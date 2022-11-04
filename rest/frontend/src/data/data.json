@@ -1,0 +1,27 @@
+{
+    "orderItems": [
+        {
+            "product": 3,
+            "name": "Cannon EOS 80D DSLR Camera",
+            "qty": 1,
+            "image": "https://storage.googleapis.com/django_media_biteam/images/camera.jpg",
+            "price": "929.99",
+            "countInStock": 5
+        },
+        {
+            "product": 5,
+            "name": "Sony Playstation 4 Pro White Version",
+            "qty": "2",
+            "image": "https://storage.googleapis.com/django_media_biteam/images/monitor.jpg",
+            "price": "799.98",
+            "countInStock": 20
+        }
+    ],
+    "shippingAddress": {
+        "Address": "aaaaa",
+        "City": "aaaa",
+        "PCode": "666",
+        "Country": "aaaa"
+    },
+    "totalPrice": 1729.97
+}
