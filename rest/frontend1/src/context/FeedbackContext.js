@@ -36,6 +36,9 @@ export const FeedbackProvider = ({ children }) => {
   // const [ReportType, setReportType] = useState()
   const [LoginText, setLoginText] = useState('')
   const [LoginLoading, setLoginLoading] = useState(false)
+  const [shared, setShared] = useState(true)
+  const [vw, setVw] = useState("95vw")
+
   
   const URL = window.location.host==="localhost:3000" ? process.env.REACT_APP_LURL : process.env.REACT_APP_PURL
   // const URL = process.env.REACT_PRO_URL
@@ -88,25 +91,44 @@ export const FeedbackProvider = ({ children }) => {
         // console.log("fetch report ", data)
     }
 
-    const fetchFilerReports =  async (id) => {
+    const fetchFilerReports =  async (id, isMB) => {
       const response = await fetch('https://storage.googleapis.com/django_media_biteam/public/user_reports.json')
       const data = await response.json()
       const manv = JSON.parse(localStorage.getItem("userInfo")).manv
       const lstreports = data.filter(el => el.manv === manv)
       let report_obj = lstreports.filter(el => el.id === id)[0]
       setFilterReports(report_obj)
-      // console.log("manv", manv)
-      report_obj.type === 1 ? setReportParam (report_obj.param.replace('xxxxxx', manv)) : setReportParam (report_obj.param.replace('xxxxxx', 'MR0000'))
-      // setReportType (report_obj.type)
+
+      if (report_obj) {
+        // console.log("is MB", isMB)
+        setShared(true);
+        const rpvw = isMB ? "95vw" : report_obj.vw
+        setVw(rpvw)
+        report_obj.type === 1 ? setReportParam (report_obj.param.replace('xxxxxx', manv)) : setReportParam (report_obj.param.replace('xxxxxx', 'MR0000'));
+      }
+      else {
+        setShared(false)
+      }
+      
     } 
 
 
-    const fetchFilerReportsExist =  async (id) => {
+    const fetchFilerReportsExist =  async (id, isMB) => {
       const manv = JSON.parse(localStorage.getItem("userInfo")).manv
       let report_obj = Reports.filter(el => el.id === id)[0]
       setFilterReports(report_obj)
-      report_obj.type === 1 ? setReportParam (report_obj.param.replace('xxxxxx', manv)) : setReportParam (report_obj.param.replace('xxxxxx', 'MR0000'))
-      // setReportType (report_obj.type)
+
+      if (report_obj) {
+        setShared(true);
+        const rpvw = isMB ? "90vw" : report_obj.vw
+        setVw(rpvw)
+        report_obj.type === 1 ? setReportParam (report_obj.param.replace('xxxxxx', manv)) : setReportParam (report_obj.param.replace('xxxxxx', 'MR0000'))
+
+      }
+      else {
+        setShared(false)
+      }
+
     }
 
     const fetchReports = async (manv) => {
@@ -491,7 +513,9 @@ export const FeedbackProvider = ({ children }) => {
         FilterReports,
         fetchFilerReports,
         fetchFilerReportsExist,
-        ReportParam
+        ReportParam,
+        shared,
+        vw
       }}
     >
       {children}

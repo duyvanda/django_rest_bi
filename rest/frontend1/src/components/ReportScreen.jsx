@@ -7,7 +7,7 @@ import { useContext, useEffect, useState } from 'react'
 
 
 function ReportScreen({match, history}) {
-    const { userInfo, Reports, FilterReports, fetchFilerReports, fetchFilerReportsExist, ReportParam } = useContext(FeedbackContext)
+    const { userInfo, Reports, FilterReports, fetchFilerReports, fetchFilerReportsExist, shared, vw, ReportParam } = useContext(FeedbackContext)
     const [MB, setIsDS] = useState(false)
     // const [data_param, setData_Param] = useState('')
 
@@ -21,7 +21,7 @@ function ReportScreen({match, history}) {
     const isMB = (media.matches)
     setIsDS(isMB)
     console.log(Reports.length)
-    Reports.length === 0 ? fetchFilerReports(match.params.id) : fetchFilerReportsExist(match.params.id)
+    Reports.length === 0 ? fetchFilerReports(match.params.id, isMB) : fetchFilerReportsExist(match.params.id, isMB)
 	}, []);
 
     // var vw = "90vw"
@@ -32,11 +32,6 @@ function ReportScreen({match, history}) {
       };
     let paramsAsString = JSON.stringify(params);
     let encodedParams = encodeURIComponent(paramsAsString)
-
-  const filter_Reports = Reports.filter(el => el.id===match.params.id)
-  const shared = filter_Reports.map(el=> el.manv).includes(userInfo.manv)
-  const vw = MB ? "90vw" : filter_Reports.map(el=> el.vw)[0]
-  // console.log("vw and mb", vw, MB, ReportParam)
 
     return (
       shared ?

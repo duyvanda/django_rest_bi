@@ -1,4 +1,3 @@
-
 from base64 import encode
 from django.shortcuts import render
 from rest_framework.parsers import FileUploadParser
@@ -17,6 +16,9 @@ from firebase_admin import firestore
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from google.cloud import logging
+from google.cloud.logging_v2 import client
+from google.cloud.logging_v2 import logger as lgr
+from google.cloud.logging_v2.resource import Resource
 import json, sys, os, requests, traceback, time 
 # from .forms import UploadFileForm, FileFieldForm
 # import json
@@ -27,7 +29,8 @@ from . import TinhThanh,PhuongXa,QuanHuyen
 
 logging_client = logging.Client()
 log_name = "django_bi_team_logger"
-logger = logging_client.logger(log_name)
+resource = Resource(type= "global", labels={})
+# logger = logging_client.logger(log_name)
 
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
@@ -89,6 +92,7 @@ def getPhuongXa(request, pk):
 
 @api_view(['POST'])
 def CreateOrder(request):
+    logger = logging_client.logger(log_name)
     logger.log_text(f"Received create request,\nRequest Data :{request.data},\nRequest Headers: {request.headers},\npath: {request.get_full_path()},\nHTTP_X_FORWARDED_FOR: {request.META.get('HTTP_X_FORWARDED_FOR')},\nREMOTE_ADDR: {request.META.get('REMOTE_ADDR')},\nQueryParams: {request.query_params}")
     default_dict = {
         # "SenderTel": "02437868020",
@@ -211,6 +215,7 @@ def FileUploadView(request, pk):
 
 @api_view(['POST'])
 def UploadSpreedSheetData(request):
+    logger = logging_client.logger(log_name)
     logger.log_text(f"Received create request,\nRequest Data :{request.data},\nRequest Headers: {request.headers},\npath: {request.get_full_path()},\nHTTP_X_FORWARDED_FOR: {request.META.get('HTTP_X_FORWARDED_FOR')},\nREMOTE_ADDR: {request.META.get('REMOTE_ADDR')},\nQueryParams: {request.query_params}")
     data =  request.data
     print(data)
@@ -297,5 +302,13 @@ def GetStatus(request, pk):
         return Response(data, status.HTTP_200_OK)
     except:
         return Response({"check":False}, status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['POST'])
+def PostUserReportLogger(request):
+    data =  request.data
+    logger = lgr.Logger(name=log_name, client=logging_client,  labels = {"name":"user_report_logger"}, resource = resource)
+    logger.log_struct(info = data, severity="INFO")
+    return Response({"message":"ok"}, status.HTTP_200_OK)
 
 

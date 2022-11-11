@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import getUrlRequest, getTinhThanh, getQuanHuyen, getPhuongXa, CreateOrder, CreateToken, FileUploadView, UploadSpreedSheetData,LogIn, ChangePass, GetStatus
+from .views import getUrlRequest, getTinhThanh, getQuanHuyen, getPhuongXa, CreateOrder, CreateToken, FileUploadView, UploadSpreedSheetData,LogIn, ChangePass, GetStatus, PostUserReportLogger
 # from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -14,6 +14,7 @@ urlpatterns = [
     path('login/', LogIn, name="LogIn"),
     path('changepass/', ChangePass, name="ChangePass"),
     path('getstatus/<str:pk>', GetStatus, name="GetStatus"),
+    path('userreportlogger', PostUserReportLogger, name="PostUserReportLogger"),
 ]
 
 # path('register/', RegisterView.as_view(), name="register"),
