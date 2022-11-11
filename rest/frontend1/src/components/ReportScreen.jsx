@@ -7,19 +7,21 @@ import { useContext, useEffect, useState } from 'react'
 
 
 function ReportScreen({match, history}) {
-    const { userInfo, Reports, FilterReports, fetchFilerReports, fetchFilerReportsExist, shared, vw, ReportParam } = useContext(FeedbackContext)
+    const { userInfo, Reports, FilterReports, fetchFilerReports, fetchFilerReportsExist, shared, vw, userLogger, ReportParam } = useContext(FeedbackContext)
     const [MB, setIsDS] = useState(false)
     // const [data_param, setData_Param] = useState('')
 
     useEffect(() => {
 		if (localStorage.getItem("userInfo")) {
-			void(0)
+			userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, match.params.id)
 		} else {
             history.push('/login');
         };
     const media = window.matchMedia('(max-width: 960px)');
     const isMB = (media.matches)
-    setIsDS(isMB)
+
+    
+    // setIsDS(isMB)
     console.log(Reports.length)
     Reports.length === 0 ? fetchFilerReports(match.params.id, isMB) : fetchFilerReportsExist(match.params.id, isMB)
 	}, []);

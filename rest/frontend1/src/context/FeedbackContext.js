@@ -131,6 +131,24 @@ export const FeedbackProvider = ({ children }) => {
 
     }
 
+    const userLogger = async (manv, id) => {
+
+      const data = {
+        manv,
+        id
+      }
+
+      console.log(data)
+
+      fetch(`${URL}/userreportlogger/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        })
+    }
+
     const fetchReports = async (manv) => {
       const response = await fetch('https://storage.googleapis.com/django_media_biteam/public/user_reports.json')
       const data = await response.json()
@@ -515,7 +533,8 @@ export const FeedbackProvider = ({ children }) => {
         fetchFilerReportsExist,
         ReportParam,
         shared,
-        vw
+        vw,
+        userLogger
       }}
     >
       {children}
