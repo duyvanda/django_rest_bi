@@ -311,4 +311,53 @@ def PostUserReportLogger(request):
     logger.log_struct(info = data, severity="INFO")
     return Response({"message":"ok"}, status.HTTP_200_OK)
 
+@api_view(['GET'])
+def GetAllUsers(request):
+    db=firebase.get_db()
+    responses = db.collection('report_users').get()
+    res_lst= []
+    for res in responses:
+        us = res.to_dict()
+        res_lst.append(us)
+    return Response(res_lst, status.HTTP_200_OK)
 
+@api_view(['GET'])
+def GetOneUser(request,pk):
+    msnv = pk
+    db=firebase.get_db()
+    res = db.collection('report_users').document(msnv).get()
+    dict = res.to_dict()
+    return Response(dict, status.HTTP_200_OK)
+
+@api_view(['POST'])
+def DeleteOneUser(request,pk):
+    msnv = pk
+    db=firebase.get_db()
+    db.collection('report_users').document(msnv).delete()
+    return Response({f"{pk}":"deleted"}, status.HTTP_200_OK)
+
+@api_view(['POST'])
+def CreateOneUser(request):
+    try:
+        data = request.data
+        msnv = data['manv']
+        default_dict = {}
+        default_dict['manv'] = data['manv']
+        default_dict['key'] = data['key']
+        default_dict['trangthaihoatdong'] = data['trangthaihoatdong']
+        db=firebase.get_db()
+        db.collection('report_users').document(msnv).set(default_dict)
+        # dict = res.to_dict()
+        return Response({f"{msnv}":"created"}, status.HTTP_201_CREATED)
+    except:
+        return Response({"message":" Data Nhap Khong Du Vui Long Nhap Lai"}, status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def UpdateOneUser(request, pk):
+    msnv = pk
+    update_data = request.data
+    db=firebase.get_db()
+    db.collection('report_users').document(msnv).update(update_data)
+    # dict = res.to_dict()
+    return Response({f"{msnv}":"updated"}, status.HTTP_200_OK)

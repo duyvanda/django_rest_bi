@@ -1,5 +1,10 @@
 from django.urls import path
-from .views import getUrlRequest, getTinhThanh, getQuanHuyen, getPhuongXa, CreateOrder, CreateToken, FileUploadView, UploadSpreedSheetData,LogIn, ChangePass, GetStatus, PostUserReportLogger
+
+from .views import getUrlRequest, getTinhThanh, getQuanHuyen, getPhuongXa, CreateOrder, CreateToken
+
+from .views import FileUploadView, UploadSpreedSheetData,LogIn, ChangePass, GetStatus, PostUserReportLogger
+
+from .views import GetAllUsers, GetOneUser, DeleteOneUser, CreateOneUser, UpdateOneUser
 # from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -15,6 +20,12 @@ urlpatterns = [
     path('changepass/', ChangePass, name="ChangePass"),
     path('getstatus/<str:pk>', GetStatus, name="GetStatus"),
     path('userreportlogger/', PostUserReportLogger, name="PostUserReportLogger"),
+    path('getallusers/', GetAllUsers, name="GetAllUsers"),
+    path('getoneuser/<str:pk>', GetOneUser, name="GetOneUser"),
+    path('deleteoneuser/<str:pk>', DeleteOneUser, name="DeleteOneUser"),
+    path('createoneuser/', CreateOneUser, name="CreateOneUser"),
+    path('updateoneuser/<str:pk>', UpdateOneUser, name="UpdateOneUser"),
+
 ]
 
 # path('register/', RegisterView.as_view(), name="register"),
