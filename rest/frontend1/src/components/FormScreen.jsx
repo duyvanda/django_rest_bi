@@ -1,6 +1,6 @@
 import React from 'react'
 import FeedbackContext from '../context/FeedbackContext'
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Spinner, Form } from "react-bootstrap";
 
@@ -8,7 +8,7 @@ import { Spinner, Form } from "react-bootstrap";
 
 function ProductList({history}) {
 
-    const { chiNhanh, tinhthanh, fetchQuanHuyen, quanhuyen, fetchPhuongXa, phuongxa, handleSaveForm, alert, alertType, alertText, loading } = useContext(FeedbackContext)
+    const { chiNhanh, tinhthanh, fetchTinhThanh, fetchQuanHuyen, quanhuyen, fetchPhuongXa, phuongxa, handleSaveForm, alert, alertType, alertText, loading } = useContext(FeedbackContext)
   
     const [maChiNhanh, SetMaChiNhanh] = useState('')
     const [maChiNhanh1, SetMaChiNhanh1] = useState('')
@@ -28,6 +28,19 @@ function ProductList({history}) {
     const [SDT, SetSDT] = useState('')
     const [Kien, setKien] = useState(1)
     // const [alert, SetALert] = useState(false)
+
+    useEffect(() => {
+
+      fetchTinhThanh()
+      // writelogs()
+      // getUserInfo()
+      // fetchTinhThanh()
+      // fetchReports()
+      // SetChiNhanh(ChiNhanh)
+      // SetPhongBan(PhongBan)
+      // console.log("URL",URL)
+      // console.log("window.location.host ",window.location.host, window.location.host==="localhost:3000")
+    }, [])
 
     const handleChangeCN = (e) => {
       // const id = e.target.value.split('-')[1]

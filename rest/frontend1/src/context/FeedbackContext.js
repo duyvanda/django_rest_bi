@@ -20,8 +20,8 @@ export const FeedbackProvider = ({ children }) => {
   const [alertType, SetALertType] = useState('alert-success')
   const [alertText, SetALertText] = useState('SUCCESS')
   const [loading, SetLoading] = useState(false)
+  
   // State Chi Tam
-
   const [phongban, SetPhongBan] = useState([])
   const [NhanVien, SetNhanVien] = useState([])
   const [HrTamAlert, setHrTamAlert] = useState(false)
@@ -45,10 +45,10 @@ export const FeedbackProvider = ({ children }) => {
   useEffect(() => {
     // writelogs()
     getUserInfo()
-    fetchTinhThanh()
+    // fetchTinhThanh()
     // fetchReports()
     SetChiNhanh(ChiNhanh)
-    SetPhongBan(PhongBan)
+    // SetPhongBan(PhongBan)
     console.log("URL",URL)
     console.log("window.location.host ",window.location.host, window.location.host==="localhost:3000")
   }, [])
@@ -500,6 +500,7 @@ export const FeedbackProvider = ({ children }) => {
         // totalPrice,
         OrderCreate,
         // updateFeedback,
+        fetchTinhThanh,
         chiNhanh,
         tinhthanh,
         fetchQuanHuyen,
