@@ -1,7 +1,8 @@
 import { createContext, useState, useEffect } from 'react'
 import FeedbackData from '../data/FeedbackData'
 import ChiNhanh from '../data/ChiNhanh'
-import PhongBan from '../data/PhongBan'
+import PLReports from '../data/PLReports'
+// import PhongBan from '../data/PhongBan'
 
 const FeedbackContext = createContext()
 
@@ -91,11 +92,36 @@ export const FeedbackProvider = ({ children }) => {
         // console.log("fetch report ", data)
     }
 
+    const fetchReports = async (manv) => {
+      const response = await fetch('https://storage.googleapis.com/django_media_biteam/public/user_reports.json')
+      const data = await response.json()
+      const lstreports = data.filter(el => el.manv === manv)
+
+      // public reports
+      let plreports = PLReports
+      plreports[0].manv = manv
+      lstreports.push(plreports[0])
+      plreports[1].manv = manv
+      lstreports.push(plreports[1])
+      // end
+
+      setReports(lstreports)
+    }
+
     const fetchFilerReports =  async (id, isMB) => {
       const response = await fetch('https://storage.googleapis.com/django_media_biteam/public/user_reports.json')
       const data = await response.json()
       const manv = JSON.parse(localStorage.getItem("userInfo")).manv
       const lstreports = data.filter(el => el.manv === manv)
+
+      // public reports
+      let plreports = PLReports
+      plreports[0].manv = manv
+      lstreports.push(plreports[0])
+      plreports[1].manv = manv
+      lstreports.push(plreports[1])
+      // end
+
       let report_obj = lstreports.filter(el => el.id === id)[0]
       setFilterReports(report_obj)
 
@@ -147,13 +173,6 @@ export const FeedbackProvider = ({ children }) => {
         },
         body: JSON.stringify(data),
         })
-    }
-
-    const fetchReports = async (manv) => {
-      const response = await fetch('https://storage.googleapis.com/django_media_biteam/public/user_reports.json')
-      const data = await response.json()
-      const lstreports = data.filter(el => el.manv === manv)
-      setReports(lstreports)
     }
 
     const fetchUserStatus = async (manv, token) => {
