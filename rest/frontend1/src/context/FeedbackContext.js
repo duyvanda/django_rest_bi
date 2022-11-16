@@ -157,6 +157,10 @@ export const FeedbackProvider = ({ children }) => {
 
     }
 
+    const clearFilerReport = () => {
+      setFilterReports('')
+    }
+
     const userLogger = async (manv, id) => {
 
       const data = {

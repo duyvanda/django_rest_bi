@@ -8,12 +8,12 @@ function ReportList({history}) {
 
   // console.log(window.location.hre, window.location.href==="http://localhost:3000/reports")
   const URL = window.location.host==="localhost:3000" ? process.env.REACT_APP_LURL : process.env.REACT_APP_PURL
-  const { userInfo, Reports } = useContext(FeedbackContext)
+  const { userInfo, Reports, clearFilterReport } = useContext(FeedbackContext)
 
 
   useEffect(() => {
 		if (localStorage.getItem("userInfo")) {
-			void(0)
+			clearFilterReport()
 		} else {
             history.push('/login');
         }

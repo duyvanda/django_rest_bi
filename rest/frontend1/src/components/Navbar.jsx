@@ -6,7 +6,7 @@ import {Nav, Navbar, Container, Button, Row, Dropdown, NavDropdown, DropdownButt
 
 
 function Navbar1() {
-    const { userInfo, logoutUser } = useContext(FeedbackContext)
+    const { userInfo, logoutUser, FilterReports } = useContext(FeedbackContext)
 
     // console.log("userinfo", userInfo) 
 
@@ -31,6 +31,7 @@ function Navbar1() {
                             }
                 </Nav>
                 </Navbar.Collapse>
+                <Navbar.Text>{FilterReports.tenreport}</Navbar.Text>
                 </Container>
             </Navbar>
         </div>
