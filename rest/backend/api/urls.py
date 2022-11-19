@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import getUrlRequest, getTinhThanh, getQuanHuyen, getPhuongXa, CreateOrder, CreateToken
+from .views import GetAutoLoginKey, getUrlRequest, getTinhThanh, getQuanHuyen, getPhuongXa, CreateOrder, CreateToken
 
 from .views import FileUploadView, UploadSpreedSheetData,LogIn, ChangePass, GetStatus, PostUserReportLogger
 
@@ -25,6 +25,7 @@ urlpatterns = [
     path('deleteoneuser/<str:pk>', DeleteOneUser, name="DeleteOneUser"),
     path('createoneuser/', CreateOneUser, name="CreateOneUser"),
     path('updateoneuser/<str:pk>', UpdateOneUser, name="UpdateOneUser"),
+    path('getautologinkey/<str:pk>', GetAutoLoginKey, name="GetAutoLoginKey"),
 
 ]
 

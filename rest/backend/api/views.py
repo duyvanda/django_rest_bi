@@ -19,7 +19,7 @@ from google.cloud import logging
 from google.cloud.logging_v2 import client
 from google.cloud.logging_v2 import logger as lgr
 from google.cloud.logging_v2.resource import Resource
-import json, sys, os, requests, traceback, time 
+import json, sys, os, requests, traceback, time, datetime
 # from .forms import UploadFileForm, FileFieldForm
 # import json
 from . import firebase
@@ -30,6 +30,9 @@ from . import TinhThanh,PhuongXa,QuanHuyen
 logging_client = logging.Client()
 log_name = "django_bi_team_logger"
 resource = Resource(type= "global", labels={})
+num_str = str(datetime.datetime.now().day*123123)
+token_s = """1Iujws5qaz2Nl1qcZpJ%01D7%Zb8cH7Fa%ErnFG7@u!M3G$xiL_hz7A$z4L1$Y207QDWUx8TMN2g!8e43jn%zt9qFjJ5vQABwoBET_c2y7owPhZAmU4Tpn!0YbOxk!MF!SO^is8YoKLU4yaj1U$9ftBp_c2y7owPhZAmU4Tpn!0YbOxk!MF!SO^is8YoKLU4yaj1U$9ftBp"""
+token_str = token_s+num_str
 # logger = logging_client.logger(log_name)
 
 @api_view(['POST'])
@@ -52,6 +55,19 @@ def getUrlRequest(request):
     # print(matinhthanh_mapping)
     # print(dict_data)
     return Response(dict_data)
+
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def GetAutoLoginKey(request, pk):
+    try:
+        if request.headers['p-token'] == token_s:
+            return Response({"manv": pk, "token": token_str}, status.HTTP_200_OK)
+        else:
+            return Response({"message": "Sai Token"}, status.HTTP_401_UNAUTHORIZED)
+    except KeyError:
+        return Response({"message": "Thieu P-Token"}, status.HTTP_401_UNAUTHORIZED)
+    except:
+        return Response({"message": "Server Bi Loi"}, status.HTTP_401_UNAUTHORIZED)
 
 # Create your views here.
 @api_view(['GET'])
@@ -250,7 +266,6 @@ def UploadSpreedSheetData(request):
 @api_view(['POST'])
 def LogIn(request):
     try:
-        token_str = """1Iujws5qaz2Nl1qcZpJ%01D7%Zb8cH7Fa%ErnFG7@u!M3G$xiL_hz7A$z4L1$Y207QDWUx8TMN2g!8e43jn%zt9qFjJ5vQABwoBET_c2y7owPhZAmU4Tpn!0YbOxk!MF!SO^is8YoKLU4yaj1U$9ftBp_c2y7owPhZAmU4Tpn!0YbOxk!MF!SO^is8YoKLU4yaj1U$9ftBp"""
         # print(request.data)
         manv = request.data['email']
         # password = request.data['password']
