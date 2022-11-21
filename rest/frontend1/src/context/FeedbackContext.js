@@ -157,7 +157,7 @@ export const FeedbackProvider = ({ children }) => {
 
     }
 
-    const clearFilerReport = () => {
+    const clearFilterReport = () => {
       setFilterReports('')
     }
 
@@ -442,6 +442,7 @@ export const FeedbackProvider = ({ children }) => {
     setUserInfo('')
     setLoginText('')
     setReports([])
+    setFilterReports('')
 
   }
 
@@ -555,6 +556,7 @@ export const FeedbackProvider = ({ children }) => {
         FilterReports,
         fetchFilerReports,
         fetchFilerReportsExist,
+        clearFilterReport,
         ReportParam,
         shared,
         vw,

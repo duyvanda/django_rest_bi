@@ -30,9 +30,10 @@ from . import TinhThanh,PhuongXa,QuanHuyen
 logging_client = logging.Client()
 log_name = "django_bi_team_logger"
 resource = Resource(type= "global", labels={})
-num_str = str(datetime.datetime.now().day*123123)
-token_s = """1Iujws5qaz2Nl1qcZpJ%01D7%Zb8cH7Fa%ErnFG7@u!M3G$xiL_hz7A$z4L1$Y207QDWUx8TMN2g!8e43jn%zt9qFjJ5vQABwoBET_c2y7owPhZAmU4Tpn!0YbOxk!MF!SO^is8YoKLU4yaj1U$9ftBp_c2y7owPhZAmU4Tpn!0YbOxk!MF!SO^is8YoKLU4yaj1U$9ftBp"""
-token_str = token_s+num_str
+num_str = str( (datetime.datetime.now().hour*5 + datetime.datetime.now().day*4 + datetime.datetime.now().month*3 + datetime.datetime.now().year*2) *123123)
+token_s = """1Iujws5qaz2Nl1qcZpJ%01D7%Zb8cH7Fa%ErnFG7@u!M3G$xiL_hz7A$z4L1$Y207QDWUx8TMN2g!8e43jn%zt9qFjJ5vQABwoBET_c2y7owPhZAmU4Tpn!0YbOxk!MF"""
+extra_s = """!SO^is8YoKLU4yaj1U$9ftBp_c2y7owPhZAmU4Tpn!0YbOxk!MF!SO^is8YoKLU4yaj1U$9ftBp"""
+token_str = token_s+extra_s+num_str
 # logger = logging_client.logger(log_name)
 
 @api_view(['POST'])
@@ -61,7 +62,7 @@ def getUrlRequest(request):
 def GetAutoLoginKey(request, pk):
     try:
         if request.headers['p-token'] == token_s:
-            return Response({"manv": pk, "token": token_str}, status.HTTP_200_OK)
+            return Response({"utm_source":"eoffice", "manv": pk, "token": token_str}, status.HTTP_200_OK)
         else:
             return Response({"message": "Sai Token"}, status.HTTP_401_UNAUTHORIZED)
     except KeyError:

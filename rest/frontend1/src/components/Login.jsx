@@ -23,7 +23,7 @@ function Login({history, location}) {
 		} 
     else if (location_search.get('utm_source')) {
       const utm_source = location.search.split("&")[0].split("=")[1]
-      const manv = location.search.split("&")[1].split("=")[1]
+      const manv = location.search.split("&")[1].split("=")[1].toUpperCase()
       const token = location.search.split("&")[2].split("=")[1]
       history.push("/login")
       const logindata = {

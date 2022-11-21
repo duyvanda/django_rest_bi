@@ -3,15 +3,22 @@ import { Link, NavLink  } from 'react-router-dom'
 import FeedbackContext from '../context/FeedbackContext'
 import { useContext } from 'react'
 import {Nav, Navbar, Container, Button, Row, Dropdown, NavDropdown, DropdownButton} from 'react-bootstrap';
+import { useHistory } from "react-router-dom";
 
 
 function Navbar1() {
     const { userInfo, logoutUser, FilterReports } = useContext(FeedbackContext)
 
+    const history = useHistory();
+
     // console.log("userinfo", userInfo) 
 
     const handleClick = () => {
-        logoutUser()}
+        logoutUser();
+        let path = `/login`;
+        history.push(path);
+        console.log("logout")
+    }
 
     return (
         <div>
