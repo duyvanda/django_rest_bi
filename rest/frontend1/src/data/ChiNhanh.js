@@ -30,6 +30,26 @@ const ChiNhanh = [
         "SenderDistrictId": "6510",
         "SenderProvinceId": "65"
     },
+    {
+        "id":4,
+        "chinhanh": "MR0013-55101A04000013000",
+        "SenderTel": "0354057688",
+        "SenderFullname": "Công ty Dược Pha Nam - CN Đà nẵng",
+        "SenderAddress": "61 Nguyễn Trác",
+        "SenderWardId": "55300",
+        "SenderDistrictId": "5510",
+        "SenderProvinceId": "55"
+    },
+    {
+        "id":5,
+        "chinhanh": "MR0012-46100A04000638000",
+        "SenderTel": "0963261803",
+        "SenderFullname": "CÔNG TY CỔ PHẦN DƯỢC PHA NAM - CHI NHÁNH NGHỆ AN",
+        "SenderAddress": "Nhà số 06 - Ngõ 30 Đường Trần Tấn",
+        "SenderWardId": "46125",
+        "SenderDistrictId": "4610",
+        "SenderProvinceId": "46"
+    },
 ]
 
 export default ChiNhanh

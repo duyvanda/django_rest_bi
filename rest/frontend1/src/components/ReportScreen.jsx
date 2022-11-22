@@ -7,7 +7,7 @@ import { useContext, useEffect, useState } from 'react'
 
 
 function ReportScreen({match, history}) {
-    const { userInfo, Reports, FilterReports, fetchFilerReports, fetchFilerReportsExist, shared, vw, userLogger, ReportParam } = useContext(FeedbackContext)
+    const { userInfo, Reports, FilterReports, fetchFilerReports, fetchFilerReportsExist, shared, vw, ReportId, userLogger, ReportParam } = useContext(FeedbackContext)
     const [MB, setIsDS] = useState(false)
     // const [data_param, setData_Param] = useState('')
 
@@ -23,6 +23,7 @@ function ReportScreen({match, history}) {
     
     // setIsDS(isMB)
     console.log(Reports.length)
+    console.log("isMB", isMB)
     Reports.length === 0 ? fetchFilerReports(match.params.id, isMB) : fetchFilerReportsExist(match.params.id, isMB)
 	}, []);
 
@@ -40,7 +41,7 @@ function ReportScreen({match, history}) {
         <div>
           {/* <Link to="/"><Button className="mr-1" variant="primary" size="sm">Go Back</Button></Link> */}
             <div align="center" className="border-1 bg-dark" >
-            <iframe frameBorder="0" className="border-1" src={`https://datastudio.google.com/embed/reporting/${match.params.id}${ReportParam}`}  style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }} allowFullScreen></iframe>
+            <iframe frameBorder="0"  src={`https://datastudio.google.com/embed/reporting/${ReportId}${ReportParam}`} style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }} ></iframe>
             </div>
         </div>
         :
@@ -55,3 +56,5 @@ function ReportScreen({match, history}) {
 //* 
 //<iframe width="600" height="600" src={`https://datastudio.google.com/embed/reporting/${match.params.id}`}  style={{ border: 0 }}></iframe>
 //{/* page/2SX2C/ <p>{`https://datastudio.google.com/embed/reporting/${match.params.id}/page/2SX2C/?params=%7B%22df3%22:%22include%25EE%2580%25800%25EE%2580%2580IN%25EE%2580%2580${manv.text}%22%7D`}</p> */}
+// style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }}
+// <div align="center" className="border-1 bg-dark" >

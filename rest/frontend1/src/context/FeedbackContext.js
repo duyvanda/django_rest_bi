@@ -34,6 +34,7 @@ export const FeedbackProvider = ({ children }) => {
   const [Reports, setReports] = useState([])
   const [FilterReports, setFilterReports] = useState('')
   const [ReportParam, setReportParam] = useState()
+  const [ReportId, setReportId] = useState('')
   // const [ReportType, setReportType] = useState()
   const [LoginText, setLoginText] = useState('')
   const [LoginLoading, setLoginLoading] = useState(false)
@@ -130,6 +131,8 @@ export const FeedbackProvider = ({ children }) => {
         setShared(true);
         const rpvw = isMB ? "95vw" : report_obj.vw
         setVw(rpvw)
+        const rpid = isMB ? report_obj.id_mb : report_obj.id
+        setReportId(rpid)
         report_obj.type === 1 ? setReportParam (report_obj.param.replace('xxxxxx', manv)) : setReportParam (report_obj.param.replace('xxxxxx', 'MR0000'));
       }
       else {
@@ -146,8 +149,10 @@ export const FeedbackProvider = ({ children }) => {
 
       if (report_obj) {
         setShared(true);
-        const rpvw = isMB ? "90vw" : report_obj.vw
+        const rpvw = isMB ? "95vw" : report_obj.vw
         setVw(rpvw)
+        const rpid = isMB ? report_obj.id_mb : report_obj.id
+        setReportId(rpid)
         report_obj.type === 1 ? setReportParam (report_obj.param.replace('xxxxxx', manv)) : setReportParam (report_obj.param.replace('xxxxxx', 'MR0000'))
 
       }
@@ -560,6 +565,7 @@ export const FeedbackProvider = ({ children }) => {
         ReportParam,
         shared,
         vw,
+        ReportId,
         userLogger
       }}
     >
