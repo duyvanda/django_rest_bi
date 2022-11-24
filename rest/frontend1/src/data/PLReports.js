@@ -1,7 +1,7 @@
 const PLReports = [
     {
     "tenreport": "PL| Tra cứu thông tin khách hàng",
-    "id": "67d194cc-fba1-49e5-9e7c-da2f959f675d",
+    "id": "7299ccee-6e38-4f71-94b5-e6659d84ae9b",
     "manv": "xxxxxx",
     "type": 0,
     "vw": "500px",
@@ -9,7 +9,7 @@ const PLReports = [
     },
     {
     "tenreport": "PL | Tra cứu thông tin đơn hàng",
-    "id": "71892275-403d-4105-a39a-8001c8bb123d",
+    "id": "0813bfb3-4fdf-4182-8ef4-a1e074ac689c",
     "manv": "xxxxxx",
     "type": 0,
     "vw": "650px",

@@ -38,7 +38,7 @@ function Navbar1() {
                             }
                 </Nav>
                 </Navbar.Collapse>
-                <Navbar.Text>{FilterReports.tenreport}</Navbar.Text>
+                <Navbar.Text className='text-truncate'>{FilterReports.tenreport}</Navbar.Text>
                 </Container>
             </Navbar>
         </div>

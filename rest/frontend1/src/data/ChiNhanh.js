@@ -33,7 +33,7 @@ const ChiNhanh = [
     {
         "id":4,
         "chinhanh": "MR0013-55101A04000013000",
-        "SenderTel": "0354057688",
+        "SenderTel": "0903186813",
         "SenderFullname": "Công ty Dược Pha Nam - CN Đà nẵng",
         "SenderAddress": "61 Nguyễn Trác",
         "SenderWardId": "55300",

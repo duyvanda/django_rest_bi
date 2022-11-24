@@ -58,3 +58,4 @@ function ReportScreen({match, history}) {
 //{/* page/2SX2C/ <p>{`https://datastudio.google.com/embed/reporting/${match.params.id}/page/2SX2C/?params=%7B%22df3%22:%22include%25EE%2580%25800%25EE%2580%2580IN%25EE%2580%2580${manv.text}%22%7D`}</p> */}
 // style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }}
 // <div align="center" className="border-1 bg-dark" >
+// match.params.id // ReportId
