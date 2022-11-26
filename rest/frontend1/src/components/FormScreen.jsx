@@ -2,7 +2,7 @@ import React from 'react'
 import FeedbackContext from '../context/FeedbackContext'
 import { useContext, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Spinner, Form } from "react-bootstrap";
+import { Spinner, Form, Button, Modal } from "react-bootstrap";
 
 
 
@@ -28,6 +28,10 @@ function ProductList({history}) {
     const [SDT, SetSDT] = useState('')
     const [Kien, setKien] = useState(1)
     // const [alert, SetALert] = useState(false)
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     useEffect(() => {
 
@@ -135,6 +139,7 @@ function ProductList({history}) {
       SetBBNH('')
       SetSDT('')
       setKien(1)
+      setShow(false);
       // SetALert(true)
       // setTimeout(() => SetALert(false),2000)
       history.push("/formmdsvnpost")
@@ -202,8 +207,9 @@ function ProductList({history}) {
                     <input className="form-control" type="text" onChange={handleSDT} value={SDT} placeholder="Ví dụ 0909555555"></input>
                     <label className="form-label" style={{fontWeight: "bold"}}>Số Kiện</label>
                     <Form.Control type="number" onChange={handleKien} value={Kien} placeholder="Số Kiện"></Form.Control>
-                    <button className="btn btn-warning mt-2 mb-2" type="button" style={{width: "100%"}} data-bs-target="#modal-1" data-bs-toggle="modal">Submit</button>
                 </form>
+                <Button className="mt-2 mb-2" variant="warning" onClick={handleShow} style={{width: "100%"}}>Post Đơn</Button>
+
                     {loading &&
                       <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
                         <span className="sr-only">Loading...</span>
@@ -218,7 +224,32 @@ function ProductList({history}) {
                     }
             </div>
         </div>
-        <div className="modal fade" role="dialog" tabIndex="-1" id="modal-1">
+
+        <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Thông Tin Đơn Sắp POST</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <p>Ma Tinh Thanh: {maTinhThanh}</p>
+        <p>Ma Quan Huyen: {maQuanHuyen}</p>
+        <p>Ma Phuong Xa: {maPhuongXa}</p>
+        <p>Ten Nha Thuoc: {tenNT}</p>
+        <p>Dia Chi: {diaChi}</p>
+        <p>CN + BBNH: {bbnh}</p>
+        <p>SDT: {SDT}</p>
+        <p>SoKien: {Kien}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleSave}>
+            Save
+          </Button>
+        </Modal.Footer>
+      </Modal>
+        
+        {/* <div className="modal" id="modal-1">
             <div className="modal-dialog" role="document">
                 <div className="modal-content">
                     <div className="modal-header">
@@ -238,7 +269,10 @@ function ProductList({history}) {
                     <button className="btn btn-primary" type="button" data-bs-dismiss="modal" onClick={handleSave}>Save</button></div>
                 </div>
             </div>
-        </div>
+        </div> */}
+
+
+        
     </div>
     <footer className="text-center">
         <div className="container text-muted py-4 py-lg-5">
@@ -249,3 +283,5 @@ function ProductList({history}) {
   )}
   
   export default ProductList
+
+  // <button className="btn btn-warning mt-2 mb-2" type="button" style={{width: "100%"}} data-bs-target="#modal-1" data-bs-toggle="modal">Submit</button>

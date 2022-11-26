@@ -6,7 +6,7 @@ function HomeScreen({history}) {
 
     useEffect(() => {
     history.push("/reports");
-    console.log("Data")
+    // console.log("Data")
 	}, [history]);
   return (
     <div className='container'>HomeScreen</div>
