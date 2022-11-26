@@ -32,7 +32,7 @@ log_name = "django_bi_team_logger"
 resource = Resource(type= "global", labels={})
 num_str = str( (datetime.datetime.now().hour*5 + datetime.datetime.now().day*4 + datetime.datetime.now().month*3 + datetime.datetime.now().year*2) *123123)
 token_s = """1Iujws5qaz2Nl1qcZpJ%01D7%Zb8cH7Fa%ErnFG7@u!M3G$xiL_hz7A$z4L1$Y207QDWUx8TMN2g!8e43jn%zt9qFjJ5vQABwoBET_c2y7owPhZAmU4Tpn!0YbOxk!MF"""
-extra_s = """!SOis8YoKLU4yaj1U$9ftBp_c2y7owPhZAmU4Tpn!0YbOxk!MF!SOis8YoKLU4yaj1U$9ftBp"""
+extra_s = """GIwSgZdtwXadjrHA.U9ftBp.SOis8YoKLU4yaj1U9ftBp_c2y7owPhZAmU4Tpn0YbOxkMFSOis8YoKLU4yaj1U9ftBp"""
 token_str = extra_s+num_str
 # logger = logging_client.logger(log_name)
 
@@ -236,7 +236,7 @@ def UploadSpreedSheetData(request):
     logger = logging_client.logger(log_name)
     logger.log_text(f"Received create request,\nRequest Data :{request.data},\nRequest Headers: {request.headers},\npath: {request.get_full_path()},\nHTTP_X_FORWARDED_FOR: {request.META.get('HTTP_X_FORWARDED_FOR')},\nREMOTE_ADDR: {request.META.get('REMOTE_ADDR')},\nQueryParams: {request.query_params}")
     data =  request.data
-    print(data)
+    # print(data)
     lst = []
     lst.append(data['MSNV'])
     lst.append(data['HoVaTen'])
@@ -280,9 +280,9 @@ def LogIn(request):
         dk1 = dict['manv'] == manv
         dk2 = dict['key'] == password
         encryptedpassword=make_password(password)
-        print(encryptedpassword)
+        # print(encryptedpassword)
         decryptedpassword=check_password(password, encryptedpassword)
-        print(decryptedpassword)
+        # print(decryptedpassword)
         dict['token'] = encryptedpassword
         dict.pop('key', None)
         if dk1 & dk2:
@@ -294,7 +294,7 @@ def LogIn(request):
 
 @api_view(['POST'])
 def ChangePass(request):
-    print(request.data)
+    # print(request.data)
     db=firebase.get_db()
     manv = request.data['manv']
     newpass = request.data['password']
@@ -312,7 +312,7 @@ def GetStatus(request, pk):
         dict = res.to_dict()
         stat = dict['trangthaihoatdong']
         encryptedpassword=request.data['token']
-        print("encryptedpassword", encryptedpassword)
+        # print("encryptedpassword", encryptedpassword)
         decryptedpassword=check_password(dict['key'], encryptedpassword)
         # passcheck = encryptedpassword==request.data['token']
         stat = bool(stat)

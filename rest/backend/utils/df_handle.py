@@ -29,7 +29,7 @@ import pyodbc
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "bigquery1508.json" if settings.LOCAL == "1" else '/app/bigquery1508.json'
 pjt = 'spatial-vision-343005'
 dts = '.biteam'
-print("Default bq project: ",pjt+dts)
+# print("Default bq project: ",pjt+dts)
 
 def check_exist_ms(sql):
     server = '115.165.164.234'
