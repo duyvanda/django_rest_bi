@@ -29,7 +29,6 @@ import pyodbc
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "bigquery1508.json" if settings.LOCAL == "1" else '/app/bigquery1508.json'
 pjt = 'spatial-vision-343005'
 dts = '.biteam'
-# print("Default bq project: ",pjt+dts)
 
 def check_exist_ms(sql):
     server = '115.165.164.234'
@@ -73,6 +72,26 @@ def upload_file_to_bucket_with_metadata(blobname: str, imagefile, filetype='text
         blob.upload_from_string(imagefile, content_type=filetype)
         return blob.public_url
 
+def download_pk_files(blobname: str, filetype='text/csv', bucketname='django_media_biteam'):
+    '''
+    bucketname: default is django_media_biteam
+    blobname: strpath example bucket.blob("admin/duy.csv")
+    df_tocsv_method: df.to_csv(index=False)
+    filetype: default is text/csv, can be 'application/json'
+    '''
+    with closing(storage.Client()) as client:
+        bucket = client.get_bucket(bucketname)
+        blob = bucket.blob(blobname)
+        pickle_in = blob.download_as_string()
+        with open('phuongxa.pk','wb') as f:
+            f.write(pickle_in)
+        # metadata = {'Cache-Control': 'no-cache'}
+        # blob.metadata = metadata
+        # blob.download_from_string(imagefile, content_type=filetype)
+        # print(os.getcwd())
+        # print("Done")
+        return pickle_in
+
 
 def insert_google_sheet(data: list, spreadsheets_id: str, worksheetname: str = 'DATA!', cellrangeinsert: str = 'A1'):
     '''
@@ -99,3 +118,6 @@ def insert_google_sheet(data: list, spreadsheets_id: str, worksheetname: str = '
         range=worksheetname+cellrangeinsert,
         body=value_range_body
     ).execute()
+
+# print("Default bq project: ",pjt+dts)
+# download_pk_files(blobname="public/phuongxa.pk")

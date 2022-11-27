@@ -13,18 +13,20 @@ function ReportScreen({match, history}) {
 
     useEffect(() => {
 		if (localStorage.getItem("userInfo")) {
-			userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, match.params.id)
+      const media = window.matchMedia('(max-width: 960px)');
+      const isMB = (media.matches);
+      // setIsDS(isMB)
+      console.log(Reports.length)
+      console.log("isMB", isMB)
+      // width
+      const dv_width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+      console.log("dv_width", dv_width)
+      Reports.length === 0 ? fetchFilerReports(match.params.id, isMB) : fetchFilerReportsExist(match.params.id, isMB)
+			userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, match.params.id, isMB, dv_width);
+
 		} else {
             history.push('/login');
         };
-    const media = window.matchMedia('(max-width: 960px)');
-    const isMB = (media.matches)
-
-    
-    // setIsDS(isMB)
-    console.log(Reports.length)
-    console.log("isMB", isMB)
-    Reports.length === 0 ? fetchFilerReports(match.params.id, isMB) : fetchFilerReportsExist(match.params.id, isMB)
 	}, []);
 
     // var vw = "90vw"

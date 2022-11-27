@@ -166,14 +166,16 @@ export const FeedbackProvider = ({ children }) => {
       setFilterReports('')
     }
 
-    const userLogger = async (manv, id) => {
+    const userLogger = async (manv, id, ismb, dv_width) => {
 
       const data = {
         manv,
-        id
+        id,
+        ismb,
+        dv_width
       }
 
-      console.log(data)
+      console.log("userLogger", data)
 
       fetch(`${URL}/userreportlogger/`, {
         method: 'POST',

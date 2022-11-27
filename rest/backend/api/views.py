@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from requests.structures import CaseInsensitiveDict
-from utils.df_handle import check_exist_ms, upload_file_to_bucket, insert_google_sheet
+from utils.df_handle import check_exist_ms, upload_file_to_bucket, insert_google_sheet, download_pk_files
 from firebase_admin import firestore
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -19,11 +19,11 @@ from google.cloud import logging
 from google.cloud.logging_v2 import client
 from google.cloud.logging_v2 import logger as lgr
 from google.cloud.logging_v2.resource import Resource
-import json, sys, os, requests, traceback, time, datetime
+import json, sys, os, requests, traceback, time, datetime, pickle
 # from .forms import UploadFileForm, FileFieldForm
 # import json
 from . import firebase
-from . import TinhThanh,PhuongXa,QuanHuyen
+from . import TinhThanh,PhuongXa2,QuanHuyen
 # print(path)
 # list_dict = []
 
@@ -96,16 +96,35 @@ def getQuanHuyen(request, pk):
     return Response({'sucess':data})
 
 
+# OLD
+# @api_view(['GET'])
+# def getPhuongXa(request, pk):
+#     # pk= "1240"
+#     data = []
+#     lst = PhuongXa.phuongxa
+#     for i in lst:
+#         if i['MaQuanHuyen'] == pk:
+#             data.append(i['TenPhuongXa']+'-'+ i['MaPhuongXa'])
+#     return Response({'sucess':data})
 
 @api_view(['GET'])
 def getPhuongXa(request, pk):
-    # pk= "1240"
-    data = []
-    lst = PhuongXa.phuongxa
-    for i in lst:
-        if i['MaQuanHuyen'] == pk:
-            data.append(i['TenPhuongXa']+'-'+ i['MaPhuongXa'])
+    if os.path.isfile("/app/phuongxa.pk"):
+        with open("/app/phuongxa.pk",'rb') as f:
+            dct = pickle.load(f)
+    else:
+        download_pk_files("public/phuongxa.pk")
+        with open("/app/phuongxa.pk",'rb') as f:
+            dct = pickle.load(f)
+    # with open("/app/phuongxa.pk",'rb') as f:
+    #     dct = pickle.load(f)
+    data =  dct[pk]['MaPhuongXa']
     return Response({'sucess':data})
+
+@api_view(['GET'])
+def getPKFiles(request):
+    download_pk_files("public/phuongxa.pk")
+    return Response({'sucess':'ok'})
 
 
 @api_view(['POST'])

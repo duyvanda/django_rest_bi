@@ -226,29 +226,42 @@ function ProductList({history}) {
         </div>
 
         <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Thông Tin Đơn Sắp POST</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        <p>Ma Tinh Thanh: {maTinhThanh}</p>
-        <p>Ma Quan Huyen: {maQuanHuyen}</p>
-        <p>Ma Phuong Xa: {maPhuongXa}</p>
-        <p>Ten Nha Thuoc: {tenNT}</p>
-        <p>Dia Chi: {diaChi}</p>
-        <p>CN + BBNH: {bbnh}</p>
-        <p>SDT: {SDT}</p>
-        <p>SoKien: {Kien}</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleSave}>
-            Save
-          </Button>
-        </Modal.Footer>
+          <Modal.Header closeButton>
+            <Modal.Title>Thông Tin Đơn Sắp POST</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+          <p>Ma Tinh Thanh: {maTinhThanh}</p>
+          <p>Ma Quan Huyen: {maQuanHuyen}</p>
+          <p>Ma Phuong Xa: {maPhuongXa}</p>
+          <p>Ten Nha Thuoc: {tenNT}</p>
+          <p>Dia Chi: {diaChi}</p>
+          <p>CN + BBNH: {bbnh}</p>
+          <p>SDT: {SDT}</p>
+          <p>SoKien: {Kien}</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleSave}>
+              Save
+            </Button>
+          </Modal.Footer>
       </Modal>
         
+       
+    </div>
+    <footer className="text-center">
+        <div className="container text-muted py-4 py-lg-5">
+            <p className="mb-0">Copyright © 2022 MerapGroup</p>
+        </div>
+    </footer>
+        </div>
+  )}
+  
+  export default ProductList
+
+  // <button className="btn btn-warning mt-2 mb-2" type="button" style={{width: "100%"}} data-bs-target="#modal-1" data-bs-toggle="modal">Submit</button>
         {/* <div className="modal" id="modal-1">
             <div className="modal-dialog" role="document">
                 <div className="modal-content">
@@ -270,18 +283,3 @@ function ProductList({history}) {
                 </div>
             </div>
         </div> */}
-
-
-        
-    </div>
-    <footer className="text-center">
-        <div className="container text-muted py-4 py-lg-5">
-            <p className="mb-0">Copyright © 2022 MerapGroup</p>
-        </div>
-    </footer>
-        </div>
-  )}
-  
-  export default ProductList
-
-  // <button className="btn btn-warning mt-2 mb-2" type="button" style={{width: "100%"}} data-bs-target="#modal-1" data-bs-toggle="modal">Submit</button>
