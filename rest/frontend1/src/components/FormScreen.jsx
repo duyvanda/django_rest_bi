@@ -8,7 +8,7 @@ import { Spinner, Form, Button, Modal } from "react-bootstrap";
 
 function ProductList({history}) {
 
-    const { chiNhanh, tinhthanh, fetchTinhThanh, fetchQuanHuyen, quanhuyen, fetchPhuongXa, phuongxa, handleSaveForm, alert, alertType, alertText, loading } = useContext(FeedbackContext)
+    const { chiNhanh, fetchKHVNP,khvnp, tinhthanh, fetchTinhThanh, fetchQuanHuyen, quanhuyen, fetchPhuongXa, phuongxa, handleSaveForm, alert, alertType, alertText, loading } = useContext(FeedbackContext)
   
     const [maChiNhanh, SetMaChiNhanh] = useState('')
     const [maChiNhanh1, SetMaChiNhanh1] = useState('')
@@ -26,13 +26,16 @@ function ProductList({history}) {
     const [diaChi, SetDiaChi] = useState('')
     const [bbnh, SetBBNH] = useState('')
     const [SDT, SetSDT] = useState('')
+    const [MKH, SetMKH] = useState('')
     const [Kien, setKien] = useState(1)
     // const [alert, SetALert] = useState(false)
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
+    const handleShow = () => {
+      setShow(true);
+      fetchKHVNP(MKH)
+    }
     useEffect(() => {
 
       fetchTinhThanh()
@@ -63,43 +66,46 @@ function ProductList({history}) {
       SetSenderProvinceId(data_arr[6])
 
     }
-    const handleChangeTT = (e) => {
-      const id = e.target.value.split('-')[1]
-      console.log("handleChangeTT ", id)
-      fetchQuanHuyen(id)
-      SetMaTinhThanh(e.target.value)
-    }
-    const handleChangeQH = (e) => {
-      const id = e.target.value.split('-')[1]
-      fetchPhuongXa(id)
-      SetMaQuanHuyen(e.target.value)
-    }
-    const handleChangePX = (e) => {
-      const data = e.target.value.split('-')[1]
-      // fetchPhuongXa(data)
-      SetMaPhuongXa(e.target.value)
-    }
+    // const handleChangeTT = (e) => {
+    //   const id = e.target.value.split('-')[1]
+    //   console.log("handleChangeTT ", id)
+    //   fetchQuanHuyen(id)
+    //   SetMaTinhThanh(e.target.value)
+    // }
+    // const handleChangeQH = (e) => {
+    //   const id = e.target.value.split('-')[1]
+    //   fetchPhuongXa(id)
+    //   SetMaQuanHuyen(e.target.value)
+    // }
+    // const handleChangePX = (e) => {
+    //   const data = e.target.value.split('-')[1]
+    //   SetMaPhuongXa(e.target.value)
+    // }
 
-    const handleTenNT = (e) => {
-      const data = e.target.value
-      SetTenNT(data)
-      // console.log(data)
-    }
+    // const handleTenNT = (e) => {
+    //   const data = e.target.value
+    //   SetTenNT(data)
+    // }
 
-    const handleDiaChi = (e) => {
-      const data = e.target.value
-      SetDiaChi(data)
-      // console.log(data)
-    }
+    // const handleDiaChi = (e) => {
+    //   const data = e.target.value
+    //   SetDiaChi(data)
+    // }
 
     const handleBBNH = (e) => {
       const data = e.target.value.split(" ").join("").split("-").join("").toUpperCase();
       SetBBNH(data)
     }
-    const handleSDT = (e) => {
+    // const handleSDT = (e) => {
+    //   const data = e.target.value
+    //   SetSDT(data)
+    // }
+
+    const handleMKH = (e) => {
       const data = e.target.value
-      SetSDT(data)
+      SetMKH(data)
     }
+
     const handleKien = (e) => {
       const data = e.target.value
       data > 20 ? window.alert(`So Kien Qua Nhieu: ${data}, Vui Long Check Lai Thong Tin`) : void(0)
@@ -117,13 +123,13 @@ function ProductList({history}) {
         SenderWardId,
         SenderDistrictId,
         SenderProvinceId,
-        'maTinhThanh':maTinhThanh.split('-')[1],
-        'maQuanHuyen':maQuanHuyen.split('-')[1],
-        'maPhuongXa':maPhuongXa.split('-')[1],
-        tenNT: tenNT.trimEnd().trimStart(),
-        diaChi: diaChi.trimEnd().trimStart(),
+        'maTinhThanh':khvnp.codetinhkh.trimEnd().trimStart(),
+        'maQuanHuyen':khvnp.codequanhuyen.trimEnd().trimStart(),
+        'maPhuongXa':khvnp.codephuongxa.trimEnd().trimStart(),
+        tenNT: khvnp.tenkhachhang.trimEnd().trimStart(),
+        diaChi: khvnp.diachikh.trimEnd().trimStart(),
         bbnh: bbnh.trimEnd().trimStart(),
-        SDT: SDT.trimEnd().trimStart(),
+        SDT: khvnp.sodienthoai.trimEnd().trimStart(),
         Kien: Number(Kien)
       }
       console.log(data)
@@ -166,8 +172,7 @@ function ProductList({history}) {
                           .map(el =><option key={el.id} value={[el.chinhanh, el.SenderTel, el.SenderFullname, el.SenderAddress, el.SenderWardId, el.SenderDistrictId, el.SenderProvinceId]}> {el.chinhanh} </option>
                           )}
                     </Form.Select>
-                  <label className="form-label" style={{fontWeight: "bold"}}>CHỌN TỈNH THÀNH</label>
-                  {/* textDecoration: "line-through" */}
+                  {/* <label className="form-label" style={{fontWeight: "bold"}}>CHỌN TỈNH THÀNH</label>
                   <select className="form-select " style={{fontStyle: "bold"}} onChange={handleChangeTT} value={maTinhThanh} disabled={false}>
                         <optgroup label="">
                         <option style={{fontWeight: "bold"}}></option>
@@ -196,17 +201,19 @@ function ProductList({history}) {
                             <option key={el} value={el} >{el}</option>
                           )}
                         </optgroup>
-                    </select>
-                    <label className="form-label" style={{fontWeight: "bold"}}>Tên Khách Hàng</label>
+                    </select> */}
+                    {/* <label className="form-label" style={{fontWeight: "bold"}}>Tên Khách Hàng</label>
                     <input className="form-control" onChange={handleTenNT} value={tenNT} type="text" placeholder="Tên Khách Hàng"></input>
                     <label className="form-label" style={{fontWeight: "bold"}}>ĐỊA CHỈ GIAO HÀNG</label>
-                    <textarea className="form-control" onChange={handleDiaChi} value={diaChi}></textarea>
+                    <textarea className="form-control" onChange={handleDiaChi} value={diaChi}></textarea> */}
                     <label className="form-label" style={{fontWeight: "bold"}} >MÃ CN THEO ĐƠN + BBNH</label>
                     <input className="form-control" type="text" onChange={handleBBNH} value={bbnh} placeholder="Ví dụ MR0001PBNH09202200511"></input>
-                    <label className="form-label" style={{fontWeight: "bold"}} >Số Điện Thoại Khách Hàng</label>
-                    <input className="form-control" type="text" onChange={handleSDT} value={SDT} placeholder="Ví dụ 0909555555"></input>
+                    {/* <label className="form-label" style={{fontWeight: "bold"}} >Số Điện Thoại Khách Hàng</label> */}
+                    {/* <input className="form-control" type="text" onChange={handleSDT} value={SDT} placeholder="Ví dụ 0909555555"></input> */}
+                    <label className="form-label" style={{fontWeight: "bold"}} >Mã KH DMS</label>
+                    <input className="form-control" type="text" onChange={handleMKH} value={MKH} placeholder="Ví dụ 000012"></input>
                     <label className="form-label" style={{fontWeight: "bold"}}>Số Kiện</label>
-                    <Form.Control type="number" onChange={handleKien} value={Kien} placeholder="Số Kiện"></Form.Control>
+                    <Form.Control type="number" onChange={handleKien} value={Kien} placeholder="Số Kiện" disabled={false}></Form.Control>
                 </form>
                 <Button className="mt-2 mb-2" variant="warning" onClick={handleShow} style={{width: "100%"}}>Post Đơn</Button>
 
@@ -230,13 +237,14 @@ function ProductList({history}) {
             <Modal.Title>Thông Tin Đơn Sắp POST</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          <p>Ma Tinh Thanh: {maTinhThanh}</p>
-          <p>Ma Quan Huyen: {maQuanHuyen}</p>
-          <p>Ma Phuong Xa: {maPhuongXa}</p>
-          <p>Ten Nha Thuoc: {tenNT}</p>
-          <p>Dia Chi: {diaChi}</p>
+          <p>Mã KH DMS: {khvnp.makhdms}</p>
+          <p>Ma Tinh Thanh: {khvnp.codetinhkh}</p>
+          <p>Ma Quan Huyen: {khvnp.codequanhuyen}</p>
+          <p>Ma Phuong Xa: {khvnp.codephuongxa}</p>
+          <p>Ten Nha Thuoc: {khvnp.tenkhachhang}</p>
+          <p>Dia Chi: {khvnp.diachikh}</p>
           <p>CN + BBNH: {bbnh}</p>
-          <p>SDT: {SDT}</p>
+          <p>SDT: {khvnp.sodienthoai}</p>
           <p>SoKien: {Kien}</p>
           </Modal.Body>
           <Modal.Footer>

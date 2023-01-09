@@ -176,6 +176,11 @@ DOWNLOAD_URL = STATIC_URL + "media/downloads"
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+# ]
+
 LOCAL = env('LOCAL')
 UAT_URL = env('UAT_URL')
 H_TOKEN = env('H_TOKEN')

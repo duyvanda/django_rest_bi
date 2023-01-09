@@ -15,6 +15,7 @@ export const FeedbackProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState('')
   const [chiNhanh, SetChiNhanh] = useState([])
   const [tinhthanh, setTinhThanh] = useState([])
+  const [khvnp, setKHVNP] = useState({})
   const [quanhuyen, setQuanHuyen] = useState([])
   const [phuongxa, setPhuongXa] = useState([])
   const [alert, SetALert] = useState(false)
@@ -55,7 +56,13 @@ export const FeedbackProvider = ({ children }) => {
     console.log("window.location.host ",window.location.host, window.location.host==="localhost:3000")
   }, [])
 
-
+  // Fetch Ma KH
+  const fetchKHVNP = async (id) => {
+    const response = await fetch(`${URL}/getonekhvnp/${id}`)
+    const data = await response.json() // or .json() or whatever
+    setKHVNP(data)
+    console.log(data)
+}
   // Fetch TinhThanh
   const fetchTinhThanh = async () => {
       const response = await fetch(`${URL}/tinhthanh/`)
@@ -418,7 +425,6 @@ export const FeedbackProvider = ({ children }) => {
       }
 
     const changePassUser = async (changedata) => {
-      // `${URL}/chitamform/`
       const response = await fetch(`${URL}/changepass/`, {
         method: 'POST',
         headers: {
@@ -426,11 +432,21 @@ export const FeedbackProvider = ({ children }) => {
         },
         body: JSON.stringify(changedata),
       })
-  
       const data = await response.json()
-      // console.log("changed", data)
       logoutUser()
-      }
+
+      // const response = await fetch('https://birest-6ey4kecoka-as.a.run.app/api/getautologinkey/MR0041', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Authorization':'1Iujws5qaz2Nl1qcZpJ01D7Zb8cH7FaErnFG7uM3GxiL.hz7A.z4L1Y207QDWUx8TMN2g8e43jnzt9qFjJ5vQABwoBET.c2y7owPhZAmU4Tpn0YbOxk.MF',
+      //     'Content-Type': 'application/json',
+      //   },
+      // })
+      // const data = await response.json()
+      // console.log(data)
+
+      // 
+    }
 
   const getUserInfo = () => {
     if (JSON.parse(localStorage.getItem("userInfo")))
@@ -531,6 +547,8 @@ export const FeedbackProvider = ({ children }) => {
         // totalPrice,
         OrderCreate,
         // updateFeedback,
+        fetchKHVNP,
+        khvnp,
         fetchTinhThanh,
         chiNhanh,
         tinhthanh,

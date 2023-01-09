@@ -50,6 +50,26 @@ const ChiNhanh = [
         "SenderDistrictId": "4610",
         "SenderProvinceId": "46"
     },
+    {
+        "id":6,
+        "chinhanh": "MR0001-74001A04002426000",
+        "SenderTel": "0909195449",
+        "SenderFullname": "CÔNG TY CỔ PHẦN DƯỢC PHA NAM - CHI NHÁNH HCM",
+        "SenderAddress": "436 CAO THẮNG",
+        "SenderWardId": "74030",
+        "SenderDistrictId": "7400",
+        "SenderProvinceId": "70"
+    },
+    {
+        "id":7,
+        "chinhanh": "74001A04001009000",
+        "SenderTel": "0938109091",
+        "SenderFullname": "CÔNG TY CỔ PHẦN TẬP ĐOÀN MERAP",
+        "SenderAddress": "436 Cao Thắng",
+        "SenderWardId": "74030 - Số 12",
+        "SenderDistrictId": "7400 - Quận 10",
+        "SenderProvinceId": "70 - Hồ Chí Minh"
+    },
 ]
 
 export default ChiNhanh

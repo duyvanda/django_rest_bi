@@ -1,10 +1,12 @@
 from django.urls import path
 
-from .views import GetAutoLoginKey, getUrlRequest, getTinhThanh, getQuanHuyen, getPhuongXa, CreateOrder, CreateToken, getPhuongXaPK
+from .views import GetAutoLoginKey, getUrlRequest, getTinhThanh, getQuanHuyen, getPhuongXa, CreateOrder, CreateToken, GetVNPOrders, getPKFiles
 
 from .views import FileUploadView, UploadSpreedSheetData,LogIn, ChangePass, GetStatus, PostUserReportLogger
 
 from .views import GetAllUsers, GetOneUser, DeleteOneUser, CreateOneUser, UpdateOneUser
+
+from .views import GetOneKHVNP, CreateOneKHVNP
 # from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -26,7 +28,10 @@ urlpatterns = [
     path('createoneuser/', CreateOneUser, name="CreateOneUser"),
     path('updateoneuser/<str:pk>', UpdateOneUser, name="UpdateOneUser"),
     path('getautologinkey/<str:pk>', GetAutoLoginKey, name="GetAutoLoginKey"),
-    path('getpkfiles/', getPhuongXaPK, name="getPhuongXaPK"),
+    path('getpkfiles/', getPKFiles, name="getPKFiles"),
+    path('getvnporders/', GetVNPOrders, name="GetVNPOrders"),
+    path('getonekhvnp/<str:pk>', GetOneKHVNP, name="GetOneKHVNP"),
+    path('createonekhvnp/', CreateOneKHVNP, name="CreateOneKHVNP"),
 
 ]
 

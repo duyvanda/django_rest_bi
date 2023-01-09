@@ -20,6 +20,7 @@ from google.cloud.logging_v2 import client
 from google.cloud.logging_v2 import logger as lgr
 from google.cloud.logging_v2.resource import Resource
 import json, sys, os, requests, traceback, time, datetime, pickle
+from datetime import timedelta
 # from .forms import UploadFileForm, FileFieldForm
 # import json
 from . import firebase
@@ -30,8 +31,8 @@ from . import TinhThanh,PhuongXa2,QuanHuyen
 logging_client = logging.Client()
 log_name = "django_bi_team_logger"
 resource = Resource(type= "global", labels={})
-num_str = str( (datetime.datetime.now().hour*5 + datetime.datetime.now().day*4 + datetime.datetime.now().month*3 + datetime.datetime.now().year*2) *123123)
-token_s = """1Iujws5qaz2Nl1qcZpJ%01D7%Zb8cH7Fa%ErnFG7@u!M3G$xiL_hz7A$z4L1$Y207QDWUx8TMN2g!8e43jn%zt9qFjJ5vQABwoBET_c2y7owPhZAmU4Tpn!0YbOxk!MF"""
+num_str = str( (datetime.datetime.now().hour*0 + datetime.datetime.now().day*4 + datetime.datetime.now().month*3 + datetime.datetime.now().year*2) *123123)
+token_s = """1Iujws5qaz2Nl1qcZpJ01D7Zb8cH7FaErnFG7uM3GxiL.hz7A.z4L1Y207QDWUx8TMN2g8e43jnzt9qFjJ5vQABwoBET.c2y7owPhZAmU4Tpn0YbOxk.MF"""
 extra_s = """GIwSgZdtwXadjrHA.U9ftBp.SOis8YoKLU4yaj1U9ftBp_c2y7owPhZAmU4Tpn0YbOxkMFSOis8YoKLU4yaj1U9ftBp"""
 token_str = extra_s+num_str
 # logger = logging_client.logger(log_name)
@@ -62,12 +63,12 @@ def getUrlRequest(request):
 def GetAutoLoginKey(request, pk):
     domain = "https://ds.merapgroup.com/login?"
     try:
-        if request.headers['p-token'] == token_s:
+        if request.headers['Authorization'] == token_s:
             return Response({"utm_source":"eoffice", "manv": pk, "token": token_str, "url": domain+f"utm_source=eoffice&manv={pk}&token={token_str}"}, status.HTTP_200_OK)
         else:
             return Response({"message": "Sai Token"}, status.HTTP_401_UNAUTHORIZED)
     except KeyError:
-        return Response({"message": "Thieu P-Token"}, status.HTTP_401_UNAUTHORIZED)
+        return Response({"message": "Thieu Authorization Token"}, status.HTTP_401_UNAUTHORIZED)
     except:
         return Response({"message": "Server Bi Loi"}, status.HTTP_401_UNAUTHORIZED)
 
@@ -399,3 +400,76 @@ def UpdateOneUser(request, pk):
     db.collection('report_users').document(msnv).update(update_data)
     # dict = res.to_dict()
     return Response({f"{msnv}":"updated"}, status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def GetVNPOrders(request):
+    db=firebase.get_db()
+    dict = request.data
+    year = int(dict['year'])
+    month = int(dict['month'])
+    day = int(dict['day'])
+    dt = datetime.datetime(year, month, day)
+    dt1 = dt + timedelta(days=1)
+    print("dt", dt)
+    responses = responses = db.collection('vnpost').where('SERVER_TIMESTAMP','>=', dt).where('SERVER_TIMESTAMP','<', dt1).get()
+    res_lst= []
+    for res in responses:
+        us = res.to_dict()
+        res_lst.append(us)
+    return Response(res_lst, status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def GetOneKHVNP(request,pk):
+    mkh = pk
+    db=firebase.get_db()
+    res = db.collection('vnp_cust').document(mkh).get()
+    dict = res.to_dict()
+    # print(res)
+    # print(dict)
+    # print(len(dict))
+
+    n_dict = {
+    "diachikh": "Chưa Tạo Mã",
+    "tenkhachhang": "Chưa Tạo Mã",
+    "codequanhuyen": "Chưa Tạo Mã",
+    "codephuongxa": "Chưa Tạo Mã",
+    "codetinhkh": "Chưa Tạo Mã",
+    "sodienthoai": "Chưa Tạo Mã",
+    "makhdms": "Chưa Tạo Mã"
+    }
+
+    if dict:
+        return Response(dict, status.HTTP_200_OK)
+    else:
+        return Response(n_dict, status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def CreateOneKHVNP(request):
+    try:
+        data = request.data
+        mkh = data['makhdms']
+        default_dict = {}
+        default_dict['makhdms'] = data['makhdms']
+        default_dict['codetinhkh'] = data['codetinhkh']
+        default_dict['codephuongxa'] = data['codephuongxa']
+        default_dict['codequanhuyen'] = data['codequanhuyen']
+        default_dict['diachikh'] = data['diachikh']
+        default_dict['sodienthoai'] = data['sodienthoai']
+        default_dict['tenkhachhang'] = data['tenkhachhang']
+        db=firebase.get_db()
+        db.collection('vnp_cust').document(mkh).set(default_dict)
+        # dict = res.to_dict()
+        return Response({f"{mkh}":"created"}, status.HTTP_201_CREATED)
+    except:
+        return Response({"message":" Data Nhap Khong Du Vui Long Nhap Lai"}, status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def DeleteOneKHVNP(request,pk):
+    msnv = pk
+    db=firebase.get_db()
+    db.collection('vnp_cust').document(msnv).delete()
+    return Response({f"{pk}":"deleted"}, status.HTTP_200_OK)
