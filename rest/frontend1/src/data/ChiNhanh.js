@@ -12,9 +12,9 @@ const ChiNhanh = [
     },
     {
         "id":2,
-        "chinhanh": "MR0015-81101A04000268000",
+        "chinhanh": "DNI015-81101A04000268000",
         "SenderTel": "0908835677",
-        "SenderFullname": "Công ty CP Dược Pha Nam CN Đồng Nai",
+        "SenderFullname": "Công ty CP Dược MERAP CN Đồng Nai",
         "SenderAddress": "CN6-LK1 & CN6-LK7 KP7",
         "SenderWardId": "81114",
         "SenderDistrictId": "8110",
@@ -22,9 +22,9 @@ const ChiNhanh = [
     },
     {
         "id":3,
-        "chinhanh": "MR0014-65101A04000075000",
+        "chinhanh": "KHA014-65101A04000075000",
         "SenderTel": "0905624353",
-        "SenderFullname": "(131-909)CÔNG TY CỔ PHẦN DƯỢC PHA NAM - CHI NHÁNH KHÁNH HÒA (HÀNG HÓA)",
+        "SenderFullname": "(131-909)CÔNG TY CỔ PHẦN DƯỢC MERAP - CHI NHÁNH KHÁNH HÒA (HÀNG HÓA)",
         "SenderAddress": "01LK21 Khu đô thị Mỹ Gia",
         "SenderWardId": "65206",
         "SenderDistrictId": "6510",
@@ -32,9 +32,9 @@ const ChiNhanh = [
     },
     {
         "id":4,
-        "chinhanh": "MR0013-55101A04000013000",
+        "chinhanh": "DNG013-55101A04000013000",
         "SenderTel": "0903186813",
-        "SenderFullname": "Công ty Dược Pha Nam - CN Đà nẵng",
+        "SenderFullname": "Công ty Dược MERAP - CN Đà nẵng",
         "SenderAddress": "61 Nguyễn Trác",
         "SenderWardId": "55300",
         "SenderDistrictId": "5510",
@@ -42,9 +42,9 @@ const ChiNhanh = [
     },
     {
         "id":5,
-        "chinhanh": "MR0012-46100A04000638000",
+        "chinhanh": "NAN012-46100A04000638000",
         "SenderTel": "0963261803",
-        "SenderFullname": "CÔNG TY CỔ PHẦN DƯỢC PHA NAM - CHI NHÁNH NGHỆ AN",
+        "SenderFullname": "CÔNG TY CỔ PHẦN DƯỢC MRAP - CHI NHÁNH NGHỆ AN",
         "SenderAddress": "Nhà số 06 - Ngõ 30 Đường Trần Tấn",
         "SenderWardId": "46125",
         "SenderDistrictId": "4610",
@@ -62,13 +62,13 @@ const ChiNhanh = [
     },
     {
         "id":7,
-        "chinhanh": "74001A04001009000",
+        "chinhanh": "HCM001-74001A04001009000",
         "SenderTel": "0938109091",
         "SenderFullname": "CÔNG TY CỔ PHẦN TẬP ĐOÀN MERAP",
         "SenderAddress": "436 Cao Thắng",
-        "SenderWardId": "74030 - Số 12",
-        "SenderDistrictId": "7400 - Quận 10",
-        "SenderProvinceId": "70 - Hồ Chí Minh"
+        "SenderWardId": "74030",
+        "SenderDistrictId": "7400",
+        "SenderProvinceId": "70"
     },
 ]
 

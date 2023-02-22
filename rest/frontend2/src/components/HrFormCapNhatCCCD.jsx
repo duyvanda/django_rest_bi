@@ -325,7 +325,7 @@ const handleChangeQH2 = async (e) => {
     <label className="form-label" style={{fontWeight: "bold"}} >Điện Thoại Liên Hệ *</label>
     <Form.Control type="number" onChange={e => setSDT(e.target.value)} value={SDT} placeholder=""></Form.Control>
 
-    <label className="form-label" style={{fontWeight: "bold"}}>Upload Hình Ảnh</label>
+    <label className="form-label" style={{fontWeight: "bold"}}>Upload Hình Ảnh CCCD *</label>
     <Form.Control required type="file" multiple={true} accept="image/*"  disabled={false} onChange={e => setSelectedFile(e.target.files)}></Form.Control>
     <Button className="mt-2 mb-2 border-0"  type="submit" style={{width: "100%", backgroundColor:"#00A79D"}}>Submit form</Button>
 
