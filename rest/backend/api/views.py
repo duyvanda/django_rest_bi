@@ -154,7 +154,7 @@ def CreateOrder(request):
         # "LengthEvaluation": 0.1,
         # "HeightEvaluation": 0.1,
         # "IsPackageViewable": False,
-        "CustomerNote": "Thu Hoi Bien Ban Giao Hang cho nguoi gui",
+        "CustomerNote": "Phat Dong Kiem, Thu Hoi Bien Ban",
         "PickupType": 1,
         # "CodAmountEvaluation": 0.0,
         # "IsReceiverPayFreight": False,
