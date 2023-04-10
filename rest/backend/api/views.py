@@ -153,7 +153,7 @@ def CreateOrder(request):
         # "WidthEvaluation": 0.1,
         # "LengthEvaluation": 0.1,
         # "HeightEvaluation": 0.1,
-        # "IsPackageViewable": False,
+        "IsPackageViewable": True,
         "CustomerNote": "Phat Dong Kiem, Thu Hoi Bien Ban",
         "PickupType": 1,
         # "CodAmountEvaluation": 0.0,
