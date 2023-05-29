@@ -6,7 +6,9 @@ const PLReports = [
     "manv": "xxxxxx",
     "type": 0,
     "vw": "500px",
-    "param": "?params=xxxxxx"
+    "param": "?params=xxxxxx",
+    "param_mb": "?params=xxxxxx",
+    "stt": "1001",
     },
     {
     "tenreport": "PL | Tra cứu thông tin đơn hàng",
@@ -15,7 +17,9 @@ const PLReports = [
     "manv": "xxxxxx",
     "type": 0,
     "vw": "650px",
-    "param": "?params=xxxxxx"
+    "param": "?params=xxxxxx",
+    "param_mb": "?params=xxxxxx",
+    "stt": "1002",
     }
 ]
 

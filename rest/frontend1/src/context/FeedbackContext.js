@@ -24,12 +24,12 @@ export const FeedbackProvider = ({ children }) => {
   const [loading, SetLoading] = useState(false)
   
   // State Chi Tam
-  const [phongban, SetPhongBan] = useState([])
-  const [NhanVien, SetNhanVien] = useState([])
-  const [HrTamAlert, setHrTamAlert] = useState(false)
-  const [HrTamAlertType, setHrTamAlertType] = useState('alert-success')
-  const [HrTamAlertText, setHrTamAlertText] = useState('SUCCESS')
-  const [HrTamLoading, setHrTamLoading] = useState(false)
+  // const [phongban, SetPhongBan] = useState([])
+  // const [NhanVien, SetNhanVien] = useState([])
+  // const [HrTamAlert, setHrTamAlert] = useState(false)
+  // const [HrTamAlertType, setHrTamAlertType] = useState('alert-success')
+  // const [HrTamAlertText, setHrTamAlertText] = useState('SUCCESS')
+  // const [HrTamLoading, setHrTamLoading] = useState(false)
 
   // Reports
   const [Reports, setReports] = useState([])
@@ -46,91 +46,69 @@ export const FeedbackProvider = ({ children }) => {
   const URL = window.location.host==="localhost:3000" ? process.env.REACT_APP_LURL : process.env.REACT_APP_PURL
   // const URL = process.env.REACT_PRO_URL
   useEffect(() => {
-    // writelogs()
     getUserInfo()
-    // fetchTinhThanh()
-    // fetchReports()
     SetChiNhanh(ChiNhanh)
-    // SetPhongBan(PhongBan)
     console.log("URL",URL)
     console.log("window.location.host ",window.location.host, window.location.host==="localhost:3000")
   }, [])
 
-  // Fetch Ma KH
-  const fetchKHVNP = async (id) => {
-    const response = await fetch(`${URL}/getonekhvnp/${id}`)
-    const data = await response.json() // or .json() or whatever
-    setKHVNP(data)
-    console.log(data)
-}
-  // Fetch TinhThanh
-  const fetchTinhThanh = async () => {
-      const response = await fetch(`${URL}/tinhthanh/`)
-      const data = await response.json() // or .json() or whatever
-      setTinhThanh(data.sucess)
-      console.log(data.sucess)
-  }
-
-  const fetchQuanHuyen = async (id) => {
-      console.log(`${URL}/quanhuyen/${id}`)
-      const response = await fetch(`${URL}/quanhuyen/${id}`)
-      // if (!response.ok) throw new Error(response.statusText)
-      const data = await response.json() // or .json() or whatever
-      setQuanHuyen(data.sucess)
-      console.log(data)
-  }
-
-  const fetchPhuongXa = async (id) => {
-      const response = await fetch(`${URL}/phuongxa/${id}`)
-      if (!response.ok) throw new Error(response.statusText)
-      const data = await response.json() // or .json() or whatever
-      setPhuongXa(data.sucess)
-      console.log(data)
-  }
-
       // Fetch Report
       const fetchReport = async () => {
         void(0)
-        // const userInfo = JSON.parse(localStorage.getItem("userInfo"))
-        // console.log("fetch report start")
-        // console.log(`${URL}/reports/${userInfo.manv}`)
-        // const response = await fetch(`${URL}/reports/${userInfo.manv}`)
-        // const data = await response.json()
-        // setReports(data)
-        // console.log("fetch report ", data)
     }
 
     const fetchReports = async (manv) => {
       const response = await fetch('https://storage.googleapis.com/django_media_biteam/public/user_reports.json')
       const data = await response.json()
       const lstreports = data.filter(el => el.manv === manv)
+      const manv_el = manv.substring(0, 2)
 
       // public reports
-      let plreports = PLReports
-      plreports[0].manv = manv
-      lstreports.push(plreports[0])
-      plreports[1].manv = manv
-      lstreports.push(plreports[1])
-      // end
+      if (manv_el === 'EL') {
+        setReports(lstreports)
+        localStorage.setItem("userLstReports", JSON.stringify(lstreports))
+      } else
+      {
+        
+        let plreports = PLReports
+        plreports[0].manv = manv
+        lstreports.push(plreports[0])
+        plreports[1].manv = manv
+        lstreports.push(plreports[1])
+        
+        setReports(lstreports)
 
-      setReports(lstreports)
+        // console.log(lstreports)
+        localStorage.setItem("userLstReports", JSON.stringify(lstreports))
+      }
+      // end
     }
 
-    const fetchFilerReports =  async (id, isMB) => {
-      const response = await fetch('https://storage.googleapis.com/django_media_biteam/public/user_reports.json')
-      const data = await response.json()
+    const fetchFilerReports =  async (stt, isMB) => {
+      // const response = await fetch('https://storage.googleapis.com/django_media_biteam/public/user_reports.json')
+      // const data = await response.json()
+      const data = JSON.parse(localStorage.getItem("userLstReports"))
       const manv = JSON.parse(localStorage.getItem("userInfo")).manv
       const lstreports = data.filter(el => el.manv === manv)
+      const manv_el = manv.substring(0, 2)
 
       // public reports
-      let plreports = PLReports
-      plreports[0].manv = manv
-      lstreports.push(plreports[0])
-      plreports[1].manv = manv
-      lstreports.push(plreports[1])
+      if (manv_el === 'EL') {
+        setReports(lstreports)
+      } else
+      {
+        
+        let plreports = PLReports
+        plreports[0].manv = manv
+        lstreports.push(plreports[0])
+        plreports[1].manv = manv
+        lstreports.push(plreports[1])
+        
+        setReports(lstreports)
+      }
       // end
 
-      let report_obj = lstreports.filter(el => el.id === id)[0]
+      let report_obj = lstreports.filter(el => el.stt === stt)[0]
       setFilterReports(report_obj)
 
       if (report_obj) {
@@ -140,7 +118,9 @@ export const FeedbackProvider = ({ children }) => {
         setVw(rpvw)
         const rpid = isMB ? report_obj.id_mb : report_obj.id
         setReportId(rpid)
-        report_obj.type === 1 ? setReportParam (report_obj.param.replace('xxxxxx', manv)) : setReportParam (report_obj.param.replace('xxxxxx', 'MR0000'));
+        const rppr = isMB ? report_obj.param_mb : report_obj.param
+        report_obj.type === 1 ? setReportParam (rppr.replace('xxxxxx', manv)) : setReportParam (rppr.replace('xxxxxx', 'MR0000'))
+        // report_obj.type === 1 ? setReportParam (report_obj.param.replace('xxxxxx', manv)) : setReportParam (report_obj.param.replace('xxxxxx', 'MR0000'));
       }
       else {
         setShared(false)
@@ -149,25 +129,28 @@ export const FeedbackProvider = ({ children }) => {
     } 
 
 
-    const fetchFilerReportsExist =  async (id, isMB) => {
-      const manv = JSON.parse(localStorage.getItem("userInfo")).manv
-      let report_obj = Reports.filter(el => el.id === id)[0]
-      setFilterReports(report_obj)
+    // const fetchFilerReportsExist =  async (id, isMB) => {
+    //   const manv = JSON.parse(localStorage.getItem("userInfo")).manv
 
-      if (report_obj) {
-        setShared(true);
-        const rpvw = isMB ? "95vw" : report_obj.vw
-        setVw(rpvw)
-        const rpid = isMB ? report_obj.id_mb : report_obj.id
-        setReportId(rpid)
-        report_obj.type === 1 ? setReportParam (report_obj.param.replace('xxxxxx', manv)) : setReportParam (report_obj.param.replace('xxxxxx', 'MR0000'))
+    //   let report_obj = Reports.filter(el => el.id === id)[0]
+    //   setFilterReports(report_obj)
 
-      }
-      else {
-        setShared(false)
-      }
+    //   if (report_obj) {
+    //     setShared(true);
+    //     const rpvw = isMB ? "95vw" : report_obj.vw
+    //     setVw(rpvw)
+    //     const rpid = isMB ? report_obj.id_mb : report_obj.id
+    //     setReportId(rpid)
+        
+    //     const rppr = isMB ? report_obj.param_mb : report_obj.param
+    //     report_obj.type === 1 ? setReportParam (rppr.replace('xxxxxx', manv)) : setReportParam (rppr.replace('xxxxxx', 'MR0000'))
 
-    }
+    //   }
+    //   else {
+    //     setShared(false)
+    //   }
+
+    // }
 
     const clearFilterReport = () => {
       setFilterReports('')
@@ -214,19 +197,43 @@ export const FeedbackProvider = ({ children }) => {
   
     }
 
+  // Fetch Ma KH
+  const fetchKHVNP = async (id) => {
+    const response = await fetch(`${URL}/getonekhvnp/${id}`)
+    const data = await response.json() // or .json() or whatever
+    setKHVNP(data)
+    console.log(data)
+}
+  // Fetch TinhThanh
+  const fetchTinhThanh = async () => {
+      const response = await fetch(`${URL}/tinhthanh/`)
+      const data = await response.json() // or .json() or whatever
+      setTinhThanh(data.sucess)
+      console.log(data.sucess)
+  }
+
+  const fetchQuanHuyen = async (id) => {
+      console.log(`${URL}/quanhuyen/${id}`)
+      const response = await fetch(`${URL}/quanhuyen/${id}`)
+      // if (!response.ok) throw new Error(response.statusText)
+      const data = await response.json() // or .json() or whatever
+      setQuanHuyen(data.sucess)
+      console.log(data)
+  }
+
+  const fetchPhuongXa = async (id) => {
+      const response = await fetch(`${URL}/phuongxa/${id}`)
+      if (!response.ok) throw new Error(response.statusText)
+      const data = await response.json() // or .json() or whatever
+      setPhuongXa(data.sucess)
+      console.log(data)
+  }
+
   // const fetchController = new AbortController();
   const handleSaveForm = async (data) => {
     const SoKien_Arr = Array.from(Array(data.Kien).keys())
     const ToTalKien = data.Kien
     console.log("SoKien", SoKien_Arr, "TotalKien", ToTalKien)
-    // const { signal } = fetchController;
-    // let timmy = setTimeout(() => {
-    //   fetchController.abort();
-    //   SetLoading(false);
-    //   SetALert(true)
-    //   SetALertType('alert-danger')
-    //   SetALertText('Hệ Thống Đang Quá Tải Vui Lòng Kiểm Tra Lại Xem ĐH Đã Được Tạo Chưa')
-    // }, 15000);
 
     for (let kien of SoKien_Arr) {
     try {
@@ -265,73 +272,64 @@ export const FeedbackProvider = ({ children }) => {
   }
   }
 
-  const handleChiTamFiles = async (MSNV, Files) => {
-    console.log(Files)
-      for (let i of Files) {
-      const formData = new FormData();
-      formData.append('file', i)
-      fetch(`${URL}/uploadfile/${MSNV}`, {
-      method: 'POST',
-      body: formData,
-      })
-      .then((response) => response.json())
-      .then((result) => {
-          console.log('Success:', result);
-      })
-      .catch((error) => {
-          console.error('Error:', error);
-      });
-    }
-  }
+  // const handleChiTamFiles = async (MSNV, Files) => {
+  //   console.log(Files)
+  //     for (let i of Files) {
+  //     const formData = new FormData();
+  //     formData.append('file', i)
+  //     fetch(`${URL}/uploadfile/${MSNV}`, {
+  //     method: 'POST',
+  //     body: formData,
+  //     })
+  //     .then((response) => response.json())
+  //     .then((result) => {
+  //         console.log('Success:', result);
+  //     })
+  //     .catch((error) => {
+  //         console.error('Error:', error);
+  //     });
+  //   }
+  // }
   
-  const handleChiTamData = async (data, Files) => {
-    console.log(data)
-    const MSNV = data.MSNV
-    // const { signal } = fetchController;
-    // let timmy = setTimeout(() => {
-    //   fetchController.abort();
-    //   setHrTamLoading(false);
-    //   setHrTamAlert(true)
-    //   setHrTamAlertType('alert-danger')
-    //   setHrTamAlertText('Hệ Thống Đang Quá Tải Vui Lòng Kiểm Tra Lại Xem ĐH Đã Được Tạo Chưa')
-    // }, 10000);
-    try {
-      setHrTamLoading(true)
-      const response = await fetch(`${URL}/chitamform/`, {
-        method: 'POST', headers: {'Content-Type': 'application/json',}, body: JSON.stringify(data)})
-      if (!response.ok) {
-        setHrTamLoading(false)
-        const data = await response.json()
-        // clearTimeout(timmy);
-        setHrTamAlert(true)
-        setHrTamAlertType('alert-danger')
-        setHrTamAlertText(data.message)
-        setTimeout(() => setHrTamAlert(false),5000)
-      } else {
-        setHrTamLoading(false)
-        const data = await response.json()
-        handleChiTamFiles(MSNV, Files)
-        // clearTimeout(timmy);
-        setHrTamAlert(true)
-        setHrTamAlertType('alert-sucess')
-        setHrTamAlertText(data.message)
-        setTimeout(() => setHrTamAlert(false),5000)
-    }
-    } catch (err) {
-      console.log(err)
-    }
-  }
+  // const handleChiTamData = async (data, Files) => {
+  //   console.log(data)
+  //   const MSNV = data.MSNV
+  //   try {
+  //     setHrTamLoading(true)
+  //     const response = await fetch(`${URL}/chitamform/`, {
+  //       method: 'POST', headers: {'Content-Type': 'application/json',}, body: JSON.stringify(data)})
+  //     if (!response.ok) {
+  //       setHrTamLoading(false)
+  //       const data = await response.json()
+  //       // clearTimeout(timmy);
+  //       setHrTamAlert(true)
+  //       setHrTamAlertType('alert-danger')
+  //       setHrTamAlertText(data.message)
+  //       setTimeout(() => setHrTamAlert(false),5000)
+  //     } else {
+  //       setHrTamLoading(false)
+  //       const data = await response.json()
+  //       handleChiTamFiles(MSNV, Files)
+  //       // clearTimeout(timmy);
+  //       setHrTamAlert(true)
+  //       setHrTamAlertType('alert-sucess')
+  //       setHrTamAlertText(data.message)
+  //       setTimeout(() => setHrTamAlert(false),5000)
+  //   }
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  // }
 
 
-  const fetchNhanVien = async () => {
+  // const fetchNhanVien = async () => {
 
-    const response = await fetch('https://storage.googleapis.com/django_media_biteam/public/msnv_ten_records.json')
+  //   const response = await fetch('https://storage.googleapis.com/django_media_biteam/public/msnv_ten_records.json')
 
-    const data = await response.json()
+  //   const data = await response.json()
 
-    SetNhanVien(data)
-  }
-
+  //   SetNhanVien(data)
+  // }
 
 
   // Fetch feedback
@@ -374,26 +372,6 @@ export const FeedbackProvider = ({ children }) => {
     console.log("deleted localstorage and setFeedback")
   }
   
-
-  // Update feedback item
-  // const updateFeedback = (id, updItem) => {
-  //   setFeedback(
-  //     feedback.map((item) => (item.id === id ? { ...item, ...updItem } : item))
-  //   )
-    
-  // }
-
-  // Set item to be updated
-  // const editFeedback = (item) => {
-  //   setFeedbackEdit({
-  //     item,
-  //     edit: true,
-  //   })
-  // }
-
-  // update for login
-
-    // Add feedback
     const loginUser = async (logindata) => {
       setLoginLoading(true)
       const response = await fetch(`${URL}/login/`, {
@@ -462,12 +440,15 @@ export const FeedbackProvider = ({ children }) => {
 
   const logoutUser = () => {
     window.localStorage.removeItem('userInfo')
+    window.localStorage.removeItem('userLstReports')
     setUserInfo('')
     setLoginText('')
     setReports([])
     setFilterReports('')
 
   }
+
+  // Dummy
 
   const fetchProducts = async () => {
 
@@ -563,14 +544,14 @@ export const FeedbackProvider = ({ children }) => {
         loading,
 
         // Chi Tam
-        phongban,
-        fetchNhanVien,
-        NhanVien,
-        handleChiTamData,
-        HrTamAlert,
-        HrTamAlertType,
-        HrTamAlertText,
-        HrTamLoading,
+        // phongban,
+        // fetchNhanVien,
+        // NhanVien,
+        // handleChiTamData,
+        // HrTamAlert,
+        // HrTamAlertType,
+        // HrTamAlertText,
+        // HrTamLoading,
 
         //report
         fetchReport,
@@ -580,7 +561,7 @@ export const FeedbackProvider = ({ children }) => {
         LoginLoading,
         FilterReports,
         fetchFilerReports,
-        fetchFilerReportsExist,
+        // fetchFilerReportsExist,
         clearFilterReport,
         ReportParam,
         shared,

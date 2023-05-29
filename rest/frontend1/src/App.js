@@ -2,7 +2,7 @@
 
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Navbar1 from './components/Navbar.jsx'
-import HrFormCapNhatCCCD from './components/HrFormCapNhatCCCD'
+// import HrFormCapNhatCCCD from './components/HrFormCapNhatCCCD'
 import Login from './components/Login'
 import Profile from './components/Profile'
 // import ProductDetail from './components/ProductDetail'

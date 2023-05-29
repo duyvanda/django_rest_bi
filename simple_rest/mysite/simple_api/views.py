@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt import tokens
 import os
 import json
-
+import pickle
 
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
@@ -21,3 +21,12 @@ def getQueryParams(request):
             return Response("You are NOT authorized")
     except KeyError as e:
         return Response("You are NOT authorized")
+
+print(os.path)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def getAllVipPlus(request):
+    pk_file = open("/app/thumuc/data_list.pk", "rb")
+    lst = pickle.load(pk_file)
+    return Response(lst)

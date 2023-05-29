@@ -12,12 +12,15 @@ function ReportList({history}) {
 
 
   useEffect(() => {
+    // console.log("Reports", Reports)
 		if (localStorage.getItem("userInfo")) {
 			clearFilterReport()
 		} else {
             history.push('/login');
         }
 	}, []);
+
+  console.log("Reports", Reports)
 
   function removeAccents(str) {
     var AccentsMap = [
@@ -58,16 +61,16 @@ function ReportList({history}) {
     </Form>
     <ul className="list-group">
     {Reports
-    .filter(el => el.manv ===userInfo.manv)
+    .filter(el => el.manv === userInfo.manv)
     .filter(el=> removeAccents(el.tenreport.toLowerCase()).includes(SearchReport))
     .map(el => 
       
-        <li className="list-group-item mt-2" key={el.id}>
+        <li className="list-group-item mt-2" key={el.stt}>
           <div className="row">
           
             <div className="col">
               
-              <Link target="_blank" onClick={e => {console.log('The link was clicked.'); }} style={{textDecoration: "None", color:"black"}} to={`/reportscreen/${el.id}`} > <p className="text-left" style={{ fontWeight: "bold", paddingBottom: "0px" }}><strong><span><i className='fas fa-chart-pie' style={{ fontWeight: "bold", color: "blue" }}></i> {el.tenreport}</span></strong></p></Link>
+              <Link target="_blank" onClick={e => {console.log('The link was clicked.'); }} style={{textDecoration: "None", color:"black"}} to={`/reportscreen/${el.stt}`} > <p className="text-left" style={{ fontWeight: "bold", paddingBottom: "0px" }}><strong><span><i className='fas fa-chart-pie' style={{ fontWeight: "bold", color: "blue" }}></i> {el.tenreport}</span></strong></p></Link>
               
             </div>
           </div>
