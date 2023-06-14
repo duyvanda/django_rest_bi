@@ -473,3 +473,11 @@ def DeleteOneKHVNP(request,pk):
     db=firebase.get_db()
     db.collection('vnp_cust').document(msnv).delete()
     return Response({f"{pk}":"deleted"}, status.HTTP_200_OK)
+
+
+
+@api_view(['POST'])
+def GetMap(request):
+    dict = request.data
+    dict['map_string'] = 'https://storage.googleapis.com/django_media_biteam/public/maps/map_3tinh.html'
+    return Response(dict, status.HTTP_200_OK)

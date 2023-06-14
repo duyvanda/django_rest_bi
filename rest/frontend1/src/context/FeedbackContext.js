@@ -41,6 +41,7 @@ export const FeedbackProvider = ({ children }) => {
   const [LoginLoading, setLoginLoading] = useState(false)
   const [shared, setShared] = useState(true)
   const [vw, setVw] = useState("95vw")
+  const [map, SetMap] = useState("https://storage.googleapis.com/django_media_biteam/public/maps/default_map.html")
 
   
   const URL = window.location.host==="localhost:3000" ? process.env.REACT_APP_LURL : process.env.REACT_APP_PURL
@@ -197,6 +198,85 @@ export const FeedbackProvider = ({ children }) => {
   
     }
 
+  
+    const loginUser = async (logindata) => {
+      setLoginLoading(true)
+      const response = await fetch(`${URL}/login/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(logindata),
+      })
+
+
+      if (!response.ok) {
+        const data = await response.json()
+        setLoginText(data.message)
+        setLoginLoading(false)
+
+      } else {
+        const data = await response.json()
+        localStorage.setItem("userInfo", JSON.stringify(data))
+        setUserInfo(JSON.parse(localStorage.getItem("userInfo")))
+
+        const data1 = JSON.parse(localStorage.getItem("userInfo"))
+        fetchReports(data1.manv)
+        fetchUserStatus(data1.manv, data1.token)
+        setLoginLoading(false)
+        setLoginText('')
+    }
+
+      }
+
+    const changePassUser = async (changedata) => {
+      const response = await fetch(`${URL}/changepass/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(changedata),
+      })
+      const data = await response.json()
+      logoutUser()
+    }
+
+  const getUserInfo = () => {
+    if (JSON.parse(localStorage.getItem("userInfo")))
+    {
+    const data = JSON.parse(localStorage.getItem("userInfo"))
+    // console.log("getUserInfo manv", data)
+    setUserInfo(data)
+    fetchReports(data.manv)
+    fetchUserStatus(data.manv, data.token)
+  }
+    else setUserInfo('')
+  }
+
+  const logoutUser = () => {
+    window.localStorage.removeItem('userInfo')
+    window.localStorage.removeItem('userLstReports')
+    setUserInfo('')
+    setLoginText('')
+    setReports([])
+    setFilterReports('')
+  }
+
+  // Fetch Ma KH
+  const fetchMap = async (mapdata) => {
+    const response = await fetch(`${URL}/map/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mapdata),
+  })
+    const data = await response.json() // or .json() or whatever
+    SetMap(data.map_string)
+    console.log(data)
+}
+
+
   // Fetch Ma KH
   const fetchKHVNP = async (id) => {
     const response = await fetch(`${URL}/getonekhvnp/${id}`)
@@ -211,7 +291,7 @@ export const FeedbackProvider = ({ children }) => {
       setTinhThanh(data.sucess)
       console.log(data.sucess)
   }
-
+  // Fetch QuanHuyen
   const fetchQuanHuyen = async (id) => {
       console.log(`${URL}/quanhuyen/${id}`)
       const response = await fetch(`${URL}/quanhuyen/${id}`)
@@ -332,121 +412,31 @@ export const FeedbackProvider = ({ children }) => {
   // }
 
 
-  // Fetch feedback
-  const fetchFeedback = () => {
-    // setManv(localStorage.getItem("manv"))
-    // console.log("useEffect manv", manv)
-    let storage_manv = JSON.parse(localStorage.getItem("manv"))
-    // console.log("storage manv", storage_manv)
-    // console.log("feedbackdata", FeedbackData.filter((item) => { return item.rating === storage_manv.text }))
-
-    if (storage_manv) {
-      console.log("context storage_manv", storage_manv)
-      setFeedback(FeedbackData.filter((item) => { return item.rating === storage_manv.text }))
-      setManv(storage_manv)
-      // setFeedback(FeedbackData)
-    } else {void(0)}
-  }
-
-  // Add feedback
-  const addFeedback = (newFeedback) => {
+  // const fetchFeedback = () => {
+  //   let storage_manv = JSON.parse(localStorage.getItem("manv"))
+  //   if (storage_manv) {
+  //     console.log("context storage_manv", storage_manv)
+  //     setFeedback(FeedbackData.filter((item) => { return item.rating === storage_manv.text }))
+  //     setManv(storage_manv)
+  //   } else {void(0)}
+  // }
+  // const addFeedback = (newFeedback) => {
     
-    {newFeedback.text === "" ? void(0) : localStorage.setItem("manv", JSON.stringify(newFeedback))}
-    {newFeedback.text === "" ? void(0) : setManv(newFeedback)}
-    console.log("manv in context", newFeedback.text)
-    setFeedback(FeedbackData.filter((item) => { return item.rating === newFeedback.text }))
-    // console.log("feedback context is", feedback)
-    // feedback.map((i) => console.log(i))
-    // console.log("feedback is", feedback)
-    console.log("filter feedback add localstorage")
-
-  }
+  //   {newFeedback.text === "" ? void(0) : localStorage.setItem("manv", JSON.stringify(newFeedback))}
+  //   {newFeedback.text === "" ? void(0) : setManv(newFeedback)}
+  //   console.log("manv in context", newFeedback.text)
+  //   setFeedback(FeedbackData.filter((item) => { return item.rating === newFeedback.text }))
+  //   console.log("filter feedback add localstorage")
+  // }
 
   // Delete feedback
-  const deleteFeedback = () => {
-    // if (window.confirm('Are you sure you want to delete?')) {
-    // }
-    window.localStorage.removeItem('manv')
-    setManv(localStorage.getItem("manv"))
-    setFeedback(FeedbackData)
-    console.log("deleted localstorage and setFeedback")
-  }
+  // const deleteFeedback = () => {
+  //   window.localStorage.removeItem('manv')
+  //   setManv(localStorage.getItem("manv"))
+  //   setFeedback(FeedbackData)
+  //   console.log("deleted localstorage and setFeedback")
+  // }
   
-    const loginUser = async (logindata) => {
-      setLoginLoading(true)
-      const response = await fetch(`${URL}/login/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(logindata),
-      })
-
-
-      if (!response.ok) {
-        const data = await response.json()
-        setLoginText(data.message)
-        setLoginLoading(false)
-
-      } else {
-        const data = await response.json()
-        localStorage.setItem("userInfo", JSON.stringify(data))
-        setUserInfo(JSON.parse(localStorage.getItem("userInfo")))
-
-        const data1 = JSON.parse(localStorage.getItem("userInfo"))
-        fetchReports(data1.manv)
-        fetchUserStatus(data1.manv, data1.token)
-        setLoginLoading(false)
-        setLoginText('')
-    }
-
-      }
-
-    const changePassUser = async (changedata) => {
-      const response = await fetch(`${URL}/changepass/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(changedata),
-      })
-      const data = await response.json()
-      logoutUser()
-
-      // const response = await fetch('https://birest-6ey4kecoka-as.a.run.app/api/getautologinkey/MR0041', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Authorization':'1Iujws5qaz2Nl1qcZpJ01D7Zb8cH7FaErnFG7uM3GxiL.hz7A.z4L1Y207QDWUx8TMN2g8e43jnzt9qFjJ5vQABwoBET.c2y7owPhZAmU4Tpn0YbOxk.MF',
-      //     'Content-Type': 'application/json',
-      //   },
-      // })
-      // const data = await response.json()
-      // console.log(data)
-
-      // 
-    }
-
-  const getUserInfo = () => {
-    if (JSON.parse(localStorage.getItem("userInfo")))
-    {
-    const data = JSON.parse(localStorage.getItem("userInfo"))
-    // console.log("getUserInfo manv", data)
-    setUserInfo(data)
-    fetchReports(data.manv)
-    fetchUserStatus(data.manv, data.token)
-  }
-    else setUserInfo('')
-  }
-
-  const logoutUser = () => {
-    window.localStorage.removeItem('userInfo')
-    window.localStorage.removeItem('userLstReports')
-    setUserInfo('')
-    setLoginText('')
-    setReports([])
-    setFilterReports('')
-
-  }
 
   // Dummy
 
@@ -515,9 +505,6 @@ export const FeedbackProvider = ({ children }) => {
         userInfo,
         products,
         // feedbackEdit,
-        deleteFeedback,
-        addFeedback,
-        fetchFeedback,
         loginUser,
         changePassUser,
         logoutUser,
@@ -567,7 +554,9 @@ export const FeedbackProvider = ({ children }) => {
         shared,
         vw,
         ReportId,
-        userLogger
+        userLogger,
+        map,
+        fetchMap
       }}
     >
       {children}

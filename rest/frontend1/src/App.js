@@ -13,6 +13,7 @@ import HomeScreen from './components/HomeScreen'
 import { FeedbackProvider } from './context/FeedbackContext'
 import ReportList from './components/ReportList'
 import TestScreenSize from './components/TestScreenSize.jsx'
+import Maps from './components/Maps.jsx'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path='/reports' component={ReportList} />
           <Route path="/reportscreen/:id" component={ReportScreen} />
           <Route path='/testscreensize' component={TestScreenSize} />
+          <Route path='/maps' component={Maps} />
         </>
       </Router>
     </FeedbackProvider>

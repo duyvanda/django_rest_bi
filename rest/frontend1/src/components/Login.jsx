@@ -9,16 +9,11 @@ function Login({history, location}) {
     const { loginUser, userInfo, LoginText, LoginLoading } = useContext(FeedbackContext)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    // const redirect = location.search ? location.search.split("=")[1] : "/";
     const location_search = new URLSearchParams(location.search)
 
     useEffect(() => {
         
 		if (userInfo) {
-      // console.log("location.search", location_search)
-      // console.log("location.search", location_search.get('utm_source'))
-      // console.log("location.search", location_search.get('manv'))
-      // console.log("location.search", location_search.get('token'))
 			history.push("/");
 		} 
     else if (location_search.get('utm_source')) {
@@ -50,15 +45,9 @@ function Login({history, location}) {
         const logindata = {
             email,
             password}
-        // console.log(logindata)
         loginUser(logindata)
-        // console.log(LoginText)
-        // LoginText ==="Ma NV & Password khong dung" ? void(0) : console.log(LoginText); 
         setEmail(''); 
         setPassword('');
-        // history.push(redirect)
-        // setEmail('')
-        // setPassword('')
     }
 return (
 
