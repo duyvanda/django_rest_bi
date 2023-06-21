@@ -494,11 +494,11 @@ def GetData(request):
 @api_view(['POST'])
 def GetMap(request):
     dict_data = request.data
-    # kenh = dict_data['kenh']
-    # kenh_tuple = ()
-    # for tinh in kenh.split(","):
-    #     kenh_tuple = kenh_tuple + (tinh, )
-    # kenh_tuple = kenh_tuple + ('',)
+    kenh = dict_data['kenh']
+    kenh_tuple = ()
+    for tinh in kenh.split(","):
+        kenh_tuple = kenh_tuple + (tinh, )
+    kenh_tuple = kenh_tuple + ('',)
     fromDate = dict_data['fromDate'].split("-")
     toDate = dict_data['toDate'].split("-")
     fromDate = fromDate[2]+'-'+fromDate[1]+'-'+fromDate[0]
@@ -518,7 +518,7 @@ def GetMap(request):
     count (distinct sodondathang) as sldh
     FROM `spatial-vision-343005.biteam.f_sales` a
     left join `spatial-vision-343005.biteam.d_master_khachhang` b on a.macongtycn = b.branchid and a.makhdms = b.custid
-    WHERE (DATE(a.ngaychungtu) >= "{fromDate}" and DATE(a.ngaychungtu) <= "{toDate}") and a.tentinhkh in ('Hà Nam', 'Ninh Bình','Nam Định') and a.makenhkh not in ('NB','OTH_LAB') and a.makenhkh in ('TP', 'INS', 'CLC', 'PCL', 'MT', '')
+    WHERE (DATE(a.ngaychungtu) >= "{fromDate}" and DATE(a.ngaychungtu) <= "{toDate}") and a.tentinhkh in ('Hà Nam', 'Ninh Bình','Nam Định') and a.makenhkh not in ('NB','OTH_LAB') and a.makenhkh in {kenh_tuple}
     and b.lat is not null
     GROUP BY 1,2,3,4,5,6,7
     having doanhsochuavat > 0
@@ -538,21 +538,21 @@ def GetMap(request):
     print("Done BQ and create Map")
     folium.GeoJson(data='https://storage.googleapis.com/django_media_biteam/public/myfile.json', style_function = lambda x: {"fillColor": "#0000ff" if x["properties"]["Name_EN"] == "Ha Nam" else "#00ff00" if x["properties"]["Name_EN"] == "Nam Dinh" else "#ffaf7a"}).add_to(map)
     for point in range(0, kh_location_list_size):
-        # tooltip = \
-        # f"""
-        # <b>NT</b>:<b>{df['makhdms'][point]} - {df['tenkhachhang'][point]}</b><br>
-        # <b>Kenh & Kenh Phu</b>:<b>{df['makenhkh'][point]} - {df['makenhphu'][point]}</b><br>
-        # <b>Lat & Lng</b>:<b>{df['lat'][point]} - {df['lng'][point]}</b><br>
-        # <b>DH</b>:{df['doanhsochuavat'][point]}<br>
-        # <b>DS</b>:{df['doanhsochuavat'][point]}<br>
-        # """
+        tooltip = \
+        f"""
+        <b>NT</b>: <b>{df['makhdms'][point]} - {df['tenkhachhang'][point]}</b><br>
+        <b>Kenh & Kenh Phu</b>: <b>{df['makenhkh'][point]} - {df['makenhphu'][point]}</b><br>
+        <b>Lat & Lng</b>: <b>{df['lat'][point]} - {df['lng'][point]}</b><br>
+        <b>DH</b>: {df['sldh'][point]}<br>
+        <b>DS</b>: {round(df['doanhsochuavat'][point]/1000000, 2)}M<br>
+        """
         # tooltip = "ABC"
         if df['makenhkh'][point] == 'TP':
-            folium.Marker(kh_location_list[point], icon=folium.Icon(color='green', icon_color='white', angle=0, prefix='fa')).add_to(map)
+            folium.Marker(kh_location_list[point], tooltip=tooltip, icon=folium.Icon(color='green', icon_color='white', angle=0, prefix='fa')).add_to(map)
         elif any([df['makenhkh'][point] == 'INS', df['makenhkh'][point] == 'CLC']):
-            folium.Marker(kh_location_list[point], icon=folium.Icon(color='red', icon_color='white', angle=0, prefix='fa')).add_to(map)
+            folium.Marker(kh_location_list[point], tooltip=tooltip, icon=folium.Icon(color='red', icon_color='white', angle=0, prefix='fa')).add_to(map)
         else:
-            folium.Marker(kh_location_list[point], icon=folium.Icon(color='blue', icon_color='white', angle=0, prefix='fa')).add_to(map)
+            folium.Marker(kh_location_list[point], tooltip=tooltip, icon=folium.Icon(color='blue', icon_color='white', angle=0, prefix='fa')).add_to(map)
     # import datetime
     str_time = datetime.datetime.now().strftime(format="%Y%m%d%H%M%S")
     output_file = f"map_{str_time}.html"
