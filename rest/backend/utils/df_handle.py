@@ -1,4 +1,4 @@
-# import pandas as pd
+import pandas as pd
 # import pandas_gbq as pdq
 # import numpy as np
 # import psycopg2
@@ -11,10 +11,9 @@ from contextlib import closing
 # from datetime import datetime, timedelta
 # import psycopg2.extras as extras
 from django.conf import settings
-from google.cloud import storage
+from google.cloud import storage, bigquery
 from google.oauth2 import service_account
 from googleapiclient import discovery
-
 import os
 import pyodbc
 
@@ -57,19 +56,20 @@ def upload_file_to_bucket(blobname: str, imagefile, filetype='text/csv', bucketn
         blob.upload_from_string(imagefile, content_type=filetype)
         return blob.public_url
 
-def upload_file_to_bucket_with_metadata(blobname: str, imagefile, filetype='text/csv', bucketname='django_media_biteam'):
+def upload_file_to_bucket_with_metadata(blobname: str, file, bucketname='django_media_biteam'):
     '''
     bucketname: default is django_media_biteam
     blobname: strpath example bucket.blob("admin/duy.csv")
-    df_tocsv_method: df.to_csv(index=False)
+    file: D:/duy.csv
     filetype: default is text/csv, can be 'application/json'
     '''
     with closing(storage.Client()) as client:
         bucket = client.get_bucket(bucketname)
         blob = bucket.blob(blobname)
-        metadata = {'Cache-Control': 'no-cache'}
-        blob.metadata = metadata
-        blob.upload_from_string(imagefile, content_type=filetype)
+        # metadata = {'Cache-Control': 'no-cache'}
+        # blob.metadata = metadata
+        blob.cache_control = 'no-cache'
+        blob.upload_from_filename(file)
         return blob.public_url
 
 def download_pk_files(blobname: str, filetype='text/csv', bucketname='django_media_biteam'):
@@ -121,3 +121,13 @@ def insert_google_sheet(data: list, spreadsheets_id: str, worksheetname: str = '
 
 # print("Default bq project: ",pjt+dts)
 # download_pk_files(blobname="public/phuongxa.pk")
+
+
+def get_bq_df(sql) -> pd.DataFrame():
+    '''
+    input a BQ SQL 
+    '''
+    # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "D:/spatial-vision-343005-340470c8d77b.json"
+    with closing(bigquery.Client()) as client:
+        df = client.query(sql).to_dataframe()
+        return df

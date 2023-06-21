@@ -42,6 +42,7 @@ export const FeedbackProvider = ({ children }) => {
   const [shared, setShared] = useState(true)
   const [vw, setVw] = useState("95vw")
   const [map, SetMap] = useState("https://storage.googleapis.com/django_media_biteam/public/maps/default_map.html")
+  // const [mapLoading, SetMapLoading] = useState(false)
 
   
   const URL = window.location.host==="localhost:3000" ? process.env.REACT_APP_LURL : process.env.REACT_APP_PURL
@@ -264,6 +265,7 @@ export const FeedbackProvider = ({ children }) => {
 
   // Fetch Ma KH
   const fetchMap = async (mapdata) => {
+    SetLoading(true)
     const response = await fetch(`${URL}/map/`, {
       method: 'POST',
       headers: {
@@ -271,9 +273,16 @@ export const FeedbackProvider = ({ children }) => {
       },
       body: JSON.stringify(mapdata),
   })
-    const data = await response.json() // or .json() or whatever
-    SetMap(data.map_string)
-    console.log(data)
+
+  if (response.ok) {
+  SetLoading(false)
+  const data = await response.json() // or .json() or whatever
+  SetMap(data.map_string)
+  console.log(data)
+  } else {
+    void(0);
+    SetLoading(false);
+  }
 }
 
 

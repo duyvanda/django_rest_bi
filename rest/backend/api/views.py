@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from requests.structures import CaseInsensitiveDict
-from utils.df_handle import check_exist_ms, upload_file_to_bucket, insert_google_sheet, download_pk_files
+from utils.df_handle import check_exist_ms, upload_file_to_bucket, insert_google_sheet, download_pk_files, get_bq_df, upload_file_to_bucket_with_metadata
 from firebase_admin import firestore
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -19,7 +19,7 @@ from google.cloud import logging
 from google.cloud.logging_v2 import client
 from google.cloud.logging_v2 import logger as lgr
 from google.cloud.logging_v2.resource import Resource
-import json, sys, os, requests, traceback, time, datetime, pickle
+import json, sys, os, requests, traceback, time, datetime, pickle, folium
 from datetime import timedelta
 # from .forms import UploadFileForm, FileFieldForm
 # import json
@@ -475,9 +475,92 @@ def DeleteOneKHVNP(request,pk):
     return Response({f"{pk}":"deleted"}, status.HTTP_200_OK)
 
 
+# @api_view(['POST'])
+# def GetMap(request):
+#     dict = request.data
+#     dict['map_string'] = 'https://storage.googleapis.com/django_media_biteam/public/maps/map_3tinh.html'
+#     return Response(dict, status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def GetData(request):
+    sql = """SELECT * from biteam.d_tinh"""
+    print(sql)
+    df=get_bq_df(sql)
+    print(df.shape)
+    return Response({"OK":"200"}, status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def GetMap(request):
-    dict = request.data
-    dict['map_string'] = 'https://storage.googleapis.com/django_media_biteam/public/maps/map_3tinh.html'
-    return Response(dict, status.HTTP_200_OK)
+    dict_data = request.data
+    # kenh = dict_data['kenh']
+    # kenh_tuple = ()
+    # for tinh in kenh.split(","):
+    #     kenh_tuple = kenh_tuple + (tinh, )
+    # kenh_tuple = kenh_tuple + ('',)
+    fromDate = dict_data['fromDate'].split("-")
+    toDate = dict_data['toDate'].split("-")
+    fromDate = fromDate[2]+'-'+fromDate[1]+'-'+fromDate[0]
+    toDate = toDate[2]+'-'+toDate[1]+'-'+toDate[0]
+    # fromDate
+    sql = \
+    f"""
+    SELECT
+    a.tentinhkh,
+    a.makhdms,
+    a.tenkhachhang,
+    a.makenhkh,
+    a.makenhphu,
+    b.lat,
+    b.lng,
+    sum(a.doanhsochuavat) as doanhsochuavat,
+    count (distinct sodondathang) as sldh
+    FROM `spatial-vision-343005.biteam.f_sales` a
+    left join `spatial-vision-343005.biteam.d_master_khachhang` b on a.macongtycn = b.branchid and a.makhdms = b.custid
+    WHERE (DATE(a.ngaychungtu) >= "{fromDate}" and DATE(a.ngaychungtu) <= "{toDate}") and a.tentinhkh in ('Hà Nam', 'Ninh Bình','Nam Định') and a.makenhkh not in ('NB','OTH_LAB') and a.makenhkh in ('TP', 'INS', 'CLC', 'PCL', 'MT', '')
+    and b.lat is not null
+    GROUP BY 1,2,3,4,5,6,7
+    having doanhsochuavat > 0
+    """
+    print("sql", sql)
+    df = get_bq_df(sql)
+    print("Done getting DF")
+    df.lat = df.lat.astype(str)
+    df.lng = df.lng.astype(str)
+    df_kh_locations = df[['lat', 'lng']]
+    # df_kh_locations
+    kh_location_list = df_kh_locations.values.tolist()
+    kh_location_list_size = len(kh_location_list)
+    # Classification
+    # Setup the map
+    map = folium.Map(location=[20.4168907,105.920043], zoom_start=10)
+    print("Done BQ and create Map")
+    folium.GeoJson(data='https://storage.googleapis.com/django_media_biteam/public/myfile.json', style_function = lambda x: {"fillColor": "#0000ff" if x["properties"]["Name_EN"] == "Ha Nam" else "#00ff00" if x["properties"]["Name_EN"] == "Nam Dinh" else "#ffaf7a"}).add_to(map)
+    for point in range(0, kh_location_list_size):
+        # tooltip = \
+        # f"""
+        # <b>NT</b>:<b>{df['makhdms'][point]} - {df['tenkhachhang'][point]}</b><br>
+        # <b>Kenh & Kenh Phu</b>:<b>{df['makenhkh'][point]} - {df['makenhphu'][point]}</b><br>
+        # <b>Lat & Lng</b>:<b>{df['lat'][point]} - {df['lng'][point]}</b><br>
+        # <b>DH</b>:{df['doanhsochuavat'][point]}<br>
+        # <b>DS</b>:{df['doanhsochuavat'][point]}<br>
+        # """
+        # tooltip = "ABC"
+        if df['makenhkh'][point] == 'TP':
+            folium.Marker(kh_location_list[point], icon=folium.Icon(color='green', icon_color='white', angle=0, prefix='fa')).add_to(map)
+        elif any([df['makenhkh'][point] == 'INS', df['makenhkh'][point] == 'CLC']):
+            folium.Marker(kh_location_list[point], icon=folium.Icon(color='red', icon_color='white', angle=0, prefix='fa')).add_to(map)
+        else:
+            folium.Marker(kh_location_list[point], icon=folium.Icon(color='blue', icon_color='white', angle=0, prefix='fa')).add_to(map)
+    # import datetime
+    str_time = datetime.datetime.now().strftime(format="%Y%m%d%H%M%S")
+    output_file = f"map_{str_time}.html"
+    blobname = f"public/maps/{output_file}"
+    map.save(output_file)
+    # import os
+    url = upload_file_to_bucket_with_metadata(blobname=blobname, file=output_file)
+    # url
+    os.remove(f"map_{str_time}.html")
+    dict_data['map_string'] = url
+    return Response(dict_data, status.HTTP_200_OK)

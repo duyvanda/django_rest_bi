@@ -166,7 +166,7 @@ function ProductList({history}) {
                 <h1 className="text-center mt-3">VN POST INPUT FORM</h1>
                 {/* onChange={handleChangeCN} value={maChiNhanh} */}
                 <form className="mt-2"><label className="form-label text-white" style={{fontWeight: "bold"}}>CHỌN CHI NHÁNH</label>
-                  <Form.Select required style={{fontStyle: "bold"}} onChange={handleChangeCN} value={maChiNhanh1} disabled={false}>
+                  <Form.Select required style={{fontStyle: "bold"}} onChange={handleChangeCN} value={maChiNhanh1} disabled={false} size='sm'>
                         <option>Vui Lòng Chọn Chi Nhánh</option>
                           {chiNhanh
                           .map(el =><option key={el.id} value={[el.chinhanh, el.SenderTel, el.SenderFullname, el.SenderAddress, el.SenderWardId, el.SenderDistrictId, el.SenderProvinceId]}> {el.chinhanh} </option>
