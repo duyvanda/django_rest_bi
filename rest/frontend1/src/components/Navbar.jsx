@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 
 
 function Navbar1() {
-    const { userInfo, logoutUser, FilterReports } = useContext(FeedbackContext)
+    const { userInfo, logoutUser, FilterReports, rpScreen, SetRpScreen } = useContext(FeedbackContext)
 
     const history = useHistory();
 
@@ -23,7 +23,8 @@ function Navbar1() {
     return (
         <div>
             <Navbar className="navbar navbar-dark navbar-expand-md bg-dark">
-                <Container> <Link to="/" className="navbar-brand">BI PORTAL</Link>
+                <Container>
+                {rpScreen ? <Link to="/" className="btn btn-success">Quay Lại</Link> : <Link to="/" className="navbar-brand">BI PORTAL</Link>}
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto"> 

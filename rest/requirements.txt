@@ -13,6 +13,7 @@ djangorestframework-simplejwt==5.2.0
 drf-yasg==1.17.1
 Faker==4.1.0
 future==0.18.2
+geopandas==0.13.2
 google-api-core==1.33.1
 google-auth==2.11.1
 google-cloud-core==0.28.1

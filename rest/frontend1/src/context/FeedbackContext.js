@@ -22,6 +22,7 @@ export const FeedbackProvider = ({ children }) => {
   const [alertType, SetALertType] = useState('alert-success')
   const [alertText, SetALertText] = useState('SUCCESS')
   const [loading, SetLoading] = useState(false)
+  const [rpScreen, SetRpScreen] = useState(false)
   
   // State Chi Tam
   // const [phongban, SetPhongBan] = useState([])
@@ -42,6 +43,7 @@ export const FeedbackProvider = ({ children }) => {
   const [shared, setShared] = useState(true)
   const [vw, setVw] = useState("95vw")
   const [map, SetMap] = useState("https://storage.googleapis.com/django_media_biteam/public/maps/default_map.html")
+  const [routes, SetRoutes] = useState("https://storage.googleapis.com/django_media_biteam/public/maps/default_map.html")
   // const [mapLoading, SetMapLoading] = useState(false)
 
   
@@ -264,7 +266,7 @@ export const FeedbackProvider = ({ children }) => {
   }
 
   // Fetch Ma KH
-  const fetchMap = async (mapdata) => {
+  const fetchMaps = async (mapdata) => {
     SetLoading(true)
     const response = await fetch(`${URL}/map/`, {
       method: 'POST',
@@ -283,6 +285,27 @@ export const FeedbackProvider = ({ children }) => {
     void(0);
     SetLoading(false);
   }
+}
+
+const fetchRoutes = async (routesdata) => {
+  SetLoading(true)
+  const response = await fetch(`${URL}/routes/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(routesdata),
+})
+
+if (response.ok) {
+SetLoading(false)
+const data = await response.json() // or .json() or whatever
+SetRoutes(data.map_string)
+console.log(data)
+} else {
+  void(0);
+  SetLoading(false);
+}
 }
 
 
@@ -565,7 +588,11 @@ export const FeedbackProvider = ({ children }) => {
         ReportId,
         userLogger,
         map,
-        fetchMap
+        fetchMaps,
+        routes,
+        fetchRoutes,
+        rpScreen,
+        SetRpScreen
       }}
     >
       {children}

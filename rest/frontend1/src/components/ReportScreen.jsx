@@ -7,7 +7,7 @@ import { useContext, useEffect, useState } from 'react'
 
 
 function ReportScreen({match, history}) {
-    const { userInfo, Reports, FilterReports, fetchFilerReports, fetchFilerReportsExist, shared, vw, ReportId, userLogger, ReportParam } = useContext(FeedbackContext)
+    const { userInfo, Reports, FilterReports, fetchFilerReports, fetchFilerReportsExist, shared, vw, ReportId, userLogger, ReportParam, SetRpScreen } = useContext(FeedbackContext)
     const [MB, setIsDS] = useState(false)
     // const [data_param, setData_Param] = useState('')
 
@@ -17,6 +17,7 @@ function ReportScreen({match, history}) {
       const isMB = (media.matches);
       const dv_width = window.innerWidth;
       setIsDS(isMB)
+      SetRpScreen(true)
       console.log(Reports)
       console.log(typeof(Reports))
       console.log(Reports)

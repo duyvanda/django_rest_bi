@@ -1,6 +1,6 @@
 import pandas as pd
 # import pandas_gbq as pdq
-# import numpy as np
+import numpy as np
 # import psycopg2
 # import sys, csv, unidecode, pyodbc, os, time
 # from sqlalchemy import create_engine, Table, MetaData
@@ -131,3 +131,13 @@ def get_bq_df(sql) -> pd.DataFrame():
     with closing(bigquery.Client()) as client:
         df = client.query(sql).to_dataframe()
         return df
+    
+def vc(df, subset=None):
+    return df.value_counts(subset=subset, dropna=False).reset_index(name='counts')
+
+def df_to_dict(df):
+    """
+    insert df with 2 columns
+    """
+    dict = df.set_index(df.columns[0]).to_dict()[df.columns[1]]
+    return dict

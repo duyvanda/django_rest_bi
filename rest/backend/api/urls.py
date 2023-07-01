@@ -6,7 +6,7 @@ from .views import FileUploadView, UploadSpreedSheetData,LogIn, ChangePass, GetS
 
 from .views import GetAllUsers, GetOneUser, DeleteOneUser, CreateOneUser, UpdateOneUser
 
-from .views import GetOneKHVNP, CreateOneKHVNP, GetMap, GetData
+from .views import GetOneKHVNP, CreateOneKHVNP, GetMap, GetData, GetRoutes
 # from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -34,6 +34,7 @@ urlpatterns = [
     path('createonekhvnp/', CreateOneKHVNP, name="CreateOneKHVNP"),
     path('map/', GetMap, name="GetMap"),
     path('getdata/', GetData, name="GetData"),
+    path('routes/', GetRoutes, name="GetRoutes"),
 ]
 
 # path('register/', RegisterView.as_view(), name="register"),

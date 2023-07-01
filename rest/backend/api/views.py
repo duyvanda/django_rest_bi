@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from requests.structures import CaseInsensitiveDict
 from utils.df_handle import check_exist_ms, upload_file_to_bucket, insert_google_sheet, download_pk_files, get_bq_df, upload_file_to_bucket_with_metadata
+from utils.df_handle import pd, vc, df_to_dict, np
 from firebase_admin import firestore
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -19,12 +20,15 @@ from google.cloud import logging
 from google.cloud.logging_v2 import client
 from google.cloud.logging_v2 import logger as lgr
 from google.cloud.logging_v2.resource import Resource
-import json, sys, os, requests, traceback, time, datetime, pickle, folium
+import json, sys, os, requests, traceback, time, datetime, pickle, folium, geopandas
+from folium.plugins import *
 from datetime import timedelta
+from math import pi, cos
 # from .forms import UploadFileForm, FileFieldForm
 # import json
 from . import firebase
 from . import TinhThanh,PhuongXa2,QuanHuyen
+
 # print(path)
 # list_dict = []
 
@@ -496,8 +500,8 @@ def GetMap(request):
     dict_data = request.data
     kenh = dict_data['kenh']
     kenh_tuple = ()
-    for tinh in kenh.split(","):
-        kenh_tuple = kenh_tuple + (tinh, )
+    for e in kenh.split(","):
+        kenh_tuple = kenh_tuple + (e, )
     kenh_tuple = kenh_tuple + ('',)
     fromDate = dict_data['fromDate'].split("-")
     toDate = dict_data['toDate'].split("-")
@@ -554,6 +558,229 @@ def GetMap(request):
         else:
             folium.Marker(kh_location_list[point], tooltip=tooltip, icon=folium.Icon(color='blue', icon_color='white', angle=0, prefix='fa')).add_to(map)
     # import datetime
+    str_time = datetime.datetime.now().strftime(format="%Y%m%d%H%M%S")
+    output_file = f"map_{str_time}.html"
+    blobname = f"public/maps/{output_file}"
+    map.save(output_file)
+    # import os
+    url = upload_file_to_bucket_with_metadata(blobname=blobname, file=output_file)
+    # url
+    os.remove(f"map_{str_time}.html")
+    dict_data['map_string'] = url
+    return Response(dict_data, status.HTTP_200_OK)
+
+
+
+@api_view(['POST'])
+def GetRoutes(request):
+    dict_data = request.data
+    kenh = dict_data['kenh']
+    kenh_tuple = ()
+    for el in kenh.split(","):
+        kenh_tuple = kenh_tuple + (el, )
+    kenh_tuple = kenh_tuple + ('',)
+    onDate = dict_data['onDate'].split("-")
+    onDate = onDate[2]+'-'+onDate[1]+'-'+onDate[0]
+    # fromDate
+    df = pd.read_csv("https://cloud.merapgroup.com/index.php/s/DCcRCMGYJyLSjgg/download/Hanam_Namdinh_Ninhbinh.csv", encoding="utf-8")
+    df = df.sort_values(by="manv")
+    manv_tpl = tuple(df.manv.to_list())
+    color_lst = ['red', 'blue', 'green', 'purple', 'orange', 'darkred', 'lightred', 'beige', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
+    color_lst = color_lst[0:6]
+
+    url="https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZHV5dnEiLCJhIjoiY2xqaGJ5anJtMGg1bTNtbzJxNHl1bmtzNCJ9.EMV1gOcu5ild0gIepl9vdQ"
+    map = folium.Map(
+        location=[10.7681538,106.6751171], 
+        zoom_start=5, 
+        tiles=None,
+        zoom_control=True,
+        control_scale=True)
+    folium.TileLayer(
+        url,
+        attr='mapbox',
+        name='MapBox'
+    ).add_to(map)
+    draw = Draw()
+    draw.add_to(map)
+    lc = folium.LayerControl(collapsed=False)
+    sql = \
+    f"""
+    with all_check as
+    (
+    SELECT
+    slsperid,
+    locationtime as updatetime,
+    lat,
+    lng,
+    null as custid,
+    "PING" as checktype,
+    null as numbercico,
+    1 as stt
+    FROM biteam.d_locationtime where date(LocationTime) ='{onDate}' and slsperid in ('MR2913', 'MR2143', 'MR2922', 'MR2676', 'MR2902', 'MR2524')
+
+    UNION ALL
+
+    SELECT
+    slsperid,
+    updatetime,
+    lat,
+    lng,
+    custid,
+    checktype,
+    numbercico,
+    2 as stt
+    FROM biteam.d_checkin where date(updatetime) ='{onDate}' and slsperid in ('MR2913', 'MR2143', 'MR2922', 'MR2676', 'MR2902', 'MR2524')
+    and checktype = 'IO'
+
+    UNION ALL
+
+    SELECT
+    a.slsperid,
+    sa_updatetime as updatetime,
+    b.lat,
+    b.lng,
+    custid,
+    'SA' as checktype,
+    a.numbercico,
+    3 as stt
+    FROM biteam.sync_dms_sacheckin a 
+    LEFT JOIN biteam.d_checkin b
+    on a.numbercico = b.numbercico
+    and date(b.updatetime) = '{onDate}'
+    and b.checktype = 'IO'
+    where date(sa_updatetime) ='{onDate}' and a.slsperid in ('MR2913', 'MR2143', 'MR2922', 'MR2676', 'MR2902', 'MR2524')
+
+    UNION ALL
+
+    SELECT
+    a.slsperid,
+    de_updatetime as updatetime,
+    b.lat,
+    b.lng,
+    custid,
+    'DE' as checktype,
+    a.numbercico,
+    4 as stt
+    FROM biteam.sync_dms_decheckin a
+    LEFT JOIN biteam.d_checkin b
+    on a.numbercico = b.numbercico
+    and b.checktype = 'IO'
+    and date(b.updatetime) = '{onDate}'
+    where date(de_updatetime) ='{onDate}' and a.slsperid in ('MR2913', 'MR2143', 'MR2922', 'MR2676', 'MR2902', 'MR2524')
+
+    )
+
+    , data_tuyen as (
+    SELECT custid,slsperid,crtd_datetime,
+    Case when routetype in ('B','D') then 1 else 2 end as routetype,
+    FROM `spatial-vision-343005.biteam.sync_dms_srm` 
+    where delroutedet is false and routetype in ('B','D') and slsperid in ('MR2913', 'MR2143', 'MR2922', 'MR2676', 'MR2902', 'MR2524')
+    )
+
+    , merged as
+    (
+    select * from all_check
+    UNION ALL
+    select
+    slsperid,
+    null as updatetime,
+    lat,
+    lng,
+    custid,
+    'MCP' as checktype,
+    null as numbercico,
+    4 as stt
+    from (
+    select a.*,row_number() over (partition by a.custid order by routetype asc,a.crtd_datetime desc) as loc ,lat,lng 
+
+    from data_tuyen a 
+    LEFT JOIN `biteam.d_master_khachhang` b on a.custid = b.custid
+
+    )
+    where loc =1
+    )
+
+    select a.*, b.custname from merged a LEFT JOIN `biteam.d_master_khachhang` b on a.custid = b.custid
+    order by stt,slsperid, updatetime asc
+    """
+    # print("sql", sql)
+    df_all = get_bq_df(sql)
+    vc(df_all, "checktype")
+    df_dms = df_all.copy()
+    df['manv'] = df['manv'] + ' ' + df['role'] + ' ' + df['tencvbh']
+    manv_tpl = df['manv'].to_list()
+    manv_tpl
+    df_dms = df_dms[df_dms.lat > 0].copy()
+    lst_df = [v for k, v in df_dms.groupby('slsperid')]
+
+    for df, fg, cl in zip(lst_df, manv_tpl, color_lst):
+        feature_group = folium.FeatureGroup(name=f"{fg} {cl.upper()}")
+        #Handle PING
+        df_ping = df[df['checktype'] == "PING"].copy()
+        data_gpd=geopandas.GeoDataFrame(df_ping,geometry=geopandas.points_from_xy(df_ping.lng,df_ping.lat),crs="EPSG:4326").to_crs("EPSG:6340")
+        data_gpd_pv = data_gpd.shift(1)
+        df_ping['distance_from_previous'] = data_gpd['geometry'].distance(data_gpd_pv['geometry'])
+        df_ping.fillna(6.00, inplace=True)
+        df_ping = df_ping[df_ping['distance_from_previous'] >= 1].copy()
+        df_ping = df_ping[df_ping['distance_from_previous'] <= 20000].copy()
+        folium.PolyLine(locations = df_ping[['lat','lng']].values, color=f"{cl}", dash_array='5').add_to(feature_group)
+        #Handle MCP
+        df_MCP = df[df['checktype'] == "MCP"].copy()
+        for row in df_MCP.itertuples():
+            folium.CircleMarker( location=[row.lat, row.lng],
+            radius=5,
+            fill=True,
+            color = f"{cl}",
+            fill_opacity=0.5).add_to(feature_group)
+        feature_group.add_to(map)
+        #Handle IO
+        dfIO = df[df['checktype'] == "IO"].copy().reset_index()
+        dfSA = df_all[df_all['checktype'] == "SA"]
+        dfSA = dfSA[['numbercico','checktype']]
+        dfSA.columns = ['numbercico', 'check']
+        dfDE = df_all[df_all['checktype'] == "DE"]
+        dfDE = dfDE[['numbercico','checktype']]
+        dfDE.columns = ['numbercico', 'check']
+        dfIO['checksa'] = dfIO['numbercico'].map(df_to_dict(dfSA))
+        dfIO['checkde'] = dfIO['numbercico'].map(df_to_dict(dfDE))
+        dfIO['checkde'].fillna('IN',inplace=True)
+        dfIO['checksa'].fillna('IN',inplace=True)
+        dfIO['check'] = dfIO['checksa'] + dfIO['checkde']
+        if dfIO.shape[0] != 0:
+            data_gpd=geopandas.GeoDataFrame(dfIO,geometry=geopandas.points_from_xy(dfIO.lng,dfIO.lat),crs="EPSG:4326").to_crs("EPSG:6340")
+            data_gpd_pv = data_gpd.shift(1)
+            dfIO['distance_from_previous'] = data_gpd['geometry'].distance(data_gpd_pv['geometry'])
+            dfIO['distance_from_previous'].fillna(0.00, inplace=True)
+            dfIO['g'] = dfIO['distance_from_previous'] > 10
+            dfIO['g'] = dfIO.g.cumsum()
+            dfIO['count'] = 1
+            dfIO['meter'] = dfIO.groupby(['g'])['count'].cumsum()-1
+            def getnewcor(lng, meter, lat):
+                earth = 6378.137
+                m = (1 / ((2 * pi / 360) * earth)) / 1000
+                return lng + (20*meter* m) / cos(lat * (pi / 180))
+            dfIO['new_lng'] = dfIO.apply(lambda x: getnewcor(x['lng'], x['meter'], x['lat']), axis=1)
+            dfIO['lng'] = np.where(dfIO.meter > 0, dfIO.new_lng, dfIO.lng)
+            # dfIO[['lng','new_lng']]
+            for row in dfIO.itertuples():
+                if row.check == "SAIN":
+                    bt_icon = folium.plugins.BeautifyIcon(iconSize=[20,20], spin=True, icons="arrow-down", iconShape= "marker", borderWidth = 2, border_color="black", number=row.Index+1, background_color=f"{cl}", textColor="white")
+                elif row.check == "INDE":
+                    bt_icon = folium.plugins.BeautifyIcon(iconSize=[20,20], spin=True, icons="arrow-down", iconShape= "rectangle", borderWidth = 2, border_color="black", number=row.Index+1, background_color=f"{cl}", textColor="white")
+                else:
+                    bt_icon = folium.plugins.BeautifyIcon(iconSize=[20,20], spin=True, icons="arrow-down", iconShape= "circle", borderWidth = 2, border_color="black", number=row.Index+1, background_color=f"{cl}", textColor="white")
+                folium.Marker(location=[row.lat, row.lng],
+                tooltip = row.lat,
+                icon=bt_icon,
+                draggable=True,
+                tags=row.check
+                ).add_to(feature_group)
+            else:
+                pass
+        feature_group.add_to(map)
+    # import datetime
+    TagFilterButton(['SAIN','INDE','ININ']).add_to(map)
+    lc.add_to(map)
     str_time = datetime.datetime.now().strftime(format="%Y%m%d%H%M%S")
     output_file = f"map_{str_time}.html"
     blobname = f"public/maps/{output_file}"

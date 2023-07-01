@@ -33,6 +33,7 @@ et-xmlfile==1.1.0
 filelock==3.0.12
 flower==0.9.7
 Folium==0.14.0
+geopandas==0.13.2
 google-ads==13.0.0
 google-api-core==1.31.2
 google-api-python-client==1.12.8
