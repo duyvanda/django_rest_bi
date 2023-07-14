@@ -17,14 +17,6 @@ from googleapiclient import discovery
 import os
 import pyodbc
 
-# from google.analytics.data_v1beta import BetaAnalyticsDataClient
-# from google.analytics.data_v1beta.types import DateRange
-# from google.analytics.data_v1beta.types import Dimension
-# from google.analytics.data_v1beta.types import Metric
-# from google.analytics.data_v1beta.types import RunReportRequest, RunPivotReportRequest
-# from google.analytics.data_v1beta.types import Pivot
-# from google.analytics.data_v1beta.types import MetricAggregation
-
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "bigquery1508.json" if settings.LOCAL == "1" else '/app/bigquery1508.json'
 pjt = 'spatial-vision-343005'
 dts = '.biteam'
@@ -42,6 +34,9 @@ def check_exist_ms(sql):
                 x = False if data[0] == 0 else True
                 return x
 
+def get_bq_client():
+    client = bigquery.Client()
+    return client
 
 def upload_file_to_bucket(blobname: str, imagefile, filetype='text/csv', bucketname='django_media_biteam'):
     '''

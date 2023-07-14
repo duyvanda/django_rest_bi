@@ -21,11 +21,10 @@ from google.cloud.logging_v2 import client
 from google.cloud.logging_v2 import logger as lgr
 from google.cloud.logging_v2.resource import Resource
 import json, sys, os, requests, traceback, time, datetime, pickle, folium, geopandas
+import duckdb as db
 from folium.plugins import *
 from datetime import timedelta
 from math import pi, cos
-# from .forms import UploadFileForm, FileFieldForm
-# import json
 from . import firebase
 from . import TinhThanh,PhuongXa2,QuanHuyen
 
@@ -61,6 +60,13 @@ def getUrlRequest(request):
     # print(matinhthanh_mapping)
     # print(dict_data)
     return Response(dict_data)
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def getAllVipPlus(request):
+    pk_file = open("/app/thumuc/data_list.pk", "rb")
+    lst = pickle.load(pk_file)
+    return Response(lst)
 
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
@@ -489,7 +495,7 @@ def DeleteOneKHVNP(request,pk):
 @api_view(['GET'])
 def GetData(request):
     sql = """SELECT * from biteam.d_tinh"""
-    print(sql)
+    # print(sql)
     df=get_bq_df(sql)
     print(df.shape)
     return Response({"OK":"200"}, status.HTTP_200_OK)
@@ -585,21 +591,26 @@ def GetRoutes(request):
     df = pd.read_csv("https://cloud.merapgroup.com/index.php/s/DCcRCMGYJyLSjgg/download/Hanam_Namdinh_Ninhbinh.csv", encoding="utf-8")
     df = df.sort_values(by="manv")
     manv_tpl = tuple(df.manv.to_list())
-    color_lst = ['red', 'blue', 'green', 'purple', 'orange', 'darkred', 'lightred', 'beige', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
-    color_lst = color_lst[0:6]
+    len_tpl = len(manv_tpl)
+    color_lst = ['red', 'blue', 'green', 'purple', 'orange', 'gray', 'black', 'pink', ' darkred', 'beige', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
+    color_lst = color_lst[0:len_tpl]
 
-    url="https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZHV5dnEiLCJhIjoiY2xqaGJ5anJtMGg1bTNtbzJxNHl1bmtzNCJ9.EMV1gOcu5ild0gIepl9vdQ"
+    # url="https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZHV5dnEiLCJhIjoiY2xqaGJ5anJtMGg1bTNtbzJxNHl1bmtzNCJ9.EMV1gOcu5ild0gIepl9vdQ"
     map = folium.Map(
         location=[10.7681538,106.6751171], 
         zoom_start=5, 
         tiles=None,
         zoom_control=True,
         control_scale=True)
-    folium.TileLayer(
-        url,
-        attr='mapbox',
-        name='MapBox'
-    ).add_to(map)
+    
+    # folium.TileLayer(
+    #     url,
+    #     attr='mapbox',
+    #     name='MapBox'
+    # ).add_to(map)
+
+    folium.TileLayer('openstreetmap').add_to(map)
+
     draw = Draw()
     draw.add_to(map)
     lc = folium.LayerControl(collapsed=False)
@@ -616,7 +627,7 @@ def GetRoutes(request):
     "PING" as checktype,
     null as numbercico,
     1 as stt
-    FROM biteam.d_locationtime where date(LocationTime) ='{onDate}' and slsperid in ('MR2913', 'MR2143', 'MR2922', 'MR2676', 'MR2902', 'MR2524')
+    FROM biteam.d_locationtime where date(LocationTime) ='{onDate}' and slsperid in {manv_tpl}
 
     UNION ALL
 
@@ -629,7 +640,7 @@ def GetRoutes(request):
     checktype,
     numbercico,
     2 as stt
-    FROM biteam.d_checkin where date(updatetime) ='{onDate}' and slsperid in ('MR2913', 'MR2143', 'MR2922', 'MR2676', 'MR2902', 'MR2524')
+    FROM biteam.d_checkin where date(updatetime) ='{onDate}' and slsperid in {manv_tpl}
     and checktype = 'IO'
 
     UNION ALL
@@ -648,7 +659,7 @@ def GetRoutes(request):
     on a.numbercico = b.numbercico
     and date(b.updatetime) = '{onDate}'
     and b.checktype = 'IO'
-    where date(sa_updatetime) ='{onDate}' and a.slsperid in ('MR2913', 'MR2143', 'MR2922', 'MR2676', 'MR2902', 'MR2524')
+    where date(sa_updatetime) ='{onDate}' and a.slsperid in {manv_tpl}
 
     UNION ALL
 
@@ -666,7 +677,7 @@ def GetRoutes(request):
     on a.numbercico = b.numbercico
     and b.checktype = 'IO'
     and date(b.updatetime) = '{onDate}'
-    where date(de_updatetime) ='{onDate}' and a.slsperid in ('MR2913', 'MR2143', 'MR2922', 'MR2676', 'MR2902', 'MR2524')
+    where date(de_updatetime) ='{onDate}' and a.slsperid in {manv_tpl}
 
     )
 
@@ -674,7 +685,7 @@ def GetRoutes(request):
     SELECT custid,slsperid,crtd_datetime,
     Case when routetype in ('B','D') then 1 else 2 end as routetype,
     FROM `spatial-vision-343005.biteam.sync_dms_srm` 
-    where delroutedet is false and routetype in ('B','D') and slsperid in ('MR2913', 'MR2143', 'MR2922', 'MR2676', 'MR2902', 'MR2524')
+    where delroutedet is false and routetype in ('B','D') and slsperid in {manv_tpl}
     )
 
     , merged as
@@ -705,25 +716,31 @@ def GetRoutes(request):
     """
     # print("sql", sql)
     df_all = get_bq_df(sql)
-    vc(df_all, "checktype")
+    # vc(df_all, "checktype")
     df_dms = df_all.copy()
-    df['manv'] = df['manv'] + ' ' + df['role'] + ' ' + df['tencvbh']
-    manv_tpl = df['manv'].to_list()
-    manv_tpl
+    df_dms = db.sql("select a.*, b.cl, b.fg from df_dms a left join df b on a.slsperid = b.manv").df()
+    # df['manv'] = df['manv'] + ' ' + df['role'] + ' ' + df['tencvbh']
+    # manv_tpl = df['manv'].to_list()
+    # manv_tpl
     df_dms = df_dms[df_dms.lat > 0].copy()
     lst_df = [v for k, v in df_dms.groupby('slsperid')]
 
-    for df, fg, cl in zip(lst_df, manv_tpl, color_lst):
+    for df in lst_df:
+        fg = db.query("""select fg from df limit 1""").fetchone()[0]
+        cl = db.query("""select cl from df limit 1""").fetchone()[0]
         feature_group = folium.FeatureGroup(name=f"{fg} {cl.upper()}")
         #Handle PING
         df_ping = df[df['checktype'] == "PING"].copy()
-        data_gpd=geopandas.GeoDataFrame(df_ping,geometry=geopandas.points_from_xy(df_ping.lng,df_ping.lat),crs="EPSG:4326").to_crs("EPSG:6340")
-        data_gpd_pv = data_gpd.shift(1)
-        df_ping['distance_from_previous'] = data_gpd['geometry'].distance(data_gpd_pv['geometry'])
-        df_ping.fillna(6.00, inplace=True)
-        df_ping = df_ping[df_ping['distance_from_previous'] >= 1].copy()
-        df_ping = df_ping[df_ping['distance_from_previous'] <= 20000].copy()
-        folium.PolyLine(locations = df_ping[['lat','lng']].values, color=f"{cl}", dash_array='5').add_to(feature_group)
+        if df_ping.shape[0] != 0:
+            data_gpd=geopandas.GeoDataFrame(df_ping,geometry=geopandas.points_from_xy(df_ping.lng,df_ping.lat),crs="EPSG:4326").to_crs("EPSG:6340")
+            data_gpd_pv = data_gpd.shift(1)
+            df_ping['distance_from_previous'] = data_gpd['geometry'].distance(data_gpd_pv['geometry'])
+            df_ping.fillna(6.00, inplace=True)
+            df_ping = df_ping[df_ping['distance_from_previous'] >= 1].copy()
+            df_ping = df_ping[df_ping['distance_from_previous'] <= 20000].copy()
+            folium.PolyLine(locations = df_ping[['lat','lng']].values, color=f"{cl}", dash_array='5').add_to(feature_group)
+        else:
+            pass
         #Handle MCP
         df_MCP = df[df['checktype'] == "MCP"].copy()
         for row in df_MCP.itertuples():
@@ -731,6 +748,7 @@ def GetRoutes(request):
             radius=5,
             fill=True,
             color = f"{cl}",
+            popup=row.custid+'-'+row.custname,
             fill_opacity=0.5).add_to(feature_group)
         feature_group.add_to(map)
         #Handle IO
@@ -763,6 +781,12 @@ def GetRoutes(request):
             dfIO['lng'] = np.where(dfIO.meter > 0, dfIO.new_lng, dfIO.lng)
             # dfIO[['lng','new_lng']]
             for row in dfIO.itertuples():
+                tooltip = \
+                f"""
+                <b>NT</b>: <b>{row.custid} - {row.custname}</b><br>
+                <b>Lat & Lng</b>: <b>{row.lat} - {row.lng}</b><br>
+                <b>Time</b>: {row.updatetime}<br>
+                """
                 if row.check == "SAIN":
                     bt_icon = folium.plugins.BeautifyIcon(iconSize=[20,20], spin=True, icons="arrow-down", iconShape= "marker", borderWidth = 2, border_color="black", number=row.Index+1, background_color=f"{cl}", textColor="white")
                 elif row.check == "INDE":
@@ -770,7 +794,7 @@ def GetRoutes(request):
                 else:
                     bt_icon = folium.plugins.BeautifyIcon(iconSize=[20,20], spin=True, icons="arrow-down", iconShape= "circle", borderWidth = 2, border_color="black", number=row.Index+1, background_color=f"{cl}", textColor="white")
                 folium.Marker(location=[row.lat, row.lng],
-                tooltip = row.lat,
+                tooltip = tooltip,
                 icon=bt_icon,
                 draggable=True,
                 tags=row.check
@@ -785,9 +809,7 @@ def GetRoutes(request):
     output_file = f"map_{str_time}.html"
     blobname = f"public/maps/{output_file}"
     map.save(output_file)
-    # import os
     url = upload_file_to_bucket_with_metadata(blobname=blobname, file=output_file)
-    # url
     os.remove(f"map_{str_time}.html")
     dict_data['map_string'] = url
     return Response(dict_data, status.HTTP_200_OK)

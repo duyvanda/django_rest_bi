@@ -6,7 +6,9 @@ from .views import FileUploadView, UploadSpreedSheetData,LogIn, ChangePass, GetS
 
 from .views import GetAllUsers, GetOneUser, DeleteOneUser, CreateOneUser, UpdateOneUser
 
-from .views import GetOneKHVNP, CreateOneKHVNP, GetMap, GetData, GetRoutes
+from .views import GetOneKHVNP, CreateOneKHVNP, GetMap, GetData, GetRoutes, getAllVipPlus
+
+from .local_views import nhacdon_pcl
 # from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -35,6 +37,8 @@ urlpatterns = [
     path('map/', GetMap, name="GetMap"),
     path('getdata/', GetData, name="GetData"),
     path('routes/', GetRoutes, name="GetRoutes"),
+    path('allvipplus/', getAllVipPlus, name="getAllVipPlus"),
+    path('nhacdonpcl/', nhacdon_pcl, name="nhacdon_pcl"),
 ]
 
 # path('register/', RegisterView.as_view(), name="register"),
