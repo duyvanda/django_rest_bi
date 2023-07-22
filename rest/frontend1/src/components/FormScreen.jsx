@@ -1,14 +1,14 @@
 import React from 'react'
 import FeedbackContext from '../context/FeedbackContext'
 import { useContext, useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import { Spinner, Form, Button, Modal } from "react-bootstrap";
 
 
 
 function ProductList({history}) {
 
-    const { chiNhanh, fetchKHVNP,khvnp, tinhthanh, fetchTinhThanh, fetchQuanHuyen, quanhuyen, fetchPhuongXa, phuongxa, handleSaveForm, alert, alertType, alertText, loading } = useContext(FeedbackContext)
+    const { chiNhanh, fetchKHVNP,khvnp, fetchTinhThanh, handleSaveForm, alert, alertType, alertText, loading } = useContext(FeedbackContext)
   
     const [maChiNhanh, SetMaChiNhanh] = useState('')
     const [maChiNhanh1, SetMaChiNhanh1] = useState('')

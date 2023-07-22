@@ -22,12 +22,12 @@ pjt = 'spatial-vision-343005'
 dts = '.biteam'
 
 def check_exist_ms(sql):
-    server = '115.165.164.234'
+    server = '101.99.42.27'
     driver = 'SQL Server'
-    db1 = 'PhaNam_eSales_PRO'
+    db1 = 'MERAPLION_PRO'
     tcon = 'no'
-    uname = 'duyvq'
-    pword = '123VanQuangDuy'
+    uname = 'esales_sync'
+    pword = 'Hqs0fteSal3sd0toM3r2p'
     with closing(pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}', host=server, database=db1, trusted_connection=tcon, user=uname, password=pword)) as cnxn:
             with closing(cnxn.cursor()) as cursor:
                 data = cursor.execute(sql).fetchone()

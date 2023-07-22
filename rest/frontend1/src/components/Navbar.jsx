@@ -24,7 +24,7 @@ function Navbar1() {
         <div>
             <Navbar className="navbar navbar-dark navbar-expand-md bg-dark">
                 <Container>
-                {rpScreen ? <Link to="/" className="btn btn-success">Quay Lại</Link> : <Link to="/" className="navbar-brand">BI PORTAL</Link>}
+                {rpScreen ? <Link to="/" className="btn btn-info">Quay Lại</Link> : <Link to="/" className="navbar-brand">BI PORTAL</Link>}
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto"> 
