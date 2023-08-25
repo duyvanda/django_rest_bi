@@ -1,15 +1,6 @@
 import pandas as pd
-# import pandas_gbq as pdq
 import numpy as np
-# import psycopg2
-# import sys, csv, unidecode, pyodbc, os, time
-# from sqlalchemy import create_engine, Table, MetaData
-# from sqlalchemy.dialects import postgresql
 from contextlib import closing
-# from sqlalchemy import create_engine
-# from typing import Iterable, List, Optional, Tuple
-# from datetime import datetime, timedelta
-# import psycopg2.extras as extras
 from django.conf import settings
 from google.cloud import storage, bigquery
 from google.oauth2 import service_account
@@ -22,7 +13,7 @@ pjt = 'spatial-vision-343005'
 dts = '.biteam'
 
 def check_exist_ms(sql):
-    server = '101.99.42.27'
+    server = '115.165.164.235'
     driver = 'SQL Server'
     db1 = 'MERAPLION_PRO'
     tcon = 'no'
@@ -136,3 +127,39 @@ def df_to_dict(df):
     """
     dict = df.set_index(df.columns[0]).to_dict()[df.columns[1]]
     return dict
+
+
+def get_eotoken(manv, password):
+    import requests
+    from requests.structures import CaseInsensitiveDict
+    url = f"""https://eoffice.merapgroup.com/eoffice/api/api/auth/login"""
+    headers = CaseInsensitiveDict()
+    # headers['Authorization'] = f'Bearer {EO_AU}'
+    headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+    headers['accept'] = 'application/json'
+    headers['content-type'] = 'application/json; charset=UTF-8'
+    headers['Host'] = 'localhost'
+    headers['client-id'] = '109065-26376-79422-746832'
+    data = {'username':f'{manv}', 'password':f'{password}'}
+    print("data", data)
+    r = requests.post("https://eoffice.merapgroup.com/eoffice/api/api/auth/login", json=data, headers=headers)
+    if any([r.status_code == 200, r.status_code == 201]):
+        return r.json()['token'], r.json()['user']['ldap_email']
+    else:
+        return None, 0
+    
+
+def get_eostatus(token):
+    import requests
+    from requests.structures import CaseInsensitiveDict
+    headers = CaseInsensitiveDict()
+    headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+    headers['accept'] = 'application/json'
+    headers['content-type'] = 'application/json; charset=UTF-8'
+    headers['Host'] = 'localhost'
+    headers['Authorization'] = f'Bearer {token}'
+    r = requests.get("https://eoffice.merapgroup.com/eoffice/api/api/oauth2/user", headers=headers)
+    if any([r.status_code == 200, r.status_code == 201]):
+        return r.json()['user']['status'], r.json()['user']['ldap_email']
+    else:
+        return 3, 0    

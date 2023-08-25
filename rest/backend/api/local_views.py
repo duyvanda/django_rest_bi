@@ -1,9 +1,7 @@
 from base64 import encode
 from django.shortcuts import render
-from rest_framework.parsers import FileUploadParser
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.auth.hashers import make_password, check_password
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from pathlib import Path
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -11,44 +9,82 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from requests.structures import CaseInsensitiveDict
-from utils.df_handle import check_exist_ms, upload_file_to_bucket, insert_google_sheet, download_pk_files, get_bq_df, upload_file_to_bucket_with_metadata
-from utils.df_handle import pd, vc, df_to_dict, np, get_bq_client
-from firebase_admin import firestore
+from utils.df_handle import get_bq_client, get_bq_df, pd, np
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from google.cloud import logging
-from google.cloud.logging_v2 import client
-from google.cloud.logging_v2 import logger as lgr
-from google.cloud.logging_v2.resource import Resource
-import json, sys, os, requests, traceback, time, datetime, pickle, folium, geopandas
+import json, sys, os, requests, traceback, time, pickle
 from contextlib import closing
-from folium.plugins import *
-from datetime import timedelta
+from datetime import timedelta, datetime
 from math import pi, cos
-from . import firebase
-from . import TinhThanh,PhuongXa2,QuanHuyen
-
-# print(path)
-# list_dict = []
-
-logging_client = logging.Client()
-log_name = "django_bi_team_logger"
-resource = Resource(type= "global", labels={})
-num_str = str( (datetime.datetime.now().hour*0 + datetime.datetime.now().day*4 + datetime.datetime.now().month*3 + datetime.datetime.now().year*2) *123123)
-token_s = """1Iujws5qaz2Nl1qcZpJ01D7Zb8cH7FaErnFG7uM3GxiL.hz7A.z4L1Y207QDWUx8TMN2g8e43jnzt9qFjJ5vQABwoBET.c2y7owPhZAmU4Tpn0YbOxk.MF"""
-extra_s = """GIwSgZdtwXadjrHA.U9ftBp.SOis8YoKLU4yaj1U9ftBp_c2y7owPhZAmU4Tpn0YbOxkMFSOis8YoKLU4yaj1U9ftBp"""
-token_str = extra_s+num_str
-# logger = logging_client.logger(log_name)
-
+pk_path = '/app/thumuc/'
 
 @api_view(['GET'])
-def nhacdon_pcl(request):
+def tinh(request):
     QUERY = \
     """
-    SELECT makhdms, tenkhachhang,phone, sotuan_chuadatdon  FROM `spatial-vision-343005.view_report.f_nhacdon_pcl` where dieukien_guitn = 0
+    SELECT * from staging.d_tinh
     """
     client = get_bq_client()
     query_job = client.query(QUERY)
     records = [dict(row) for row in query_job]
     client.close()
     return Response(records)
+
+
+@api_view(['GET'])
+def api_ds_theo_khach_example(request):
+    request_params = request.query_params.dict()
+
+    P_MAKHDMS = request_params.get('makhdms') if request_params.get('makhdms') is not None else ''
+    P_STARTDATE = request_params.get('startdate') if request_params.get('startdate') is not None else ''
+    P_ENDDATE = request_params.get('enddate') if request_params.get('enddate') is not None else ''
+    P_PAGE = int(request_params.get('page')) if request_params.get('page') is not None else 1
+    P_LIMIT = request_params.get('limit') if request_params.get('limit') is not None else ''
+
+
+    QUERY = \
+    f"""
+    CALL staging_temp.api_ds_theo_khach_example('{P_STARTDATE}','{P_ENDDATE}','{P_PAGE}','{P_LIMIT}')
+    """
+    CACHED_API_CALL_PATH = pk_path+'staging_temp.api_ds_theo_khach_example'+P_STARTDATE+P_ENDDATE+'.pk'
+    try:
+    # LOOK FOR CACHED DATA FIRST
+        assert pd.read_pickle(CACHED_API_CALL_PATH).expired_date.values[0] > np.datetime64(datetime.now())
+        CACHED_DF = pd.read_pickle(CACHED_API_CALL_PATH)
+        # OUTPUT DATA
+        OUTPUT_DF = CACHED_DF.query(f" page=={P_PAGE} ")
+        if P_MAKHDMS == '':
+            pass
+        else: OUTPUT_DF = OUTPUT_DF.query(f" makhdms=='{P_MAKHDMS}' ")
+
+    except (FileNotFoundError, AssertionError) as e:
+        CACHED_DF = get_bq_df(QUERY)
+        print(CACHED_DF.shape)
+        #CACHED RESULTS TO PICKPLE FILE
+        x = 30 if datetime.now().minute >= 30 else 0
+        CACHED_DF['expired_date'] = datetime.now().replace(minute=x, second=0, microsecond=0) + timedelta(minutes=31)
+        CACHED_DF.to_pickle(CACHED_API_CALL_PATH)
+        #END CACHED
+        # OUTPUT DATA
+        OUTPUT_DF = CACHED_DF.query(f" page=={P_PAGE} ")
+        if P_MAKHDMS == '':
+            pass
+        else: OUTPUT_DF = OUTPUT_DF.query(f" makhdms=='{P_MAKHDMS}' ")
+
+    
+    res_data = OUTPUT_DF.to_dict(orient='records')   
+    response = \
+    {
+    'rows': CACHED_DF.shape[0],
+    'data': res_data
+    }
+    return Response(response)
+
+
+@api_view(['GET'])
+def GetData(request):
+    sql = """SELECT * from staging.d_tinh"""
+    df=get_bq_df(sql)
+    print(df.shape)
+    return Response({"OKOK":"200"}, status.HTTP_200_OK)
+

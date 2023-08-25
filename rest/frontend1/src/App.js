@@ -22,7 +22,7 @@ function App() {
       <Router>
       <Navbar1 />
         <>
-        <Route exact path='/'component={HomeScreen} />
+          <Route exact path='/'component={HomeScreen} />
           <Route path='/formmdsvnpost'component={FormScreen} />
           <Route path='/login' component={Login} />
           <Route path='/profile' component={Profile} />

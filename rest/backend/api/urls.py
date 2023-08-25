@@ -6,10 +6,8 @@ from .views import FileUploadView, UploadSpreedSheetData,LogIn, ChangePass, GetS
 
 from .views import GetAllUsers, GetOneUser, DeleteOneUser, CreateOneUser, UpdateOneUser
 
-from .views import GetOneKHVNP, CreateOneKHVNP, GetMap, GetData, GetRoutes, getAllVipPlus
-
-from .local_views import nhacdon_pcl
-# from rest_framework_simplejwt.views import TokenRefreshView
+from .views import GetOneKHVNP, CreateOneKHVNP, GetMap, GetRoutes, LogIn_V1, GetStatus_V1
+# from .local_urls import urlpatterns_local
 
 urlpatterns = [
     path('params/', getUrlRequest, name="getQueryParams"),
@@ -21,8 +19,10 @@ urlpatterns = [
     path('uploadfile/<str:pk>', FileUploadView, name="Upload_File"),
     path('chitamform/', UploadSpreedSheetData, name="UploadSpreedSheetData"),
     path('login/', LogIn, name="LogIn"),
-    path('changepass/', ChangePass, name="ChangePass"),
+    path('loginv1/', LogIn_V1, name="LogIn_V1"),
     path('getstatus/<str:pk>', GetStatus, name="GetStatus"),
+    path('getstatusv1/<str:pk>', GetStatus_V1, name="GetStatus_V1"),
+    path('changepass/', ChangePass, name="ChangePass"),
     path('userreportlogger/', PostUserReportLogger, name="PostUserReportLogger"),
     path('getallusers/', GetAllUsers, name="GetAllUsers"),
     path('getoneuser/<str:pk>', GetOneUser, name="GetOneUser"),
@@ -35,11 +35,13 @@ urlpatterns = [
     path('getonekhvnp/<str:pk>', GetOneKHVNP, name="GetOneKHVNP"),
     path('createonekhvnp/', CreateOneKHVNP, name="CreateOneKHVNP"),
     path('map/', GetMap, name="GetMap"),
-    path('getdata/', GetData, name="GetData"),
     path('routes/', GetRoutes, name="GetRoutes"),
-    path('allvipplus/', getAllVipPlus, name="getAllVipPlus"),
-    path('nhacdonpcl/', nhacdon_pcl, name="nhacdon_pcl"),
+    # path('allvipplus/', getAllVipPlus, name="getAllVipPlus"),
 ]
+
+# urlpatterns.append(urlpatterns_local)
+
+# print(urlpatterns)
 
 # path('register/', RegisterView.as_view(), name="register"),
 # path('login/', LoginAPIView.as_view(), name="login"),

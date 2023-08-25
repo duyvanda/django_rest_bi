@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from requests.structures import CaseInsensitiveDict
 from utils.df_handle import check_exist_ms, upload_file_to_bucket, insert_google_sheet, download_pk_files, get_bq_df, upload_file_to_bucket_with_metadata
-from utils.df_handle import pd, vc, df_to_dict, np
+from utils.df_handle import pd, vc, df_to_dict, np, get_eotoken, get_eostatus
 from firebase_admin import firestore
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -61,12 +61,12 @@ def getUrlRequest(request):
     # print(dict_data)
     return Response(dict_data)
 
-@api_view(['GET'])
+# @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
-def getAllVipPlus(request):
-    pk_file = open("/app/thumuc/data_list.pk", "rb")
-    lst = pickle.load(pk_file)
-    return Response(lst)
+# def getAllVipPlus(request):
+#     pk_file = open("/app/thumuc/data_list.pk", "rb")
+#     lst = pickle.load(pk_file)
+#     return Response(lst)
 
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
@@ -298,24 +298,45 @@ def UploadSpreedSheetData(request):
 @api_view(['POST'])
 def LogIn(request):
     try:
-        # print(request.data)
         manv = request.data['email']
-        # password = request.data['password']
         db=firebase.get_db()
         res = db.collection('report_users').document(manv).get()
         dict = res.to_dict()
         dict.pop('report', None)
-        # print(type(dict))
         password = request.data['password'] if request.data['password'] != token_str else dict['key']
         dk1 = dict['manv'] == manv
         dk2 = dict['key'] == password
         encryptedpassword=make_password(password)
-        # print(encryptedpassword)
-        decryptedpassword=check_password(password, encryptedpassword)
-        # print(decryptedpassword)
         dict['token'] = encryptedpassword
         dict.pop('key', None)
         if dk1 & dk2:
+            return Response(dict, status.HTTP_200_OK)
+        else:
+            return Response({"message":"Ma NV & Password khong dung"}, status.HTTP_401_UNAUTHORIZED)
+    except:
+        return Response({"message":"Ma NV & Password khong dung"}, status.HTTP_401_UNAUTHORIZED)
+    
+@api_view(['POST'])
+def LogIn_V1(request):
+    try:
+        manv = request.data['email']
+        pwd = request.data['password']
+        db=firebase.get_db()
+        res = db.collection('report_users').document(manv).get()
+        dict = {'manv':f'{manv}', 'key':f'{pwd}', 'trangthaihoatdong': 1} if res.to_dict() == None else res.to_dict()
+        password = pwd if pwd != token_str else dict['key']
+        encryptedpassword, valid = get_eotoken(manv, password)
+        print(encryptedpassword, valid)
+        dk1 = valid == 1
+        dk2 = encryptedpassword != None
+        dict['token'] = encryptedpassword
+        dict.pop('key', None)
+        if dk1 & dk2:
+            default_dict = {}
+            default_dict['manv'] = manv
+            default_dict['key'] = password
+            default_dict['trangthaihoatdong'] = valid
+            db.collection('report_users').document(manv).set(default_dict)
             return Response(dict, status.HTTP_200_OK)
         else:
             return Response({"message":"Ma NV & Password khong dung"}, status.HTTP_401_UNAUTHORIZED)
@@ -342,9 +363,21 @@ def GetStatus(request, pk):
         dict = res.to_dict()
         stat = dict['trangthaihoatdong']
         encryptedpassword=request.data['token']
-        # print("encryptedpassword", encryptedpassword)
         decryptedpassword=check_password(dict['key'], encryptedpassword)
-        # passcheck = encryptedpassword==request.data['token']
+        stat = bool(stat)
+        bol = all([decryptedpassword,stat])
+        data = {"check": bol}
+        return Response(data, status.HTTP_200_OK)
+    except:
+        return Response({"check":False}, status.HTTP_401_UNAUTHORIZED)
+    
+@api_view(['GET'])
+def GetStatus_V1(request, pk):
+    try:
+        encryptedpassword=request.data['token']
+        trangthaihoatdong, trangthainhanvien = get_eostatus(encryptedpassword)
+        stat = trangthaihoatdong
+        decryptedpassword = any([trangthainhanvien == 1, trangthainhanvien == 2, trangthainhanvien == 3])
         stat = bool(stat)
         bol = all([decryptedpassword,stat])
         data = {"check": bol}
@@ -492,15 +525,6 @@ def DeleteOneKHVNP(request,pk):
 #     return Response(dict, status.HTTP_200_OK)
 
 
-@api_view(['GET'])
-def GetData(request):
-    sql = """SELECT * from biteam.d_tinh"""
-    # print(sql)
-    df=get_bq_df(sql)
-    print(df.shape)
-    return Response({"OK":"200"}, status.HTTP_200_OK)
-
-
 @api_view(['POST'])
 def GetMap(request):
     dict_data = request.data
@@ -526,8 +550,8 @@ def GetMap(request):
     b.lng,
     sum(a.doanhsochuavat) as doanhsochuavat,
     count (distinct sodondathang) as sldh
-    FROM `spatial-vision-343005.biteam.f_sales` a
-    left join `spatial-vision-343005.biteam.d_master_khachhang` b on a.macongtycn = b.branchid and a.makhdms = b.custid
+    FROM `spatial-vision-343005.staging.f_sales` a
+    left join `spatial-vision-343005.staging.d_master_khachhang` b on a.macongtycn = b.branchid and a.makhdms = b.custid
     WHERE (DATE(a.ngaychungtu) >= "{fromDate}" and DATE(a.ngaychungtu) <= "{toDate}") and a.tentinhkh in ('Hà Nam', 'Ninh Bình','Nam Định') and a.makenhkh not in ('NB','OTH_LAB') and a.makenhkh in {kenh_tuple}
     and b.lat is not null
     GROUP BY 1,2,3,4,5,6,7
@@ -627,7 +651,7 @@ def GetRoutes(request):
     "PING" as checktype,
     null as numbercico,
     1 as stt
-    FROM biteam.d_locationtime where date(LocationTime) ='{onDate}' and slsperid in {manv_tpl}
+    FROM staging.d_locationtime where date(LocationTime) ='{onDate}' and slsperid in {manv_tpl}
 
     UNION ALL
 
@@ -640,7 +664,7 @@ def GetRoutes(request):
     checktype,
     numbercico,
     2 as stt
-    FROM biteam.d_checkin where date(updatetime) ='{onDate}' and slsperid in {manv_tpl}
+    FROM staging.d_checkin where date(updatetime) ='{onDate}' and slsperid in {manv_tpl}
     and checktype = 'IO'
 
     UNION ALL
@@ -654,8 +678,8 @@ def GetRoutes(request):
     'SA' as checktype,
     a.numbercico,
     3 as stt
-    FROM biteam.sync_dms_sacheckin a 
-    LEFT JOIN biteam.d_checkin b
+    FROM staging.sync_dms_sacheckin a 
+    LEFT JOIN staging.d_checkin b
     on a.numbercico = b.numbercico
     and date(b.updatetime) = '{onDate}'
     and b.checktype = 'IO'
@@ -672,8 +696,8 @@ def GetRoutes(request):
     'DE' as checktype,
     a.numbercico,
     4 as stt
-    FROM biteam.sync_dms_decheckin a
-    LEFT JOIN biteam.d_checkin b
+    FROM staging.sync_dms_decheckin a
+    LEFT JOIN staging.d_checkin b
     on a.numbercico = b.numbercico
     and b.checktype = 'IO'
     and date(b.updatetime) = '{onDate}'
@@ -684,7 +708,7 @@ def GetRoutes(request):
     , data_tuyen as (
     SELECT custid,slsperid,crtd_datetime,
     Case when routetype in ('B','D') then 1 else 2 end as routetype,
-    FROM `spatial-vision-343005.biteam.sync_dms_srm` 
+    FROM `spatial-vision-343005.staging.sync_dms_srm` 
     where delroutedet is false and routetype in ('B','D') and slsperid in {manv_tpl}
     )
 
@@ -705,13 +729,13 @@ def GetRoutes(request):
     select a.*,row_number() over (partition by a.custid order by routetype asc,a.crtd_datetime desc) as loc ,lat,lng 
 
     from data_tuyen a 
-    LEFT JOIN `biteam.d_master_khachhang` b on a.custid = b.custid
+    LEFT JOIN `staging.d_master_khachhang` b on a.custid = b.custid
 
     )
     where loc =1
     )
 
-    select a.*, b.custname from merged a LEFT JOIN `biteam.d_master_khachhang` b on a.custid = b.custid
+    select a.*, b.custname from merged a LEFT JOIN `staging.d_master_khachhang` b on a.custid = b.custid
     order by stt,slsperid, updatetime asc
     """
     # print("sql", sql)
@@ -788,11 +812,11 @@ def GetRoutes(request):
                 <b>Time</b>: {row.updatetime}<br>
                 """
                 if row.check == "SAIN":
-                    bt_icon = folium.plugins.BeautifyIcon(iconSize=[20,20], spin=True, icons="arrow-down", iconShape= "marker", borderWidth = 2, border_color="black", number=row.Index+1, background_color=f"{cl}", textColor="white")
+                    bt_icon = folium.plugins.BeautifyIcon(iconSize=[20,20], iconShape = "marker", borderWidth = 2, border_color="black", number=row.Index+1, background_color=f"{cl}", textColor="white")
                 elif row.check == "INDE":
-                    bt_icon = folium.plugins.BeautifyIcon(iconSize=[20,20], spin=True, icons="arrow-down", iconShape= "rectangle", borderWidth = 2, border_color="black", number=row.Index+1, background_color=f"{cl}", textColor="white")
+                    bt_icon = folium.plugins.BeautifyIcon(iconSize=[20,20], iconShape = "rectangle", borderWidth = 2, border_color="black", number=row.Index+1, background_color=f"{cl}", textColor="white")
                 else:
-                    bt_icon = folium.plugins.BeautifyIcon(iconSize=[20,20], spin=True, icons="arrow-down", iconShape= "circle", borderWidth = 2, border_color="black", number=row.Index+1, background_color=f"{cl}", textColor="white")
+                    bt_icon = folium.plugins.BeautifyIcon(iconSize=[20,20], iconShape = "circle", borderWidth = 2, border_color="black", number=row.Index+1, background_color=f"{cl}", textColor="white")
                 folium.Marker(location=[row.lat, row.lng],
                 tooltip = tooltip,
                 icon=bt_icon,
@@ -802,6 +826,17 @@ def GetRoutes(request):
             else:
                 pass
         feature_group.add_to(map)
+    # Handle hub con
+    HUBCON = pd.read_csv("https://cloud.merapgroup.com/index.php/s/Yy6rN3rrzpJCBgT/download/hubcon.csv")
+    for row in HUBCON.itertuples():
+        bt_icon = folium.plugins.BeautifyIcon(iconSize=[30,30], icon="home", iconShape = "marker", borderWidth = 2, border_color="black")
+        tooltip = \
+        f"""
+        <b>NT</b>: <b>{row.hubname}</b>
+        """        
+        folium.Marker(location=[row.lat, row.lng], tooltip=tooltip, icon=bt_icon).add_to(map)
+
+
     # import datetime
     TagFilterButton(['SAIN','INDE','ININ']).add_to(map)
     lc.add_to(map)
