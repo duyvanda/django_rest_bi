@@ -197,7 +197,6 @@ def CreateOrder(request):
         BBHN_exist = check_exist_ms(sql)
         logger.log_text(f"Received data and BBHN_exist is {BBHN_exist}")
         if BBHN_exist:
-            #handle post VNPOST
             url_createorder = f"{settings.UAT_URL}/doitac/createorder"
             headers = CaseInsensitiveDict()
             headers['Content-Type'] = 'application/json'

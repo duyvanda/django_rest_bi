@@ -87,4 +87,3 @@ def GetData(request):
     df=get_bq_df(sql)
     print(df.shape)
     return Response({"OKOK":"200"}, status.HTTP_200_OK)
-
