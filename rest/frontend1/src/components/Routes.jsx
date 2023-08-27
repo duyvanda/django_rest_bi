@@ -44,88 +44,44 @@ function Routes() {
     // SetToDate('');
   };
 
-  return (
-    <div>
-      <Form className="d-flex ml-5 mt-2" onSubmit={handleRoutesSubmit}>
-        <Form.Group>
-          <Form.Control
-            type="text"
-            disabled={true}
-            as="input"
-            htmlSize={25}
-            className="text-truncate"
-            value={tinh}
-            onChange={handleTextChange}
-            placeholder="Tinh,Tinh,Tinh"
-          ></Form.Control>
-        </Form.Group>
+  if (!loading) {
 
-        <Form.Group>
-          <Form.Control
-            type="text"
-            disabled={true}
-            as="input"
-            htmlSize={14}
-            className="text-truncate"
-            value={kenh}
-            onChange={handleKenhChange}
-            placeholder="Kenh,Kenh,Kenh"
-          ></Form.Control>
-        </Form.Group>
+    return (
+      <div>
+        <Form className='d-flex ml-5 mt-2' onSubmit={handleRoutesSubmit}>
 
-        <Form.Group>
-          <Form.Control
-            type="text"
-            disabled={true}
-            as="input"
-            htmlSize={14}
-            className="text-truncate"
-            value={manv}
-            onChange={console.log("null")}
-            placeholder="DS NV"
-          ></Form.Control>
-        </Form.Group>
+          <Form.Group>
+            <Form.Control type="text" disabled={true} as='input' htmlSize={25} className='text-truncate' value={tinh} onChange={handleTextChange} placeholder='Tinh,Tinh,Tinh'></Form.Control>
+          </Form.Group>
 
-        <Form.Group>
-          <Form.Control
-            type="text"
-            value={onDate}
-            htmlSize={8}
-            onChange={handleOnDateChange}
-            placeholder="onDate: 01-06-2023"
-          ></Form.Control>
-        </Form.Group>
+          <Form.Group>
+            <Form.Control type="text" disabled={true} as='input' htmlSize={14} className='text-truncate' value={kenh} onChange={handleKenhChange} placeholder='Kenh,Kenh,Kenh'></Form.Control>
+          </Form.Group>
 
-        <Button
-          className="ml-2 border-0"
-          type="submit"
-          style={{ backgroundColor: "#00A79D" }}
-        >
-          Submit
-        </Button>
-      </Form>
-      {loading && (
-        <Spinner
-          animation="border"
-          role="status"
-          style={{
-            height: "100px",
-            width: "100px",
-            margin: "auto",
-            display: "block",
-          }}
-        >
-          <span className="sr-only">Loading...</span>
+          <Form.Group>
+            <Form.Control type="text" disabled={true} as='input' htmlSize={14} className='text-truncate' value={manv} onChange={console.log("null")} placeholder='DS NV'></Form.Control>
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Control type="text" value={onDate} htmlSize={8} onChange={handleOnDateChange} placeholder='onDate: 01-06-2023'></Form.Control>
+          </Form.Group>
+
+          <Button className="ml-2 border-0"  type="submit" style={{backgroundColor:"#00A79D"}}>Submit</Button>
+        </Form>
+        <iframe className="mt-2" src={routes}  style={{ border: 1, height: "100vh", frameBorder:"0", width: "100vw"  }} allowFullScreen></iframe>
+      </div>
+    );
+
+  }
+  else {
+        return (
+      <div>
+        <h1>Loading Map</h1>
+        <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
+        <span className="sr-only">Loading...</span>
         </Spinner>
-      )}
-
-      <iframe
-        className="mt-2"
-        src={routes}
-        style={{ border: 1, height: "100vh", frameBorder: "0", width: "100vw" }}
-        allowFullScreen
-      ></iframe>
-    </div>
-  );
+      </div>
+        )
+  }
 }
 export default Routes;
