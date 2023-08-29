@@ -65,55 +65,55 @@ function VnpEditKH({history}) {
 
   const handle_changed_id = (e) => {
     const data = e.target.value;
-    console.log(data) // should be empty
+    console.log(data)
     set_id(data);
   };
 
   const handle_changed_ma_kh_dms = (e) => {
     const data = e.target.value;
-    console.log(data) // should be empty
+    console.log(data)
     set_ma_kh_dms(data);
   }; 
 
   const handle_changed_receiverName = (e) => {
     const data = e.target.value;
-    console.log(data) // should be empty
+    console.log(data)
     set_receiverName(data);
   }; 
 
   const handle_changed_receiverAddress = (e) => {
     const data = e.target.value;
-    console.log(data) // should be empty
+    console.log(data)
     set_receiverAddress(data);
   }; 
 
   const handle_changed_receiverProvinceCode = (e) => {
     const data = e.target.value;
-    console.log(data) // should be empty
+    console.log(data)
     set_receiverProvinceCode(data);
   }; 
 
   const handle_changed_receiverDistrictCode = (e) => {
     const data = e.target.value;
-    console.log(data) // should be empty
+    console.log(data)
     set_receiverDistrictCode(data);
   }; 
 
   const handle_changed_receiverCommuneCode = (e) => {
     const data = e.target.value;
-    console.log(data) // should be empty
+    console.log(data)
     set_receiverCommuneCode(data);
   }; 
 
   const handle_changed_receiverPhone = (e) => {
     const data = e.target.value;
-    console.log(data) // should be empty
+    console.log(data)
     set_receiverPhone(data);
   }; 
 
   const handle_changed_receiverEmail = (e) => {
     const data = e.target.value;
-    console.log(data) // should be empty
+    console.log(data)
     set_receiverEmail(data);
   }; 
 

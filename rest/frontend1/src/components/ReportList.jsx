@@ -3,6 +3,7 @@ import { useState, useContext, useEffect } from 'react'
 import FeedbackContext from '../context/FeedbackContext'
 import { Link } from 'react-router-dom'
 import Form from 'react-bootstrap/Form';
+import { FaChartPie } from 'react-icons/fa';
 
 function ReportList({history}) {
 
@@ -69,9 +70,8 @@ function ReportList({history}) {
         <li className="list-group-item mt-2" key={el.stt}>
           <div className="row">
           
-            <div className="col">
-              
-              <Link target="_blank" onClick={e => {console.log('The link was clicked.'); }} style={{textDecoration: "None", color:"black"}} to={`/reportscreen/${el.stt}`} > <p className="text-left" style={{ fontWeight: "bold", paddingBottom: "0px" }}><strong><span><i className='fas fa-chart-pie' style={{ fontWeight: "bold", color: "blue" }}></i> {el.tenreport}</span></strong></p></Link>
+            <div className="col">              
+              <Link target="_blank" onClick={e => {console.log('The link was clicked.'); }} style={{textDecoration: "None", color:"black"}} to={`/reportscreen/${el.stt}`} > <p className="text-left" style={{ fontWeight: "bold", paddingBottom: "0px" }}><strong><span><FaChartPie style={{ fontWeight: "bold", color: "blue", fontSize:25 }} /> {el.tenreport}</span></strong></p></Link>
               
             </div>
           </div>

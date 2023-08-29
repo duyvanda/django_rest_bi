@@ -7,7 +7,6 @@ from .views import FileUploadView, UploadSpreedSheetData,LogIn, ChangePass, GetS
 from .views import GetAllUsers, GetOneUser, DeleteOneUser, CreateOneUser, UpdateOneUser
 
 from .views import GetOneKHVNP, CreateOneKHVNP, GetMap, GetRoutes, LogIn_V1, GetStatus_V1
-# from .local_urls import urlpatterns_local
 
 urlpatterns = [
     path('params/', getUrlRequest, name="getQueryParams"),
@@ -36,17 +35,4 @@ urlpatterns = [
     path('createonekhvnp/', CreateOneKHVNP, name="CreateOneKHVNP"),
     path('map/', GetMap, name="GetMap"),
     path('routes/', GetRoutes, name="GetRoutes"),
-    # path('allvipplus/', getAllVipPlus, name="getAllVipPlus"),
 ]
-
-# urlpatterns.append(urlpatterns_local)
-
-# print(urlpatterns)
-
-# path('register/', RegisterView.as_view(), name="register"),
-# path('login/', LoginAPIView.as_view(), name="login"),
-# path('tokenrefresh/', TokenRefreshView.as_view(), name="tokenrefresh"),
-# path('products/', getProducts, name="products"),
-# path('products/<str:pk>', getProduct, name="product"),
-# path('params/', getQueryParams, name="getQueryParams"),
-# path('createorder/', addOrderItems, name="addOrderItems"),

@@ -598,18 +598,22 @@ def GetMap(request):
     dict_data['map_string'] = url
     return Response(dict_data, status.HTTP_200_OK)
 
-
-
 @api_view(['POST'])
 def GetRoutes(request):
     dict_data = request.data
     kenh = dict_data['kenh']
-    kenh_tuple = ()
-    for el in kenh.split(","):
-        kenh_tuple = kenh_tuple + (el, )
-    kenh_tuple = kenh_tuple + ('',)
-    onDate = dict_data['onDate'].split("-")
-    onDate = onDate[2]+'-'+onDate[1]+'-'+onDate[0]
+    kenh_tuple = tuple(kenh)
+    # for el in kenh.split(","):
+    #     kenh_tuple = kenh_tuple + (el, )
+    kenh_tuple = kenh_tuple + ('',) + ('',)
+    manv = dict_data['manv']
+    manv_tpl = tuple(manv)
+    # for el in manv.split(","):
+    #     kenh_tuple = kenh_tuple + (el, )
+    manv_tpl = manv_tpl + ('',) + ('',)
+    # onDate = dict_data['onDate'].split("-")
+    # onDate = onDate[2]+'-'+onDate[1]+'-'+onDate[0]
+    onDate = dict_data['onDate']
     # fromDate
     df = pd.read_csv("https://cloud.merapgroup.com/index.php/s/DCcRCMGYJyLSjgg/download/Hanam_Namdinh_Ninhbinh.csv", encoding="utf-8")
     df = df.sort_values(by="manv")
@@ -834,7 +838,6 @@ def GetRoutes(request):
         <b>NT</b>: <b>{row.hubname}</b>
         """        
         folium.Marker(location=[row.lat, row.lng], tooltip=tooltip, icon=bt_icon).add_to(map)
-
 
     # import datetime
     TagFilterButton(['SAIN','INDE','ININ']).add_to(map)

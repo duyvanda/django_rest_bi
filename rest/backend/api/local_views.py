@@ -84,6 +84,5 @@ def api_ds_theo_khach_example(request):
 @api_view(['GET'])
 def GetData(request):
     sql = """SELECT * from staging.d_tinh"""
-    df=get_bq_df(sql)
-    print(df.shape)
-    return Response({"OKOK":"200"}, status.HTTP_200_OK)
+    df = get_bq_df(sql)
+    return Response(request.META, status.HTTP_200_OK)

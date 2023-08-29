@@ -316,7 +316,9 @@ export default ProductList;
 
 
 
-{/* <Dropdown>
+{/* 
+
+<Dropdown>
 <Dropdown.Toggle variant="success" id="dropdown-basic">
 Dropdown Button
 </Dropdown.Toggle>
@@ -337,4 +339,6 @@ Dropdown Button
   <option value="2">Two</option>
   <option value="3">Three</option>
 </Form.Select>
-</DropdownButton> */}
+</DropdownButton> 
+
+*/}
