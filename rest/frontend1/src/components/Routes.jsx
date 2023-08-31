@@ -36,26 +36,40 @@ function Routes() {
     return newString;
   }
 
+  
+  const fetch_manv_role = async () => {
+
+    const response = await fetch('https://storage.googleapis.com/django_media_biteam/public/map_manv_role.json')
+
+    const data = await response.json()
+
+    // console.log("set_lst_manv_check", data)
+
+    set_lst_manv_check(data)
+    // set_lst_manv_check_ft(data)
+
+  }
+
   const current_date = formatDate(Date())
   const [onDate, setDate] = useState(current_date);
   const { routes, fetchRoutes, loading } = useContext(MapContext);
 
-  const [tinh, setTinh] = useState("Ha Nam,Ninh Binh,Nam Dinh");
+  // const [tinh, setTinh] = useState("Ha Nam,Ninh Binh,Nam Dinh");
   
-  const [kenh, SetKenh] = useState("TP,INS,CLC,PCL,MT");
-  const [manv, SetManv] = useState("MR0000");
-  const [lst_manv_check, set_lst_manv_check] = useState(
-    [
-      {id: "MR2143", name:"Đinh Thị Hoa", checked: false },
-      {id: "MR2524", name:"Nguyễn Tiến Tân", checked: true },
-      {id: "MR2676", name:"Phạm Công Diễn", checked: true },
-      {id: "MR2902", name:"Hoàng Văn Thành", checked: true },
-      {id: "MR2913", name:"Lê Thị Thơm", checked: false },
-      {id: "MR2954", name:"L Đ Tùng", checked: true },
-      {id: "MR2953", name:"P Đ Cẩn", checked: true },
-    ]
+  // const [kenh, SetKenh] = useState("TP,INS,CLC,PCL,MT");
+  // const [manv, SetManv] = useState("MR0000");
+  const [lst_manv_check, set_lst_manv_check] = useState([])
+  const [search, set_search] = useState('')
+    // [
+      // {id: "MR2143", name:"Đinh Thị Hoa", checked: false },
+      // {id: "MR2524", name:"Nguyễn Tiến Tân", checked: true },
+      // {id: "MR2676", name:"Phạm Công Diễn", checked: true },
+      // {id: "MR2902", name:"Hoàng Văn Thành", checked: true },
+      // {id: "MR2913", name:"Lê Thị Thơm", checked: false },
+      // {id: "MR2954", name:"L Đ Tùng", checked: true },
+      // {id: "MR2953", name:"P Đ Cẩn", checked: true },
+    // ]
   
-  );
 
   const [lst_makenh, set_lst_makenh] = useState(
     [
@@ -68,41 +82,26 @@ function Routes() {
   
   );
 
-  const handleTextChange = (e) => {
-    setTinh(e.target.value.toUpperCase());
-  };
+  useEffect(() => {
+    fetch_manv_role()
+  }, []);
 
-  const handleKenhChange = (e) => {
-    SetKenh(e.target.value.toUpperCase());
-  };
+  // const handleTextChange = (e) => {
+  //   setTinh(e.target.value.toUpperCase());
+  // };
+
+  // const handleKenhChange = (e) => {
+  //   SetKenh(e.target.value.toUpperCase());
+  // };
 
   // const handleOnDateChange = (e) => {
   //   SetOnDate(e.target.value.toUpperCase());
   // };
 
-  const handleRoutesSubmit = (e) => {
-    const manv = []
-    for (let i of lst_manv_check) {
-      if (i.checked === true) {manv.push(i.id)}
-    }
+  const handleSearchParam=(e)=>{
+    set_search(e.target.value.toLowerCase())
+  }
 
-    const kenh = []
-    for (let i of lst_makenh) {
-      if (i.checked === true) {kenh.push(i.id)}
-    }
-
-    e.preventDefault();
-    const routesdata = {
-      kenh,
-      manv,
-      onDate,
-    };
-    fetchRoutes(routesdata);
-    console.log(routesdata);
-    // setTinh('');
-    // SetFromDate('');
-    // SetToDate('');
-  };
 
   const handeClick = (e) => {
     // console.log("ID: " + e.target.id);
@@ -115,8 +114,9 @@ function Routes() {
     let lst = [];
     for (const [index, element] of lst_manv_check.entries()) {
       // console.log("index", index, "element", element)
-      if(element.id === e.target.id) {
-        element.checked = !element.checked      
+      if(element.manv === e.target.id) {
+        element.checked = e.target.checked
+        // console.log("ele manv", element.manv)   
         lst.push(element);
       }
       else {
@@ -141,23 +141,55 @@ const handeClickChannel = (e) => {
   set_lst_makenh(lst)
 }
 
+const handleRoutesSubmit = (e) => {
+  const manv = []
+  const fg = []
+  for (let i of lst_manv_check) {
+    if (i.checked === true) 
+    // console.log(i)
+    {manv.push(i.manv); fg.push(i.tencvbh)}
+  }
+
+  const kenh = []
+  for (let i of lst_makenh) {
+    if (i.checked === true) {kenh.push(i.id)}
+  }
+
+  e.preventDefault();
+  const routesdata = {
+    kenh,
+    manv,
+    fg,
+    onDate,
+  };
+  fetchRoutes(routesdata);
+  console.log(routesdata);
+  set_search('');
+  // SetFromDate('');
+  // SetToDate('');
+};
 
   if (!loading) {
 
     return (
       <div>
-        <Form className='d-flex ml-5 mt-2' onSubmit={handleRoutesSubmit}>
-        <Stack direction="horizontal" gap={2}>
+        <Form className='ml-5 mt-2' onSubmit={handleRoutesSubmit}>
+        <Stack direction="horizontal" gap={2} className="col-md-2">
 
           <Dropdown>
             <Dropdown.Toggle id="dropdown-basic">
             Chọn Nhân Viên
             </Dropdown.Toggle>
-            <Dropdown.Menu>
+            <Dropdown.Menu style={{maxHeight: "410px", overflowY: "auto"}}>
+            <Form.Control type="text" onChange={handleSearchParam} placeholder="Tìm Mã Hoặc Tên" />
                 {lst_manv_check
+                .filter( el =>
+                  el.ma_va_ten.includes(search)
+                  )
+                // .slice(0, 100)
                 .map( el =>
-                  <Form.Check className="text-nowrap" type="switch" checked={el.checked} onChange={handeClick} id={el.id} label={el.name}/>
-                    )
+                  <Form.Check key={el.manv} className="text-nowrap" type="switch" checked={el.checked} onChange={handeClick} id={el.manv} label={el.tencvbh}/>
+                  )
                 }
             </Dropdown.Menu>
           </Dropdown>
@@ -169,7 +201,7 @@ const handeClickChannel = (e) => {
             <Dropdown.Menu>
                 {lst_makenh
                 .map( el =>
-                  <Form.Check className="text-nowrap" type="switch" checked={el.checked} onChange={handeClickChannel} id={el.id} label={el.id}/>
+                  <Form.Check key={el.id} className="text-nowrap" type="switch" checked={el.checked} onChange={handeClickChannel} id={el.id} label={el.id}/>
                     )
                 }
             </Dropdown.Menu>
@@ -180,7 +212,9 @@ const handeClickChannel = (e) => {
           <Button className="ml-2 border-0"  type="submit" style={{backgroundColor:"#00A79D"}}>Submit</Button>
           </Stack>
         </Form>
-        <iframe className="mt-2" src={routes}  style={{ border: 1, height: "100vh", frameBorder:"0", width: "100vw"  }} allowFullScreen></iframe>
+        <div align="center" className="mt-2" >
+        <iframe  className="border border-dark mt-2" src={routes}  style={{ border: 1, height: "80vh", frameBorder:"0", width: "94vw"  }} allowFullScreen></iframe>
+        </div>
       </div>
     );
 

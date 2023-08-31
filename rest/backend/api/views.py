@@ -602,25 +602,30 @@ def GetMap(request):
 def GetRoutes(request):
     dict_data = request.data
     kenh = dict_data['kenh']
-    kenh_tuple = tuple(kenh)
-    # for el in kenh.split(","):
-    #     kenh_tuple = kenh_tuple + (el, )
-    kenh_tuple = kenh_tuple + ('',) + ('',)
-    manv = dict_data['manv']
+    kenh_tpl = tuple(kenh)
+    kenh_tpl = kenh_tpl + ('',) + ('',)
+    manv = sorted(dict_data['manv'])
     manv_tpl = tuple(manv)
-    # for el in manv.split(","):
-    #     kenh_tuple = kenh_tuple + (el, )
     manv_tpl = manv_tpl + ('',) + ('',)
-    # onDate = dict_data['onDate'].split("-")
-    # onDate = onDate[2]+'-'+onDate[1]+'-'+onDate[0]
     onDate = dict_data['onDate']
+    fg = dict_data['fg']
     # fromDate
-    df = pd.read_csv("https://cloud.merapgroup.com/index.php/s/DCcRCMGYJyLSjgg/download/Hanam_Namdinh_Ninhbinh.csv", encoding="utf-8")
-    df = df.sort_values(by="manv")
-    manv_tpl = tuple(df.manv.to_list())
-    len_tpl = len(manv_tpl)
-    color_lst = ['red', 'blue', 'green', 'purple', 'orange', 'gray', 'black', 'pink', ' darkred', 'beige', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
+    # df = pd.read_csv("https://cloud.merapgroup.com/index.php/s/DCcRCMGYJyLSjgg/download/Hanam_Namdinh_Ninhbinh.csv", encoding="utf-8")
+    # df = df.sort_values(by="manv")
+    # manv_tpl = tuple(df.manv.to_list())
+    len_tpl = len(manv)
+    color_lst = ['red', 'blue', 'green', 'purple', 'orange', 'gray', 'black', 'pink', 'red', 'blue', 'green', 'purple', 'orange', 'gray', 'black', 'pink', 'red', 'blue', 'green', 'purple', 'orange', 'gray', 'black', 'pink']
     color_lst = color_lst[0:len_tpl]
+
+    data = {
+        'manv': manv,
+        'fg': fg,
+        'cl': color_lst
+    }
+
+    print(data)
+
+    df = pd.DataFrame(data)
 
     # url="https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZHV5dnEiLCJhIjoiY2xqaGJ5anJtMGg1bTNtbzJxNHl1bmtzNCJ9.EMV1gOcu5ild0gIepl9vdQ"
     map = folium.Map(
@@ -709,9 +714,10 @@ def GetRoutes(request):
     )
 
     , data_tuyen as (
-    SELECT custid,slsperid,crtd_datetime,
+    SELECT a.custid, a.slsperid, a.crtd_datetime,
     Case when routetype in ('B','D') then 1 else 2 end as routetype,
-    FROM `spatial-vision-343005.staging.sync_dms_srm` 
+    FROM `spatial-vision-343005.staging.sync_dms_srm`  a
+    INNER JOIN `spatial-vision-343005.staging.d_master_khachhang`  b on a.custid = b.custid and b.channel in {kenh_tpl}
     where delroutedet is false and routetype in ('B','D') and slsperid in {manv_tpl}
     )
 

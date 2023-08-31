@@ -85,4 +85,4 @@ def api_ds_theo_khach_example(request):
 def GetData(request):
     sql = """SELECT * from staging.d_tinh"""
     df = get_bq_df(sql)
-    return Response(request.META, status.HTTP_200_OK)
+    return Response("This server is working fine", status.HTTP_200_OK)

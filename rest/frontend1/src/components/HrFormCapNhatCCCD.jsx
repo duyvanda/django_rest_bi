@@ -53,15 +53,13 @@ function HrFormCapNhatCCCD() {
 
     setNhanVien(data)
 
-    // console.log("DATAPRODUCTS", products)
   }
 
   const handleSearchParam=(e)=>{
-    // setSearch(e.target.value)
-    // e.target.value === "" ? setFilterNhanVien([]) :
+
     setFilterNhanVien(NhanVien.filter(el => el.name
       .includes(removeAccents(e.target.value.toLowerCase())))
-      .slice(0, 20)) // select top 20
+      .slice(0, 20))
   }
 const uploadDataAndFiles = (e) => {
   e.preventDefault();
