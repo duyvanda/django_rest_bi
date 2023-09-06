@@ -21,7 +21,7 @@ function Profile({history, location}) {
 
     const handleTextChange = (e) => {
         setEmail(e.target.value)
-      }
+    }
     
     const handlePassChange = (e) => {
         setPassword(e.target.value)
@@ -42,9 +42,9 @@ function Profile({history, location}) {
     return (
     <div className='container'>
         <Link to="/"> Go Back </Link>
-        <p className='mt-2'>{userInfo.manv}</p>
+        {/* <p className='mt-2'>{userInfo.manv}</p> */}
         {/* <p>{userInfo.phanloai.toString()}</p> */}
-        <h1>Change Pass</h1>
+        <h1>Change Pass {userInfo.manv}</h1>
         <form style={{ display: "inline-block" }} onSubmit={handleSubmit}>
             <label className="form-label">Mật Khẩu Cũ</label>
             <input className="form-control" onChange={handleTextChange} defaultValue={email} type="password" placeholder="Mat Khau Cu" style={{ background: "#f7f7f9", fontFamily: "Arial", border: "none" }}></input>

@@ -6,8 +6,11 @@ import Login from "./components/Login";
 import Profile from "./components/Profile";
 import ReportScreen from "./components/ReportScreen";
 import FormScreen from "./components/FormScreen";
-import VnpEditKH from "./components/VnpEditKH";
-import VnpCreateKH from "./components/VnpCreateKH";
+//MYVNPOST
+import VnpHome from "./myvnpost/VnpHome";
+import VnpEditKH from "./myvnpost/VnpEditKH";
+import VnpCreateKH from "./myvnpost/VnpCreateKH";
+//END MYVNPOST
 import HomeScreen from "./components/HomeScreen";
 import { FeedbackProvider } from "./context/FeedbackContext";
 import { MapProvider } from "./context/MapContext";
@@ -29,6 +32,7 @@ function App() {
               <>
                 <Route exact path="/" component={HomeScreen} />
                 <Route path="/formmdsvnpost" component={FormScreen} />
+                <Route exact path="/myvnpost" component={VnpHome} />
                 <Route path="/myvnpost/editkh" component={VnpEditKH} />
                 <Route path="/myvnpost/createkh" component={VnpCreateKH} />
                 <Route path="/login" component={Login} />

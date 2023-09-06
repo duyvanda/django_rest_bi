@@ -22,16 +22,10 @@ function ReportScreen({match, history}) {
       console.log(typeof(Reports))
       console.log(Reports)
       console.log(Reports.length)
-      // console.log("isMB", isMB)
-      // width
-      
-      //  || document.documentElement.clientWidth || document.body.clientWidth;
-      // console.log("dv_width", dv_width)
       console.log("stt", match.params.id)
       console.log("type of stt", typeof(match.params.id))
       fetchFilerReports(match.params.id, isMB)
 			userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, match.params.id, isMB, dv_width);
-
 		} else {
             history.push('/login');
         };
@@ -48,17 +42,22 @@ function ReportScreen({match, history}) {
     let paramsAsString = JSON.stringify(params);
     let encodedParams = encodeURIComponent(paramsAsString)
 
-    return (
-      shared ?
-      <div align="center" className="border-1 bg-dark" >
-      <iframe frameBorder="0"  src={`https://datastudio.google.com/embed/reporting/${ReportId}${ReportParam}`} style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }} ></iframe>
-      </div>
-        :
-        <div className="container">
-        <h1>Khong The Truy Cap</h1>
-        <Link to="/reports">Đi Đến Danh Sách Reports</Link>
+    if (shared) {
+      return (
+        
+        <div align="center" className="border-1 bg-dark" >
+          <iframe frameBorder="0"  src={`https://datastudio.google.com/embed/reporting/${ReportId}${ReportParam}`} style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }} ></iframe>
         </div>
-    )
+      )
+    }
+    else {
+      return (
+      <div className="container">
+        <h1>Bạn chưa được cấp quyền truy cập</h1>
+        <Link to="/reports">Đi Đến Danh Sách Reports</Link>
+      </div>
+      )
+    }
   }
   
   export default ReportScreen

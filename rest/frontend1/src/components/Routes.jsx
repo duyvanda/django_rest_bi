@@ -39,7 +39,7 @@ function Routes() {
   
   const fetch_manv_role = async () => {
 
-    const response = await fetch('https://storage.googleapis.com/django_media_biteam/public/map_manv_role.json')
+    const response = await fetch('https://bi.meraplion.com/local/manv_role/')
 
     const data = await response.json()
 
@@ -102,6 +102,14 @@ function Routes() {
     set_search(e.target.value.toLowerCase())
   }
 
+  const handleClickNV = () => {
+    let lst = [];
+    for (const i of lst_manv_check) {
+      i.checked = false
+      lst.push(i);
+    };
+    set_lst_manv_check(lst)
+  }
 
   const handeClick = (e) => {
     // console.log("ID: " + e.target.id);
@@ -175,13 +183,16 @@ const handleRoutesSubmit = (e) => {
       <div>
         <Form className='ml-5 mt-2' onSubmit={handleRoutesSubmit}>
         <Stack direction="horizontal" gap={2} className="col-md-2">
-
+        
           <Dropdown>
-            <Dropdown.Toggle id="dropdown-basic">
+            <Dropdown.Toggle id="dropdown-basic" className="text-dark bg-warning border border-warning">
             Chọn Nhân Viên
             </Dropdown.Toggle>
             <Dropdown.Menu style={{maxHeight: "410px", overflowY: "auto"}}>
-            <Form.Control type="text" onChange={handleSearchParam} placeholder="Tìm Mã Hoặc Tên" />
+            <div align="center">
+              <Button variant="warning" size="sm" style={{width:"200px"}} onClick={handleClickNV}>Clear All Nhân Viên</Button>
+            </div>
+            <Form.Control className="mt-2" type="text" onChange={handleSearchParam} placeholder="Tìm Mã Hoặc Tên" />
                 {lst_manv_check
                 .filter( el =>
                   el.ma_va_ten.includes(search)
@@ -195,7 +206,7 @@ const handleRoutesSubmit = (e) => {
           </Dropdown>
 
           <Dropdown>
-            <Dropdown.Toggle id="dropdown-basic">
+            <Dropdown.Toggle id="dropdown-basic" className="text-dark bg-warning border border-warning">
             Chọn Kênh
             </Dropdown.Toggle>
             <Dropdown.Menu>
@@ -207,9 +218,10 @@ const handleRoutesSubmit = (e) => {
             </Dropdown.Menu>
           </Dropdown>
 
-            <Form.Control style={{backgroundColor: "light"}} variant="dark" type="date" value={onDate} htmlSize={8} onChange={(e) => setDate(e.target.value)} placeholder="DateRange"></Form.Control>
+            <Form.Control className="text-dark bg-warning border border-warning" type="date" value={onDate} htmlSize={8} onChange={(e) => setDate(e.target.value)} placeholder="DateRange"></Form.Control>
 
-          <Button className="ml-2 border-0"  type="submit" style={{backgroundColor:"#00A79D"}}>Submit</Button>
+          <Button className="ml-2 border-0"  type="submit" variant="warning">Submit</Button>
+
           </Stack>
         </Form>
         <div align="center" className="mt-2" >
@@ -231,3 +243,6 @@ const handleRoutesSubmit = (e) => {
   }
 }
 export default Routes;
+
+{/* <ListGroup horizontal gap={2} className="col-md-2"> */}
+{/* </ListGroup> */}

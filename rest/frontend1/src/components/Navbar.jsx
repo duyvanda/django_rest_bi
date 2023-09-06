@@ -23,13 +23,11 @@ function Navbar1() {
     return (
         <div>
             <Navbar className="navbar navbar-dark navbar-expand-md bg-dark">
-                <Container>
+                <Container className='d-flex justify-content-start'>
                     {rpScreen ? <Link to="/" className="btn btn-warning">Quay Lại</Link> : <Link to="/" className="navbar-brand">BI PORTAL</Link>}
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto"> 
+
                                     {userInfo ?
-                                            <NavDropdown title={userInfo.manv}>
+                                            <NavDropdown title={userInfo.manv} className='text-white ml-2 '>
                                                     <NavDropdown.Item><Link to="/profile">Đổi Mật Khẩu</Link></NavDropdown.Item>
                                                     <NavDropdown.Item><Link to="/reports">Reports</Link></NavDropdown.Item>
                                                     <NavDropdown.Item onClick={handleClick}>Logout</NavDropdown.Item>
@@ -37,9 +35,9 @@ function Navbar1() {
                                         :
                                         <li className="nav-item"><Link className="nav-link" to="/login">Login</Link></li>
                                     }
-                        </Nav>
-                    </Navbar.Collapse>
-                    <Navbar.Text className='text-truncate'>{FilterReports.tenreport}</Navbar.Text>
+
+                    {FilterReports && <Navbar.Text className='text-white text-truncate ml-3 border-info border-bottom'> {FilterReports.tenreport} </Navbar.Text>}
+                    
                 </Container>
             </Navbar>
         </div>
@@ -47,3 +45,11 @@ function Navbar1() {
 }
 
 export default Navbar1
+
+{/* <Navbar.Toggle aria-controls="basic-navbar-nav" /> */}
+{/* <Navbar.Collapse id="basic-navbar-nav">
+<Nav >  */}
+
+{/* </Nav>
+</Navbar.Collapse> */}
+{/* <Navbar.Text className='text-truncate'>{FilterReports.tenreport}</Navbar.Text> */}
