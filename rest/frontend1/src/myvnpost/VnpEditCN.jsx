@@ -34,16 +34,14 @@ function VnpEditKH() {
   const [edit, set_edit] = useState(true);
   const [disalbe, set_disalbe] = useState(true);
 
-  const width_size = "100px"
-
-  const handle_nhap_ma = (e) => {
+  const handle_changed = (e) => {
     const data = e.target.value;
     console.log(data)
     set_ma_kh_search(data);
 
   };
   
-  const handle_tim_ma = () => {
+  const handle_click = () => {
     fetchKHVNP(ma_kh_search)
     set_edit(false)
   };
@@ -99,8 +97,8 @@ function VnpEditKH() {
               <h1 className="mt-2 ml-2">CHỈNH SỬA MÃ KH</h1>
             </InputGroup>
           <InputGroup className='mt-2'>
-            <Form.Control placeholder="NHẬP VÀO MÃ" onChange={handle_nhap_ma} value = {ma_kh_search}/>
-            <Button style={{fontWeight: "bold"}} variant="warning" onClick={handle_tim_ma} >Tìm Mã</Button>
+            <Form.Control placeholder="NHẬP VÀO MÃ" onChange={handle_changed} value = {ma_kh_search}/>
+            <Button style={{fontWeight: "bold"}} variant="warning" onClick={handle_click} >Tìm Mã</Button>
           </InputGroup>
           {loading === false ?
           (
@@ -121,47 +119,22 @@ function VnpEditKH() {
             :
               <div>
                 <Form onSubmit={handle_submit}>
-                  
                 <InputGroup className="mt-2">
-                  <InputGroup.Text className="w100px"> MÃ KH </InputGroup.Text>
-                  <Form.Control readOnly value = {ma_kh_dms}/>
+                  <InputGroup.Text id="basic-addon1">ABC</InputGroup.Text>
+                  <Form.Control aria-describedby="basic-addon1" readOnly value = {ma_kh_dms}/>
                 </InputGroup>
 
-                  <InputGroup className="mt-2 ">
-                    <InputGroup.Text className="w100px"> TÊN KH </InputGroup.Text>
-                    <Form.Control  required type="text" onChange={ (e) => set_receiverName(e.target.value) } value = {receiverName} />
-                  </InputGroup>
-
-                  <InputGroup className="mt-2">
-                    <InputGroup.Text className="w100px"> ĐỊA CHỈ KH </InputGroup.Text>
-                    <Form.Control required type="text" onChange={ (e) => set_receiverAddress(e.target.value) } value = {receiverAddress} />
-                  </InputGroup>
-
-                  <InputGroup className="mt-2">
-                    <InputGroup.Text className="w100px"> MÃ TỈNH </InputGroup.Text>
-                    <Form.Control required type="text" onChange={ (e) => set_receiverProvinceCode(e.target.value) } value = {receiverProvinceCode} />
-                  </InputGroup>
-
-                  <InputGroup className="mt-2">
-                    <InputGroup.Text className="w100px"> MÃ QUẬN </InputGroup.Text>
-                    <Form.Control required type="text" onChange={ (e) => set_receiverDistrictCode(e.target.value) } value = {receiverDistrictCode} />
-                  </InputGroup>
-
-                  <InputGroup className="mt-2">
-                    <InputGroup.Text className="w100px"> MÃ PX </InputGroup.Text>
-                    <Form.Control required type="text" onChange={ (e) => set_receiverCommuneCode(e.target.value) } value = {receiverCommuneCode} />
-                  </InputGroup>
-
-                  <InputGroup className="mt-2">
-                    <InputGroup.Text className="w100px"> PHONE </InputGroup.Text>
-                    <Form.Control required type="text" onChange={ (e) => set_receiverPhone(e.target.value) } value = {receiverPhone} />
-                  </InputGroup>
-
-                  <InputGroup className="mt-2">
-                    <InputGroup.Text className="w100px"> EMAIL </InputGroup.Text>
-                    <Form.Control required type="text" onChange={ (e) => set_receiverEmail(e.target.value) } value = {receiverEmail} />
-                  </InputGroup>
-
+                <InputGroup className="mt-2">
+                  <InputGroup.Text id="basic-addon1">ABC</InputGroup.Text>
+                  <Form.Control required type="text" className="mt-2" onChange={ (e) => set_receiverName(e.target.value) } value = {receiverName} />
+                </InputGroup>
+                
+                  <Form.Control required type="text" className="mt-2" onChange={ (e) => set_receiverAddress(e.target.value) } value = {receiverAddress} />
+                  <Form.Control required type="text" className="mt-2" onChange={ (e) => set_receiverProvinceCode(e.target.value) } value = {receiverProvinceCode} />  
+                  <Form.Control required type="text" className="mt-2" onChange={ (e) => set_receiverDistrictCode(e.target.value) } value = {receiverDistrictCode} />  
+                  <Form.Control required type="text" className="mt-2" onChange={ (e) => set_receiverCommuneCode(e.target.value) } value = {receiverCommuneCode} />  
+                  <Form.Control required type="text" className="mt-2" onChange={ (e) => set_receiverPhone(e.target.value) } value = {receiverPhone} />  
+                  <Form.Control required type="text" className="mt-2" onChange={ (e) => set_receiverEmail(e.target.value) } value = {receiverEmail} />
                   <Button className='mt-2' disabled={disalbe} variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
                 </Form>
               </div>              

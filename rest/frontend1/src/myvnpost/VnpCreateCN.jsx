@@ -9,8 +9,7 @@ import Button from "react-bootstrap/Button";
 import InputGroup from 'react-bootstrap/InputGroup';
 import MYVNPContext from "../context/MYVNPContext";
 
-
-function VnpCreateKH() {
+function VnpCreateCN() {
 
   const navigate = useHistory();
 
@@ -66,7 +65,7 @@ function VnpCreateKH() {
                 <Form onSubmit={handle_submit}>
                   <InputGroup>
                     <Button variant="warning" className="font-weight-bold" size="sm" onClick={ () => navigate.push("/myvnpost") }>QUAY LẠI</Button>
-                    <h1 className="mt-2 ml-2">THÊM MỚI KHÁCH HÀNG</h1>
+                    <h1 className="mt-2 ml-2">THÊM MỚI CHI NHÁNH</h1>
                   </InputGroup>
                   <Form.Control required type="text" className="mt-2" placeholder="MÃ KH" onChange={ (e) => set_ma_kh_dms(e.target.value) } value = {ma_kh_dms}/>
                   <Form.Control required type="text" className="mt-2" placeholder="TÊN KH" onChange={ (e) => set_receiverName(e.target.value) } value = {receiverName}/>
@@ -81,7 +80,7 @@ function VnpCreateKH() {
 
                 {loading && 
                   <div>
-                    <h1>Khởi Tạo Khách Hàng</h1>
+                    <h1>Khởi Tạo Chi Nhánh</h1>
                     <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
                     <span className="sr-only">Loading...</span>
                     </Spinner>
@@ -103,7 +102,7 @@ function VnpCreateKH() {
   )
 }
 
-export default VnpCreateKH
+export default VnpCreateCN
 
 // https://getbootstrap.com/docs/5.0/customize/color/
 // https://materialui.co/colors/indigo/100

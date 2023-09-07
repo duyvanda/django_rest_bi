@@ -10,7 +10,9 @@ import FormScreen from "./components/FormScreen";
 import VnpHome from "./myvnpost/VnpHome";
 import VnpEditKH from "./myvnpost/VnpEditKH";
 import VnpCreateKH from "./myvnpost/VnpCreateKH";
-//END MYVNPOST
+import VnpEditCN from "./myvnpost/VnpEditCN";
+import VnpCreateCN from "./myvnpost/VnpCreateCN";
+//REPORT
 import HomeScreen from "./components/HomeScreen";
 import { FeedbackProvider } from "./context/FeedbackContext";
 import { MapProvider } from "./context/MapContext";
@@ -18,6 +20,7 @@ import { VNPProvider } from "./context/VNPContext";
 import { MYVNPProvider } from "./context/MYVNPContext";
 import ReportList from "./components/ReportList";
 import TestScreenSize from "./components/TestScreenSize.jsx";
+// MAPS
 import Maps from "./components/Maps.jsx";
 import Routes from "./components/Routes.jsx";
 
@@ -31,10 +34,14 @@ function App() {
               <Navbar1 />
               <>
                 <Route exact path="/" component={HomeScreen} />
+                {/* MYVNP */}
                 <Route path="/formmdsvnpost" component={FormScreen} />
                 <Route exact path="/myvnpost" component={VnpHome} />
                 <Route path="/myvnpost/editkh" component={VnpEditKH} />
                 <Route path="/myvnpost/createkh" component={VnpCreateKH} />
+                <Route path="/myvnpost/editcn" component={VnpEditKH} />
+                <Route path="/myvnpost/createcn" component={VnpCreateKH} />
+                {/* REPORT */}
                 <Route path="/login" component={Login} />
                 <Route path="/profile" component={Profile} />
                 <Route path="/reports" component={ReportList} />

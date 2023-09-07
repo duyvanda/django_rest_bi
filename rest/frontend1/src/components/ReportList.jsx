@@ -57,28 +57,43 @@ function ReportList({history}) {
   }
 
   return (
-  <div className='container'>
-    <Form className='mt-2'>
-    <Form.Control className='border-1' type="text" style={{ background: "#f7f7f9", fontFamily: "Arial"}} onChange={handleSearchReport} placeholder="Tìm Report" />
-    </Form>
-    <ul className="list-group">
-    {Reports
-    .filter(el => el.manv === userInfo.manv)
-    .filter(el=> removeAccents(el.tenreport.toLowerCase()).includes(SearchReport))
-    .map(el => 
-      
-        <li className="list-group-item mt-2" key={el.stt}>
-          <div className="row">
-          
-            <div className="col">              
-              <Link target="_blank" onClick={e => {console.log('The link was clicked.'); }} style={{textDecoration: "None", color:"black"}} to={`/reportscreen/${el.stt}`} > <p className="text-left" style={{ fontWeight: "bold", paddingBottom: "0px" }}><strong><span><FaChartPie style={{ fontWeight: "bold", color: "blue", fontSize:25 }} /> {el.tenreport}</span></strong></p></Link>
-              
-            </div>
-          </div>
-        </li>
-      )}
-  </ul>
-  </div>
-)}
+    <div className='container'>
+      <Form className='mt-2'>
+        <Form.Control className='border-1' type="text" style={{ background: "#f7f7f9", fontFamily: "Arial"}} onChange={handleSearchReport} placeholder="Tìm Report" />
+      </Form>
+      <ul className="list-group">
+      {Reports
+      .filter(el => el.manv === userInfo.manv)
+      .filter(el=> removeAccents(el.tenreport.toLowerCase()).includes(SearchReport))
+      .map(el =>
+          (
+            el.type === 3  ? 
+            (
+              <li className="list-group-item mt-2" key={el.stt}>
+                <div className="row">
+                  <div className="col">
+                  <Link target="_blank" onClick={e => {console.log('The link was clicked.'); }} style={{textDecoration: "None", color:"black"}} to={`${el.id}`} > <p className="text-left" style={{ fontWeight: "bold", paddingBottom: "0px" }}><strong><span><FaChartPie style={{ fontWeight: "bold", color: "blue", fontSize:25 }} /> {el.tenreport}</span></strong></p></Link>
+                  </div>
+                </div>
+              </li>
+            ) 
+            : 
+            (
+              <li className="list-group-item mt-2" key={el.stt}>
+                <div className="row">
+                  <div className="col">
+                  <Link target="_blank" onClick={e => {console.log('The link was clicked.'); }} style={{textDecoration: "None", color:"black"}} to={`/reportscreen/${el.stt}`} > <p className="text-left" style={{ fontWeight: "bold", paddingBottom: "0px" }}><strong><span><FaChartPie style={{ fontWeight: "bold", color: "blue", fontSize:25 }} /> {el.tenreport}</span></strong></p></Link>
+                  </div>
+                </div>
+              </li>
+            )
+          )
+        )
+      }
+      </ul>
+    </div>
+)
+
+}
 
 export default ReportList

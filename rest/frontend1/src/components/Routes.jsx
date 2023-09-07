@@ -1,19 +1,41 @@
-import React from "react";
 import { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import MapContext from "../context/MapContext";
+import FeedbackContext from '../context/FeedbackContext'
 import {
   Button,
   Dropdown,
-  DropdownButton,
   Form,
-  InputGroup,
   Spinner,
 } from "react-bootstrap";
 
-import ListGroup from 'react-bootstrap/ListGroup';
+// import ListGroup from 'react-bootstrap/ListGroup';
 import Stack from 'react-bootstrap/Stack';
 
-function Routes() {
+function Routes({history}) {
+
+  const {userLogger, SetRpScreen, fetchFilerReports, shared } = useContext(FeedbackContext)
+
+  const fetch_manv_role = async (manv) => {
+    const response = await fetch(`https://bi.meraplion.com/local/manv_role/?manv=${manv}`)
+    const data = await response.json()
+    set_lst_manv_check(data)
+  }
+
+  useEffect(() => {
+		if (localStorage.getItem("userInfo")) {
+      const media = window.matchMedia('(max-width: 960px)');
+      const isMB = (media.matches);
+      const dv_width = window.innerWidth;
+      userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, '10', isMB, dv_width);
+      SetRpScreen(true);
+      fetch_manv_role(JSON.parse(localStorage.getItem("userInfo")).manv);
+      fetchFilerReports("10", isMB);
+		} else {
+            history.push('/login');
+        };
+	}, []);
+
   function formatDate(date) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),
@@ -28,27 +50,16 @@ function Routes() {
     return [year, month, day].join('-');
   }
 
-  function reverseString(str) {
-    var newString = "";
-    for (var i = str.length - 1; i >= 0; i--) {
-        newString += str[i];
-    }
-    return newString;
-  }
+  // function reverseString(str) {
+  //   var newString = "";
+  //   for (var i = str.length - 1; i >= 0; i--) {
+  //       newString += str[i];
+  //   }
+  //   return newString;
+  // }
 
   
-  const fetch_manv_role = async () => {
 
-    const response = await fetch('https://bi.meraplion.com/local/manv_role/')
-
-    const data = await response.json()
-
-    // console.log("set_lst_manv_check", data)
-
-    set_lst_manv_check(data)
-    // set_lst_manv_check_ft(data)
-
-  }
 
   const current_date = formatDate(Date())
   const [onDate, setDate] = useState(current_date);
@@ -81,11 +92,6 @@ function Routes() {
     ]
   
   );
-
-  useEffect(() => {
-    fetch_manv_role()
-  }, []);
-
   // const handleTextChange = (e) => {
   //   setTinh(e.target.value.toUpperCase());
   // };
@@ -177,7 +183,16 @@ const handleRoutesSubmit = (e) => {
   // SetToDate('');
 };
 
-  if (!loading) {
+  if (!shared) {
+    return (
+      <div className="container">
+        <h1>Bạn chưa được cấp quyền truy cập</h1>
+        <Link to="/reports">Đi Đến Danh Sách Reports</Link>
+      </div>
+      )
+  }
+
+  else if (!loading) {
 
     return (
       <div>

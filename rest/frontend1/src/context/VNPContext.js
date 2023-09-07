@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect } from "react";
 import ChiNhanh from "../data/ChiNhanh";
-import PLReports from "../data/PLReports";
 
 const VNPContext = createContext();
 
