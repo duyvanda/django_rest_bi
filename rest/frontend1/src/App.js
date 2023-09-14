@@ -12,6 +12,7 @@ import VnpEditKH from "./myvnpost/VnpEditKH";
 import VnpCreateKH from "./myvnpost/VnpCreateKH";
 import VnpEditCN from "./myvnpost/VnpEditCN";
 import VnpCreateCN from "./myvnpost/VnpCreateCN";
+import VnpCreateOrder from "./myvnpost/VnpCreateOrder";
 //REPORT
 import HomeScreen from "./components/HomeScreen";
 import { FeedbackProvider } from "./context/FeedbackContext";
@@ -22,7 +23,14 @@ import ReportList from "./components/ReportList";
 import TestScreenSize from "./components/TestScreenSize.jsx";
 // MAPS
 import Maps from "./components/Maps.jsx";
+import MapBox from "./components/MapBox.jsx";
 import Routes from "./components/Routes.jsx";
+//REALTIME
+import TonKhoVaTocDoBan from "./realtime/TonKhoVaTocDoBan";
+import Ton_phan_bo_hang_hoa from "./realtime/Ton_phan_bo_hang_hoa";
+//FORMCONTROL
+import Theo_doi_bb_giao_nhan_hang_hoa from "./formcontrol/theo_doi_bb_giao_nhan_hang_hoa";
+
 
 function App() {
   return (
@@ -39,8 +47,15 @@ function App() {
                 <Route exact path="/myvnpost" component={VnpHome} />
                 <Route path="/myvnpost/editkh" component={VnpEditKH} />
                 <Route path="/myvnpost/createkh" component={VnpCreateKH} />
-                <Route path="/myvnpost/editcn" component={VnpEditKH} />
-                <Route path="/myvnpost/createcn" component={VnpCreateKH} />
+                <Route path="/myvnpost/editcn" component={VnpEditCN} />
+                <Route path="/myvnpost/createcn" component={VnpCreateCN} />
+                <Route path="/myvnpost/createorder" component={VnpCreateOrder} />
+                {/* Tồn Kho Và Tốc Độ Bán */}
+                <Route path="/realtime/tonkhovatocdoban" component={TonKhoVaTocDoBan} />
+                <Route path="/realtime/ton_phan_bo_hang_hoa/:id" component={Ton_phan_bo_hang_hoa} />
+                {/* Form Control */}
+                <Route path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa" component={Theo_doi_bb_giao_nhan_hang_hoa} />
+                {/* <Route path="/formcontrol/sup_location_ngoai_mcp" component={Sup_location_ngoai_mcp} /> */}
                 {/* REPORT */}
                 <Route path="/login" component={Login} />
                 <Route path="/profile" component={Profile} />
@@ -49,6 +64,7 @@ function App() {
                 <Route path="/testscreensize" component={TestScreenSize} />
                 <Route path="/maps/sales" component={Maps} />
                 <Route path="/maps/routes" component={Routes} />
+                <Route path="/mapbox" component={MapBox} />
               </>
             </Router>
           </MYVNPProvider>

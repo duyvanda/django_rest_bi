@@ -15,11 +15,15 @@ import Stack from 'react-bootstrap/Stack';
 function Routes({history}) {
 
   const {userLogger, SetRpScreen, fetchFilerReports, shared } = useContext(FeedbackContext)
+  const { routes, fetchRoutes, loading, SetLoading } = useContext(MapContext);
 
-  const fetch_manv_role = async (manv) => {
-    const response = await fetch(`https://bi.meraplion.com/local/manv_role/?manv=${manv}`)
+  const fetch_manv_role = async () => {
+    SetLoading(true)
+    // const response = await fetch(`https://bi.meraplion.com/local/manv_role/?manv=${manv}`)
+    const response = await fetch(`https://bi.meraplion.com/local/manv_role/`)
     const data = await response.json()
     set_lst_manv_check(data)
+    SetLoading(false)
   }
 
   useEffect(() => {
@@ -63,7 +67,7 @@ function Routes({history}) {
 
   const current_date = formatDate(Date())
   const [onDate, setDate] = useState(current_date);
-  const { routes, fetchRoutes, loading } = useContext(MapContext);
+
 
   // const [tinh, setTinh] = useState("Ha Nam,Ninh Binh,Nam Dinh");
   
@@ -108,7 +112,7 @@ function Routes({history}) {
     set_search(e.target.value.toLowerCase())
   }
 
-  const handleClickNV = () => {
+  const handleClearNV = () => {
     let lst = [];
     for (const i of lst_manv_check) {
       i.checked = false
@@ -130,7 +134,7 @@ function Routes({history}) {
       // console.log("index", index, "element", element)
       if(element.manv === e.target.id) {
         element.checked = e.target.checked
-        // console.log("ele manv", element.manv)   
+        // console.log("ele manv", element.manv)
         lst.push(element);
       }
       else {
@@ -189,7 +193,7 @@ const handleRoutesSubmit = (e) => {
         <h1>Bạn chưa được cấp quyền truy cập</h1>
         <Link to="/reports">Đi Đến Danh Sách Reports</Link>
       </div>
-      )
+    )
   }
 
   else if (!loading) {
@@ -205,17 +209,13 @@ const handleRoutesSubmit = (e) => {
             </Dropdown.Toggle>
             <Dropdown.Menu style={{maxHeight: "410px", overflowY: "auto"}}>
             <div align="center">
-              <Button variant="warning" size="sm" style={{width:"200px"}} onClick={handleClickNV}>Clear All Nhân Viên</Button>
+              <Button variant="warning" size="sm" style={{width:"200px"}} onClick={handleClearNV}>Clear All Nhân Viên</Button>
             </div>
             <Form.Control className="mt-2" type="text" onChange={handleSearchParam} placeholder="Tìm Mã Hoặc Tên" />
                 {lst_manv_check
-                .filter( el =>
-                  el.ma_va_ten.includes(search)
-                  )
+                .filter( el => el.ma_va_ten.includes(search))
                 // .slice(0, 100)
-                .map( el =>
-                  <Form.Check key={el.manv} className="text-nowrap" type="switch" checked={el.checked} onChange={handeClick} id={el.manv} label={el.tencvbh}/>
-                  )
+                .map( el => <Form.Check key={el.manv} className="text-nowrap" type="switch" checked={el.checked} onChange={handeClick} id={el.manv} label={el.tencvbh}/>)
                 }
             </Dropdown.Menu>
           </Dropdown>
@@ -247,14 +247,15 @@ const handleRoutesSubmit = (e) => {
 
   }
   else {
-        return (
-      <div>
-        <h1>Loading Map</h1>
-        <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-        <span className="sr-only">Loading...</span>
-        </Spinner>
-      </div>
-        )
+    return (
+
+        <div>
+          <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
+          <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
+          </Spinner>
+        </div>
+      
+    )
   }
 }
 export default Routes;

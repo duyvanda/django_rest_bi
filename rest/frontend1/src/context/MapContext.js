@@ -62,6 +62,7 @@ export const MapProvider = ({ children }) => {
   return (
     <MapContext.Provider
       value={{
+        SetLoading,
         loading,
         map,
         fetchMaps,

@@ -171,7 +171,7 @@ function ProductList({ history }) {
                         {chiNhanh
                         .map(el =><option key={el.id} value={[el.chinhanh, el.SenderTel, el.SenderFullname, el.SenderAddress, el.SenderWardId, el.SenderDistrictId, el.SenderProvinceId]}> {el.chinhanh} </option>
                         )}
-                  </Form.Select>
+                </Form.Select>
 
                   <label className="form-label" style={{fontWeight: "bold"}} >MÃ CN THEO ĐƠN + BBNH</label>
                   <input className="form-control" type="text" onChange={handleBBNH} value={bbnh} placeholder="Ví dụ MR0001PBNH09202200511"></input>

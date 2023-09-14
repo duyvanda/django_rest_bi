@@ -72,7 +72,7 @@ function ReportList({history}) {
               <li className="list-group-item mt-2" key={el.stt}>
                 <div className="row">
                   <div className="col">
-                  <Link target="_blank" onClick={e => {console.log('The link was clicked.'); }} style={{textDecoration: "None", color:"black"}} to={`${el.id}`} > <p className="text-left" style={{ fontWeight: "bold", paddingBottom: "0px" }}><strong><span><FaChartPie style={{ fontWeight: "bold", color: "blue", fontSize:25 }} /> {el.tenreport}</span></strong></p></Link>
+                  <Link target="_blank" onClick={e => {console.log('The link was clicked.'); }} style={{textDecoration: "None", color:"black"}} to={`${el.link_report}`} > <p className="text-left" style={{ fontWeight: "bold", paddingBottom: "0px" }}><strong><span><FaChartPie style={{ fontWeight: "bold", color: "blue", fontSize:25 }} /> {el.tenreport}</span></strong></p></Link>
                   </div>
                 </div>
               </li>

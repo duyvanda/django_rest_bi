@@ -143,40 +143,19 @@ def CreateOrder(request):
     logger = logging_client.logger(log_name)
     logger.log_text(f"Received create request,\nRequest Data :{request.data},\nRequest Headers: {request.headers},\npath: {request.get_full_path()},\nHTTP_X_FORWARDED_FOR: {request.META.get('HTTP_X_FORWARDED_FOR')},\nREMOTE_ADDR: {request.META.get('REMOTE_ADDR')},\nQueryParams: {request.query_params}")
     default_dict = {
-        # "SenderTel": "02437868020",
-        # "SenderFullname": "Cty Dược phẩm Pha Nam - CN Hà Nội",
-        # "SenderAddress": "12H1 Khu Đô Thị Yên Hòa, Cầu Giấy HN",
-        # "SenderWardId": "12260",
-        # "SenderDistrictId": "1220",
-        # "SenderProvinceId": "10",
-        # "ReceiverTel": "02437868020",
-        # "ReceiverFullname": "BV ĐK KV Mường La - Sơn La",
-        # "ReceiverAddress": "Tiểu khu IV, Thị trấn Ít Ong, Huyện Mường La, Sơn La, Việt Nam",
-        # "ReceiverWardId": "36470",
-        # "ReceiverDistrictId": "3647",
-        # "ReceiverProvinceId": "36",
         "ReceiverAddressType": 1,
         "ServiceName": "BK",
-        # "OrderCode": "MR0001PBNH09202200511",
         "PackageContent": "",
         "WeightEvaluation": 0.1,
-        # "WidthEvaluation": 0.1,
-        # "LengthEvaluation": 0.1,
-        # "HeightEvaluation": 0.1,
         "IsPackageViewable": True,
         "CustomerNote": "Phat Dong Kiem, Thu Hoi Bien Ban",
         "PickupType": 1,
-        # "CodAmountEvaluation": 0.0,
-        # "IsReceiverPayFreight": False,
-        # "OrderAmountEvaluation": 0.0,
         "UseBaoPhat": True,
         "UseHoaDon": False,
-        # "CustomerCode": "0843211234C333345",
         "PickupPoscode": "0"
     }
     data =  request.data
     x = 'K' + str(data['Kien']) if int(data['ToTalKien']) != 1 else ''
-    # print("type x", type(x), x)
     try:
         default_dict["SenderTel"] = data['SenderTel']
         default_dict["SenderFullname"] = data['SenderFullname']

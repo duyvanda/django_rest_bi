@@ -30,6 +30,7 @@ function VnpCreateKH() {
   const [receiverDistrictCode, set_receiverDistrictCode] = useState("");
   const [receiverCommuneCode, set_receiverCommuneCode] = useState("");
   const [receiverPhone, set_receiverPhone] = useState("");
+  const [receiverRealName, set_receiverRealName] = useState("");
   const [receiverEmail, set_receiverEmail] = useState("");
 
   const handle_submit = (e) => {
@@ -42,6 +43,7 @@ function VnpCreateKH() {
       "receiverDistrictCode": receiverDistrictCode.trimEnd().trimStart(),
       "receiverCommuneCode": receiverCommuneCode.trimEnd().trimStart(),
       "receiverPhone": receiverPhone.trimEnd().trimStart(),
+      "receiverRealName": receiverRealName.trimEnd().trimStart(),
       "receiverEmail": receiverEmail.trimEnd().trimStart()
     }
     console.log("data", data)
@@ -55,6 +57,7 @@ function VnpCreateKH() {
     set_receiverDistrictCode("");
     set_receiverCommuneCode("");
     set_receiverPhone("");
+    set_receiverRealName("");
     set_receiverEmail("");
   }; 
 
@@ -74,16 +77,16 @@ function VnpCreateKH() {
                   <Form.Control required type="text" className="mt-2" placeholder="MÃ TỈNH" onChange={ (e) => set_receiverProvinceCode(e.target.value) } value = {receiverProvinceCode}/>  
                   <Form.Control required type="text" className="mt-2" placeholder="MÃ QUẬN" onChange={ (e) => set_receiverDistrictCode(e.target.value) } value = {receiverDistrictCode}/>  
                   <Form.Control required type="text" className="mt-2" placeholder="MÃ PHƯỜNG XÃ" onChange={ (e) => set_receiverCommuneCode(e.target.value) } value = {receiverCommuneCode}/>  
-                  <Form.Control required type="text" className="mt-2" placeholder="SỐ ĐIỆN THOẠI" onChange={ (e) => set_receiverPhone(e.target.value) } value = {receiverPhone}/>  
+                  <Form.Control required type="text" className="mt-2" placeholder="SỐ ĐIỆN THOẠI (10 số)" onChange={ (e) => set_receiverRealName(e.target.value) } value = {receiverRealName}/>
+                  <Form.Control type="text" className="mt-2" placeholder="TÊN NGƯỜI NHẬN" onChange={ (e) => set_receiverPhone(e.target.value) } value = {receiverPhone}/>  
                   <Form.Control required type="text" className="mt-2" placeholder="EMAIL" onChange={ (e) => set_receiverEmail(e.target.value) } value = {receiverEmail}/>
                   <Button className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
                 </Form>
 
-                {loading && 
+                {loading &&
                   <div>
-                    <h1>Khởi Tạo Khách Hàng</h1>
+                    <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
                     <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-                    <span className="sr-only">Loading...</span>
                     </Spinner>
                   </div>
                 }

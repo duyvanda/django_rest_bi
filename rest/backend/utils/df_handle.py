@@ -3,8 +3,8 @@ import numpy as np
 from contextlib import closing
 from django.conf import settings
 from google.cloud import storage, bigquery
-from google.oauth2 import service_account
-from googleapiclient import discovery
+# from google.oauth2 import service_account
+# from googleapiclient import discovery
 import os
 import pyodbc
 
@@ -14,7 +14,6 @@ dts = '.biteam'
 
 def check_exist_ms(sql):
     server = '115.165.164.235'
-    driver = 'SQL Server'
     db1 = 'MERAPLION_PRO'
     tcon = 'no'
     uname = 'esales_sync'
@@ -113,7 +112,6 @@ def get_bq_df(sql) -> pd.DataFrame():
     '''
     input a BQ SQL 
     '''
-    # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "D:/spatial-vision-343005-340470c8d77b.json"
     with closing(bigquery.Client()) as client:
         df = client.query(sql).to_dataframe()
         return df
@@ -134,7 +132,6 @@ def get_eotoken(manv, password):
     from requests.structures import CaseInsensitiveDict
     url = f"""https://eoffice.merapgroup.com/eoffice/api/api/auth/login"""
     headers = CaseInsensitiveDict()
-    # headers['Authorization'] = f'Bearer {EO_AU}'
     headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
     headers['accept'] = 'application/json'
     headers['content-type'] = 'application/json; charset=UTF-8'

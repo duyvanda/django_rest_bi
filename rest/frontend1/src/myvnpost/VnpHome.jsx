@@ -26,8 +26,7 @@ function VnpHome() {
         <Col xs={2} className="mt-3 ">
           <ButtonGroup vertical >
           <Link to={'/reportscreen/1'} target="_blank" className="btn btn-dark">Danh Sách Đơn Hàng Đã Tạo</Link>
-          <Link to={'/myvnpost/createkh'} className="btn btn-dark">Tạo Đơn Hàng</Link>
-          <Link to={'/myvnpost/editkh'} className="btn btn-dark">Xóa Đơn Hàng</Link>
+          <Link to={'/myvnpost/createorder'} className="btn btn-dark">Tạo Đơn Hàng</Link>
           </ButtonGroup>
         </Col>
       </Row>
