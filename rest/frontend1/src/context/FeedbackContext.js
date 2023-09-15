@@ -18,6 +18,9 @@ export const FeedbackProvider = ({ children }) => {
   const [shared, setShared] = useState(true);
   const [vw, setVw] = useState("95vw");
   const [loading, SetLoading] = useState(false);
+  const [alert, SetALert] = useState(false);
+  const [alertType, SetALertType] = useState("alert-success");
+  const [alertText, SetALertText] = useState("SUCCESS");
   // const [rt_report, set_rt_report] = useState("https://lookerstudio.google.com/embed/reporting/1ccb8576-9fae-4c46-a757-5a7aa361140d/page/7qYcD");
 
   const URL =
@@ -112,6 +115,20 @@ export const FeedbackProvider = ({ children }) => {
     var minutes = date.getMinutes()< 10 ? '0'+ date.getMinutes().toString() : date.getMinutes().toString();
     var hour = date.getHours()< 10 ? '0'+ date.getHours().toString() : date.getHours().toString();
     return hour+minutes+seconds
+  }
+
+  function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
   }
 
   const fetch_real_time_report = async (data_user, rppr) => {
@@ -301,8 +318,15 @@ export const FeedbackProvider = ({ children }) => {
   return (
     <FeedbackContext.Provider
       value={{
+        formatDate,
         loading,
         SetLoading,
+        alert,
+        SetALert,
+        alertText,
+        SetALertText,
+        alertType,
+        SetALertType,
         manv,
         userInfo,
         loginUser,
