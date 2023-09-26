@@ -1,3 +1,7 @@
+.w75px {
+    width: 73px;
+}
+
 .w100px {
     width: 110px;
 }
@@ -13,4 +17,10 @@
 .w250px {
     width: 250px;
 }
+
+.w100pc {
+    width: 100%;
+}
+
+
 

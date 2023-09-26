@@ -18,7 +18,7 @@ import {
 // import ListGroup from 'react-bootstrap/ListGroup';
 // import Stack from 'react-bootstrap/Stack';
 
-function Theo_doi_bb_giao_nhan_hang_hoa(history) {
+function Theo_doi_bb_giao_nhan_hang_hoa_mds(history) {
 
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
@@ -46,22 +46,23 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
     //---------------------------//
 
     const [search, set_search] = useState("");
-    const [kt_da_nhan, set_kt_da_nhan] = useState("");
-    const [kt_kh_bb, set_kt_kh_bb] = useState("");
-    const [kt_kh_hd, set_kt_kh_hd] = useState("");
+    // const [kt_da_nhan, set_kt_da_nhan] = useState("");
+    // const [kt_kh_bb, set_kt_kh_bb] = useState("");
+    // const [kt_kh_hd, set_kt_kh_hd] = useState("");
 
     const [phan_hoi_uuid, set_phan_hoi_uuid] = useState("");
-    const [kt_phan_hoi, set_kt_phan_hoi] = useState("");
+    const [mds_phan_hoi, set_mds_phan_hoi] = useState("");
     const [lst_phan_hoi, set_lst_phan_hoi] = useState([]);
-    const [kt_ghi_chu, set_kt_ghi_chu] = useState("");
+    const [mds_ghi_chu, set_mds_ghi_chu] = useState("");
+    const [mds_da_ban_giao, set_mds_da_ban_giao] = useState("");
     const [edit_phan_hoi, set_edit_phan_hoi] = useState(false);
 
     //---------------------------//
 
 
-    const fetch_kt_cache_data = async (select_order) => {
+    const fetch_mds_cache_data = async (select_order) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/kt_cache_data/?sodondathang=${select_order}`)
+        const response = await fetch(`https://bi.meraplion.com/local/mds_cache_data/?sodondathang=${select_order}`)
         
         if (!response.ok) {
             SetLoading(false)
@@ -70,14 +71,11 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
         else {
         const data_arr = await response.json()
         const data = data_arr[0]
-        console.log("fetch_kt_cache_data", data);
+        console.log("fetch_mds_cache_data", data);
         set_lst_order(data);
-        //-----------------------------------//
-        set_kt_da_nhan(data.KT_DA_NHAN);
-        set_kt_kh_bb(data.KH_KI_NHAN_THEO_MAU_BB_GIAO_HANG);
-        set_kt_kh_hd(data.KH_KI_NHAN_HANG_TREN_HOA_DON);
-        set_lst_phan_hoi(data.KT_PHAN_HOI);
-        set_kt_ghi_chu(data.KT_GHI_CHU);
+        set_lst_phan_hoi(data.MDS_PHAN_HOI);
+        set_mds_ghi_chu(data.MDS_GHI_CHU);
+        console.log("lst_phan_hoi", data.MDS_PHAN_HOI);
         SetLoading(false)
 
         }
@@ -89,13 +87,13 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
         const data = {
             "uuid": phan_hoi_uuid ==="" ? uuid() : phan_hoi_uuid,
             "active":true,
-            "kt_phan_hoi":kt_phan_hoi,
+            "mds_phan_hoi":mds_phan_hoi,
             "current_date":current_date,
         }
         arr2.push(data);
         console.log("on_click_them_san_pham", arr2)
         set_lst_phan_hoi(arr2);
-        set_kt_phan_hoi("");
+        set_mds_phan_hoi("");
         set_phan_hoi_uuid("");
         set_edit_phan_hoi(false)
     }
@@ -119,7 +117,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
     const on_click_edit_phan_hoi = (el, idx) => {
         document.getElementById("IDSP").focus();
         set_phan_hoi_uuid(el.uuid);
-        set_kt_phan_hoi(el.kt_phan_hoi);
+        set_mds_phan_hoi(el.mds_phan_hoi);
         set_edit_phan_hoi(!edit_phan_hoi);
         on_click_xoa_phan_hoi(el);
 
@@ -127,7 +125,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
 
     const post_form_data = async (data) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/kt_theo_doi_bb_giao_nhan_hang_hoa/`, {
+        const response = await fetch(`https://bi.meraplion.com/local/mds_theo_doi_bb_giao_nhan_hang_hoa/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -162,20 +160,18 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
             "MAKHDMS":lst_order.MAKHDMS,
             "TENKHDMS":lst_order.TENKHDMS,
             "DUNO":lst_order.DUNO,
-            "KT_DA_NHAN":kt_da_nhan,
-            "KH_KI_NHAN_THEO_MAU_BB_GIAO_HANG":kt_kh_bb,
-            "KH_KI_NHAN_HANG_TREN_HOA_DON":kt_kh_hd,
-            "KT_GHI_CHU":kt_ghi_chu,
-            "KT_PHAN_HOI":lst_phan_hoi
+            "MDS_GHI_CHU":mds_ghi_chu,
+            "MDS_DA_BAN_GIAO":mds_da_ban_giao,
+            "MDS_PHAN_HOI":lst_phan_hoi
         }
 
         console.log("handle_submit", data);
         post_form_data(data);
 
-        set_kt_da_nhan("");
-        set_kt_kh_bb("");
-        set_kt_kh_hd("");
-        set_kt_ghi_chu("");
+        // set_kt_da_nhan("");
+        // set_kt_kh_bb("");
+        // set_kt_kh_hd("");
+        set_mds_ghi_chu("");
         set_lst_phan_hoi([]);
         set_lst_order({});
 
@@ -188,7 +184,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
     const handleSearchEnter = (e) => {
         if (e.key === 'Enter') {
             console.log(e.target.value);
-            fetch_kt_cache_data(e.target.value);
+            fetch_mds_cache_data(e.target.value);
             set_search(e.target.value);
         }
     }
@@ -209,33 +205,30 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
                     </div>
                     }
                     <Form onSubmit={handle_submit}>
-                    <FloatingLabel label="Tìm Đơn Hàng - Hóa Đơn Ví Dụ Như DL5-0723-00116-00090632" className="border rounded mt-2 text-muted" > <Form.Control className="" type="text" onKeyDown={handleSearchEnter} value={search} onChange={handleSearchParam} placeholder="" /> </FloatingLabel>
+                    <FloatingLabel label="Tìm Đơn Hàng - Hóa Đơn Ví Dụ Như DL5-0723-00116-00090632" className="border rounded mt-2" > <Form.Control className="" type="text" onKeyDown={handleSearchEnter} value={search} onChange={handleSearchParam} placeholder="" /> </FloatingLabel>
                     
                     <Form.Control className="mt-2" readOnly value = {lst_order.SODONDATHANG}/>
                     <Form.Control className="mt-2" readOnly value = {lst_order.MAKHDMS}/>
                     <Form.Control className="mt-2" readOnly value = {lst_order.DUNO}/>
                     <Form.Control className="mt-2" readOnly value = {lst_order.TENKHDMS}/>
 
-                    <FloatingLabel label="KT ĐÃ NHẬN" className="border rounded mt-2 text-muted" > <Form.Control placeholder="" type="text" onChange={ (e) => set_kt_da_nhan( e.target.value ) } value = {kt_da_nhan} /> </FloatingLabel>
-                    <FloatingLabel label="KH KÍ NHẬN THEO MẪU BIÊN BẢN GIAO HÀNG" className="border rounded mt-2 text-muted" > <Form.Control placeholder="" type="text" onChange={ (e) => set_kt_kh_bb(e.target.value) } value = {kt_kh_bb} /> </FloatingLabel>
-                    <FloatingLabel label="KH KÍ NHẬN HÀNG TRÊN HÓA ĐƠN" className="border rounded mt-2 text-muted" > <Form.Control placeholder="" type="text" onChange={ (e) => set_kt_kh_hd(e.target.value) } value = {kt_kh_hd} /> </FloatingLabel>
-                    <FloatingLabel label="KT GHI CHÚ" className="border rounded mt-2 text-muted" > <Form.Control placeholder="" type="text" onChange={ (e) => set_kt_ghi_chu(e.target.value) } value = {kt_ghi_chu} /> </FloatingLabel>
-                    
+                    <FloatingLabel label="MDS GHI CHÚ" className="border rounded mt-2" > <Form.Control placeholder="" type="text" onChange={ (e) => set_mds_ghi_chu(e.target.value) } value = {mds_ghi_chu} /> </FloatingLabel>
+                    <FloatingLabel label="MDS ĐÃ BÀN GIAO" className="border rounded mt-2" > <Form.Control placeholder="" type="text" onChange={ (e) => set_mds_da_ban_giao(e.target.value) } value = {mds_da_ban_giao} /> </FloatingLabel>
 
                     {/* ADD MULTIPLE ITEMS WITH THE SAME ID */}
 
                     <div className="mt-3 p-1 border border-2 border-success rounded">
-                        <FloatingLabel label="KT PHẢN HỒI" id="IDSP" className="border rounded mt-2 text-muted" > <Form.Control type="text" className="" placeholder="PHAI IN PUT" onChange={ (e) => set_kt_phan_hoi( e.target.value ) } value = {kt_phan_hoi} /> </FloatingLabel>
+                        <FloatingLabel label="MDS PHẢN HỒI" id="IDSP" className="border rounded mt-2" > <Form.Control type="text" className="" placeholder="" onChange={ (e) => set_mds_phan_hoi( e.target.value ) } value = {mds_phan_hoi} /> </FloatingLabel>
                         <FloatingLabel label="DATE" className="border rounded mt-2" > <Form.Control disabled type="date" className="" placeholder="" value={formatDate(Date())} /> </FloatingLabel>
                         {!edit_phan_hoi ? (
                             <>
-                            <Button disabled={kt_phan_hoi===""} size="sm" variant="success" id="button-addon1" className="mb-1 text-left w150px" onClick={ on_click_them_san_pham }>
+                            <Button disabled={mds_phan_hoi===""} size="sm" variant="success" id="button-addon1" className="mb-1 text-left w150px" onClick={ on_click_them_san_pham }>
                             + PHẢN HỒI
                             </Button>
                             </>
                         )
                         :(    
-                            <Button size="sm" variant="danger" id="button-addon1" className="mb-1 text-left w150px" onClick={ on_click_them_san_pham }>
+                            <Button disabled={mds_phan_hoi===""} size="sm" variant="danger" id="button-addon1" className="mb-1 text-left w150px" onClick={ on_click_them_san_pham }>
                             UPDATE
                             </Button>
                         )
@@ -250,7 +243,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
                                     <Button  className="font-weight-bold w75px" variant="outline-danger" onClick={ () => on_click_xoa_phan_hoi(el, index) } > Xóa </Button>
                                     <Button  className="font-weight-bold w75px" variant="outline-success" onClick={ () => on_click_edit_phan_hoi(el, index) } > Edit </Button> 
                                     <Form.Control readOnly type="text" className="" placeholder=""  value = {el.current_date}/>
-                                    <Form.Control readOnly type="textarea" className="w-50" placeholder=""  value = {el.kt_phan_hoi}/>
+                                    <Form.Control readOnly type="text" className="w-50" placeholder=""  value = {el.mds_phan_hoi}/>
                                 </InputGroup>
                             )
                         )
@@ -292,7 +285,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
 
 }
 
-export default Theo_doi_bb_giao_nhan_hang_hoa
+export default Theo_doi_bb_giao_nhan_hang_hoa_mds
 
 {/* <Dropdown required disabled={false} block="true" onSelect = {e =>set_select_order(e)}>
 

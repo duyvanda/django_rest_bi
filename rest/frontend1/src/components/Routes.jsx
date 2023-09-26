@@ -259,6 +259,3 @@ const handleRoutesSubmit = (e) => {
   }
 }
 export default Routes;
-
-{/* <ListGroup horizontal gap={2} className="col-md-2"> */}
-{/* </ListGroup> */}

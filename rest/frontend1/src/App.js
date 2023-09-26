@@ -26,11 +26,13 @@ import Maps from "./components/Maps.jsx";
 import MapBox from "./components/MapBox.jsx";
 import Routes from "./components/Routes.jsx";
 //REALTIME
-import TonKhoVaTocDoBan from "./realtime/TonKhoVaTocDoBan";
+import Ton_Kho_Va_Toc_Do_Ban from "./realtime/Ton_Kho_Va_Toc_Do_Ban";
 import Ton_phan_bo_hang_hoa from "./realtime/Ton_phan_bo_hang_hoa";
 //FORMCONTROL
 import Theo_doi_bb_giao_nhan_hang_hoa from "./formcontrol/theo_doi_bb_giao_nhan_hang_hoa";
-
+import Theo_doi_bb_giao_nhan_hang_hoa_mds from "./formcontrol/theo_doi_bb_giao_nhan_hang_hoa_mds";
+import template from "./formcontrol/template";
+import Danh_muc_dau_thau from "./formcontrol/danh_muc_dau_thau";
 
 function App() {
   return (
@@ -43,7 +45,7 @@ function App() {
               <>
                 <Route exact path="/" component={HomeScreen} />
                 {/* MYVNP */}
-                <Route path="/formmdsvnpost" component={FormScreen} />
+                {/* <Route path="/formmdsvnpost" component={FormScreen} /> */}
                 <Route exact path="/myvnpost" component={VnpHome} />
                 <Route path="/myvnpost/editkh" component={VnpEditKH} />
                 <Route path="/myvnpost/createkh" component={VnpCreateKH} />
@@ -51,10 +53,13 @@ function App() {
                 <Route path="/myvnpost/createcn" component={VnpCreateCN} />
                 <Route path="/myvnpost/createorder" component={VnpCreateOrder} />
                 {/* Tồn Kho Và Tốc Độ Bán */}
-                <Route path="/realtime/tonkhovatocdoban" component={TonKhoVaTocDoBan} />
+                <Route path="/realtime/ton_kho_va_toc_do_ban/:id" component={Ton_Kho_Va_Toc_Do_Ban} />
                 <Route path="/realtime/ton_phan_bo_hang_hoa/:id" component={Ton_phan_bo_hang_hoa} />
                 {/* Form Control */}
                 <Route path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa" component={Theo_doi_bb_giao_nhan_hang_hoa} />
+                <Route path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa_mds" component={Theo_doi_bb_giao_nhan_hang_hoa_mds} />
+                <Route path="/formcontrol/danh_muc_dau_thau" component={Danh_muc_dau_thau} />
+                <Route path="/formcontrol/template" component={template} />
                 {/* <Route path="/formcontrol/sup_location_ngoai_mcp" component={Sup_location_ngoai_mcp} /> */}
                 {/* REPORT */}
                 <Route path="/login" component={Login} />

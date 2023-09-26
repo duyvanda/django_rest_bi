@@ -25,7 +25,8 @@ function Ton_phan_bo_hang_hoa( {match,history} ) {
         console.log("phan cap", phancap)
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, rpid , isMB, dv_width);
         SetRpScreen(true);
-        fetchFilerReportsRT(rpid, isMB, phancap);
+        const local_url = "ton_phan_bo_hang_hoa"
+        fetchFilerReportsRT(rpid, isMB, phancap, local_url, {});
 		} else {
             history.push('/login');
         };

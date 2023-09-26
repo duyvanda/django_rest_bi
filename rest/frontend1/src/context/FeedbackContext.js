@@ -68,8 +68,6 @@ export const FeedbackProvider = ({ children }) => {
   };
 
   const fetchFilerReports = async (stt, isMB) => {
-    // const response = await fetch('https://storage.googleapis.com/django_media_biteam/public/user_reports.json')
-    // const data = await response.json()
     const data = JSON.parse(localStorage.getItem("userLstReports"));
     const manv = JSON.parse(localStorage.getItem("userInfo")).manv;
     const lstreports = data.filter((el) => el.manv === manv);
@@ -93,7 +91,6 @@ export const FeedbackProvider = ({ children }) => {
     setFilterReports(report_obj);
 
     if (report_obj) {
-      // console.log("is MB", isMB)
       setShared(true);
       const rpvw = isMB ? "95vw" : report_obj.vw;
       setVw(rpvw);
@@ -103,7 +100,6 @@ export const FeedbackProvider = ({ children }) => {
       report_obj.type === 1
         ? setReportParam(rppr.replace("xxxxxx", manv))
         : setReportParam(rppr.replace("xxxxxx", "MR0000"));
-      // report_obj.type === 1 ? setReportParam (report_obj.param.replace('xxxxxx', manv)) : setReportParam (report_obj.param.replace('xxxxxx', 'MR0000'));
     } else {
       setShared(false);
     }
@@ -131,9 +127,9 @@ export const FeedbackProvider = ({ children }) => {
     return [year, month, day].join('-');
   }
 
-  const fetch_real_time_report = async (data_user, rppr) => {
+  const fetch_real_time_report = async (data_user, local_url, rppr) => {
     SetLoading(true)
-    const response = await fetch(`${LOCALURL}/ton_phan_bo_hang_hoa/`, {
+    const response = await fetch(`${LOCALURL}/${local_url}/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -154,7 +150,7 @@ export const FeedbackProvider = ({ children }) => {
     }
   }
 
-  const fetchFilerReportsRT = async (stt, isMB, phancap) => {
+  const fetchFilerReportsRT = async (stt, isMB, phancap, local_url, filter_data) => {
     const data = JSON.parse(localStorage.getItem("userLstReports"));
     const manv = JSON.parse(localStorage.getItem("userInfo")).manv;
     const lstreports = data.filter((el) => el.manv === manv);
@@ -198,10 +194,12 @@ export const FeedbackProvider = ({ children }) => {
         "phancap": phancap
       }
 
-      // console.log("data", data)
+      const new_data = {...data, ...filter_data}
+
+      console.log("new_data", new_data)
       const rppr = isMB ? report_obj.param_mb : report_obj.param;
 
-      fetch_real_time_report(data, rppr)
+      fetch_real_time_report(new_data, local_url, rppr)
 
       // setReportParam(rppr.replace("xxxxxx", manv).replace("vvvvvv", version))
       // console.log(rppr.replace("xxxxxx", manv).replace("vvvvvv", version))
