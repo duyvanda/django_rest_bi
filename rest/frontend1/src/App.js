@@ -5,7 +5,7 @@ import Navbar1 from "./components/Navbar.jsx";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
 import ReportScreen from "./components/ReportScreen";
-import FormScreen from "./components/FormScreen";
+// import FormScreen from "./components/FormScreen";
 //MYVNPOST
 import VnpHome from "./myvnpost/VnpHome";
 import VnpEditKH from "./myvnpost/VnpEditKH";
@@ -28,11 +28,13 @@ import Routes from "./components/Routes.jsx";
 //REALTIME
 import Ton_Kho_Va_Toc_Do_Ban from "./realtime/Ton_Kho_Va_Toc_Do_Ban";
 import Ton_phan_bo_hang_hoa from "./realtime/Ton_phan_bo_hang_hoa";
+import Thu_hoi_bb_giao_hang from "./realtime/Thu_hoi_bb_giao_hang";
 //FORMCONTROL
 import Theo_doi_bb_giao_nhan_hang_hoa from "./formcontrol/theo_doi_bb_giao_nhan_hang_hoa";
 import Theo_doi_bb_giao_nhan_hang_hoa_mds from "./formcontrol/theo_doi_bb_giao_nhan_hang_hoa_mds";
 import template from "./formcontrol/template";
 import Danh_muc_dau_thau from "./formcontrol/danh_muc_dau_thau";
+import Theo_doi_dccn from "./formcontrol/theo_doi_dccn";
 
 function App() {
   return (
@@ -55,11 +57,13 @@ function App() {
                 {/* Tồn Kho Và Tốc Độ Bán */}
                 <Route path="/realtime/ton_kho_va_toc_do_ban/:id" component={Ton_Kho_Va_Toc_Do_Ban} />
                 <Route path="/realtime/ton_phan_bo_hang_hoa/:id" component={Ton_phan_bo_hang_hoa} />
+                <Route path="/realtime/thu_hoi_bb_giao_hang/:id" component={Thu_hoi_bb_giao_hang} />
                 {/* Form Control */}
                 <Route path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa" component={Theo_doi_bb_giao_nhan_hang_hoa} />
                 <Route path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa_mds" component={Theo_doi_bb_giao_nhan_hang_hoa_mds} />
                 <Route path="/formcontrol/danh_muc_dau_thau" component={Danh_muc_dau_thau} />
                 <Route path="/formcontrol/template" component={template} />
+                <Route path="/formcontrol/theo_doi_dccn" component={Theo_doi_dccn} />
                 {/* <Route path="/formcontrol/sup_location_ngoai_mcp" component={Sup_location_ngoai_mcp} /> */}
                 {/* REPORT */}
                 <Route path="/login" component={Login} />

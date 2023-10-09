@@ -11,6 +11,8 @@ function Navbar1() {
 
     const history = useHistory();
 
+    const navigate = useHistory();
+
     // console.log("userinfo", userInfo) 
 
     const handleClick = () => {
@@ -28,12 +30,15 @@ function Navbar1() {
 
                                     {userInfo ?
                                             <NavDropdown title={userInfo.manv} className='text-white ml-2 '>
-                                                    <NavDropdown.Item><Link to="/profile">Đổi Mật Khẩu</Link></NavDropdown.Item>
-                                                    <NavDropdown.Item><Link to="/reports">Reports</Link></NavDropdown.Item>
-                                                    <NavDropdown.Item onClick={handleClick}>Logout</NavDropdown.Item>
+                                                <NavDropdown.Item  onClick={ () => navigate.push("/reports") }  >
+                                                    <h5>REPORTS</h5>
+                                                </NavDropdown.Item>
+                                                <NavDropdown.Item className='fs-5' onClick={handleClick}><h5>LOGOUT</h5></NavDropdown.Item>
                                             </NavDropdown >
                                         :
-                                        <li className="nav-item"><Link className="nav-link" to="/login">Login</Link></li>
+                                                <NavDropdown.Item className='text-white mt-2' onClick={ () => navigate.push("/login") }  >
+                                                    <h5>LOGIN</h5>
+                                                </NavDropdown.Item>
                                     }
 
                     {FilterReports && <Navbar.Text className='text-white text-truncate ml-3 border-info border-bottom'> {FilterReports.tenreport} </Navbar.Text>}
@@ -53,3 +58,4 @@ export default Navbar1
 {/* </Nav>
 </Navbar.Collapse> */}
 {/* <Navbar.Text className='text-truncate'>{FilterReports.tenreport}</Navbar.Text> */}
+{/* Link id="RouterNavLink" to="/profile">Đổi Mật Khẩu</Link> */}

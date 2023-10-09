@@ -14,11 +14,11 @@ function Login({history, location}) {
     useEffect(() => {
         
 		if (userInfo) {
-			history.push("/");
+			history.push("/reports");
 		} 
     else if (location_search.get('utm_source')) {
       const utm_source = location.search.split("&")[0].split("=")[1]
-      const manv = location.search.split("&")[1].split("=")[1].toUpperCase()
+      const manv = location.search.split("&")[1].split("=")[1]
       const token = location.search.split("&")[2].split("=")[1]
       history.push("/login")
       const logindata = {
@@ -33,7 +33,7 @@ function Login({history, location}) {
 	}, [history, userInfo]);
 
     const handleTextChange = (e) => {
-        setEmail(e.target.value.toUpperCase())
+        setEmail(e.target.value)
       }
     
     const handlePassChange = (e) => {
@@ -60,6 +60,8 @@ return (
             <label className="form-label">Password</label>
             <Form.Control required onChange={handlePassChange} value={password} type="password" placeholder="Enter your password" style={{ background: "#f7f7f9", fontFamily: "Arial", border: "none" }}></Form.Control>
             <button className="btn btn-dark mt-3" type="submit" >Sign In</button>
+            <h5 className='mt-2'> VUI LÒNG ĐĂNG NHẬP BẰNG TÀI KHOẢN CLOUD / BITRIX / EOFFICE  </h5>
+            <h5 className='mt-2'> MỌI THẮC MẮC VỀ TÀI KHOẢN VUI LÒNG LIÊN HỆ ANH HUY IT (0902995675 - ZALO) </h5>
             <p className='mt-2'>{LoginText}</p>
         </form>
         {LoginLoading &&

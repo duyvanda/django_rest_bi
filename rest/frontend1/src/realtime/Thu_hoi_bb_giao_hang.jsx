@@ -5,7 +5,7 @@ import {
     Spinner
 } from "react-bootstrap";
 
-function Ton_phan_bo_hang_hoa( {match,history} ) {
+function Thu_hoi_bb_giao_hang( {match,history} ) {
 
     useEffect(() => {
 		if (localStorage.getItem("userInfo")) {
@@ -20,7 +20,7 @@ function Ton_phan_bo_hang_hoa( {match,history} ) {
         console.log("phan cap", phancap)
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, rpid , isMB, dv_width);
         SetRpScreen(true);
-        const local_url = "ton_phan_bo_hang_hoa"
+        const local_url = "thu_hoi_bb_giao_hang"
         fetchFilerReportsRT(rpid, isMB, phancap, local_url, {});
 		} else {
             history.push('/login');
@@ -127,7 +127,7 @@ function Ton_phan_bo_hang_hoa( {match,history} ) {
         }
 }
 
-export default Ton_phan_bo_hang_hoa
+export default Thu_hoi_bb_giao_hang
 
 
                 {/* <Form className='ml-5 mt-2' onSubmit={console.log("first")}>

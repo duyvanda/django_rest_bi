@@ -18,7 +18,7 @@ import {
 // import ListGroup from 'react-bootstrap/ListGroup';
 // import Stack from 'react-bootstrap/Stack';
 
-function Theo_doi_bb_giao_nhan_hang_hoa(history) {
+function Theo_doi_bb_giao_nhan_hang_hoa({history}) {
 
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
@@ -30,8 +30,9 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Theo_doi_bb_giao_nhan_hang_hoa', isMB, dv_width);
-        set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
+        const _manv = JSON.parse(localStorage.getItem("userInfo")).manv
+        userLogger(_manv, 'Theo_doi_bb_giao_nhan_hang_hoa', isMB, dv_width);
+        set_manv(_manv);
         } else {
             history.push('/login');
         };
@@ -39,7 +40,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
 
     
     const [manv, set_manv] = useState("");
-    const [lst_order, set_lst_order]  = useState({});
+    const [lst_order, set_lst_order]  = useState({"SODONDATHANG":""});
     // const [fix_kt_phanhoi, set_fix_kt_phanhoi] = useState("");
     // const [fix_mds_phanhoi, set_fix_mds_phanhoi] = useState("");
 
@@ -139,12 +140,24 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
             SetLoading(false);
             const data = await response.json();
             console.log(data);
+            SetALert(true);
+            SetALertType("alert-danger");
+            SetALertText("TẠO CHƯA THÀNH CÔNG");
+            setTimeout(() => SetALert(false), 3000);
         } else {
             SetLoading(false);
             const data = await response.json();
             console.log(data);
+            //-----------------------------------//
+            set_kt_da_nhan("");
+            set_kt_kh_bb("");
+            set_kt_kh_hd("");
+            set_kt_ghi_chu("");
+            set_lst_phan_hoi([]);
+            set_lst_order({"SODONDATHANG":""});
+            //-----------------------------------//  
             SetALert(true);
-            SetALertType("alert-warning");
+            SetALertType("alert-success");
             SetALertText("ĐÃ TẠO THÀNH CÔNG");
             setTimeout(() => SetALert(false), 3000);
 
@@ -172,12 +185,6 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
         console.log("handle_submit", data);
         post_form_data(data);
 
-        set_kt_da_nhan("");
-        set_kt_kh_bb("");
-        set_kt_kh_hd("");
-        set_kt_ghi_chu("");
-        set_lst_phan_hoi([]);
-        set_lst_order({});
 
     }
 
@@ -209,7 +216,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
                     </div>
                     }
                     <Form onSubmit={handle_submit}>
-                    <FloatingLabel label="Tìm Đơn Hàng - Hóa Đơn Ví Dụ Như DL5-0723-00116-00090632" className="border rounded mt-2 text-muted" > <Form.Control className="" type="text" onKeyDown={handleSearchEnter} value={search} onChange={handleSearchParam} placeholder="" /> </FloatingLabel>
+                    <FloatingLabel label="Tìm Hóa Đơn (00090632) Hoặc Đơn Hàng - Hóa Đơn (DL5-0723-00116-00090632)" className="border rounded mt-2 text-muted" > <Form.Control className="" type="text" onKeyDown={handleSearchEnter} value={search} onChange={handleSearchParam} placeholder="" /> </FloatingLabel>
                     
                     <Form.Control className="mt-2" readOnly value = {lst_order.SODONDATHANG}/>
                     <Form.Control className="mt-2" readOnly value = {lst_order.MAKHDMS}/>
@@ -259,7 +266,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa(history) {
                         </div >
 
 
-                    <Button disabled={edit_phan_hoi} className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
+                    <Button disabled={edit_phan_hoi | lst_order.SODONDATHANG==="" } className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
                     </Form>
 
                     {loading &&

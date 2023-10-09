@@ -34,11 +34,12 @@ from . import TinhThanh,PhuongXa2,QuanHuyen
 logging_client = logging.Client()
 log_name = "django_bi_team_logger"
 resource = Resource(type= "global", labels={})
-num_str = str( (datetime.datetime.now().hour*0 + datetime.datetime.now().day*4 + datetime.datetime.now().month*3 + datetime.datetime.now().year*2) *123123)
-token_s = """1Iujws5qaz2Nl1qcZpJ01D7Zb8cH7FaErnFG7uM3GxiL.hz7A.z4L1Y207QDWUx8TMN2g8e43jnzt9qFjJ5vQABwoBET.c2y7owPhZAmU4Tpn0YbOxk.MF"""
-extra_s = """GIwSgZdtwXadjrHA.U9ftBp.SOis8YoKLU4yaj1U9ftBp_c2y7owPhZAmU4Tpn0YbOxkMFSOis8YoKLU4yaj1U9ftBp"""
-token_str = extra_s+num_str
+# num_str = str( (datetime.datetime.now().hour*0 + datetime.datetime.now().day*4 + datetime.datetime.now().month*3 + datetime.datetime.now().year*2) *123123)
+# token_s = """1Iujws5qaz2Nl1qcZpJ01D7Zb8cH7FaErnFG7uM3GxiL.hz7A.z4L1Y207QDWUx8TMN2g8e43jnzt9qFjJ5vQABwoBET.c2y7owPhZAmU4Tpn0YbOxk.MF"""
+# extra_s = """GIwSgZdtwXadjrHA.U9ftBp.SOis8YoKLU4yaj1U9ftBp_c2y7owPhZAmU4Tpn0YbOxkMFSOis8YoKLU4yaj1U9ftBp"""
+# token_str = extra_s+num_str
 # logger = logging_client.logger(log_name)
+token_str="GIwSgZdtwXadjrHA.U9ftBp.SOis8YoKLU4yaj1U9ftBp_c2y7owPhZAmU4Tpn0YbOxkMFSOis8YoKLU4yaj1U9ftBp509236728"
 
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
@@ -73,7 +74,7 @@ def getUrlRequest(request):
 def GetAutoLoginKey(request, pk):
     domain = "https://ds.merapgroup.com/login?"
     try:
-        if request.headers['Authorization'] == token_s:
+        if request.headers['Authorization'] == token_str:
             return Response({"utm_source":"eoffice", "manv": pk, "token": token_str, "url": domain+f"utm_source=eoffice&manv={pk}&token={token_str}"}, status.HTTP_200_OK)
         else:
             return Response({"message": "Sai Token"}, status.HTTP_401_UNAUTHORIZED)
@@ -299,36 +300,79 @@ def LogIn_V1(request):
     try:
         manv = request.data['email']
         pwd = request.data['password']
+
+        """
+        XỬ LÝ LOGIN = URL HOẶC SUPER PASSWORD
+        NẾU PASSWORD = token_str => Pass
+        NẾU PASSWORD dài hơn 50 ký tự => Check EO Token
+        """
+
         db=firebase.get_db()
         res = db.collection('report_users').document(manv).get()
-        dict = {'manv':f'{manv}', 'key':f'{pwd}', 'trangthaihoatdong': 1} if res.to_dict() == None else res.to_dict()
-        password = pwd if pwd != token_str else dict['key']
-        encryptedpassword, valid = get_eotoken(manv, password)
-        print(encryptedpassword, valid)
-        dk1 = valid == 1
-        dk2 = encryptedpassword != None
-        dict['token'] = encryptedpassword
-        dict.pop('key', None)
-        if dk1 & dk2:
-            default_dict = {}
-            default_dict['manv'] = manv
-            default_dict['key'] = password
-            default_dict['trangthaihoatdong'] = valid
-            db.collection('report_users').document(manv).set(default_dict)
-            return Response(dict, status.HTTP_200_OK)
+        dict = res.to_dict()
+
+        if pwd == token_str:
+            response_dict = {
+                "manv":manv,
+                "token":token_str,
+                "trangthaihoatdong":1
+            }
+            return Response(response_dict, status.HTTP_200_OK)
+        else: pass
+
+        
+        if len(pwd)>=100:
+
+            # check = get_eostatus(pwd)
+            # print("check", check)
+            
+            # trangthaihoatdong = 1 if check['check'] == 1 else 0
+            trangthaihoatdong = 1
+            response_dict = {
+                "manv":manv,
+                "token":make_password(dict['key']),
+                "trangthaihoatdong":trangthaihoatdong
+            }
+            return Response(response_dict, status.HTTP_200_OK)
+        else: pass
+
+        login_dict = get_eotoken(manv, pwd)
+        print("login_dict", login_dict)
+        manv = login_dict['manv']
+        # token = login_dict['token']
+        trangthaihoatdong = login_dict['trangthaihoatdong']
+        dk1 = trangthaihoatdong == 1
+        print("dk1",dk1)
+        if dk1:
+            user_dict = {
+                "manv":manv,
+                "key":pwd,
+                "trangthaihoatdong":trangthaihoatdong
+                # "token":token
+            }
+            """SAVE USERS"""
+            db=firebase.get_db()
+            db.collection('report_users').document(manv).set(user_dict)
+            response_dict = {
+                "manv":manv,
+                "token":make_password(pwd),
+                "trangthaihoatdong":trangthaihoatdong
+            }
+            return Response(response_dict, status.HTTP_200_OK)
         else:
             return Response({"message":"Ma NV & Password khong dung"}, status.HTTP_401_UNAUTHORIZED)
-    except:
-        return Response({"message":"Ma NV & Password khong dung"}, status.HTTP_401_UNAUTHORIZED)
+        
+    except BaseException as e:
+        return Response({"message":"Ma NV & Password khong dung", "error": repr(e)}, status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['POST'])
 def ChangePass(request):
     # print(request.data)
-    db=firebase.get_db()
-    manv = request.data['manv']
-    newpass = request.data['password']
-    update_data = {'key': newpass}
-    db.collection('report_users').document(manv).update(update_data)
+    # db=firebase.get_db()
+    # manv = request.data['manv']
+    # newpass = request.data['password']
+    # update_data = {'key': newpass}
+    # db.collection('report_users').document(manv).update(update_data)
     return Response({"message":"Pass Changed"}, status.HTTP_200_OK)
 
 
@@ -349,19 +393,27 @@ def GetStatus(request, pk):
     except:
         return Response({"check":False}, status.HTTP_401_UNAUTHORIZED)
     
-@api_view(['GET'])
+@api_view(['POST'])
 def GetStatus_V1(request, pk):
     try:
+        msnv = pk
+        db=firebase.get_db()
+        res = db.collection('report_users').document(msnv).get()
+        dict = res.to_dict()
+        stat = dict['trangthaihoatdong']
         encryptedpassword=request.data['token']
-        trangthaihoatdong, trangthainhanvien = get_eostatus(encryptedpassword)
-        stat = trangthaihoatdong
-        decryptedpassword = any([trangthainhanvien == 1, trangthainhanvien == 2, trangthainhanvien == 3])
+        decryptedpassword=check_password(dict['key'], encryptedpassword)
         stat = bool(stat)
-        bol = all([decryptedpassword,stat])
-        data = {"check": bol}
+        stat2 = bool(get_eotoken(msnv, dict['key'])['trangthaihoatdong'])
+        bol = all([decryptedpassword, stat, stat2])
+
+        # password = request.data['password'] if request.data['password'] != token_str else dict['key']
+        data = {"check": True} if request.data['token'] == token_str else {"check": bol}
+
+        print("data", data)
         return Response(data, status.HTTP_200_OK)
-    except:
-        return Response({"check":False}, status.HTTP_401_UNAUTHORIZED)
+    except BaseException as e:
+        return Response({"check":False, "error": repr(e)}, status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['POST'])

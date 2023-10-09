@@ -127,6 +127,13 @@ export const FeedbackProvider = ({ children }) => {
     return [year, month, day].join('-');
   }
 
+  function Inserted_at() {
+    const datetime = new Date();
+    const inserted_at = (datetime.toISOString().replace("Z",""));
+
+    return inserted_at;
+  }
+
   const fetch_real_time_report = async (data_user, local_url, rppr) => {
     SetLoading(true)
     const response = await fetch(`${LOCALURL}/${local_url}/`, {
@@ -239,7 +246,7 @@ export const FeedbackProvider = ({ children }) => {
   const fetchUserStatus = async (manv, token) => {
     const logindata = { token };
     // console.log(logindata)
-    const response = await fetch(`${URL}/getstatus/${manv}`, {
+    const response = await fetch(`${URL}/getstatusv1/${manv}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -249,15 +256,17 @@ export const FeedbackProvider = ({ children }) => {
 
     const data = await response.json();
 
-    // console.log(data)
+    console.log("fetchUserStatus response", data)
 
     !data.check ? setUserInfo("") : void 0;
     !data.check ? setReports([]) : void 0;
+    !data.check ? window.localStorage.removeItem("userInfo") : void(0);
+    !data.check ? window.localStorage.removeItem("userLstReports") : void(0);
   };
 
   const loginUser = async (logindata) => {
     setLoginLoading(true);
-    const response = await fetch(`${URL}/login/`, {
+    const response = await fetch(`${URL}/loginv1/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -271,6 +280,7 @@ export const FeedbackProvider = ({ children }) => {
       setLoginLoading(false);
     } else {
       const data = await response.json();
+      console.log("loginUser response", data)
       localStorage.setItem("userInfo", JSON.stringify(data));
       setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
 
@@ -297,7 +307,7 @@ export const FeedbackProvider = ({ children }) => {
   const getUserInfo = () => {
     if (JSON.parse(localStorage.getItem("userInfo"))) {
       const data = JSON.parse(localStorage.getItem("userInfo"));
-      // console.log("getUserInfo manv", data)
+      console.log("getUserInfo manv", data)
       setUserInfo(data);
       fetchReports(data.manv);
       fetchUserStatus(data.manv, data.token);
@@ -317,6 +327,7 @@ export const FeedbackProvider = ({ children }) => {
     <FeedbackContext.Provider
       value={{
         formatDate,
+        Inserted_at,
         loading,
         SetLoading,
         alert,

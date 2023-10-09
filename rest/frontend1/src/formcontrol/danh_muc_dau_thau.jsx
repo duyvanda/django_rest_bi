@@ -242,7 +242,7 @@ function Danh_muc_dau_thau({history}) {
                             <option value="">Pháp Lý</option>
                             {lst_phap_ly
                             .map( (el, index) => 
-                            <option value={el}>{el}</option>
+                            <option value={el}> {el} </option>
                             )
                             }
                         </Form.Select>

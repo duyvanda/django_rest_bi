@@ -20,7 +20,7 @@ function ReportList({history}) {
 		} else {
             history.push('/login');
         }
-	}, []);
+	}, [history, Reports, userInfo]);
 
   console.log("Reports", Reports)
 
