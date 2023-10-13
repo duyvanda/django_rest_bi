@@ -12,7 +12,7 @@ export const MapProvider = ({ children }) => {
     "https://storage.googleapis.com/django_media_biteam/public/maps/default_map.html"
   );
   const [routes, SetRoutes] = useState(
-    "https://storage.googleapis.com/django_media_biteam/public/maps/default_map.html"
+    "<h1></h1>"
   );
 
   const [loading, SetLoading] = useState(false);

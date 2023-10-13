@@ -405,15 +405,16 @@ def GetStatus_V1(request, pk):
         decryptedpassword=check_password(dict['key'], encryptedpassword)
         stat = bool(stat)
         stat2 = bool(get_eotoken(msnv, dict['key'])['trangthaihoatdong'])
+        """
+        NEU DA NGHI THI STAT2 SE BI LOI r.json()['token'] => LOI KEY KeyError('token')
+        """
         bol = all([decryptedpassword, stat, stat2])
-
-        # password = request.data['password'] if request.data['password'] != token_str else dict['key']
         data = {"check": True} if request.data['token'] == token_str else {"check": bol}
-
         print("data", data)
         return Response(data, status.HTTP_200_OK)
     except BaseException as e:
-        return Response({"check":False, "error": repr(e)}, status.HTTP_401_UNAUTHORIZED)
+        error_text = traceback.format_exc()
+        return Response({"check":False, "error": repr(e), "error_detail": error_text}, status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['POST'])
@@ -658,21 +659,23 @@ def GetRoutes(request):
 
     df = pd.DataFrame(data)
 
-    # url="https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZHV5dnEiLCJhIjoiY2xqaGJ5anJtMGg1bTNtbzJxNHl1bmtzNCJ9.EMV1gOcu5ild0gIepl9vdQ"
+    url="https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZHV5dnEiLCJhIjoiY2xqaGJ5anJtMGg1bTNtbzJxNHl1bmtzNCJ9.EMV1gOcu5ild0gIepl9vdQ"
     map = folium.Map(
         location=[10.7681538,106.6751171], 
         zoom_start=5, 
         tiles=None,
         zoom_control=True,
-        control_scale=True)
+        control_scale=True,
+        height="75%"
+        )
     
-    # folium.TileLayer(
-    #     url,
-    #     attr='mapbox',
-    #     name='MapBox'
-    # ).add_to(map)
+    folium.TileLayer(
+        url,
+        attr='mapbox',
+        name='MapBox'
+    ).add_to(map)
 
-    folium.TileLayer('openstreetmap').add_to(map)
+    # folium.TileLayer('openstreetmap').add_to(map)
 
     draw = Draw()
     draw.add_to(map)
@@ -867,23 +870,23 @@ def GetRoutes(request):
                 pass
         feature_group.add_to(map)
     # Handle hub con
-    HUBCON = pd.read_csv("https://cloud.merapgroup.com/index.php/s/Yy6rN3rrzpJCBgT/download/hubcon.csv")
-    for row in HUBCON.itertuples():
-        bt_icon = folium.plugins.BeautifyIcon(iconSize=[30,30], icon="home", iconShape = "marker", borderWidth = 2, border_color="black")
-        tooltip = \
-        f"""
-        <b>NT</b>: <b>{row.hubname}</b>
-        """        
-        folium.Marker(location=[row.lat, row.lng], tooltip=tooltip, icon=bt_icon).add_to(map)
+    # HUBCON = pd.read_csv("https://cloud.merapgroup.com/index.php/s/Yy6rN3rrzpJCBgT/download/hubcon.csv")
+    # for row in HUBCON.itertuples():
+    #     bt_icon = folium.plugins.BeautifyIcon(iconSize=[30,30], icon="home", iconShape = "marker", borderWidth = 2, border_color="black")
+    #     tooltip = \
+    #     f"""
+    #     <b>NT</b>: <b>{row.hubname}</b>
+    #     """        
+    #     folium.Marker(location=[row.lat, row.lng], tooltip=tooltip, icon=bt_icon).add_to(map)
 
     # import datetime
-    TagFilterButton(['SAIN','INDE','ININ']).add_to(map)
+    # TagFilterButton(['SAIN','INDE','ININ']).add_to(map)
     lc.add_to(map)
-    str_time = datetime.datetime.now().strftime(format="%Y%m%d%H%M%S")
-    output_file = f"map_{str_time}.html"
-    blobname = f"public/maps/{output_file}"
-    map.save(output_file)
-    url = upload_file_to_bucket_with_metadata(blobname=blobname, file=output_file)
-    os.remove(f"map_{str_time}.html")
-    dict_data['map_string'] = url
+    # str_time = datetime.datetime.now().strftime(format="%Y%m%d%H%M%S")
+    # output_file = f"map_{str_time}.html"
+    # blobname = f"public/maps/{output_file}"
+    # map.save(output_file)
+    # url = upload_file_to_bucket_with_metadata(blobname=blobname, file=output_file)
+    # os.remove(f"map_{str_time}.html")
+    dict_data['map_string'] = map._repr_html_()
     return Response(dict_data, status.HTTP_200_OK)

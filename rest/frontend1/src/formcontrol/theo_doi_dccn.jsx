@@ -18,7 +18,7 @@ import {
 
 function Theo_doi_dccn({history}) {
 
-    const { userLogger, loading, SetLoading, formatDate, Inserted_at, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
+    const { fetchFilerReports, SetRpScreen, userLogger, loading, SetLoading, formatDate, Inserted_at, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
     const fetch_fix_data = async () => {
         // SetLoading(true)
@@ -45,7 +45,6 @@ function Theo_doi_dccn({history}) {
         const dv_width = window.innerWidth;
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Theo_doi_dccn', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
-
         fetch_fix_data();
 
         } else {

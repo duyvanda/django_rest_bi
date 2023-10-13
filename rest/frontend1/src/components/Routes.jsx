@@ -4,12 +4,12 @@ import MapContext from "../context/MapContext";
 import FeedbackContext from '../context/FeedbackContext'
 import {
   Button,
+  Container,
   Dropdown,
   Form,
   Spinner,
 } from "react-bootstrap";
 
-// import ListGroup from 'react-bootstrap/ListGroup';
 import Stack from 'react-bootstrap/Stack';
 
 function Routes({history}) {
@@ -18,8 +18,7 @@ function Routes({history}) {
   const { routes, fetchRoutes, loading, SetLoading } = useContext(MapContext);
 
   const fetch_manv_role = async () => {
-    SetLoading(true)
-    // const response = await fetch(`https://bi.meraplion.com/local/manv_role/?manv=${manv}`)
+    SetLoading(true);
     const response = await fetch(`https://bi.meraplion.com/local/manv_role/`)
     const data = await response.json()
     set_lst_manv_check(data)
@@ -159,6 +158,8 @@ const handeClickChannel = (e) => {
   set_lst_makenh(lst)
 }
 
+// const clean = '<div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span><iframe srcdoc="&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n&lt;head&gt;\n    \n    &lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=UTF-8&quot; /&gt;\n    \n        &lt;script&gt;\n            L_NO_TOUCH = false;\n            L_DISABLE_3D = false;\n        &lt;/script&gt;\n    \n    &lt;style&gt;html, body {width: 100%;height: 100%;margin: 0;padding: 0;}&lt;/style&gt;\n    &lt;style&gt;#map {position:absolute;top:0;bottom:0;right:0;left:0;}&lt;/style&gt;\n    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js&quot;&gt;&lt;/script&gt;\n    &lt;script src=&quot;https://code.jquery.com/jquery-1.12.4.min.js&quot;&gt;&lt;/script&gt;\n    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;\n    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js&quot;&gt;&lt;/script&gt;\n    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css&quot;/&gt;\n    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css&quot;/&gt;\n    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css&quot;/&gt;\n    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css&quot;/&gt;\n    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css&quot;/&gt;\n    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css&quot;/&gt;\n    \n            &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,\n                initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot; /&gt;\n            &lt;style&gt;\n                #map_4ad3e0003c58a2cbb520c41bc838ac6a {\n                    position: relative;\n                    width: 94.0%;\n                    height: 80.0%;\n                    left: 3.0%;\n                    top: 0.0%;\n                }\n                .leaflet-container { font-size: 1rem; }\n            &lt;/style&gt;\n        \n&lt;/head&gt;\n&lt;body&gt;\n    \n    \n            &lt;div class=&quot;folium-map&quot; id=&quot;map_4ad3e0003c58a2cbb520c41bc838ac6a&quot; &gt;&lt;/div&gt;\n        \n&lt;/body&gt;\n&lt;script&gt;\n    \n    \n            var map_4ad3e0003c58a2cbb520c41bc838ac6a = L.map(\n                &quot;map_4ad3e0003c58a2cbb520c41bc838ac6a&quot;,\n                {\n                    center: [-33.925, 18.625],\n                    crs: L.CRS.EPSG3857,\n                    zoom: 10,\n                    zoomControl: true,\n                    preferCanvas: false,\n                }\n            );\n\n            \n\n        \n    \n            var tile_layer_e5cdc1ac1779328a830246043f19a459 = L.tileLayer(\n                &quot;https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png&quot;,\n                {&quot;attribution&quot;: &quot;Data by \\u0026copy; \\u003ca target=\\&quot;_blank\\&quot; href=\\&quot;http://openstreetmap.org\\&quot;\\u003eOpenStreetMap\\u003c/a\\u003e, under \\u003ca target=\\&quot;_blank\\&quot; href=\\&quot;http://www.openstreetmap.org/copyright\\&quot;\\u003eODbL\\u003c/a\\u003e.&quot;, &quot;detectRetina&quot;: false, &quot;maxNativeZoom&quot;: 18, &quot;maxZoom&quot;: 18, &quot;minZoom&quot;: 0, &quot;noWrap&quot;: false, &quot;opacity&quot;: 1, &quot;subdomains&quot;: &quot;abc&quot;, &quot;tms&quot;: false}\n            ).addTo(map_4ad3e0003c58a2cbb520c41bc838ac6a);\n        \n&lt;/script&gt;\n&lt;/html&gt;" style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe></div></div>'
+
 const handleRoutesSubmit = (e) => {
   const manv = []
   const fg = []
@@ -233,15 +234,16 @@ const handleRoutesSubmit = (e) => {
             </Dropdown.Menu>
           </Dropdown>
 
-            <Form.Control className="text-dark bg-warning border border-warning" type="date" value={onDate} htmlSize={8} onChange={(e) => setDate(e.target.value)} placeholder="DateRange"></Form.Control>
+          <Form.Control className="text-dark bg-warning border border-warning" type="date" value={onDate} htmlSize={8} onChange={(e) => setDate(e.target.value)} placeholder="DateRange"></Form.Control>
 
           <Button className="ml-2 border-0"  type="submit" variant="warning">Submit</Button>
 
           </Stack>
         </Form>
-        <div align="center" className="mt-2" >
-        <iframe  className="border border-dark mt-2" src={routes}  style={{ border: 1, height: "80vh", frameBorder:"0", width: "94vw"  }} allowFullScreen></iframe>
-        </div>
+
+        <Container fluid >
+          <div style={{ border: 1 }} className="mt-2" dangerouslySetInnerHTML={{__html: routes}} />
+        </Container>
       </div>
     );
 
@@ -259,3 +261,7 @@ const handleRoutesSubmit = (e) => {
   }
 }
 export default Routes;
+
+{/* <div align="center" className="mt-2" >
+<iframe  className="border border-dark mt-2" src={routes}  style={{ border: 1, height: "80vh", frameBorder:"0", width: "94vw"  }} allowFullScreen></iframe>
+</div> */}

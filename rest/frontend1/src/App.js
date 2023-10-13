@@ -1,5 +1,6 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
+// import 'leaflet/dist/leaflet.css'
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Navbar1 from "./components/Navbar.jsx";
 import Login from "./components/Login";
@@ -25,9 +26,11 @@ import TestScreenSize from "./components/TestScreenSize.jsx";
 import Maps from "./components/Maps.jsx";
 import MapBox from "./components/MapBox.jsx";
 import Routes from "./components/Routes.jsx";
+import SalesRoutes from "./components/SalesRoutes.jsx";
 //REALTIME
 import Ton_Kho_Va_Toc_Do_Ban from "./realtime/Ton_Kho_Va_Toc_Do_Ban";
 import Ton_phan_bo_hang_hoa from "./realtime/Ton_phan_bo_hang_hoa";
+import Don_treo_cxs from "./realtime/Don_treo_cxs";
 import Thu_hoi_bb_giao_hang from "./realtime/Thu_hoi_bb_giao_hang";
 //FORMCONTROL
 import Theo_doi_bb_giao_nhan_hang_hoa from "./formcontrol/theo_doi_bb_giao_nhan_hang_hoa";
@@ -57,6 +60,7 @@ function App() {
                 {/* Tồn Kho Và Tốc Độ Bán */}
                 <Route path="/realtime/ton_kho_va_toc_do_ban/:id" component={Ton_Kho_Va_Toc_Do_Ban} />
                 <Route path="/realtime/ton_phan_bo_hang_hoa/:id" component={Ton_phan_bo_hang_hoa} />
+                <Route path="/realtime/don_treo_cxs/:id" component={Don_treo_cxs} />
                 <Route path="/realtime/thu_hoi_bb_giao_hang/:id" component={Thu_hoi_bb_giao_hang} />
                 {/* Form Control */}
                 <Route path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa" component={Theo_doi_bb_giao_nhan_hang_hoa} />
@@ -71,8 +75,10 @@ function App() {
                 <Route path="/reports" component={ReportList} />
                 <Route path="/reportscreen/:id" component={ReportScreen} />
                 <Route path="/testscreensize" component={TestScreenSize} />
+                {/* MAPS */}
                 <Route path="/maps/sales" component={Maps} />
                 <Route path="/maps/routes" component={Routes} />
+                <Route path="/maps/salesroutes" component={SalesRoutes} />
                 <Route path="/mapbox" component={MapBox} />
               </>
             </Router>
