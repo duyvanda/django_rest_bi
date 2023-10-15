@@ -1,3 +1,4 @@
+import * as pd from "danfojs";
 import { useContext, useEffect, useState } from "react";
 import { v4 as uuid } from 'uuid';
 import './myvnp.css';
@@ -22,21 +23,26 @@ function Theo_doi_dccn({history}) {
 
     const fetch_fix_data = async () => {
         // SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/kt_fix_data_dccn_den_thang/`)
+        const response = await fetch(`https://bi.meraplion.com/local/kt_fix_data/`)
         const arr = await response.json()
-        set_id1(arr);
-        console.log("fetch_fix_data", arr)
+        let df = new pd.DataFrame(arr)
+
+        set_fix_df(df)
+        
+        set_id1(df.dccndenthang.unique().values);
+        console.log("fetch_fix_data", df.dccndenthang.unique().values)
         // SetLoading(false)
     }
 
     const fetch_fix_data_ten_kh = async (pk) => {
         set_id2([]);
         set_select_id2("");
-        const response = await fetch(`https://bi.meraplion.com/local/kt_fix_data_ten_kh/?pk=${pk}`)
-        const arr = await response.json()
-        set_id2(arr);
+        console.log("pk", pk)
+        let dk = fix_df['dccndenthang'].eq(pk)
+        let df = fix_df.loc({rows: dk})
+        df = df.shape[0] === 0 ? new pd.DataFrame() : df.groupby(['makhcu','tenkh','tenkh_clean']).count()
+        set_id2(pd.toJSON(df));
         console.log("current_date", current_date);
-        // SetLoading(false)
     }
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {
@@ -57,13 +63,9 @@ function Theo_doi_dccn({history}) {
         return outputArray
     }
 
-
-
-
-
     const [manv, set_manv] = useState("");
     const current_date = formatDate(Date());
-    // const [fix_arr, set_fix_arr] = useState([]);
+    const [fix_df, set_fix_df] = useState(new pd.DataFrame());
     const [id1, set_id1]= useState([]);
     const [id2, set_id2]= useState([]);
     const [select_id1, set_select_id1]= useState("");
