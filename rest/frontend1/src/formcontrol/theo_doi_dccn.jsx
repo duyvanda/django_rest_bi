@@ -26,9 +26,7 @@ function Theo_doi_dccn({history}) {
         const response = await fetch(`https://bi.meraplion.com/local/kt_fix_data/`)
         const arr = await response.json()
         let df = new pd.DataFrame(arr)
-
         set_fix_df(df)
-        
         set_id1(df.dccndenthang.unique().values);
         console.log("fetch_fix_data", df.dccndenthang.unique().values)
         // SetLoading(false)

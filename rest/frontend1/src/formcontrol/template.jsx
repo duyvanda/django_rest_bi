@@ -18,7 +18,7 @@ import {
 
 function Template({history}) {
 
-    const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
+    const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {
@@ -258,14 +258,13 @@ function Template({history}) {
                                 <Dropdown.Divider style={{height: 1, backgroundColor: 'steelblue'}}></Dropdown.Divider>
                                     {
                                     lst_dd1
-                                    .filter( el => el.id.includes(dd_search1))
+                                    .filter( el => removeAccents(el.id).toLowerCase().includes(dd_search1) )
                                     .map( (el, index) =>
                                         <Dropdown.Item key={index} eventKey={el.id}> {el.id} </Dropdown.Item>
                                     )
                                     }
                                 </Dropdown.Menu>
-                        </Dropdown>
-                    
+                            </Dropdown>
                         </InputGroup>
 
                         {/* MULTISELECT WITH SEARCH */}

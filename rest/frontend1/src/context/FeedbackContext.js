@@ -68,38 +68,53 @@ export const FeedbackProvider = ({ children }) => {
   };
 
   const fetchFilerReports = async (stt, isMB) => {
-    const data = JSON.parse(localStorage.getItem("userLstReports"));
-    const manv = JSON.parse(localStorage.getItem("userInfo")).manv;
-    const lstreports = data.filter((el) => el.manv === manv);
-    const manv_el = manv.substring(0, 2);
+    let data = JSON.parse(localStorage.getItem("userLstReports"));
+    let manv = JSON.parse(localStorage.getItem("userInfo")).manv;
+    let lstreports = data.filter((el) => el.manv === manv);
+    // const manv_el = manv.substring(0, 2);
+    setReports(lstreports);
 
     // public reports
-    if (manv_el === "EL") {
-      setReports(lstreports);
-    } else {
-      let plreports = PLReports;
-      plreports[0].manv = manv;
-      lstreports.push(plreports[0]);
-      plreports[1].manv = manv;
-      lstreports.push(plreports[1]);
+    // if (manv_el === "EL") {
+    //   setReports(lstreports);
+    // } else {
+    //   let plreports = PLReports;
+    //   plreports[0].manv = manv;
+    //   lstreports.push(plreports[0]);
+    //   plreports[1].manv = manv;
+    //   lstreports.push(plreports[1]);
 
-      setReports(lstreports);
-    }
+    //   setReports(lstreports);
+    // }
     // end
 
     let report_obj = lstreports.filter((el) => el.stt === stt)[0];
+    console.log("report_obj", report_obj);
     setFilterReports(report_obj);
 
-    if (report_obj) {
+    if (Object.keys(report_obj).length > 0) {
       setShared(true);
-      const rpvw = isMB ? "95vw" : report_obj.vw;
+      let rpvw = isMB ? "95vw" : report_obj.vw;
       setVw(rpvw);
-      const rpid = isMB ? report_obj.id_mb : report_obj.id;
+      let rpid = isMB ? report_obj.id_mb : report_obj.id;
       setReportId(rpid);
-      const rppr = isMB ? report_obj.param_mb : report_obj.param;
-      report_obj.type === 1
-        ? setReportParam(rppr.replace("xxxxxx", manv))
-        : setReportParam(rppr.replace("xxxxxx", "MR0000"));
+      let rppr = isMB ? report_obj.param_mb : report_obj.param;
+
+      if ( report_obj.type === 1) {
+        setReportParam(rppr.replace("xxxxxx", manv));
+        console.log(rppr.replace("xxxxxx", manv));
+      }
+      else {
+        setReportParam(rppr.replace("xxxxxx", "MR0000"));
+        console.log(rppr.replace("xxxxxx", "MR0000"));
+      }
+      // report_obj.type === 1
+      //   ? ( 
+      //     setReportParam(rppr.replace("xxxxxx", manv))
+      //     )
+      //   : ( 
+      //     setReportParam(rppr.replace("xxxxxx", "MR0000"))
+      //     );
     } else {
       setShared(false);
     }
@@ -130,31 +145,60 @@ export const FeedbackProvider = ({ children }) => {
   function Inserted_at() {
     const datetime = new Date();
     const inserted_at = (datetime.toISOString().replace("Z",""));
-
     return inserted_at;
   }
 
-  const fetch_real_time_report = async (data_user, local_url, rppr) => {
-    SetLoading(true)
-    const response = await fetch(`${LOCALURL}/${local_url}/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data_user),
-    });
-
-    if (!response.ok) {
-      SetLoading(false);
-      const data = await response.json();
-      console.log("reponse not ok", data);
-    } else {
-      const data = await response.json();
-      setReportParam(rppr.replace("xxxxxx", data_user.manv).replace("vvvvvv", data_user.version))
-      console.log(rppr.replace("xxxxxx", data_user.manv).replace("vvvvvv", data_user.version))
-      console.log("reponse ok", data);
-      SetLoading(false);
+  function removeAccents(str) {
+    var AccentsMap = [
+      "aàảãáạăằẳẵắặâầẩẫấậ",
+      "AÀẢÃÁẠĂẰẲẴẮẶÂẦẨẪẤẬ",
+      "dđ", "DĐ",
+      "eèẻẽéẹêềểễếệ",
+      "EÈẺẼÉẸÊỀỂỄẾỆ",
+      "iìỉĩíị",
+      "IÌỈĨÍỊ",
+      "oòỏõóọôồổỗốộơờởỡớợ",
+      "OÒỎÕÓỌÔỒỔỖỐỘƠỜỞỠỚỢ",
+      "uùủũúụưừửữứự",
+      "UÙỦŨÚỤƯỪỬỮỨỰ",
+      "yỳỷỹýỵ",
+      "YỲỶỸÝỴ"    
+    ];
+    for (var i=0; i<AccentsMap.length; i++) {
+      var re = new RegExp('[' + AccentsMap[i].substr(1) + ']', 'g');
+      var char = AccentsMap[i][0];
+      str = str.replace(re, char);
     }
+    return str;
+  }
+
+  const fetch_real_time_report = async (data_user, local_url, rppr) => {
+    try {
+      SetLoading(true)
+      const response = await fetch(`${LOCALURL}/${local_url}/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data_user),
+      });
+  
+      if (!response.ok) {
+        SetLoading(false);
+        const data = await response.json();
+        console.log("reponse not ok", data);
+      } else {
+        const data = await response.json();
+        setReportParam(rppr.replaceAll("xxxxxx", data_user.manv).replaceAll("vvvvvv", data_user.version))
+        console.log(rppr.replaceAll("xxxxxx", data_user.manv).replaceAll("vvvvvv", data_user.version))
+        console.log("reponse ok", data);
+        SetLoading(false);
+      }
+    } catch (error) {
+      SetLoading(false);
+      console.log(error);
+    }
+
   }
 
   const fetchFilerReportsRT = async (stt, isMB, phancap, local_url, filter_data) => {
@@ -292,17 +336,17 @@ export const FeedbackProvider = ({ children }) => {
     }
   };
 
-  const changePassUser = async (changedata) => {
-    const response = await fetch(`${URL}/changepass/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(changedata),
-    });
-    const data = await response.json();
-    logoutUser();
-  };
+  // const changePassUser = async (changedata) => {
+  //   const response = await fetch(`${URL}/changepass/`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(changedata),
+  //   });
+  //   const data = await response.json();
+  //   logoutUser();
+  // };
 
   const getUserInfo = () => {
     if (JSON.parse(localStorage.getItem("userInfo"))) {
@@ -328,6 +372,7 @@ export const FeedbackProvider = ({ children }) => {
       value={{
         formatDate,
         Inserted_at,
+        removeAccents,
         loading,
         SetLoading,
         alert,
@@ -339,7 +384,6 @@ export const FeedbackProvider = ({ children }) => {
         manv,
         userInfo,
         loginUser,
-        changePassUser,
         logoutUser,
         fetchReports,
         Reports,

@@ -32,12 +32,17 @@ import Ton_Kho_Va_Toc_Do_Ban from "./realtime/Ton_Kho_Va_Toc_Do_Ban";
 import Ton_phan_bo_hang_hoa from "./realtime/Ton_phan_bo_hang_hoa";
 import Don_treo_cxs from "./realtime/Don_treo_cxs";
 import Thu_hoi_bb_giao_hang from "./realtime/Thu_hoi_bb_giao_hang";
+import Voucher_du_lich from "./realtime/Voucher_du_lich";
+import Thu_hoi_bbgh from "./realtime/Thu_hoi_bbgh";
+
 //FORMCONTROL
 import Theo_doi_bb_giao_nhan_hang_hoa from "./formcontrol/theo_doi_bb_giao_nhan_hang_hoa";
 import Theo_doi_bb_giao_nhan_hang_hoa_mds from "./formcontrol/theo_doi_bb_giao_nhan_hang_hoa_mds";
 import template from "./formcontrol/template";
 import Danh_muc_dau_thau from "./formcontrol/danh_muc_dau_thau";
 import Theo_doi_dccn from "./formcontrol/theo_doi_dccn";
+import Scn_quan_ly_ncc from "./formcontrol/scn_quan_ly_ncc";
+import Scn_quan_ly_nvl from "./formcontrol/scn_quan_ly_nvl";
 
 function App() {
   return (
@@ -62,13 +67,16 @@ function App() {
                 <Route path="/realtime/ton_phan_bo_hang_hoa/:id" component={Ton_phan_bo_hang_hoa} />
                 <Route path="/realtime/don_treo_cxs/:id" component={Don_treo_cxs} />
                 <Route path="/realtime/thu_hoi_bb_giao_hang/:id" component={Thu_hoi_bb_giao_hang} />
+                <Route path="/realtime/voucher_du_lich/:id" component={Voucher_du_lich} />
+                <Route path="/realtime/thu_hoi_bbgh/:id" component={Thu_hoi_bbgh} />
                 {/* Form Control */}
                 <Route path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa" component={Theo_doi_bb_giao_nhan_hang_hoa} />
                 <Route path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa_mds" component={Theo_doi_bb_giao_nhan_hang_hoa_mds} />
                 <Route path="/formcontrol/danh_muc_dau_thau" component={Danh_muc_dau_thau} />
                 <Route path="/formcontrol/template" component={template} />
                 <Route path="/formcontrol/theo_doi_dccn" component={Theo_doi_dccn} />
-                {/* <Route path="/formcontrol/sup_location_ngoai_mcp" component={Sup_location_ngoai_mcp} /> */}
+                <Route path="/formcontrol/scn_quan_ly_ncc" component={Scn_quan_ly_ncc} />
+                <Route path="/formcontrol/scn_quan_ly_nvl" component={Scn_quan_ly_nvl} />
                 {/* REPORT */}
                 <Route path="/login" component={Login} />
                 <Route path="/profile" component={Profile} />
