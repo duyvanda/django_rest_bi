@@ -22,17 +22,6 @@ function Scn_quan_ly_ncc({history}) {
 
     const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
-    async function  fetch_ncc  () {
-        let response = await fetch(`https://bi.meraplion.com/local/get_ncc/`)
-        let arr = await response.json()
-        let df = new pd.DataFrame(arr.data)
-        set_fix_df(df)
-        // df.ctypes.print()
-        df.head().print()
-        console.log(pd.toJSON(df)[0]);
-        set_lst_dd1(pd.toJSON(df));
-    }
-    
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {
         const media = window.matchMedia('(max-width: 960px)');
@@ -46,6 +35,17 @@ function Scn_quan_ly_ncc({history}) {
             history.push('/login');
         };
     }, []);
+
+    async function  fetch_ncc  () {
+        let response = await fetch(`https://bi.meraplion.com/local/get_ncc/`)
+        let arr = await response.json()
+        let df = new pd.DataFrame(arr.data)
+        set_fix_df(df)
+        // df.ctypes.print()
+        df.head(1).print()
+        console.log(pd.toJSON(df)[0]);
+        set_lst_dd1(pd.toJSON(df));
+    }
 
     {/* SEARCH STATE */}
     const [fix_df, set_fix_df] = useState(new pd.DataFrame());
@@ -82,11 +82,10 @@ function Scn_quan_ly_ncc({history}) {
     }
 
     function fetch_id_data (pk) {
-
         console.log("pk", pk)
         let dk = fix_df['mancc'].eq(pk)
         let df = fix_df.loc({rows: dk})
-        df.head().print()
+        df.head(1).print()
         df = df.shape[0] === 0 ? new pd.DataFrame() : df
         df.fillNa('', {'inplace':true})
         let data_arr = pd.toJSON(df)

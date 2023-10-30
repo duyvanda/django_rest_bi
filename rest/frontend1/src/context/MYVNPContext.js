@@ -13,16 +13,6 @@ export const MYVNPProvider = ({ children }) => {
 
   const URL = "https://bi.meraplion.com/myvnp"
 
-  useEffect(() => {
-    SetChiNhanh(ChiNhanh);
-    console.log("URL", URL);
-    console.log(
-      "window.location.host ",
-      window.location.host,
-      window.location.host === "localhost:3000"
-    );
-  }, []);
-
   // Post and Update KH
   const post_data = async (data) => {
     SetLoading(true);
@@ -231,3 +221,12 @@ export const MYVNPProvider = ({ children }) => {
 };
 
 export default MYVNPContext;
+
+  // useEffect(() => {
+    // SetChiNhanh(ChiNhanh);
+    // console.log("URL", URL);
+    // console.log(
+    //   "window.location.host ",
+    //   window.location.host,
+    //   window.location.host === "localhost:3000");
+  // }, []);

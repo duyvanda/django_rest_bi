@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Navbar1 from "./components/Navbar.jsx";
 import Login from "./components/Login";
-import Profile from "./components/Profile";
 import ReportScreen from "./components/ReportScreen";
 // import FormScreen from "./components/FormScreen";
 //MYVNPOST
@@ -45,7 +44,6 @@ function App() {
   return (
     <FeedbackProvider>
       <MapProvider>
-        <VNPProvider>
           <MYVNPProvider>
             <Router>
               <Navbar1 />
@@ -73,7 +71,6 @@ function App() {
                 <Route path="/formcontrol/scn_quan_ly_nvl" component={Scn_quan_ly_nvl} />
                 {/* REPORT */}
                 <Route path="/login" component={Login} />
-                <Route path="/profile" component={Profile} />
                 <Route path="/reports" component={ReportList} />
                 <Route path="/reportscreen/:id" component={ReportScreen} />
                 <Route path="/testscreensize" component={TestScreenSize} />
@@ -85,7 +82,6 @@ function App() {
               </>
             </Router>
           </MYVNPProvider>
-        </VNPProvider>
       </MapProvider>
     </FeedbackProvider>
   );

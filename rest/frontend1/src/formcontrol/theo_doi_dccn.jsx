@@ -19,7 +19,7 @@ import {
 
 function Theo_doi_dccn({history}) {
 
-    const { fetchFilerReports, SetRpScreen, userLogger, loading, SetLoading, formatDate, Inserted_at, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
+    const { get_current_dmy, fetchFilerReports, SetRpScreen, userLogger, loading, SetLoading, formatDate, Inserted_at, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
     const fetch_fix_data = async () => {
         // SetLoading(true)
@@ -35,12 +35,14 @@ function Theo_doi_dccn({history}) {
     const fetch_fix_data_ten_kh = async (pk) => {
         set_id2([]);
         set_select_id2("");
+        set_sotiendccn("");
         console.log("pk", pk)
         let dk = fix_df['dccndenthang'].eq(pk)
         let df = fix_df.loc({rows: dk})
         df = df.shape[0] === 0 ? new pd.DataFrame() : df.groupby(['makhcu','tenkh','tenkh_clean']).count()
+        console.log(df.shape)
         set_id2(pd.toJSON(df));
-        console.log("current_date", current_date);
+        // console.log(pd.toJSON(df))
     }
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {
@@ -50,7 +52,10 @@ function Theo_doi_dccn({history}) {
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Theo_doi_dccn', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_fix_data();
-
+        let [year, month, day] = get_current_dmy();
+        console.log([year, month, day])
+        set_number1(month);
+        set_number2(year);
         } else {
             history.push('/login');
         };
@@ -61,6 +66,8 @@ function Theo_doi_dccn({history}) {
         return outputArray
     }
 
+
+    const f = new Intl.NumberFormat()
     const [manv, set_manv] = useState("");
     const current_date = formatDate(Date());
     const [fix_df, set_fix_df] = useState(new pd.DataFrame());
@@ -83,12 +90,11 @@ function Theo_doi_dccn({history}) {
     const [text12, set_text12]= useState("");
     const [number1, set_number1]= useState("");
     const [number2, set_number2]= useState("");
-    // const [number, set_number] = useState("");
+    const [sotiendccn, set_sotiendccn] = useState("");
     const [date1, setDate1] = useState("");
 
     const fetch_id_data = async (select_id) => {
         // SetLoading(true)
-
         console.log("fetch_id_data", select_id)
 
         const response = await fetch(`https://bi.meraplion.com/local/kt_get_dccn_id/?pk=${select_id}`)
@@ -100,7 +106,6 @@ function Theo_doi_dccn({history}) {
         else {
         const data_arr = await response.json()
         const data = data_arr[0]
-
         console.log("fetch_id_data", data)
         setDate1(data.date1);
         set_text1(data.text1);
@@ -115,10 +120,12 @@ function Theo_doi_dccn({history}) {
         set_text10(data.text10);
         set_text11(data.text11);
         set_text12(data.text12);
-        set_number1(data.number1);
-        set_number2(data.number2);
 
-
+        let x1 = data.number1 === 0 ? number1 : data.number1
+        let x2 = data.number2 === 0 ? number2 : data.number2
+        set_number1(x1);
+        set_number2(x2);
+        set_sotiendccn(data.sotiendccn)
         // console.log(data)
         SetLoading(false)
 
@@ -248,8 +255,6 @@ function Theo_doi_dccn({history}) {
 
                         <Dropdown className="" autoClose="true" block="true" onSelect = { handle_select_id2 }>
 
-
-
                                 <Dropdown.Toggle disabled={select_id1==="" | id2.length === 0} className="ml-1 bg-white border-0 text-dark text-left flex-grow-1"> 
                                 {select_id2 === "" ? "Chọn Mã KH": select_id2}
                                 </Dropdown.Toggle>
@@ -260,8 +265,8 @@ function Theo_doi_dccn({history}) {
                                 <Dropdown.Divider style={{height: 1, backgroundColor: 'steelblue'}}></Dropdown.Divider>
                                     {
                                     id2
-                                    .slice(0, 20)
                                     .filter( el => el.tenkh_clean.includes(search_id2.toLowerCase()))
+                                    .slice(0, 200)                     
                                     .map( (el, index) =>
                                         <Dropdown.Item key={index} eventKey={el.makhcu}> {el.makhcu + " - " + el.tenkh} </Dropdown.Item>
                                     )
@@ -269,8 +274,9 @@ function Theo_doi_dccn({history}) {
                                 </Dropdown.Menu>
                         </Dropdown>
                         </InputGroup>
+
                         
-                        <FloatingLabel label="NGÀY THU HỒI" className="border rounded mt-2" > <Form.Control type="date" className="" placeholder="xxx" onChange={(e) => setDate1(e.target.value)} value={date1} /> </FloatingLabel>
+                        <FloatingLabel label="NGÀY THU HỒI MỚI" className="border rounded mt-2" > <Form.Control type="date" className="" placeholder="xxx" onChange={(e) => setDate1(e.target.value)} value={date1} /> </FloatingLabel>
                         <FloatingLabel label="THÁNG THU HỒI" className="border rounded mt-2" > <Form.Control min="0" max="12" type="number" className="" placeholder="xxx" onChange={ (e) => set_number1(e.target.value) } value = {number1}/> </FloatingLabel>
                         <FloatingLabel label="NĂM THU HỒI" className="border rounded mt-2" > <Form.Control type="number" className="" placeholder="xxx" onChange={ (e) => set_number2(e.target.value) } value = {number2}/> </FloatingLabel>
                         <FloatingLabel label="NGƯỜI THU HỒI" className="border rounded mt-2" > <Form.Control type="text" className="" placeholder="xxx" onChange={ (e) => set_text1(e.target.value) } value = {text1}/> </FloatingLabel>
@@ -278,7 +284,8 @@ function Theo_doi_dccn({history}) {
                         <FloatingLabel label="TÍNH KPI PBH" className="border rounded mt-2" > <Form.Control type="text" className="" placeholder="xxx" onChange={ (e) => set_text2(e.target.value) } value = {text2}/> </FloatingLabel>
                         <FloatingLabel label="SỐ BILL" className="border rounded mt-2" > <Form.Control type="text" className="" placeholder="xxx" onChange={ (e) => set_text3(e.target.value) } value = {text3}/> </FloatingLabel>
                         <FloatingLabel label="PHỤ TRÁCH LIÊN HỆ" className="border rounded mt-2" > <Form.Control type="text" className="" placeholder="xxx" onChange={ (e) => set_text4(e.target.value) } value = {text4}/> </FloatingLabel>
-                        
+                        <p className="text-danger fw-bold">SỐ TIỀN ĐCCN: {f.format(sotiendccn)} VND</p>
+                        <p className="text-danger fw-bold">NGÀY THU HỒI CŨ (Y-M-D): {date1.replace("T00:00:00","")}</p>
                         
                         {/* END FORM BODY */}
 
@@ -293,7 +300,7 @@ function Theo_doi_dccn({history}) {
                         <FloatingLabel label="Cảnh báo nợ" className="border rounded mt-2" > <Form.Control type="text" className="" placeholder="xxx" onChange={ (e) => set_text10(e.target.value) } value = {text10}/> </FloatingLabel>
                         <FloatingLabel label="Khởi kiện" className="border rounded mt-2" > <Form.Control type="text" className="" placeholder="xxx" onChange={ (e) => set_text11(e.target.value) } value = {text11}/> </FloatingLabel>
                         <FloatingLabel label="Ghi chú" className="border rounded mt-2" > <Form.Control type="text" className="" placeholder="xxx" onChange={ (e) => set_text12(e.target.value) } value = {text12}/> </FloatingLabel>
-                        <Button disabled={false} className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
+                        <Button disabled={select_id2 === ''} className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
                 </Col>
                 
             </Row>
@@ -332,3 +339,4 @@ export default Theo_doi_dccn
 // console.log(_newArray);
 
 // set_id2(_newArray);
+

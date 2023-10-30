@@ -130,7 +130,6 @@ def df_to_dict(df):
 def get_eotoken(manv, password):
     import requests
     from requests.structures import CaseInsensitiveDict
-    # url = f"""https://eoffice.merapgroup.com/eoffice/api/api/auth/login"""
     headers = CaseInsensitiveDict()
     headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
     headers['accept'] = 'application/json'

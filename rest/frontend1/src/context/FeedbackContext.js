@@ -142,6 +142,14 @@ export const FeedbackProvider = ({ children }) => {
     return [year, month, day].join('-');
   }
 
+  function get_current_dmy() {
+      let d = new Date()
+      let month = d.getMonth() + 1
+      let day = d.getDate()
+      let year = d.getFullYear() 
+    return [year, month, day];
+  }
+
   function Inserted_at() {
     const datetime = new Date();
     const inserted_at = (datetime.toISOString().replace("Z",""));
@@ -232,8 +240,6 @@ export const FeedbackProvider = ({ children }) => {
       const rpid = isMB ? report_obj.id_mb : report_obj.id;
       setReportId(rpid);
 
-      
-
       // const phancap = report_obj.param === "type0" ? false : true
 
       const version = get_version()
@@ -254,7 +260,6 @@ export const FeedbackProvider = ({ children }) => {
 
       // setReportParam(rppr.replace("xxxxxx", manv).replace("vvvvvv", version))
       // console.log(rppr.replace("xxxxxx", manv).replace("vvvvvv", version))
-
       // fetch_real_time_report(data)
 
     } else {
@@ -371,6 +376,7 @@ export const FeedbackProvider = ({ children }) => {
     <FeedbackContext.Provider
       value={{
         formatDate,
+        get_current_dmy,
         Inserted_at,
         removeAccents,
         loading,
