@@ -44,6 +44,7 @@ function Scn_quan_ly_ncc({history}) {
         // df.ctypes.print()
         df.head(1).print()
         console.log(pd.toJSON(df)[0]);
+        df = df.groupby(['manvl','ma_ten_nvl']).count()
         set_lst_dd1(pd.toJSON(df));
     }
 

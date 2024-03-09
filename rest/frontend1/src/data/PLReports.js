@@ -1,6 +1,6 @@
 const PLReports = [
     {
-    "tenreport": "PL| Tra cứu thông tin khách hàng",
+    "tenreport": "PL | Tra cứu thông tin khách hàng",
     "id": "7299ccee-6e38-4f71-94b5-e6659d84ae9b",
     "id_mb": "7299ccee-6e38-4f71-94b5-e6659d84ae9b",
     "manv": "xxxxxx",

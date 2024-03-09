@@ -14,6 +14,8 @@ import {
     InputGroup,
     Stack,
     FloatingLabel,
+    Table,
+    Pagination
 } from "react-bootstrap";
 
 function Template({history}) {
@@ -52,6 +54,20 @@ function Template({history}) {
     const [edit_sp1, set_edit_sp1] = useState(false);
 
     const URL = EDITMODE ? 'ABC' : 'XYZ'
+    const [page, set_page] = useState(1);
+    const data_table = [
+        {"id":1,"name":"Nguyen Thuy Kieu HCPXXXXXXXX BV Tan Phu SG", "class":"Ho Thi Hong Gam (MR0673)", "QuaTang":"Chai nuoc tuong ChinSu, SL:02 (5.000.000 VND)"},
+        {"id":1,"name":"Nguyen Thuy Kieu HCPXXXXXXXX BV Tan Phu SG", "class":"Ho Thi Hong Gam (MR0673)", "QuaTang":"Chai nuoc tuong ChinSu"},
+        {"id":1,"name":"Nguyen Thuy Kieu HCPXXXXXXXX BV Tan Phu SG", "class":"Ho Thi Hong Gam (MR0673)", "QuaTang":"Chai nuoc tuong ChinSu"},
+        {"id":1,"name":"Nguyen Thuy Kieu HCPXXXXXXXX BV Tan Phu SG", "class":"Ho Thi Hong Gam (MR0673)", "QuaTang":"Chai nuoc tuong ChinSu"},
+        {"id":1,"name":"Nguyen Thuy Kieu HCPXXXXXXXX BV Tan Phu SG", "class":"Ho Thi Hong Gam (MR0673)", "QuaTang":"Chai nuoc tuong ChinSu"},
+        {"id":1,"name":"Nguyen Thuy Kieu HCPXXXXXXXX BV Tan Phu SG", "class":"Ho Thi Hong Gam (MR0673)", "QuaTang":"Chai nuoc tuong ChinSu"},
+        {"id":1,"name":"Nguyen Thuy Kieu HCPXXXXXXXX BV Tan Phu SG", "class":"Ho Thi Hong Gam (MR0673)", "QuaTang":"Chai nuoc tuong ChinSu"},
+        {"id":1,"name":"Nguyen Thuy Kieu HCPXXXXXXXX BV Tan Phu SG", "class":"Ho Thi Hong Gam (MR0673)", "QuaTang":"Chai nuoc tuong ChinSu"},
+        {"id":1,"name":"Nguyen Thuy Kieu HCPXXXXXXXX BV Tan Phu SG", "class":"Ho Thi Hong Gam (MR0673)", "QuaTang":"Chai nuoc tuong ChinSu"},
+        {"id":1,"name":"Nguyen Thuy Kieu HCPXXXXXXXX BV Tan Phu SG", "class":"Ho Thi Hong Gam (MR0673)", "QuaTang":"Chai nuoc tuong ChinSu"}
+    ]
+    const items = [1,2,3,4,5]
 
     const handle_id_enter = (e) => {
         if (e.key === 'Enter') {
@@ -330,6 +346,52 @@ function Template({history}) {
                         </div >
                         
                         <Button disabled={edit_sp | edit_sp1 | dd_select1===""} className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
+                        
+                        <Table  className="w-auto text-wrap mb-0" striped bordered size="sm" variant="light">
+                        <colgroup>
+                        <col span="1" style={{width: "1%"}}/>
+                        <col span="1" style={{width: "25%"}}/>
+                        <col span="1" style={{width: "25%"}}/>
+                        <col span="1" style={{width: "25%"}}/>
+                        <col span="1" style={{width: "1%"}}/>
+                        </colgroup>
+                        <thead >
+                        <tr>
+                        <th>#</th>
+                        <th>id</th>
+                        <th>name</th>
+                        <th>class</th>
+                        <th>approve</th>
+                        </tr>
+                        </thead>
+                            <tbody >
+                            {data_table
+                            .filter( el => el.id === page )
+                            .map( (el) =>
+                            <tr>
+                                <td className="align-middle">{el.id}</td>
+                                <td>{el.name}</td>
+                                <td>{el.class}</td>
+                                <td>{el.QuaTang}</td>
+                                <td className="align-middle"><Form.Check className="mb-3" type="switch" onChange={console.log("first")} defaultChecked={true}/> </td>
+                            </tr>
+                            )
+                            }
+                        <tr >
+                        <td colSpan={5}>
+                        <Pagination className="mb-0">
+                        {items.map( (el) =>  <Pagination.Item onClick={ (e)=> set_page(Number(e.target.text)) } key={el} active = {el === page}> {el}</Pagination.Item>
+                        )
+                        }
+                        </Pagination>
+                        </td>
+                        </tr>
+
+
+                            </tbody>
+                        </Table>
+
+                        
                         </Form>
                         {/* END FORM BODY */}
 

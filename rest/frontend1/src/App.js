@@ -35,10 +35,19 @@ import Realtime from "./realtime/Realtime";
 import Theo_doi_bb_giao_nhan_hang_hoa from "./formcontrol/theo_doi_bb_giao_nhan_hang_hoa";
 import Theo_doi_bb_giao_nhan_hang_hoa_mds from "./formcontrol/theo_doi_bb_giao_nhan_hang_hoa_mds";
 import template from "./formcontrol/template";
+import TemplateSimple from "./formcontrol/template_simple";
 import Danh_muc_dau_thau from "./formcontrol/danh_muc_dau_thau";
 import Theo_doi_dccn from "./formcontrol/theo_doi_dccn";
 import Scn_quan_ly_ncc from "./formcontrol/scn_quan_ly_ncc";
 import Scn_quan_ly_nvl from "./formcontrol/scn_quan_ly_nvl";
+import Scn_quan_ly_dmnvl from "./formcontrol/scn_quan_ly_dmnvl";
+import Chuong_trinh_dau_tu_hcp_test from "./formcontrol/chuong_trinh_dau_tu_hcp_test";
+import Tracking_chi_phi_hco from "./formcontrol/tracking_chi_phi_hco";
+import Crm_tracking_chi_phi_hco from "./formcontrol/crm_tracking_chi_phi_hco";
+import Tracking_chi_phi_hcp from "./formcontrol/tracking_chi_phi_hcp";
+import Tracking_chi_phi_pcl from "./formcontrol/tracking_chi_phi_pcl";
+import MdsXuanThinhVuong from "./formcontrol/mds_xuan_thinh_vuong";
+import Wps_dang_ky_vpp from "./formcontrol/wps_dang_ky_vpp";
 
 function App() {
   return (
@@ -66,9 +75,18 @@ function App() {
                 <Route path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa_mds" component={Theo_doi_bb_giao_nhan_hang_hoa_mds} />
                 <Route path="/formcontrol/danh_muc_dau_thau" component={Danh_muc_dau_thau} />
                 <Route path="/formcontrol/template" component={template} />
+                <Route path="/formcontrol/template_simple" component={TemplateSimple} />
                 <Route path="/formcontrol/theo_doi_dccn" component={Theo_doi_dccn} />
                 <Route path="/formcontrol/scn_quan_ly_ncc" component={Scn_quan_ly_ncc} />
                 <Route path="/formcontrol/scn_quan_ly_nvl" component={Scn_quan_ly_nvl} />
+                <Route path="/formcontrol/scn_quan_ly_dmnvl" component={Scn_quan_ly_dmnvl} />
+                <Route path="/formcontrol/mds_xuan_thinh_vuong" component={MdsXuanThinhVuong} />
+                <Route path="/formcontrol/chuong_trinh_dau_tu_hcp_test" component={Chuong_trinh_dau_tu_hcp_test} />
+                <Route path="/formcontrol/tracking_chi_phi_hco" component={Tracking_chi_phi_hco} />
+                <Route path="/formcontrol/crm_tracking_chi_phi_hco" component={Crm_tracking_chi_phi_hco} />
+                <Route path="/formcontrol/tracking_chi_phi_hcp" component={Tracking_chi_phi_hcp} />
+                <Route path="/formcontrol/tracking_chi_phi_pcl" component={Tracking_chi_phi_pcl} />
+                <Route path="/formcontrol/wps_dang_ky_vpp" component={Wps_dang_ky_vpp} />
                 {/* REPORT */}
                 <Route path="/login" component={Login} />
                 <Route path="/reports" component={ReportList} />

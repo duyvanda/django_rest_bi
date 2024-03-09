@@ -268,7 +268,7 @@ function Theo_doi_dccn({history}) {
                                     .filter( el => el.tenkh_clean.includes(search_id2.toLowerCase()))
                                     .slice(0, 200)                     
                                     .map( (el, index) =>
-                                        <Dropdown.Item key={index} eventKey={el.makhcu}> {el.makhcu + " - " + el.tenkh} </Dropdown.Item>
+                                        <Dropdown.Item key={index} eventKey={el.makhcu}> {el.tenkh_clean} </Dropdown.Item>
                                     )
                                     }
                                 </Dropdown.Menu>

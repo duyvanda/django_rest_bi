@@ -151,8 +151,10 @@ export const FeedbackProvider = ({ children }) => {
   }
 
   function Inserted_at() {
-    const datetime = new Date();
+    let datetime = new Date();
+    // datetime = datetime.toLocaleString("en-US", {timeZone: "Asia/Bangkok"});
     const inserted_at = (datetime.toISOString().replace("Z",""));
+    // const inserted_at = datetime.replace("Z","");
     return inserted_at;
   }
 

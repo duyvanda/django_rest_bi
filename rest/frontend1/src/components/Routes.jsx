@@ -208,7 +208,7 @@ const handleRoutesSubmit = (e) => {
             <Dropdown.Toggle id="dropdown-basic" className="text-dark bg-warning border border-warning">
             Chọn Nhân Viên
             </Dropdown.Toggle>
-            <Dropdown.Menu style={{maxHeight: "410px", overflowY: "auto"}}>
+            <Dropdown.Menu style={{maxHeight: "410px", overflowY: "auto"}} >
             <div align="center">
               <Button variant="warning" size="sm" style={{width:"200px"}} onClick={handleClearNV}>Clear All Nhân Viên</Button>
             </div>

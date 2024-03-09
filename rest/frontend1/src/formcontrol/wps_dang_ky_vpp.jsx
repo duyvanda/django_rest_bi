@@ -17,10 +17,25 @@ import {
     Card
 } from "react-bootstrap";
 
-function TemplateSimple({history}) {
+function Wps_dang_ky_vpp({history}) {
 
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
+    const fetch_wps_data = async () => {
+        SetLoading(true);
+        const response = await fetch(`https://bi.meraplion.com/local/wps_data_vpp/`)
+        if (response.ok) {
+            SetLoading(false)
+            const data = await response.json()
+            set_arr_vpp(data)
+            
+        }
+        else {
+            SetLoading(false)
+        }
+
+    }
+    
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {
         const media = window.matchMedia('(max-width: 960px)');
@@ -28,40 +43,26 @@ function TemplateSimple({history}) {
         const dv_width = window.innerWidth;
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Theo_doi_dccn', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
+        fetch_wps_data();
         } else {
             history.push('/login');
         };
     }, []);
 
     const [manv, set_manv] = useState("");
-    const current_date = formatDate(Date());
-    const [text, set_text] = useState("");
-    const [number, set_number] = useState("");
+    const current_date = formatDate(Date());    
+    const [arr_vpp, set_arr_vpp] = useState([]);
+    const [vpp, set_vpp] = useState("");
+    // const [text, set_text] = useState("");
+    const [so_luong, set_so_luong] = useState("");
     const [onDate, setDate] = useState(current_date);
     
 
 
-    const fetch_id_data = async (select_id) => {
-        SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/template/?id=${select_id}`)
-        
-        if (!response.ok) {
-            SetLoading(false)
-        }
-
-        else {
-        const data_arr = await response.json()
-        const data = data_arr[0]
-        set_text(data.id)
-        console.log(data)
-        SetLoading(false)
-
-        }
-    }
 
     const post_form_data = async (data) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/template/`, {
+        const response = await fetch(`https://bi.meraplion.com/local/insert_wps_data_vpp/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -78,7 +79,7 @@ function TemplateSimple({history}) {
             const data = await response.json();
             console.log(data);
             SetALert(true);
-            SetALertType("alert-warning");
+            SetALertType("alert-success");
             SetALertText("ĐÃ TẠO THÀNH CÔNG");
             setTimeout(() => SetALert(false), 3000);
 
@@ -90,13 +91,15 @@ function TemplateSimple({history}) {
         const current_date = formatDate(Date());
 
         const data = {
-            "text":text,
-            "number":number,
+            // "text":text,
+            "uuid":uuid(),
+            "manv":manv,
+            "vpp":vpp,
+            "so_luong":so_luong,
             "date":onDate,
         }
         console.log(data);
-        post_form_data(data);
-        set_text("");
+        post_form_data(data);    
     }
 
     if (!loading) {
@@ -115,39 +118,28 @@ function TemplateSimple({history}) {
                         </div>
                         }
 
+                        <h1>Đăng ký VPP (WPS)</h1>
+
                         <Form onSubmit={handle_submit}>
                         {/* START FORM BODY */}
-
-                        <InputGroup className="ml-1">
-                            <Form.Control type="text" className="" placeholder="ĐCCN ĐẾN THÁNG"  />
-                            <Form.Control type="text" className="" placeholder="MÃ KH" />
-                        </InputGroup>
+                        <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ e => set_vpp(e.target.value) }>
+                            <option value="">Chọn VPP</option>
+                            {arr_vpp
+                            .map( (el, index) =>
+                            <option key={index} value={el.tenvpp_clean}>{el.tenvpp + '  ' + '(' + el.dvt + ')' }</option>
+                            )
+                            }
+                        </Form.Select>
                         
-                        {/* TEXT */}
-                        <FloatingLabel label="TEXT" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text(e.target.value) } value = {text}/> </FloatingLabel>
+                        {/* so_luong */}
+                        <FloatingLabel label="Số Lượng" className="border rounded mt-2" > <Form.Control required type="so_luong" className="" placeholder="" onChange={ (e) => set_so_luong(e.target.value) } value = {so_luong} /> </FloatingLabel>
                         
-                        {/* NUMBER */}
-                        <FloatingLabel label="NUMBER" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_number(e.target.value) } value = {number} /> </FloatingLabel>
-                        
-                        {/* DATE */}
-                        <FloatingLabel label="DATE" className="border rounded mt-2" > <Form.Control required type="date" className="" placeholder="" onChange={(e) => setDate(e.target.value)} value={onDate} /> </FloatingLabel>
                         
                         <Button disabled={false} className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
                         </Form>
                         {/* END FORM BODY */}
 
-                        {/* CARDS IF NEEDED */}
 
-                        <Card>
-                            <Card.Body>
-                            <Card.Title>Card Title</Card.Title>
-                                <Card.Text>
-                                Some quick example text to build on the card title and make up the
-                                bulk of the card's content.
-                                </Card.Text>
-                                <Button size="sm" variant="primary">Go somewhere</Button>
-                            </Card.Body>
-                        </Card>
 
                         
                     </div>
@@ -170,4 +162,4 @@ function TemplateSimple({history}) {
 
 }
 
-export default TemplateSimple
+export default Wps_dang_ky_vpp

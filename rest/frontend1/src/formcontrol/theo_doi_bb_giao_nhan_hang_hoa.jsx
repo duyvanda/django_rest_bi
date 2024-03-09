@@ -38,15 +38,18 @@ function Theo_doi_bb_giao_nhan_hang_hoa({history}) {
         };
     }, []);
 
-    
+    const [arr_month, set_arr_month] = useState(['2023-10-01','2023-09-01','2023-08-01','2023-07-01','2023-06-01','2023-05-01','2023-04-01']);
+    const [arr_kv, set_arr_kv] = useState(['Bắc Trung Bộ',	'Đông Bắc 1',	'Đông Bắc 2',	'Đông Nam 1',	'Đông Nam 2',	'Hà Nội 1',	'Hà Nội 2',	'Hồ Chí Minh 1',	'Hồ Chí Minh 2',	'Mê Kông 1',	'Mê Kông 2',	'Miền Đông 1',	'Miền Đông 2',	'Nam Trung Bộ',	'Tây Bắc HN']);
     const [manv, set_manv] = useState("");
-    const [lst_order, set_lst_order]  = useState({"SODONDATHANG":""});
+    const [lst_order, set_lst_order]  = useState( {"SODONDATHANG":"", "NGAY_HOA_DON":""} );
     // const [fix_kt_phanhoi, set_fix_kt_phanhoi] = useState("");
     // const [fix_mds_phanhoi, set_fix_mds_phanhoi] = useState("");
 
     //---------------------------//
 
     const [search, set_search] = useState("");
+    const [month, set_month] = useState("2023-10-01");
+    const [kv, set_kv] = useState('Bắc Trung Bộ');
     const [kt_da_nhan, set_kt_da_nhan] = useState("");
     const [kt_kh_bb, set_kt_kh_bb] = useState("");
     const [kt_kh_hd, set_kt_kh_hd] = useState("");
@@ -62,7 +65,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa({history}) {
 
     const fetch_kt_cache_data = async (select_order) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/kt_cache_data/?sodondathang=${select_order}`)
+        const response = await fetch(`https://bi.meraplion.com/local/kt_cache_data/?sodondathang=${select_order}&kv=${kv}&month=${month}`)
         
         if (!response.ok) {
             SetLoading(false)
@@ -80,7 +83,6 @@ function Theo_doi_bb_giao_nhan_hang_hoa({history}) {
         set_lst_phan_hoi(data.KT_PHAN_HOI);
         set_kt_ghi_chu(data.KT_GHI_CHU);
         SetLoading(false)
-
         }
     }
 
@@ -154,7 +156,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa({history}) {
             set_kt_kh_hd("");
             set_kt_ghi_chu("");
             set_lst_phan_hoi([]);
-            set_lst_order({"SODONDATHANG":""});
+            set_lst_order( {"SODONDATHANG":"", "NGAY_HOA_DON":""} );
             //-----------------------------------//  
             SetALert(true);
             SetALertType("alert-success");
@@ -179,7 +181,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa({history}) {
             "KH_KI_NHAN_THEO_MAU_BB_GIAO_HANG":kt_kh_bb,
             "KH_KI_NHAN_HANG_TREN_HOA_DON":kt_kh_hd,
             "KT_GHI_CHU":kt_ghi_chu,
-            "KT_PHAN_HOI":lst_phan_hoi
+            "KT_PHAN_HOI":kt_phan_hoi
         }
 
         console.log("handle_submit", data);
@@ -216,9 +218,28 @@ function Theo_doi_bb_giao_nhan_hang_hoa({history}) {
                     </div>
                     }
                     <Form onSubmit={handle_submit}>
+                    
+                    <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ e => set_month(e.target.value) }>
+                        <option value={month}>{month}</option>
+                        {arr_month
+                        .map((el, index)=>
+                            <option key={index} value={el}>{el}</option>
+                        )
+                        }
+                    </Form.Select>
+
+                    <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ e => set_kv(e.target.value) }>       
+                        <option value={kv}>{kv}</option>
+                        {arr_kv
+                        .map((el, index)=>
+                            <option key={index} value={el}>{el}</option>
+                        )
+                        }
+                    </Form.Select>
+
                     <FloatingLabel label="Tìm Hóa Đơn (00090632) Hoặc Đơn Hàng - Hóa Đơn (DL5-0723-00116-00090632)" className="border rounded mt-2 text-muted" > <Form.Control className="" type="text" onKeyDown={handleSearchEnter} value={search} onChange={handleSearchParam} placeholder="" /> </FloatingLabel>
                     
-                    <Form.Control className="mt-2" readOnly value = {lst_order.SODONDATHANG}/>
+                    <Form.Control className="mt-2" readOnly value = {lst_order.SODONDATHANG + "- Ngày HĐ: " + lst_order.NGAY_HOA_DON.replace("T00:00:00","")}/>
                     <Form.Control className="mt-2" readOnly value = {lst_order.MAKHDMS}/>
                     <Form.Control className="mt-2" readOnly value = {lst_order.DUNO}/>
                     <Form.Control className="mt-2" readOnly value = {lst_order.TENKHDMS}/>
@@ -227,11 +248,12 @@ function Theo_doi_bb_giao_nhan_hang_hoa({history}) {
                     <FloatingLabel label="KH KÍ NHẬN THEO MẪU BIÊN BẢN GIAO HÀNG" className="border rounded mt-2 text-muted" > <Form.Control placeholder="" type="text" onChange={ (e) => set_kt_kh_bb(e.target.value) } value = {kt_kh_bb} /> </FloatingLabel>
                     <FloatingLabel label="KH KÍ NHẬN HÀNG TRÊN HÓA ĐƠN" className="border rounded mt-2 text-muted" > <Form.Control placeholder="" type="text" onChange={ (e) => set_kt_kh_hd(e.target.value) } value = {kt_kh_hd} /> </FloatingLabel>
                     <FloatingLabel label="KT GHI CHÚ" className="border rounded mt-2 text-muted" > <Form.Control placeholder="" type="text" onChange={ (e) => set_kt_ghi_chu(e.target.value) } value = {kt_ghi_chu} /> </FloatingLabel>
+                    <FloatingLabel label="KT PHẢN HỒI" className="border rounded mt-2 text-muted" > <Form.Control placeholder="" type="text" onChange={ (e) => set_kt_phan_hoi(e.target.value) } value = {kt_phan_hoi} /> </FloatingLabel>
                     
 
                     {/* ADD MULTIPLE ITEMS WITH THE SAME ID */}
 
-                    <div className="mt-3 p-1 border border-2 border-success rounded">
+                    {/* <div className="mt-3 p-1 border border-2 border-success rounded">
                         <FloatingLabel label="KT PHẢN HỒI" id="IDSP" className="border rounded mt-2 text-muted" > <Form.Control type="text" className="" placeholder="PHAI IN PUT" onChange={ (e) => set_kt_phan_hoi( e.target.value ) } value = {kt_phan_hoi} /> </FloatingLabel>
                         <FloatingLabel label="DATE" className="border rounded mt-2" > <Form.Control disabled type="date" className="" placeholder="" value={formatDate(Date())} /> </FloatingLabel>
                         {!edit_phan_hoi ? (
@@ -263,7 +285,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa({history}) {
                         )
                         }
 
-                        </div >
+                    </div > */}
 
 
                     <Button disabled={edit_phan_hoi | lst_order.SODONDATHANG==="" } className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>

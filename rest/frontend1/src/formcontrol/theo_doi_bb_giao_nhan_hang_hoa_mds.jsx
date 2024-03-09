@@ -39,7 +39,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa_mds(history) {
 
     
     const [manv, set_manv] = useState("");
-    const [lst_order, set_lst_order]  = useState({});
+    const [lst_order, set_lst_order]  = useState({"SODONDATHANG":""});
     // const [fix_kt_phanhoi, set_fix_kt_phanhoi] = useState("");
     // const [fix_mds_phanhoi, set_fix_mds_phanhoi] = useState("");
 
@@ -73,9 +73,8 @@ function Theo_doi_bb_giao_nhan_hang_hoa_mds(history) {
         const data = data_arr[0]
         console.log("fetch_mds_cache_data", data);
         set_lst_order(data);
-        set_lst_phan_hoi(data.MDS_PHAN_HOI);
         set_mds_ghi_chu(data.MDS_GHI_CHU);
-        console.log("lst_phan_hoi", data.MDS_PHAN_HOI);
+        set_mds_da_ban_giao(data.MDS_DA_BAN_GIAO);
         SetLoading(false)
 
         }
@@ -142,7 +141,7 @@ function Theo_doi_bb_giao_nhan_hang_hoa_mds(history) {
             const data = await response.json();
             console.log(data);
             SetALert(true);
-            SetALertType("alert-warning");
+            SetALertType("alert-success");
             SetALertText("ĐÃ TẠO THÀNH CÔNG");
             setTimeout(() => SetALert(false), 3000);
 
@@ -161,8 +160,8 @@ function Theo_doi_bb_giao_nhan_hang_hoa_mds(history) {
             "TENKHDMS":lst_order.TENKHDMS,
             "DUNO":lst_order.DUNO,
             "MDS_GHI_CHU":mds_ghi_chu,
-            "MDS_DA_BAN_GIAO":mds_da_ban_giao,
-            "MDS_PHAN_HOI":lst_phan_hoi
+            "MDS_DA_BAN_GIAO":mds_da_ban_giao
+            // "MDS_PHAN_HOI":lst_phan_hoi
         }
 
         console.log("handle_submit", data);
@@ -173,7 +172,8 @@ function Theo_doi_bb_giao_nhan_hang_hoa_mds(history) {
         // set_kt_kh_hd("");
         set_mds_ghi_chu("");
         set_lst_phan_hoi([]);
-        set_lst_order({});
+        set_lst_order({"SODONDATHANG":""});
+        set_mds_da_ban_giao("");
 
     }
 
@@ -212,47 +212,11 @@ function Theo_doi_bb_giao_nhan_hang_hoa_mds(history) {
                     <Form.Control className="mt-2" readOnly value = {lst_order.DUNO}/>
                     <Form.Control className="mt-2" readOnly value = {lst_order.TENKHDMS}/>
 
-                    <FloatingLabel label="MDS GHI CHÚ" className="border rounded mt-2" > <Form.Control placeholder="" type="text" onChange={ (e) => set_mds_ghi_chu(e.target.value) } value = {mds_ghi_chu} /> </FloatingLabel>
-                    <FloatingLabel label="MDS ĐÃ BÀN GIAO" className="border rounded mt-2" > <Form.Control placeholder="" type="text" onChange={ (e) => set_mds_da_ban_giao(e.target.value) } value = {mds_da_ban_giao} /> </FloatingLabel>
-
-                    {/* ADD MULTIPLE ITEMS WITH THE SAME ID */}
-
-                    <div className="mt-3 p-1 border border-2 border-success rounded">
-                        <FloatingLabel label="MDS PHẢN HỒI" id="IDSP" className="border rounded mt-2" > <Form.Control type="text" className="" placeholder="" onChange={ (e) => set_mds_phan_hoi( e.target.value ) } value = {mds_phan_hoi} /> </FloatingLabel>
-                        <FloatingLabel label="DATE" className="border rounded mt-2" > <Form.Control disabled type="date" className="" placeholder="" value={formatDate(Date())} /> </FloatingLabel>
-                        {!edit_phan_hoi ? (
-                            <>
-                            <Button disabled={mds_phan_hoi===""} size="sm" variant="success" id="button-addon1" className="mb-1 text-left w150px" onClick={ on_click_them_san_pham }>
-                            + PHẢN HỒI
-                            </Button>
-                            </>
-                        )
-                        :(    
-                            <Button disabled={mds_phan_hoi===""} size="sm" variant="danger" id="button-addon1" className="mb-1 text-left w150px" onClick={ on_click_them_san_pham }>
-                            UPDATE
-                            </Button>
-                        )
-                        }
-
-                        {!edit_phan_hoi && (
-                        
-                            lst_phan_hoi
-                            .filter( el => el.active === true)
-                            .map( (el, index) =>                                
-                                <InputGroup key={index} className="ml-1">
-                                    <Button  className="font-weight-bold w75px" variant="outline-danger" onClick={ () => on_click_xoa_phan_hoi(el, index) } > Xóa </Button>
-                                    <Button  className="font-weight-bold w75px" variant="outline-success" onClick={ () => on_click_edit_phan_hoi(el, index) } > Edit </Button> 
-                                    <Form.Control readOnly type="text" className="" placeholder=""  value = {el.current_date}/>
-                                    <Form.Control readOnly type="text" className="w-50" placeholder=""  value = {el.mds_phan_hoi}/>
-                                </InputGroup>
-                            )
-                        )
-                        }
-
-                        </div >
+                    <FloatingLabel label="MDS PHẢN HỒI" className="border rounded mt-2" > <Form.Control placeholder="" type="text" onChange={ (e) => set_mds_ghi_chu(e.target.value) } value = {mds_ghi_chu} /> </FloatingLabel>
+                    <FloatingLabel label="MDS ĐÃ BÀN GIAO (gõ X)" className="border rounded mt-2" > <Form.Control placeholder="" type="text" onChange={ (e) => set_mds_da_ban_giao(e.target.value.toUpperCase()) } value = {mds_da_ban_giao} /> </FloatingLabel>
 
 
-                    <Button disabled={edit_phan_hoi} className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
+                    <Button disabled={ lst_order.SODONDATHANG==="" } className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
                     </Form>
 
                     {loading &&
