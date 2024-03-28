@@ -25,14 +25,20 @@ function Tracking_chi_phi_hcp({history}) {
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const navigate = useHistory();
 
-    const fetch_tracking_chi_phi_get_data_hcp = async () => {
+    const fetch_tracking_chi_phi_get_data_hcp = async (manv) => {
         SetLoading(true);
-        const response = await fetch(`https://bi.meraplion.com/local/tracking_chi_phi_get_data_hcp/`)
-        const data = await response.json()
-        set_arr_hcp(data['lst_hcp'])
-        set_tong_hcp_da_dau_tu(data['tong_hcp_da_dau_tu'])
-        set_tong_tien_ke_hoach_da_dau_tu(data['tong_tien_ke_hoach_da_dau_tu'])
-        SetLoading(false)
+        const response = await fetch(`https://bi.meraplion.com/local/tracking_chi_phi_get_data_hcp/?manv=${manv}`)
+        
+        if (response.ok) {
+            const data = await response.json()
+            set_arr_hcp(data['lst_hcp'])
+            set_tong_hcp_da_dau_tu(data['tong_hcp_da_dau_tu'])
+            set_tong_tien_ke_hoach_da_dau_tu(data['tong_tien_ke_hoach_da_dau_tu'])
+            SetLoading(false)
+        }
+        else {
+            SetLoading(false)
+        }
     }
 
     const [count, setCount] = useState(0);
@@ -42,9 +48,9 @@ function Tracking_chi_phi_hcp({history}) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Theo_doi_dccn', isMB, dv_width);
+        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'tracking_chi_phi_hcp', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
-        fetch_tracking_chi_phi_get_data_hcp();
+        fetch_tracking_chi_phi_get_data_hcp(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
             history.push('/login');
         };
@@ -58,6 +64,7 @@ function Tracking_chi_phi_hcp({history}) {
     const [chon_qua_sn, set_chon_qua_sn] = useState("");
     const [chon_hoi_nghi, set_chon_hoi_nghi] = useState("");
     const [chon_qua_tang_hoi_nghi, set_chon_qua_tang_hoi_nghi] = useState("");
+    const [chon_hinh_thuc_hoi_nghi, set_chon_hinh_thuc_hoi_nghi] = useState("");
     // const [text1, set_text1] = useState("");
     // const [text2, set_text2] = useState("");
     // const [text3, set_text3] = useState("");
@@ -66,6 +73,7 @@ function Tracking_chi_phi_hcp({history}) {
     // const [onDate, setDate] = useState(current_date);
 
     const [arr_hcp, set_arr_hcp] = useState([]);
+    const [hcp, set_hcp] = useState("");
     const [tong_hcp_da_dau_tu, set_tong_hcp_da_dau_tu] = useState("");
     const [tong_tien_ke_hoach_da_dau_tu, set_tong_tien_ke_hoach_da_dau_tu] = useState("");
     // const [arr_gift, set_arr_gift] = useState(['Quà Tặng 1','Quà Tặng 2','Quà Tặng 3']);
@@ -73,6 +81,7 @@ function Tracking_chi_phi_hcp({history}) {
     const [search, set_search] = useState('');
 
     const handeClick = (e) => {
+        (e.target.checked) ? set_hcp(e.target.id) : set_hcp("")
         let lst = [];
         for (const [index, element] of arr_hcp.entries()) {
         if(element.ma_hcp_2 === e.target.id) {
@@ -129,6 +138,11 @@ function Tracking_chi_phi_hcp({history}) {
             SetALertType("alert-success");
             SetALertText("ĐÃ TẠO THÀNH CÔNG");
             setTimeout(() => SetALert(false), 3000);
+            set_chon_qua_tang("");
+            set_chon_qua_sn("");
+            set_chon_hoi_nghi("");
+            set_chon_qua_tang_hoi_nghi("");
+            set_chon_hinh_thuc_hoi_nghi("");
             setCount(count+1)
             // window.location.reload();
 
@@ -154,7 +168,12 @@ function Tracking_chi_phi_hcp({history}) {
             "chon_hoi_nghi": chon_hoi_nghi,
             "chon_qua_tang_hoi_nghi": chon_qua_tang_hoi_nghi,
             "inserted":"inserted",
-            "uuid":uuid()
+            "uuid":uuid(),
+            "status":"H",
+            "approved_time":"",
+            "approved_manv":"",
+            "approved_uuid":"",
+            "chon_hinh_thuc_hoi_nghi": chon_hinh_thuc_hoi_nghi
         }
         console.log(data);
         post_form_data(data);
@@ -184,8 +203,9 @@ function Tracking_chi_phi_hcp({history}) {
                         {/* START FORM BODY */}
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hco") } className="bg-warning text-dark border-0" >HCO</Button>
-                            <Button onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp") } >HCP</Button>
+                            <Button key={1} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hco") } className="bg-warning text-dark border-0" >HCO</Button>
+                            <Button key={2} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp") } >HCP</Button>
+                            <Link style={{textDecoration:  "none"}} target="_blank" key={3} className="border-1 text-dark mx-2" to="/realtime/271?local_url=sp_f_data_tracking_chi_phi_hcp" >View Báo Cáo</Link>
                         </ButtonGroup>
 
                         <Card className="mt-2">
@@ -198,28 +218,19 @@ function Tracking_chi_phi_hcp({history}) {
                                 <br></br>
                                 Tổng số tiền thực tế đã đầu tư: 0 VNĐ
                                 </Card.Text>
-                                {/* <Button size="sm" variant="primary">Go somewhere</Button> */}
                             </Card.Body>
                         </Card>
 
                         <ListGroup className="mt-2" style={{maxHeight: "400px", overflowY: "auto"}}>
 
-                        <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="Tìm Mã Hoặc Tên" />
-                        {/* {arr_hcp
-                            .map( (el, index) =>
-                            <ListGroup.Item style={{maxHeight:"75px"}} className="border border-secondary mx-0 px-0" >
-                                <Form.Check key={index} className="text-nowrap" type="switch" checked={el.check} onChange={ handeClick } id={el.contract_code} label={el.contract_name + ' - '+el.public_name}/>
-                            <p className="ml-4"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{el.contract_code + ' - ' + 'Quà Tặng '+ el.merap_tt + ' - Chi Phí Giao Tiếp '+ el.sms + ' - Hội Nghị '+ el.smn}  </p>
-                            </ListGroup.Item>
-                            )
-                        } */}
+                        <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="Tìm Mã Hoặc Tên (KHONG DAU) " />
 
                         {arr_hcp
-                            .filter( el => el.clean_ten_hcp.toLowerCase().includes(search))
+                            .filter( el => el.clean_ten_hcp.toLowerCase().includes( search.toLowerCase() ) )
                             .map( (el, index) =>
                             <ListGroup.Item style={{maxHeight:"125px"}} className="border border-secondary mx-0 px-0" >
                                 <Form.Check key={index} className="text-nowrap" type="switch" checked={el.check} onChange={ handeClick } id={el.ma_hcp_2} label={ el.ten_hcp + ' - ' +  el.ten_kh_chung + ' - ' +  el.ma_kh_chung + ' - '+ el.phan_loai_hcp}/>
-                            <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{el.ma_hcp_1  + ' - ' + 'Quà Tặng: '+ el.chon_qua_tang + ' - Quà SN: '+ el.chon_qua_sn + ' - Hội Nghị: '+ el.chon_hoi_nghi + ' - '+  el.chon_qua_tang_hoi_nghi }  </p>
+                            <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{el.ma_hcp_1  + ' - ' + 'Quà Tặng: '+ el.chon_qua_tang + ' - Quà SN: '+ el.chon_qua_sn + ' - Hội Nghị: '+ el.chon_hoi_nghi + ' - '+  el.chon_qua_tang_hoi_nghi  }  </p>
                             <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{'Tổng Tiền: '+ f.format (Number(el.tong_tien_kh)) }  </p>
                             </ListGroup.Item>
                             )
@@ -229,16 +240,17 @@ function Tracking_chi_phi_hcp({history}) {
                         
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang(e.target.value)  }>                                 
                             <option value=''>Chọn Quà Tặng</option>
-                            <option value='Yến'>Yến</option>
-                            <option value='Nón protect'>Nón protect</option>
-                            <option value='Sổ tay'>Sổ tay</option>
+                            <option value='Yến'>Yến - 134,200 đ</option>
+                            <option value='Nón protect'>Nón protect - 234,163 đ </option>
+                            <option value='Sổ tay'>Sổ tay - 29,000 đ </option>
+                            <option value='Áo mưa'>Áo mưa - 65,139 đ </option>
                         )
                         </Form.Select>
 
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_sn(e.target.value)  }>                                 
                             <option value=''>Chọn Quà Sinh Nhật</option>
-                            <option value='Loại 1'>Loại 1</option>
-                            <option value='Loại 2'>Loại 2</option>
+                            <option value='Nam'>Nam</option>
+                            <option value='Nữ'>Nữ</option>
                         )
                         </Form.Select>
 
@@ -253,12 +265,25 @@ function Tracking_chi_phi_hcp({history}) {
                         
                         { chon_hoi_nghi &&
 
+                        <>
+
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_hoi_nghi(e.target.value)  }>                                 
                             <option value=''>Ưu Tiên</option>
                             <option value='Ưu Tiên 1'>Ưu Tiên 1</option>
                             <option value='Ưu Tiên 2'>Ưu Tiên 2</option>
                         )
                         </Form.Select>
+
+                        <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_hinh_thuc_hoi_nghi(e.target.value)  }>                                 
+                            <option value=''>Hình Thức</option>
+                            <option value='Bay'>Bay</option>
+                            <option value='Đi xe'>Đi xe</option>
+                            <option value='Gala'>Gala</option>
+                            <option value='Online'>Online</option>
+                        )
+                        </Form.Select>
+
+                        </>
 
                         }
 
@@ -267,7 +292,7 @@ function Tracking_chi_phi_hcp({history}) {
                         {/* <FloatingLabel label="CHI PHÍ GIAO TIẾP" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text1(e.target.value) } value = {text1}/> </FloatingLabel>
                         <FloatingLabel label="HỘI NGHỊ" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text2(e.target.value) } value = {text2}/> </FloatingLabel> */}
                         
-                        <Button disabled={false} className='mt-2' variant="primary" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
+                        <Button disabled={ hcp === "" } className='mt-2' variant="primary" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
                         </Form>
                         {/* END FORM BODY */}
 

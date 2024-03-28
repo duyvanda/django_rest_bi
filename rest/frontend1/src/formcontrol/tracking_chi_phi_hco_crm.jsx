@@ -16,20 +16,21 @@ import {
     ListGroup
 } from "react-bootstrap";
 
-function Crm_tracking_chi_phi_hco({history}) {
+function Tracking_chi_phi_hco_crm({history}) {
 
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const navigate = useHistory();
 
-    const fetch_tracking_chi_phi_get_data_hco = async () => {
+    const fetch_tracking_chi_phi_get_data_hco = async (manv) => {
         SetLoading(true);
-        const response = await fetch(`https://bi.meraplion.com/local/tracking_chi_phi_get_data_hco_crm/`)
+        const response = await fetch(`https://bi.meraplion.com/local/tracking_chi_phi_get_data_hco_crm/?manv=${manv}`)
         if (response.ok) {
             SetLoading(false)
             const data = await response.json()
-            set_arr_hcp(data['lst_hco'])
-            set_tong_hco_da_dau_tu(data['tong_hco_da_dau_tu'])
-            set_tong_tien_ke_hoach_da_dau_tu(data['tong_tien_ke_hoach_da_dau_tu'])
+            set_arr_hcp(data['lst_hco']);
+            set_tong_hco_da_dau_tu(data['tong_hco_da_dau_tu']);
+            set_tong_tien_ke_hoach_da_dau_tu(data['tong_tien_ke_hoach_da_dau_tu']);
+            set_list_nv(data['list_nv']);
             
         }
         else {
@@ -45,9 +46,9 @@ function Crm_tracking_chi_phi_hco({history}) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Theo_doi_dccn', isMB, dv_width);
+        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'tracking_chi_phi_hco_crm', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
-        fetch_tracking_chi_phi_get_data_hco();
+        fetch_tracking_chi_phi_get_data_hco(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
             history.push('/login');
         };
@@ -60,9 +61,13 @@ function Crm_tracking_chi_phi_hco({history}) {
     const [arr_hcp, set_arr_hcp] = useState([]);
     const [tong_hco_da_dau_tu, set_tong_hco_da_dau_tu] = useState("");
     const [tong_tien_ke_hoach_da_dau_tu, set_tong_tien_ke_hoach_da_dau_tu] = useState("");
+    const [list_nv, set_list_nv] = useState([]);
+    const [select_nv, set_select_nv] = useState("");
     const [search, set_search] = useState('');
+    const [sl_da_chon, set_sl_da_chon] = useState(0);
 
     const handeClick = (e) => {
+        (e.target.checked) ? set_sl_da_chon(sl_da_chon+1) : set_sl_da_chon(sl_da_chon-1) 
         let lst = [];
         for (const [index, element] of arr_hcp.entries()) {
         if(element.ma_kh_chung === e.target.id) {
@@ -89,6 +94,7 @@ function Crm_tracking_chi_phi_hco({history}) {
         const data = {
             "ma_kh_chung":ma_hco,
             "manv":manv,
+            // "manv":"MR1391",
             "current_date":current_date,
             "inserted":"inserted",
             "uuid":uuid(),
@@ -150,7 +156,9 @@ function Crm_tracking_chi_phi_hco({history}) {
             SetALertType("alert-success");
             SetALertText("ĐÃ TẠO THÀNH CÔNG");
             setTimeout(() => SetALert(false), 3000);
-            setCount(count+1)
+            setCount(count+1);
+            set_select_nv("");
+            set_sl_da_chon(0);
 
         }
     }
@@ -177,9 +185,8 @@ function Crm_tracking_chi_phi_hco({history}) {
                         {/* START FORM BODY */}
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hco") } className="bg-warning text-dark border-0" >BV</Button>
-                            {/* <Button onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_pcl") } className="bg-success text-white border-0" >PCL</Button> */}
-                            <Button onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp") } className="bg-primary text-white border-0"> HCP</Button>
+                            <Button onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hco_crm") } className="bg-warning text-dark border-0" >BV</Button>
+                            <Button onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_crm") } className="bg-primary text-white border-0"> HCP</Button>
                         </ButtonGroup>
 
                         <Card className="mt-2">
@@ -197,9 +204,19 @@ function Crm_tracking_chi_phi_hco({history}) {
 
                         <ListGroup className="mt-2" style={{maxHeight: "650px", overflowY: "auto"}}>
 
-                        <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value.toLowerCase())} placeholder="Tìm Mã Hoặc Tên" />
+                        <Form.Select className="mt-2" style={{}}  onChange={ e => set_select_nv(e.target.value) }>
+                            <option value="">Chọn Nhân Viên</option>
+                            {list_nv
+                            .map( (el, index) => 
+                            <option value={el.manv}> {el.manv + ' - ' + el.tencvbh} </option>
+                            )
+                            }
+                        </Form.Select>
+
+                        <Form.Control className="mt-1" type="text" onChange={ (e) => set_search(e.target.value.toLowerCase())} placeholder="Tìm Mã Hoặc Tên" />
 
                         {arr_hcp
+                            .filter( el => el.ma_crs.includes(select_nv))
                             .filter( el => el.clean_ten_kh_chung.toLowerCase().includes(search))
                             .map( (el, index) =>
                             <ListGroup.Item key={el.id} style={{maxHeight:"90px"}} className="border border-secondary mx-0 px-0" >
@@ -210,6 +227,8 @@ function Crm_tracking_chi_phi_hco({history}) {
                             )
                         }
                         </ListGroup>
+
+                        <h4 style={{color:"red"}} className="mt-2">Bạn Đã Chọn:{`\xa0`} {sl_da_chon} </h4>
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
                             <Button disabled={false} className='mt-2' variant="success" type="submit" style={{width: "100%", fontWeight: "bold"}}> DUYỆT </Button>
@@ -245,4 +264,4 @@ function Crm_tracking_chi_phi_hco({history}) {
 
 }
 
-export default Crm_tracking_chi_phi_hco
+export default Tracking_chi_phi_hco_crm

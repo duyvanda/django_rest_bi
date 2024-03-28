@@ -25,9 +25,9 @@ function Tracking_chi_phi_hco({history}) {
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const navigate = useHistory();
 
-    const fetch_tracking_chi_phi_get_data_hco = async () => {
+    const fetch_tracking_chi_phi_get_data_hco = async (manv) => {
         SetLoading(true);
-        const response = await fetch(`https://bi.meraplion.com/local/tracking_chi_phi_get_data_hco/`)
+        const response = await fetch(`https://bi.meraplion.com/local/tracking_chi_phi_get_data_hco/?manv=${manv}`)
         if (response.ok) {
             SetLoading(false)
             const data = await response.json()
@@ -49,9 +49,9 @@ function Tracking_chi_phi_hco({history}) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Theo_doi_dccn', isMB, dv_width);
+        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'tracking_chi_phi_hco', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
-        fetch_tracking_chi_phi_get_data_hco();
+        fetch_tracking_chi_phi_get_data_hco(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
             history.push('/login');
         };
@@ -70,15 +70,13 @@ function Tracking_chi_phi_hco({history}) {
     const [chon_thang_ttk, set_chon_thang_ttk] = useState("");
     const [chon_loai_ttk, set_chon_loai_ttk] = useState("");
     const [gia_tri_ttk, set_gia_tri_ttk] = useState("");
-    // const [number1, set_number1] = useState("500000");
-    // const [number2, set_number2] = useState("0");
+
     const [onDate, setDate] = useState(current_date);
 
     const [arr_hcp, set_arr_hcp] = useState([]);
     const [hco, set_hco] = useState("");
     const [tong_hco_da_dau_tu, set_tong_hco_da_dau_tu] = useState("");
     const [tong_tien_ke_hoach_da_dau_tu, set_tong_tien_ke_hoach_da_dau_tu] = useState("");
-    // const [hcp, set_hcp]= useState("");
     const [search, set_search] = useState('');
 
     const handeClick = (e) => {
@@ -100,24 +98,6 @@ function Tracking_chi_phi_hco({history}) {
     }
     
 
-
-    // const fetch_id_data = async (select_id) => {
-    //     SetLoading(true)
-    //     const response = await fetch(`https://bi.meraplion.com/local/template/?id=${select_id}`)
-        
-    //     if (!response.ok) {
-    //         SetLoading(false)
-    //     }
-
-    //     else {
-    //     const data_arr = await response.json()
-    //     const data = data_arr[0]
-    //     set_gia_tri_smn(data.id)
-    //     console.log(data)
-    //     SetLoading(false)
-
-    //     }
-    // }
 
     const post_form_data = async (data) => {
         // SetLoading(true)
@@ -143,6 +123,13 @@ function Tracking_chi_phi_hco({history}) {
             SetALertText("ĐÃ TẠO THÀNH CÔNG");
             setTimeout(() => SetALert(false), 3000);
             setCount(count+1);
+            set_gia_tri_smn("");
+            set_gia_tri_sms("");
+            set_gia_tri_ttk("");
+            set_chon_thang_smn("");
+            set_chon_thang_sms("");
+            set_chon_loai_ttk("");
+            set_chon_thang_ttk("");
             
             // window.location.reload();
 
@@ -172,9 +159,12 @@ function Tracking_chi_phi_hco({history}) {
             "chon_loai_ttk":chon_loai_ttk,
             "chon_thang_ttk":chon_thang_ttk,
             "gia_tri_ttk": gia_tri_ttk === "" ? "0": gia_tri_ttk,
-            "inserted":"inserted",
+            "inserted":"",
             "uuid":uuid(),
             "status":"H",
+            "approved_time":"",
+            "approved_manv":"",
+            "approved_uuid":""
         }
         console.log(data);
         post_form_data(data);
@@ -224,7 +214,7 @@ function Tracking_chi_phi_hco({history}) {
 
                         <ListGroup className="mt-2" style={{maxHeight: "400px", overflowY: "auto"}}>
 
-                        <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value.toLowerCase())} placeholder="Tìm Mã Hoặc Tên" value={search} />
+                        <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value.toLowerCase())} placeholder="Tìm Mã Hoặc Tên (KHONG DAU)" value={search} />
 
                         {arr_hcp
                             .filter( el => el.clean_ten_kh_chung.toLowerCase().includes(search))

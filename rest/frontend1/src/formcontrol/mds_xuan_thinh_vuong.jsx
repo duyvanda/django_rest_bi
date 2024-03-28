@@ -26,7 +26,7 @@ function MdsXuanThinhVuong({history}) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Theo_doi_dccn', isMB, dv_width);
+        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'mds_xuan_thinh_vuong', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
             history.push('/login');
