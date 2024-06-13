@@ -70,7 +70,7 @@ function Tracking_chi_phi_hcp_crm({history}) {
         (e.target.checked) ? set_sl_da_chon(sl_da_chon+1) : set_sl_da_chon(sl_da_chon-1) 
         let lst = [];
         for (const [index, element] of arr_hcp.entries()) {
-        if(element.ma_hcp_2 === e.target.id) {
+        if(element.uuid === e.target.id) {
             element.check = e.target.checked
             lst.push(element);
         }
@@ -88,13 +88,13 @@ function Tracking_chi_phi_hcp_crm({history}) {
         e.preventDefault();
         const current_date = formatDate(Date());
 
-        const ma_hcp = []
+        const ma_uuid = []
         for (let i of arr_hcp) {
-            if (i.check === true) {ma_hcp.push(i.ma_hcp_2)}
+            if (i.check === true) {ma_uuid.push(i.uuid)}
         }
 
         const data = {
-            "ma_hcp_2":ma_hcp,
+            "uuid_nv":ma_uuid,
             "manv":manv,
             "current_date":current_date,
             "inserted":"inserted",
@@ -104,7 +104,7 @@ function Tracking_chi_phi_hcp_crm({history}) {
         console.log(data);
 
         // neu khong chon ma cho nao thi ko lam gi
-        if (ma_hcp.length >=1 ) {
+        if (ma_uuid.length >=1 ) {
             post_form_data(data);
         }
         else {
@@ -117,15 +117,13 @@ function Tracking_chi_phi_hcp_crm({history}) {
         // e.preventDefault();
         const current_date = formatDate(Date());
 
-        const ma_hcp = []
+        const ma_uuid = []
         for (let i of arr_hcp) {
-            if (i.check === true) {ma_hcp.push(i.ma_hcp_2)}
+            if (i.check === true) {ma_uuid.push(i.uuid)}
         }
 
-        // set_number2(Number(number2)+1)
-
         const data = {
-            "ma_hcp_2":ma_hcp,
+            "uuid_nv":ma_uuid,
             "manv":manv,
             "current_date":current_date,
             "inserted":"inserted",
@@ -133,16 +131,14 @@ function Tracking_chi_phi_hcp_crm({history}) {
             "status":"R"
         }
         console.log(data);
-                // neu khong chon ma cho nao thi ko lam gi
-        if (ma_hcp.length >=1 ) {
+
+        // neu khong chon ma cho nao thi ko lam gi
+        if (ma_uuid.length >=1 ) {
             post_form_data(data);
         }
         else {
             void(0);
         }
-
-
-        // set_gia_tri_smn("");
 
     }
 
@@ -235,8 +231,8 @@ function Tracking_chi_phi_hcp_crm({history}) {
                             .filter( el => el.clean_ten_hcp.toLowerCase().includes(search.toLowerCase()))
                             .map( (el, index) =>
                             <ListGroup.Item style={{maxHeight:"125px"}} className="border border-secondary mx-0 px-0" >
-                                <Form.Check key={index} className="text-nowrap" type="switch" checked={el.check} onChange={ handeClick } id={el.ma_hcp_2} label={ el.ten_hcp + ' - ' +  el.ten_kh_chung + ' - ' +  el.ma_kh_chung + ' - '+ el.phan_loai_hcp}/>
-                            <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{el.ma_hcp_1  + ' - ' + 'Quà Tặng: '+ el.chon_qua_tang + ' - Quà SN: '+ el.chon_qua_sn + ' - Hội Nghị: '+ el.chon_hoi_nghi + ' - '+  el.chon_qua_tang_hoi_nghi + '(' +  el.ma_crs  + ')'}  </p>
+                                <Form.Check key={index} className="text-nowrap" type="switch" checked={el.check} onChange={ handeClick } id={el.uuid} label={ el.ten_hcp + ' - ' +  el.ten_kh_chung + ' - ' +  el.ma_kh_chung + ' - '+ el.phan_loai_hcp}/>
+                            <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{el.ma_hcp_1 + ' - Quà Cảm Xúc: '+ el.chon_qua_tang_cam_xuc  + ' - ' + 'Quà 1/5: '+ el.chon_qua_tang_2 + ' - Quà Tặng: '+ el.chon_qua_tang + ' - Quà SN: '+ el.chon_qua_sn + ' - Hội Nghị: '+ el.chon_hoi_nghi + ' - '+  el.chon_qua_tang_hoi_nghi + '(' +  el.ma_crs  + ')'}  </p>
                             <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{'Tổng Tiền: '+ f.format (Number(el.tong_tien_kh)) }  </p>
                             </ListGroup.Item>
                             )

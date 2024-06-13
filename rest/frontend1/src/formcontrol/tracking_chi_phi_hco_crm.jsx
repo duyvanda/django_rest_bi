@@ -67,10 +67,10 @@ function Tracking_chi_phi_hco_crm({history}) {
     const [sl_da_chon, set_sl_da_chon] = useState(0);
 
     const handeClick = (e) => {
-        (e.target.checked) ? set_sl_da_chon(sl_da_chon+1) : set_sl_da_chon(sl_da_chon-1) 
+        (e.target.checked) ? set_sl_da_chon(sl_da_chon+1) : set_sl_da_chon(sl_da_chon-1)
         let lst = [];
         for (const [index, element] of arr_hcp.entries()) {
-        if(element.ma_kh_chung === e.target.id) {
+        if(element.uuid === e.target.id) {
             element.check = e.target.checked
             lst.push(element);
         }
@@ -86,13 +86,14 @@ function Tracking_chi_phi_hco_crm({history}) {
         e.preventDefault();
         const current_date = formatDate(Date());
 
-        const ma_hco = []
+        const ma_uuid = []
         for (let i of arr_hcp) {
-            if (i.check === true) {ma_hco.push(i.ma_kh_chung)}
+            if (i.check === true) {ma_uuid.push(i.uuid)}
         }
 
         const data = {
-            "ma_kh_chung":ma_hco,
+            // "ma_kh_chung":ma_hco,
+            "uuid_nv":ma_uuid,
             "manv":manv,
             // "manv":"MR1391",
             "current_date":current_date,
@@ -103,7 +104,7 @@ function Tracking_chi_phi_hco_crm({history}) {
         console.log(data);
 
         // neu khong chon ma cho nao thi ko lam gi
-        if (ma_hco.length >=1 ) {
+        if (ma_uuid.length >=1 ) {
             post_form_data(data);
         }
         else {
@@ -114,13 +115,13 @@ function Tracking_chi_phi_hco_crm({history}) {
     const handle_reject = (e) => {
         const current_date = formatDate(Date());
 
-        const ma_hco = []
+        const ma_uuid = []
         for (let i of arr_hcp) {
-            if (i.check === true) {ma_hco.push(i.ma_kh_chung)}
+            if (i.check === true) {ma_uuid.push(i.uuid)}
         }
 
         const data = {
-            "ma_kh_chung":ma_hco,
+            "uuid_nv":ma_uuid,
             "manv":manv,
             "current_date":current_date,
             "inserted":"inserted",
@@ -129,7 +130,7 @@ function Tracking_chi_phi_hco_crm({history}) {
         }
         console.log(data);
         // neu khong chon ma cho nao thi ko lam gi
-        if (ma_hco.length >=1 ) {
+        if (ma_uuid.length >=1 ) {
             post_form_data(data);
         }
         else {
@@ -220,7 +221,7 @@ function Tracking_chi_phi_hco_crm({history}) {
                             .filter( el => el.clean_ten_kh_chung.toLowerCase().includes(search))
                             .map( (el, index) =>
                             <ListGroup.Item key={el.id} style={{maxHeight:"90px"}} className="border border-secondary mx-0 px-0" >
-                                <Form.Check key={el.id} className="text-nowrap" type="switch" checked={el.check} onChange={ handeClick } id={el.ma_kh_chung} label={el.ten_kh_chung + ' - '  + el.phan_loai_hco + ' - '  + el.ma_kh_chung }/>
+                                <Form.Check key={el.id} className="text-nowrap" type="switch" checked={el.check} onChange={ handeClick } id={el.uuid} label={el.ten_kh_chung + ' - '  + el.phan_loai_hco + ' - '  + el.ma_kh_chung }/>
                             <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{ 'Merap tận tâm '+ f.format(el.merap_tt) + ' - SMS '+ f.format(el.sms) + ' - SMN '+  f.format(el.smn) + ' - Tài Trợ Khác '+  f.format(el.ttk) }  </p>
                             <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{ 'Tổng Mức Đầu Tư: '+ f.format (Number(el.merap_tt) + Number(el.ttk) + Number(el.sms) + Number(el.smn)  )  }  </p>
                             </ListGroup.Item>

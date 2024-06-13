@@ -65,12 +65,10 @@ function Tracking_chi_phi_hcp({history}) {
     const [chon_hoi_nghi, set_chon_hoi_nghi] = useState("");
     const [chon_qua_tang_hoi_nghi, set_chon_qua_tang_hoi_nghi] = useState("");
     const [chon_hinh_thuc_hoi_nghi, set_chon_hinh_thuc_hoi_nghi] = useState("");
-    // const [text1, set_text1] = useState("");
-    // const [text2, set_text2] = useState("");
-    // const [text3, set_text3] = useState("");
+    const [chon_qua_tang_2, set_chon_qua_tang_2] = useState("");
+    const [chon_qua_tang_cam_xuc, set_chon_qua_tang_cam_xuc] = useState("");
     const [number1, set_number1] = useState("500000");
     const [number2, set_number2] = useState("0");
-    // const [onDate, setDate] = useState(current_date);
 
     const [arr_hcp, set_arr_hcp] = useState([]);
     const [hcp, set_hcp] = useState("");
@@ -143,6 +141,8 @@ function Tracking_chi_phi_hcp({history}) {
             set_chon_hoi_nghi("");
             set_chon_qua_tang_hoi_nghi("");
             set_chon_hinh_thuc_hoi_nghi("");
+            set_chon_qua_tang_2("");
+            set_chon_qua_tang_cam_xuc("");
             setCount(count+1)
             // window.location.reload();
 
@@ -173,7 +173,9 @@ function Tracking_chi_phi_hcp({history}) {
             "approved_time":"",
             "approved_manv":"",
             "approved_uuid":"",
-            "chon_hinh_thuc_hoi_nghi": chon_hinh_thuc_hoi_nghi
+            "chon_hinh_thuc_hoi_nghi": chon_hinh_thuc_hoi_nghi,
+            "chon_qua_tang_2": chon_qua_tang_2,
+            "chon_qua_tang_cam_xuc": chon_qua_tang_cam_xuc,
         }
         console.log(data);
         post_form_data(data);
@@ -230,20 +232,38 @@ function Tracking_chi_phi_hcp({history}) {
                             .map( (el, index) =>
                             <ListGroup.Item style={{maxHeight:"125px"}} className="border border-secondary mx-0 px-0" >
                                 <Form.Check key={index} className="text-nowrap" type="switch" checked={el.check} onChange={ handeClick } id={el.ma_hcp_2} label={ el.ten_hcp + ' - ' +  el.ten_kh_chung + ' - ' +  el.ma_kh_chung + ' - '+ el.phan_loai_hcp}/>
-                            <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{el.ma_hcp_1  + ' - ' + 'Quà Tặng: '+ el.chon_qua_tang + ' - Quà SN: '+ el.chon_qua_sn + ' - Hội Nghị: '+ el.chon_hoi_nghi + ' - '+  el.chon_qua_tang_hoi_nghi  }  </p>
+                            <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{el.ma_hcp_1  + ' - Quà Tặng: '+ el.chon_qua_tang + ' - Quà SN: '+ el.chon_qua_sn + ' - Hội Nghị: '+ el.chon_hoi_nghi + ' - '+  el.chon_qua_tang_hoi_nghi  }  </p>
                             <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{'Tổng Tiền: '+ f.format (Number(el.tong_tien_kh)) }  </p>
                             </ListGroup.Item>
                             )
                         }
 
-                        </ListGroup>                        
+                        </ListGroup>
+
+                        <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_cam_xuc(e.target.value)  }>                                 
+                            <option value=''>Chọn Quà Tặng Cảm Xúc</option>
+                            <option value='Bàn chải điện colgate'>Bàn chải điện colgate - 1,000,000 đ</option>
+                            <option value='Cặp cho con bs (bé trai)'>Cặp cho con bs (bé trai) - 720,000 đ </option>
+                            <option value='Cặp cho con bs (bé gái)'>Cặp cho con bs (bé gái) - 720,000 đ </option>
+                            <option value='Combo set túi du lịch'>Combo set túi du lịch - 300,000 đ </option>
+                        )
+                        </Form.Select>                   
                         
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang(e.target.value)  }>                                 
-                            <option value=''>Chọn Quà Tặng</option>
+                            <option value=''>Chọn Gimmick</option>
                             <option value='Yến'>Yến - 134,200 đ</option>
                             <option value='Nón protect'>Nón protect - 234,163 đ </option>
                             <option value='Sổ tay'>Sổ tay - 29,000 đ </option>
                             <option value='Áo mưa'>Áo mưa - 65,139 đ </option>
+                        )
+                        </Form.Select>
+
+                        <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_2(e.target.value)  }>                                 
+                            <option value=''>Chọn Quà 1/5</option>
+                            <option value='Combo quà nữ'>Combo quà nữ - 700,000 đ</option>
+                            <option value='Combo quà nam'>Combo quà nam - 700,000 đ </option>
+                            <option value='Atlat TMH'>Atlat TMH - 320,000 đ </option>
+                            <option value='Áo sơ mi An Phước'>Áo sơ mi An Phước - 1,100,000 đ </option>
                         )
                         </Form.Select>
 
@@ -256,10 +276,11 @@ function Tracking_chi_phi_hcp({history}) {
 
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_hoi_nghi(e.target.value)  }>                                 
                             <option value=''>Chọn Hội Nghị</option>
-                            <option value='Dược'>Dược</option>
+                            {/* <option value='Dược'>Dược</option>
                             <option value='TMH MN T3'>TMH MN T3</option>
                             <option value='TMH MB T5'>TMH MB T5</option>
-                            <option value='TMH TQ T10'>TMH TQ T10</option>
+                            <option value='TMH TQ T10'>TMH TQ T10</option> */}
+                            <option value='TMH Bán Kỳ T6'>TMH Bán Kỳ T6</option>
                         )
                         </Form.Select>
                         
@@ -267,19 +288,20 @@ function Tracking_chi_phi_hcp({history}) {
 
                         <>
 
-                        <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_hoi_nghi(e.target.value)  }>                                 
+                        {/* <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_hoi_nghi(e.target.value)  }>                                 
                             <option value=''>Ưu Tiên</option>
                             <option value='Ưu Tiên 1'>Ưu Tiên 1</option>
                             <option value='Ưu Tiên 2'>Ưu Tiên 2</option>
                         )
-                        </Form.Select>
+                        </Form.Select> */}
 
-                        <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_hinh_thuc_hoi_nghi(e.target.value)  }>                                 
+                        <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_hinh_thuc_hoi_nghi(e.target.value)  }>                                 
                             <option value=''>Hình Thức</option>
-                            <option value='Bay'>Bay</option>
+                            {/* <option value='Bay'>Bay</option>
                             <option value='Đi xe'>Đi xe</option>
-                            <option value='Gala'>Gala</option>
+                            <option value='Gala'>Gala</option> */}
                             <option value='Online'>Online</option>
+                            <option value='Offline'>Offline</option>
                         )
                         </Form.Select>
 

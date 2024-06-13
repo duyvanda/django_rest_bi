@@ -1,6 +1,7 @@
 #! /bin/bash
 echo Hello World!
 # git clone https://github.com/duyvantest/ecommerce-django-react.git
+# 10:30:PM 06062024
 
 docker build -t bi_local_rest:v5 .
 

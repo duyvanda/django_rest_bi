@@ -12,10 +12,17 @@ function Login({history, location}) {
     const location_search = new URLSearchParams(location.search)
 
     useEffect(() => {
-        
-		if (userInfo) {
-			history.push("/reports");
-		} 
+
+    if (userInfo && location_search.get('redirect'))
+      {
+        const redirect = location.search.split("&")[0].split("=")[1]
+        history.push(redirect);
+      }
+    else if (userInfo) 
+      {
+        history.push("/reports");
+      }
+
     else if (location_search.get('utm_source')) {
       const utm_source = location.search.split("&")[0].split("=")[1]
       const manv = location.search.split("&")[1].split("=")[1]
@@ -31,6 +38,8 @@ function Login({history, location}) {
   }
 
 	}, [history, userInfo]);
+  
+  // userInfo
 
     const handleTextChange = (e) => {
         setEmail(e.target.value)

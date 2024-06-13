@@ -24,9 +24,9 @@ os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = env('CREDENTIALS_1') if env('LOCA
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = env('DEBUG')=="1"
+# DEBUG = env('DEBUG')=="1"
 
-# DEBUG = True
+DEBUG = True
 
 CLOUDRUN_SERVICE_URL = env("CLOUDRUN_SERVICE_URL", default=None)
 if CLOUDRUN_SERVICE_URL:
@@ -168,8 +168,10 @@ STATIC_ROOT = 'static/'
 
 
 PROJECT_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
-MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(GS_MEDIA_BUCKET_NAME)
-MEDIA_ROOT = "media/"
+# MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(GS_MEDIA_BUCKET_NAME)
+# MEDIA_ROOT = "/media/"
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'thumuc')
+MEDIA_URL = '/thumuc/'
 
 UPLOAD_ROOT = 'media/uploads/'
 

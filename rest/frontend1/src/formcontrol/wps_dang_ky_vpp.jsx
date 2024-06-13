@@ -104,6 +104,11 @@ function Wps_dang_ky_vpp({history}) {
         post_form_data(data);    
     }
 
+    const on_click_xoa_san_pham = (data, _) => {
+
+        console.log("on_click_xoa_san_pham")
+    }
+
     if (!loading) {
         return (
         <Container className="bg-teal-100 h-100" fluid>
@@ -135,15 +140,15 @@ function Wps_dang_ky_vpp({history}) {
                         
                         {/* so_luong */}
                         <FloatingLabel label="Số Lượng" className="border rounded mt-2" > <Form.Control required type="so_luong" className="" placeholder="" onChange={ (e) => set_so_luong(e.target.value) } value = {so_luong} /> </FloatingLabel>
-                        
-
 
                         <Button disabled={false} className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
-                        <div className='mt-2'>
-                        <h3>Đã nhập</h3>
+                        <div className='mt-2 bg-light text-dark border rounded mt-2'>
+                        <h3>Đã nhập:</h3>
                         {arr_input
                             .map( (el, index) =>
-                            <h6 className="text-dark" >{el.vpp + '  ' + '(' + el.so_luong + ')' }</h6>
+                            <InputGroup key={index} className="ml-1">
+                            <h6 className="" >{' - ' +el.vpp + '  ' + '(' + el.so_luong + ')' } <Button onClick={ () => on_click_xoa_san_pham(el, index) } variant="outline-danger" size="sm">Xóa</Button> </h6>
+                            </InputGroup>
                             )
                         }
                         </div>

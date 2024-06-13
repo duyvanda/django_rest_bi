@@ -49,6 +49,7 @@ import Tracking_chi_phi_hcp_crm from "./formcontrol/tracking_chi_phi_hcp_crm";
 import Tracking_chi_phi_pcl from "./formcontrol/tracking_chi_phi_pcl";
 import MdsXuanThinhVuong from "./formcontrol/mds_xuan_thinh_vuong";
 import Wps_dang_ky_vpp from "./formcontrol/wps_dang_ky_vpp";
+import Thi_cmsp from "./formcontrol/thi_cmsp";
 
 function App() {
   return (
@@ -89,6 +90,7 @@ function App() {
                 <Route path="/formcontrol/tracking_chi_phi_hcp_crm" component={Tracking_chi_phi_hcp_crm} />
                 <Route path="/formcontrol/tracking_chi_phi_pcl" component={Tracking_chi_phi_pcl} />
                 <Route path="/formcontrol/wps_dang_ky_vpp" component={Wps_dang_ky_vpp} />
+                <Route path="/formcontrol/thi_cmsp" component={Thi_cmsp} />
                 {/* REPORT */}
                 <Route path="/login" component={Login} />
                 <Route path="/reports" component={ReportList} />

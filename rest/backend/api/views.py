@@ -3,10 +3,11 @@ from django.shortcuts import render
 from rest_framework.parsers import FileUploadParser
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.auth.hashers import make_password, check_password
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from pathlib import Path
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -85,7 +86,8 @@ def GetAutoLoginKey(request, pk):
 
 # Create your views here.
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def getTinhThanh(request):
     # db=firebase.get_db()
     # res = db.collection('tinhthanh').get()
@@ -95,10 +97,15 @@ def getTinhThanh(request):
     lst = TinhThanh.tinhthanh
     for i in lst:
         data.append(i['TenTinhThanh']+'-'+ i['MaTinhThanh'])
-    return Response({'sucess':data})
+
+    print(request.user)
+
+    token = RefreshToken.for_user(request.user)
+    return Response({'sucess':str(token.access_token)})
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getQuanHuyen(request, pk):
     data = []
     lst = QuanHuyen.quanhuyen

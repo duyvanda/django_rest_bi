@@ -243,13 +243,13 @@ function Tracking_chi_phi_hco({history}) {
 
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_thang_smn(e.target.value)  }>                              
                             <option value=''>Chọn Tháng SMN</option>
-                            <option value='Tháng 1'>Tháng 1</option>
-                            <option value='Tháng 2'>Tháng 2</option>
-                            <option value='Tháng 3'>Tháng 3</option>
+                            <option value='Tháng 4'>Tháng 4</option>
+                            <option value='Tháng 5'>Tháng 5</option>
+                            <option value='Tháng 6'>Tháng 6</option>
                         )
                         </Form.Select>
 
-                        <FloatingLabel label={"Giá Trị SMN" + " : " + f.format(gia_tri_smn) } className="border rounded mt-2" > <Form.Control type="number" className="" placeholder="" onChange={ (e) => set_gia_tri_smn(e.target.value) } value = {gia_tri_smn}/> </FloatingLabel>
+                        <FloatingLabel label={"Giá Trị SMN" + " : " + f.format(gia_tri_smn) } className="border rounded mt-2" > <Form.Control type="number" className="" placeholder="" onChange={ (e) => set_gia_tri_smn( e.target.value.replace(".", "").replace(",", "") ) } value = {gia_tri_smn}/> </FloatingLabel>
                         
                         <FloatingLabel label="Điền Khoa Phòng SMN..." className="border rounded mt-2" > <Form.Control type="text" placeholder="" className="" onChange={ (e) => set_chon_khoa_phong_smn(e.target.value) } value = {chon_khoa_phong_smn}/> </FloatingLabel>
                         
@@ -261,13 +261,13 @@ function Tracking_chi_phi_hco({history}) {
                                 
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_thang_sms(e.target.value)  }>                                 
                             <option value=''>Chọn Tháng SMS</option>
-                            <option value='Tháng 1'>Tháng 1</option>
-                            <option value='Tháng 2'>Tháng 2</option>
-                            <option value='Tháng 3'>Tháng 3</option>
+                            <option value='Tháng 4'>Tháng 4</option>
+                            <option value='Tháng 5'>Tháng 5</option>
+                            <option value='Tháng 6'>Tháng 6</option>
                         )
                         </Form.Select>
 
-                        <FloatingLabel label={"Giá Trị SMS" + " : " + f.format(gia_tri_sms) } className="border rounded mt-2" > <Form.Control type="number" className="" placeholder="" onChange={ (e) => set_gia_tri_sms(e.target.value) } value = {gia_tri_sms}/> </FloatingLabel>
+                        <FloatingLabel label={"Giá Trị SMS" + " : " + f.format(gia_tri_sms) } className="border rounded mt-2" > <Form.Control type="number" className="" placeholder="" onChange={ (e) => set_gia_tri_sms( e.target.value.replace(".", "").replace(",", "") ) } value = {gia_tri_sms}/> </FloatingLabel>
 
                         </div>
 
@@ -284,13 +284,13 @@ function Tracking_chi_phi_hco({history}) {
                                 
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_thang_ttk(e.target.value)  }>                                 
                             <option value=''>Chọn Tháng Tài Trợ Khác</option>
-                            <option value='Tháng 1'>Tháng 1</option>
-                            <option value='Tháng 2'>Tháng 2</option>
-                            <option value='Tháng 3'>Tháng 3</option>
+                            <option value='Tháng 4'>Tháng 4</option>
+                            <option value='Tháng 5'>Tháng 5</option>
+                            <option value='Tháng 6'>Tháng 6</option>
                         
                         </Form.Select>
 
-                        <FloatingLabel label={"Giá Trị Tài Trợ Khác" + " : " + f.format(gia_tri_ttk) } className="border rounded mt-2" > <Form.Control type="number" className="" placeholder="" onChange={ (e) => set_gia_tri_ttk(e.target.value) } value = {gia_tri_ttk}/> </FloatingLabel>
+                        <FloatingLabel label={"Giá Trị Tài Trợ Khác" + " : " + f.format(gia_tri_ttk) } className="border rounded mt-2" > <Form.Control type="number" className="" placeholder="" onChange={ (e) => set_gia_tri_ttk( e.target.value.replace(".", "").replace(",", "") ) } value = {gia_tri_ttk}/> </FloatingLabel>
 
                         </div>
                                                 
