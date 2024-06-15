@@ -24,7 +24,7 @@ function Thi_cmsp({history}) {
     const navigate = useHistory();
     const fetch_data = async (manv) => {
         SetLoading(true);
-        const response = await fetch(`https://bi.meraplion.com/local/cmsp_quy_tp/`)
+        const response = await fetch(`https://bi.meraplion.com/local/cmsp_quy_tp/?manv=${manv}`)
         if (response.ok) {
             SetLoading(false)
             const data = await response.json()
@@ -38,7 +38,7 @@ function Thi_cmsp({history}) {
     }
     
     const [count, setCount] = useState(0);
-    const [seconds, set_seconds] = useState(3600);
+    const [seconds, set_seconds] = useState(2700);
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {
         const media = window.matchMedia('(max-width: 960px)');
@@ -67,15 +67,20 @@ function Thi_cmsp({history}) {
     const [manv, set_manv] = useState("");
     const [arr_detail, set_arr_detail] = useState([]);
     const [arr_input, set_arr_input] = useState([]);
+    const [arr_indx, set_arr_indx] = useState([]);
 
     const handeClick = (e) => {
         let lst = [];
+        let new_lst_indx = [];
+        // let uniq_lst = [];
+
         for (const [index, element] of arr_detail.entries()) {
 
         let arr_id = e.target.id.split('@@');
         let select_cau_hoi = arr_id[0];
         let select_type = arr_id[1];
         let select_lua_chon = arr_id[2];
+        let indx = arr_id[3];
         
         if (select_type === 'S') {
         
@@ -93,6 +98,9 @@ function Thi_cmsp({history}) {
             }
 
             set_arr_detail(lst);
+            // new_lst_indx = [...arr_indx, indx]
+
+            // set_arr_indx([...new Set(new_lst_indx)])
 
         }
     else {
@@ -104,8 +112,15 @@ function Thi_cmsp({history}) {
             lst.push(element);
         }
         set_arr_detail(lst);
-    }
-    }
+        }
+        }
+        
+        let loc_cau_hoi = lst.filter(a => a.check === true);
+        let lst_cau_hoi = loc_cau_hoi.map(a => a.cauhoi);
+        set_arr_indx([...new Set(lst_cau_hoi)]); 
+
+
+        
     }
 
 
@@ -184,15 +199,15 @@ function Thi_cmsp({history}) {
                         {/* START FORM BODY */}
 
                         {arr_input
-                        .map( (el, index) =>
-                        <Card className="mt-2" key={index}>
-                        <Card.Title>{index+1}-{el.cauhoi}</Card.Title>
+                        .map( (el, index0) =>
+                        <Card className="mt-2" key={index0}>
+                        <Card.Title>{index0+1}-{el.cauhoi}</Card.Title>
 
 
                             {arr_detail
                             .filter( eli => eli.cauhoi.includes(el.cauhoi))
                             .map( (eli, index) =>
-                                <Form.Check key={index} className="text-wrap" type="switch" checked={eli.check} onChange={ handeClick } id={eli.cauhoi+'@@'+eli.type+'@@'+eli.cacluachon} label={ eli.cacluachon }/>
+                                <Form.Check key={index} className="text-wrap" type="switch" checked={eli.check} onChange={ handeClick } id={eli.cauhoi+'@@'+eli.type+'@@'+eli.cacluachon+'@@'+index0} label={ eli.cacluachon }/>
                             // <option value={eli.cacluachon}> {eli.cacluachon} </option>
                             )
                             }
@@ -202,7 +217,12 @@ function Thi_cmsp({history}) {
                         )
                         }
 
-                        <Button disabled={false} className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> NỘP BÀI VÀ XEM KẾT QUẢ </Button>
+                        <h3 style={{color:"red"}} className="mt-2 text-center">Bạn Đã Chọn:{`\xa0`}  
+                        { arr_indx.length } / 20
+                        </h3>
+
+                        {/* <Button disabled={false} className='mt-2' variant="warning" type="button" onClick={console.log(arr_indx)} style={{width: "100%", fontWeight: "bold"}}> CONSOLE LOG </Button> */}
+                        <Button disabled={arr_indx.length<=5} className='mt-5' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> NỘP BÀI VÀ XEM KẾT QUẢ </Button>
 
                         </Form>
                         {/* END FORM BODY */}
