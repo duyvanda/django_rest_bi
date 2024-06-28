@@ -60,7 +60,33 @@ function Wps_dang_ky_vpp({history}) {
     const [onDate, setDate] = useState(current_date);
     
 
+    const del_item = async (data) => {
+        SetLoading(true);
+        let item = {"uuid":data}
+        const response = await fetch(`https://bi.meraplion.com/local/del_wps_data_vpp/`, {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify(item),
+        });
 
+        if (!response.ok) {
+            SetLoading(false);
+            const data = await response.json();
+            console.log(data);
+        } else {
+            SetLoading(false);
+            const data = await response.json();
+            console.log(data);
+            // SetALert(true);
+            // SetALertType("alert-success");
+            // SetALertText("ĐÃ TẠO THÀNH CÔNG");
+            // setTimeout(() => SetALert(false), 3000);
+            setCount(count+1)
+
+        }
+    }
 
     const post_form_data = async (data) => {
         SetLoading(true)
@@ -104,9 +130,10 @@ function Wps_dang_ky_vpp({history}) {
         post_form_data(data);    
     }
 
-    const on_click_xoa_san_pham = (data, _) => {
+    const on_click_xoa_san_pham = (uuid, _) => {
 
-        console.log("on_click_xoa_san_pham")
+        console.log("on_click_xoa_san_pham");
+        del_item(uuid);
     }
 
     if (!loading) {
@@ -147,7 +174,7 @@ function Wps_dang_ky_vpp({history}) {
                         {arr_input
                             .map( (el, index) =>
                             <InputGroup key={index} className="ml-1">
-                            <h6 className="" >{' - ' +el.vpp + '  ' + '(' + el.so_luong + ')' } <Button onClick={ () => on_click_xoa_san_pham(el, index) } variant="outline-danger" size="sm">Xóa</Button> </h6>
+                            <h6 className="" >{' - ' +el.vpp + '  ' + '(' + el.so_luong + ')' } <Button onClick={ () => on_click_xoa_san_pham(el.uuid, index) } variant="outline-danger" size="sm">Xóa</Button> </h6>
                             </InputGroup>
                             )
                         }

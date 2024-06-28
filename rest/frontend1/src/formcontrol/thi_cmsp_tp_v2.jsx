@@ -19,7 +19,7 @@ import {
     Image
 } from "react-bootstrap";
 
-function Thi_cmsp({history}) {
+function Thi_cmsp_tp_v2({history}) {
 
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const navigate = useHistory();
@@ -138,6 +138,7 @@ function Thi_cmsp({history}) {
         });
 
         if (!response.ok) {
+            // SetLoading(false);
             SetLoading(false);
             const data = await response.json();
             console.log(data);
@@ -149,7 +150,7 @@ function Thi_cmsp({history}) {
             SetALert(true);
             SetALertType("alert-success");
             SetALertText("ĐÃ TẠO THÀNH CÔNG");
-            // document.getElementById("focus1").focus();
+            document.getElementById("focus1").focus();
             setTimeout(() => SetALert(false), 3000
             );
             
@@ -255,4 +256,4 @@ function Thi_cmsp({history}) {
 
 }
 
-export default Thi_cmsp
+export default Thi_cmsp_tp_v2

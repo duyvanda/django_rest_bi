@@ -897,3 +897,5 @@ def GetRoutes(request):
     # os.remove(f"map_{str_time}.html")
     dict_data['map_string'] = map._repr_html_()
     return Response(dict_data, status.HTTP_200_OK)
+
+
