@@ -149,7 +149,6 @@ function Thi_cmsp({history}) {
             SetALert(true);
             SetALertType("alert-success");
             SetALertText("ĐÃ TẠO THÀNH CÔNG");
-            // document.getElementById("focus1").focus();
             setTimeout(() => SetALert(false), 3000
             );
             

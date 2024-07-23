@@ -31,9 +31,10 @@ function Tracking_chi_phi_hcp({history}) {
         
         if (response.ok) {
             const data = await response.json()
-            set_arr_hcp(data['lst_hcp'])
-            set_tong_hcp_da_dau_tu(data['tong_hcp_da_dau_tu'])
-            set_tong_tien_ke_hoach_da_dau_tu(data['tong_tien_ke_hoach_da_dau_tu'])
+            set_arr_hcp(data['lst_hcp']);
+            set_tong_hcp_da_dau_tu(data['tong_hcp_da_dau_tu']);
+            set_tong_tien_ke_hoach_da_dau_tu(data['tong_tien_ke_hoach_da_dau_tu']);
+            set_arr_gimmick(data['lst_gimmick']);
             SetLoading(false)
         }
         else {
@@ -59,7 +60,8 @@ function Tracking_chi_phi_hcp({history}) {
     
     const f = new Intl.NumberFormat();
     const [manv, set_manv] = useState("");
-    const current_date = formatDate(Date());
+    // const current_date = formatDate(Date());
+    const [arr_gimmick, set_arr_gimmick] = useState([]); 
     const [chon_qua_tang, set_chon_qua_tang] = useState("");
     const [chon_qua_sn, set_chon_qua_sn] = useState("");
     const [chon_hoi_nghi, set_chon_hoi_nghi] = useState("");
@@ -67,8 +69,8 @@ function Tracking_chi_phi_hcp({history}) {
     const [chon_hinh_thuc_hoi_nghi, set_chon_hinh_thuc_hoi_nghi] = useState("");
     const [chon_qua_tang_2, set_chon_qua_tang_2] = useState("");
     const [chon_qua_tang_cam_xuc, set_chon_qua_tang_cam_xuc] = useState("");
-    const [number1, set_number1] = useState("500000");
-    const [number2, set_number2] = useState("0");
+    // const [number1, set_number1] = useState("500000");
+    // const [number2, set_number2] = useState("0");
 
     const [arr_hcp, set_arr_hcp] = useState([]);
     const [hcp, set_hcp] = useState("");
@@ -251,10 +253,17 @@ function Tracking_chi_phi_hcp({history}) {
                         
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang(e.target.value)  }>                                 
                             <option value=''>Chọn Gimmick</option>
-                            <option value='Yến'>Yến - 134,200 đ</option>
+
+                            {arr_gimmick
+                            .map( (el, index) => 
+                            <option value={el.name}> {el.name} ({ f.format(el.value) } đ) </option>
+                            )
+                            }
+
+                            {/* <option value='Yến'>Yến - 134,200 đ</option>
                             <option value='Nón protect'>Nón protect - 234,163 đ </option>
                             <option value='Sổ tay'>Sổ tay - 29,000 đ </option>
-                            <option value='Áo mưa'>Áo mưa - 65,139 đ </option>
+                            <option value='Áo mưa'>Áo mưa - 65,139 đ </option> */}
                         )
                         </Form.Select>
 

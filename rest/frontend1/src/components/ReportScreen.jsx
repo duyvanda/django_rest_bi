@@ -41,7 +41,7 @@ function ReportScreen({match, history}) {
       return (
         
         <div align="center" className="border-1 bg-dark" >
-          <iframe frameBorder="0"  src={`https://datastudio.google.com/embed/reporting/${ReportId}${ReportParam}`} style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }} ></iframe>
+          <iframe frameBorder="0"  src={`https://lookerstudio.google.com/embed/reporting/${ReportId}${ReportParam}`} style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }} ></iframe>
         </div>
       )
     }

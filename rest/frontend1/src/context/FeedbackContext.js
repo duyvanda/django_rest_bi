@@ -125,7 +125,11 @@ export const FeedbackProvider = ({ children }) => {
     var seconds = date.getSeconds()< 10 ? '0'+ date.getSeconds().toString() : date.getSeconds().toString();
     var minutes = date.getMinutes()< 10 ? '0'+ date.getMinutes().toString() : date.getMinutes().toString();
     var hour = date.getHours()< 10 ? '0'+ date.getHours().toString() : date.getHours().toString();
-    return hour+minutes+seconds
+    var milliseconds = (date.getMilliseconds() < 10 ) ? '00'+ date.getMilliseconds().toString()
+    : (date.getMilliseconds() < 100 ) ? '0'+ date.getMilliseconds().toString()
+    : date.getMilliseconds().toString();
+    // var milliseconds = date.getMilliseconds().toString();
+    return hour+minutes+seconds+milliseconds
   }
 
   function formatDate(date) {

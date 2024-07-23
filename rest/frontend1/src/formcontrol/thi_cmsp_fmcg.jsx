@@ -145,17 +145,11 @@ function Thi_cmsp_fmcg({history}) {
             // SetLoading(false);
             const data = await response.json();
             console.log(data);
-            history.push('/realtime/401?local_url=sp_f_data_cmsp_quy_tp');
-            // SetALert(true);
-            // SetALertType("alert-success");
-            // SetALertText("ĐÃ TẠO THÀNH CÔNG");
-            // document.getElementById("focus1").focus();
-            // setTimeout(() => SetALert(false), 3000
-            // );
-            
-            // setCount(count+1);
-            
-            // set_seconds(3600);
+            // history.push('/realtime/401?local_url=sp_f_data_cmsp_quy_tp');
+            SetALert(true);
+            SetALertType("alert-success");
+            SetALertText("ĐÃ TẠO THÀNH CÔNG");
+            setTimeout(() => SetALert(false), 3000);
 
         }
     }

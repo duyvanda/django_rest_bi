@@ -24,7 +24,7 @@ function Navbar1() {
 
     return (
         <div>
-            <Navbar className="navbar navbar-dark navbar-expand-md bg-dark">
+            <Navbar style={{maxHeight:""}} className="navbar navbar-dark navbar-expand-md bg-dark">
                 <Container className='d-flex justify-content-start'>
                     {rpScreen ? <Link to="/" className="btn btn-warning">Quay Lại</Link> : <Link to="/" className="navbar-brand">BI PORTAL</Link>}
 

@@ -69,20 +69,20 @@ function ReportList({history}) {
           (
             el.type === 3  ? 
             (
-              <li className="list-group-item mt-2" key={el.stt}>
-                <div className="row">
+              <li className="list-group-item mt-1 mb-1" key={el.stt}>
+                <div className="row" style={{maxHeight:"30px"}}>
                   <div className="col">
-                  <Link target="_blank" onClick={e => {console.log('The link was clicked.'); }} style={{textDecoration: "None", color:"black"}} to={`${el.link_report}`} > <p className="text-left" style={{ fontWeight: "bold", paddingBottom: "0px" }}><strong><span><FaChartPie style={{ fontWeight: "bold", color: "blue", fontSize:25 }} /> {el.tenreport}</span></strong></p></Link>
+                  <Link target="_blank" onClick={e => {console.log('The link was clicked.'); }} style={{textDecoration: "None", color:"black"}} to={`${el.link_report}`} > <p className="text-left text-truncate" style={{ fontWeight: "bold", paddingBottom: "0px" }}><strong><span><FaChartPie style={{ fontWeight: "bold", color: "blue", fontSize:25 }} /> {el.tenreport}</span></strong></p></Link>
                   </div>
                 </div>
               </li>
             ) 
             : 
             (
-              <li className="list-group-item mt-2" key={el.stt}>
-                <div className="row">
-                  <div className="col">
-                  <Link target="_blank" onClick={e => {console.log('The link was clicked.'); }} style={{textDecoration: "None", color:"black"}} to={`/reportscreen/${el.stt}`} > <p className="text-left" style={{ fontWeight: "bold", paddingBottom: "0px" }}><strong><span><FaChartPie style={{ fontWeight: "bold", color: "blue", fontSize:25 }} /> {el.tenreport}</span></strong></p></Link>
+              <li className="list-group-item mt-1 mb-1" key={el.stt}>
+                <div className="row" style={{maxHeight:"30px"}} >
+                  <div className="col border-dark rounded">
+                  <Link target="_blank" onClick={e => {console.log('The link was clicked.'); }} style={{textDecoration: "None", color:"black"}} to={`/reportscreen/${el.stt}`} > <p className="text-left text-truncate" style={{ fontWeight: "bold", paddingBottom: "0px" }}><strong><span><FaChartPie style={{ fontWeight: "bold", color: "blue", fontSize:25 }} /> {el.tenreport}</span></strong></p></Link>
                   </div>
                 </div>
               </li>

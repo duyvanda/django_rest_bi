@@ -1,11 +1,12 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 // import 'leaflet/dist/leaflet.css'
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Navbar1 from "./components/Navbar.jsx";
 import Login from "./components/Login";
 import ReportScreen from "./components/ReportScreen";
 // import FormScreen from "./components/FormScreen";
+import PageNotFound from "./components/404Page.jsx";
 //MYVNPOST
 import VnpHome from "./myvnpost/VnpHome";
 import VnpEditKH from "./myvnpost/VnpEditKH";
@@ -61,53 +62,55 @@ function App() {
           <MYVNPProvider>
             <Router>
               <Navbar1 />
-              <>
+              <Switch>
                 <Route exact path="/" component={HomeScreen} />
                 {/* MYVNP */}
                 {/* <Route path="/formmdsvnpost" component={FormScreen} /> */}
                 <Route exact path="/myvnpost" component={VnpHome} />
-                <Route path="/myvnpost/editkh" component={VnpEditKH} />
-                <Route path="/myvnpost/createkh" component={VnpCreateKH} />
-                <Route path="/myvnpost/editcn" component={VnpEditCN} />
-                <Route path="/myvnpost/createcn" component={VnpCreateCN} />
-                <Route path="/myvnpost/createorder" component={VnpCreateOrder} />
+                <Route exact path="/myvnpost/editkh" component={VnpEditKH} />
+                <Route exact path="/myvnpost/createkh" component={VnpCreateKH} />
+                <Route exact path="/myvnpost/editcn" component={VnpEditCN} />
+                <Route exact path="/myvnpost/createcn" component={VnpCreateCN} />
+                <Route exact path="/myvnpost/createorder" component={VnpCreateOrder} />
                 {/* Tồn Kho Và Tốc Độ Bán */}
-                <Route path="/realtime/ton_kho_va_toc_do_ban/:id" component={Ton_Kho_Va_Toc_Do_Ban} />
-                <Route path="/realtime/ton_phan_bo_hang_hoa/:id" component={Ton_phan_bo_hang_hoa} />
+                <Route exact path="/realtime/ton_kho_va_toc_do_ban/:id" component={Ton_Kho_Va_Toc_Do_Ban} />
+                <Route exact path="/realtime/ton_phan_bo_hang_hoa/:id" component={Ton_phan_bo_hang_hoa} />
                 <Route exact path="/realtime/:id" component={Realtime} />
                 {/* Form Control */}
-                <Route path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa" component={Theo_doi_bb_giao_nhan_hang_hoa} />
-                <Route path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa_mds" component={Theo_doi_bb_giao_nhan_hang_hoa_mds} />
-                <Route path="/formcontrol/danh_muc_dau_thau" component={Danh_muc_dau_thau} />
-                <Route path="/formcontrol/template" component={template} />
-                <Route path="/formcontrol/template_simple" component={TemplateSimple} />
-                <Route path="/formcontrol/theo_doi_dccn" component={Theo_doi_dccn} />
-                <Route path="/formcontrol/scn_quan_ly_ncc" component={Scn_quan_ly_ncc} />
-                <Route path="/formcontrol/scn_quan_ly_nvl" component={Scn_quan_ly_nvl} />
-                <Route path="/formcontrol/scn_quan_ly_dmnvl" component={Scn_quan_ly_dmnvl} />
-                <Route path="/formcontrol/mds_xuan_thinh_vuong" component={MdsXuanThinhVuong} />
-                <Route path="/formcontrol/chuong_trinh_dau_tu_hcp_test" component={Chuong_trinh_dau_tu_hcp_test} />
-                <Route path="/formcontrol/tracking_chi_phi_hco" component={Tracking_chi_phi_hco} />
-                <Route path="/formcontrol/tracking_chi_phi_hco_crm" component={Tracking_chi_phi_hco_crm} />
-                <Route path="/formcontrol/tracking_chi_phi_hcp" component={Tracking_chi_phi_hcp} />
-                <Route path="/formcontrol/tracking_chi_phi_hcp_crm" component={Tracking_chi_phi_hcp_crm} />
-                <Route path="/formcontrol/tracking_chi_phi_pcl" component={Tracking_chi_phi_pcl} />
-                <Route path="/formcontrol/wps_dang_ky_vpp" component={Wps_dang_ky_vpp} />
-                <Route path="/formcontrol/thi_cmsp_tp" component={Thi_cmsp} />
-                <Route path="/formcontrol/thi_cmsp_tp_v2" component={Thi_cmsp_tp_v2} />
-                <Route path="/formcontrol/thi_cmsp_hcp" component={Thi_cmsp_hcp} />
-                <Route path="/formcontrol/thi_cmsp_fmcg" component={Thi_cmsp_fmcg} />
+                <Route exact path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa" component={Theo_doi_bb_giao_nhan_hang_hoa} />
+                <Route exact path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa_mds" component={Theo_doi_bb_giao_nhan_hang_hoa_mds} />
+                <Route exact path="/formcontrol/danh_muc_dau_thau" component={Danh_muc_dau_thau} />
+                <Route exact path="/formcontrol/template" component={template} />
+                <Route exact path="/formcontrol/template_simple" component={TemplateSimple} />
+                <Route exact path="/formcontrol/theo_doi_dccn" component={Theo_doi_dccn} />
+                <Route exact path="/formcontrol/scn_quan_ly_ncc" component={Scn_quan_ly_ncc} />
+                <Route exact path="/formcontrol/scn_quan_ly_nvl" component={Scn_quan_ly_nvl} />
+                <Route exact path="/formcontrol/scn_quan_ly_dmnvl" component={Scn_quan_ly_dmnvl} />
+                <Route exact path="/formcontrol/mds_xuan_thinh_vuong" component={MdsXuanThinhVuong} />
+                <Route exact path="/formcontrol/chuong_trinh_dau_tu_hcp_test" component={Chuong_trinh_dau_tu_hcp_test} />
+                {/* <Route path="/formcontrol/tracking_chi_phi_hco" component={Tracking_chi_phi_hco} />
+                <Route path="/formcontrol/tracking_chi_phi_hco_crm" component={Tracking_chi_phi_hco_crm} /> */}
+                <Route exact path="/formcontrol/tracking_chi_phi_hcp" component={Tracking_chi_phi_hcp} />
+                <Route exact path="/formcontrol/tracking_chi_phi_hcp_crm" component={Tracking_chi_phi_hcp_crm} />
+                <Route exact path="/formcontrol/tracking_chi_phi_pcl" component={Tracking_chi_phi_pcl} />
+                <Route exact path="/formcontrol/wps_dang_ky_vpp" component={Wps_dang_ky_vpp} />
+                {/* THI CMSP */}
+                <Route exact path="/formcontrol/thi_cmsp_tp" component={Thi_cmsp} />
+                <Route exact path="/formcontrol/thi_cmsp_hcp" component={Thi_cmsp_hcp} />
+                <Route exact path="/formcontrol/thi_cmsp_fmcg" component={Thi_cmsp_fmcg} />
+                {/* <Route path="/formcontrol/thi_cmsp_tp_v2" component={Thi_cmsp_tp_v2} /> */}
                 {/* REPORT */}
-                <Route path="/login" component={Login} />
-                <Route path="/reports" component={ReportList} />
-                <Route path="/reportscreen/:id" component={ReportScreen} />
-                <Route path="/testscreensize" component={TestScreenSize} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/reports" component={ReportList} />
+                <Route exact path="/reportscreen/:id" component={ReportScreen} />
+                <Route exact path="/testscreensize" component={TestScreenSize} />
                 {/* MAPS */}
-                <Route path="/maps/sales" component={Maps} />
-                <Route path="/maps/routes" component={Routes} />
-                <Route path="/maps/salesroutes" component={SalesRoutes} />
-                <Route path="/mapbox" component={MapBox} />
-              </>
+                <Route exact path="/maps/sales" component={Maps} />
+                <Route exact path="/maps/routes" component={Routes} />
+                <Route exact path="/maps/salesroutes" component={SalesRoutes} />
+                <Route exact path="/mapbox" component={MapBox} />
+                <Route component={ PageNotFound } />
+              </Switch>
             </Router>
           </MYVNPProvider>
       </MapProvider>
