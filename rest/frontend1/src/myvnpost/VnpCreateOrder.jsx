@@ -29,6 +29,7 @@ function VnpCreateOrder({history}) {
 		} else {
             history.push('/login');
         };
+  // eslint-disable-next-line
 	}, []);
 
   const navigate = useHistory();

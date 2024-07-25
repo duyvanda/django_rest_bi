@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
@@ -25,6 +25,7 @@ function Ton_phan_bo_hang_hoa( {match,history} ) {
 		} else {
             history.push('/login');
         };
+    // eslint-disable-next-line
 	}, []);
 
     const {userLogger, SetRpScreen, fetchFilerReportsRT, shared, loading, ReportId, ReportParam, vw } = useContext(FeedbackContext)
@@ -130,20 +131,20 @@ function Ton_phan_bo_hang_hoa( {match,history} ) {
 export default Ton_phan_bo_hang_hoa
 
 
-                {/* <Form className='ml-5 mt-2' onSubmit={console.log("first")}>
-                <Stack direction="horizontal" gap={2} className="col-md-2">
-                
-                    <Dropdown>
-                        <Dropdown.Toggle id="dropdown-basic" className="text-dark bg-warning border border-warning">
-                        Chọn CN
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu style={{maxHeight: "410px", overflowY: "auto"}}>
-                            {lst_cn_check
-                            .map( el => <Form.Check key={el.cn} className="text-nowrap" type="switch" checked={el.checked} onChange={handeClick} id={el.cn} label={el.cn}/>)
-                            }
-                        </Dropdown.Menu>
-                    </Dropdown>                
-                    <Button className="ml-2 border-0"  type="submit" variant="warning">Submit</Button>
-        
-                    </Stack>
-                </Form> */}
+/* <Form className='ml-5 mt-2' onSubmit={console.log("first")}>
+<Stack direction="horizontal" gap={2} className="col-md-2">
+
+<Dropdown>
+    <Dropdown.Toggle id="dropdown-basic" className="text-dark bg-warning border border-warning">
+    Chọn CN
+    </Dropdown.Toggle>
+    <Dropdown.Menu style={{maxHeight: "410px", overflowY: "auto"}}>
+        {lst_cn_check
+        .map( el => <Form.Check key={el.cn} className="text-nowrap" type="switch" checked={el.checked} onChange={handeClick} id={el.cn} label={el.cn}/>)
+        }
+    </Dropdown.Menu>
+</Dropdown>                
+<Button className="ml-2 border-0"  type="submit" variant="warning">Submit</Button>
+
+</Stack>
+</Form> */

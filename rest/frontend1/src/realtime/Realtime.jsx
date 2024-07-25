@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
@@ -26,6 +26,7 @@ function Realtime( {match, history, location} ) {
 		} else {
             history.push('/login');
         };
+    // eslint-disable-next-line
 	}, []);
 
     const {userLogger, SetRpScreen, fetchFilerReportsRT, shared, loading, ReportId, ReportParam, vw } = useContext(FeedbackContext)

@@ -1,27 +1,27 @@
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
 import './myvnp.css';
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,
     Col,
     Row,
     Container,
-    Dropdown,
     Form,
     Spinner,
     InputGroup,
-    Stack,
     FloatingLabel,
-    Card
+    // Stack,
+    // Dropdown,
+    // Card
 } from "react-bootstrap";
 
 function Wps_dang_ky_vpp({history}) {
 
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    // const navigate = useHistory();
     const fetch_wps_data = async (manv) => {
         SetLoading(true);
         const response = await fetch(`https://bi.meraplion.com/local/wps_data_vpp/?manv=${manv}`)
@@ -49,15 +49,16 @@ function Wps_dang_ky_vpp({history}) {
         } else {
             history.push('/login');
         };
+    // eslint-disable-next-line
     }, [count]);
 
     const [manv, set_manv] = useState("");
-    const current_date = formatDate(Date());    
+    // const current_date = formatDate(Date());    
     const [arr_vpp, set_arr_vpp] = useState([]);
     const [vpp, set_vpp] = useState("");
     const [arr_input, set_arr_input] = useState([]);
     const [so_luong, set_so_luong] = useState("");
-    const [onDate, setDate] = useState(current_date);
+    // const [onDate, setDate] = useState(current_date);
     
 
     const del_item = async (data) => {
@@ -124,7 +125,7 @@ function Wps_dang_ky_vpp({history}) {
             "manv":manv,
             "vpp":vpp,
             "so_luong":so_luong,
-            "date":onDate,
+            "date": current_date,
         }
         console.log(data);
         post_form_data(data);    
@@ -160,7 +161,7 @@ function Wps_dang_ky_vpp({history}) {
                             <option value="">Chọn VPP</option>
                             {arr_vpp
                             .map( (el, index) =>
-                            <option key={index} value={el.tenvpp_clean}>{el.tenvpp + '  ' + '(' + el.dvt + ')' }</option>
+                            <option key={index} value={el.tenvpp_clean}> {el.tenvpp + '  ' + '(' + el.dvt + ')' } </option>
                             )
                             }
                         </Form.Select>

@@ -88,8 +88,8 @@ function App() {
                 <Route exact path="/formcontrol/scn_quan_ly_dmnvl" component={Scn_quan_ly_dmnvl} />
                 <Route exact path="/formcontrol/mds_xuan_thinh_vuong" component={MdsXuanThinhVuong} />
                 <Route exact path="/formcontrol/chuong_trinh_dau_tu_hcp_test" component={Chuong_trinh_dau_tu_hcp_test} />
-                {/* <Route path="/formcontrol/tracking_chi_phi_hco" component={Tracking_chi_phi_hco} />
-                <Route path="/formcontrol/tracking_chi_phi_hco_crm" component={Tracking_chi_phi_hco_crm} /> */}
+                <Route path="/formcontrol/tracking_chi_phi_hco" component={Tracking_chi_phi_hco} />
+                {/* <Route path="/formcontrol/tracking_chi_phi_hco_crm" component={Tracking_chi_phi_hco_crm} /> */}
                 <Route exact path="/formcontrol/tracking_chi_phi_hcp" component={Tracking_chi_phi_hcp} />
                 <Route exact path="/formcontrol/tracking_chi_phi_hcp_crm" component={Tracking_chi_phi_hcp_crm} />
                 <Route exact path="/formcontrol/tracking_chi_phi_pcl" component={Tracking_chi_phi_pcl} />

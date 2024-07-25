@@ -54,11 +54,13 @@ function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
 		} else {
             history.push('/login');
         };
+    // eslint-disable-next-line
 	}, []);
 
     const handle_click_chi_nhanh = (e) => {
         let lst = [];
-        for (const [index, element] of lst_cn_check.entries()) {
+        // eslint-disable-next-line
+        for (const [ind, element] of lst_cn_check.entries()) {
             if(element.cn === e.target.id) {
                 element.checked = e.target.checked
                 lst.push(element);
@@ -161,7 +163,7 @@ function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
 
 export default Ton_Kho_Va_Toc_Do_Ban
 
-{/* <Form className='ml-5 mt-2' onSubmit={console.log("first")}>
+/* <Form className='ml-5 mt-2' onSubmit={console.log("first")}>
 <Stack direction="horizontal" gap={2} className="col-md-2">
 
     <Dropdown>
@@ -177,4 +179,4 @@ export default Ton_Kho_Va_Toc_Do_Ban
     <Button className="ml-2 border-0"  type="submit" variant="warning">Submit</Button>
 
     </Stack>
-</Form> */}
+</Form> */

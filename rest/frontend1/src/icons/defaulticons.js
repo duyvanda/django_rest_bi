@@ -4,7 +4,7 @@ import iconShadow from "./../images/marker-shadow.png"
 import iconUrlRed from "./../images/marker-icon-red.png"
 
 
-const { iconSize, shadowSize, iconAnchor, popupAnchor, tooltipAnchor } = L.Marker.prototype.options.icon.options
+const { shadowSize, iconAnchor, popupAnchor, tooltipAnchor } = L.Marker.prototype.options.icon.options
 
 console.log(L.Marker.prototype.options.icon.options);
 

@@ -49,9 +49,10 @@ function Tracking_chi_phi_hco({history}) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'tracking_chi_phi_hco', isMB, dv_width);
-        set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
-        fetch_tracking_chi_phi_get_data_hco(JSON.parse(localStorage.getItem("userInfo")).manv);
+        history.push("/formcontrol/tracking_chi_phi_hcp");
+        // userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'tracking_chi_phi_hco', isMB, dv_width);
+        // set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
+        // fetch_tracking_chi_phi_get_data_hco(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
             history.push('/login');
         };
