@@ -202,7 +202,7 @@ function Thi_cmsp({history}) {
                         {arr_input
                         .map( (el, index0) =>
                         <Card className="mt-2" key={index0}>
-                        <Card.Title>{index0+1}-{el.cauhoi}</Card.Title>
+                        <Card.Title>{index0+1}{el.type === "M" && "-Chọn Nhiều"}-{el.cauhoi}</Card.Title>
 
 
                             {arr_detail

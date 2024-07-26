@@ -203,7 +203,9 @@ function Thi_cmsp_hcp({history}) {
                         {arr_input
                         .map( (el, index0) =>
                         <Card className="mt-2" key={index0}>
-                        <Card.Title>{index0+1}-{el.cauhoi}</Card.Title>
+                        <Card.Title>
+                        {index0+1}{el.type === "M" && "-Chọn Nhiều"}-{el.cauhoi}
+                        </Card.Title>
 
 
                             {arr_detail
@@ -213,14 +215,12 @@ function Thi_cmsp_hcp({history}) {
                             // <option value={eli.cacluachon}> {eli.cacluachon} </option>
                             )
                             }
-
-
                         </Card>
                         )
                         }
 
                         <h3 style={{color:"red"}} className="mt-2 text-center">Bạn Đã Chọn:{`\xa0`}  
-                        { arr_indx.length } / 20
+                        { arr_indx.length } / 30
                         </h3>
 
                         {/* <Button disabled={false} className='mt-2' variant="warning" type="button" onClick={console.log(arr_indx)} style={{width: "100%", fontWeight: "bold"}}> CONSOLE LOG </Button> */}
