@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 // import { useHistory } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
@@ -161,7 +162,8 @@ function Wps_dang_ky_vpp({history}) {
                             <option value="">Chọn VPP</option>
                             {arr_vpp
                             .map( (el, index) =>
-                            <option key={index} value={el.tenvpp_clean}> {el.tenvpp + '  ' + '(' + el.dvt + ')' } </option>
+                            <option key={index} value={el.tenvpp_clean}> { el.tenvpp + ' - ' + '(' + el.dvt + ')' } </option>
+                            // <option key={index} value={el.tenvpp_clean}>{`${el.tenvpp} - (${el.dvt})`}</option>
                             )
                             }
                         </Form.Select>

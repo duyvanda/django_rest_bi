@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {Form, Button, Spinner, Badge, Image, Stack} from 'react-bootstrap';
 import { useContext, useEffect, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";

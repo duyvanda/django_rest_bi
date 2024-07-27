@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 
 
 
 
 function ReportScreen({match, history}) {
-    const { userInfo, Reports, fetchFilerReports, shared, vw, ReportId, userLogger, ReportParam, SetRpScreen } = useContext(FeedbackContext)
+    const { Reports, fetchFilerReports, shared, vw, ReportId, userLogger, ReportParam, SetRpScreen } = useContext(FeedbackContext)
     // const [MB, setIsDS] = useState(false)
 
     useEffect(() => {
@@ -27,6 +27,7 @@ function ReportScreen({match, history}) {
 		} else {
             history.push('/login');
         };
+  // eslint-disable-next-line
 	}, []);
 
     // console.log("reportid", ReportId)
@@ -41,7 +42,7 @@ function ReportScreen({match, history}) {
       return (
         
         <div align="center" className="border-1 bg-dark" >
-          <iframe frameBorder="0"  src={`https://lookerstudio.google.com/embed/reporting/${ReportId}${ReportParam}`} style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }} ></iframe>
+          <iframe title="myFrame" frameBorder="0"  src={`https://lookerstudio.google.com/embed/reporting/${ReportId}${ReportParam}`} style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }} ></iframe>
         </div>
       )
     }

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react'
 
 function danh_sach_tham_gia_du_thau() {

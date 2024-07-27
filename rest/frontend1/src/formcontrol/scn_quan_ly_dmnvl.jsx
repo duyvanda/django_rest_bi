@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as pd from "danfojs";
 import { useContext, useEffect, useState } from "react";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -219,4 +220,4 @@ function Scn_quan_ly_dmnvl({history}) {
 
 }
 
-export default Scn_quan_ly_dmnvl
+// export default Scn_quan_ly_dmnvl

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {Nav, Navbar, Container, Button, Row, Dropdown, NavDropdown, DropdownButton, Anchor, Badge, Image} from 'react-bootstrap';
 import { useContext, useEffect, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";

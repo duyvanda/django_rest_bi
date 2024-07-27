@@ -1,8 +1,9 @@
+/* eslint-disable */
 import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
-    Spinner
+    Spinner, Modal, Button
 } from "react-bootstrap";
 
 function Realtime( {match, history, location} ) {
@@ -41,30 +42,33 @@ function Realtime( {match, history, location} ) {
         )
     }
     
-        else if (!loading) {
+        else {
     
         return (
-            <div>
-
-
-                <div align="center" className="border-1 bg-dark" >
-                    <iframe title="myFrame" frameBorder="0"  src={`https://lookerstudio.google.com/embed/reporting/${ReportId}${ReportParam}`} style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }} ></iframe>
-                </div>
+        <div>
+        <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
+        <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
+        </Modal>
+            {!loading &&
+            <div align="center" className="border-1 bg-dark" >
+            <iframe title="myFrame" frameBorder="0"  src={`https://lookerstudio.google.com/embed/reporting/${ReportId}${ReportParam}`} style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }} ></iframe>
             </div>
+            }
+        </div>
         );
     
         }
-        else {
-        return (
+        // else {
+        // return (
     
-            <div>
-                <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
-                <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-                </Spinner>
-            </div>
+        //     <div>
+        //         <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
+        //         <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
+        //         </Spinner>
+        //     </div>
             
-        )
-        }
+        // )
+        // }
 }
 
 export default Realtime

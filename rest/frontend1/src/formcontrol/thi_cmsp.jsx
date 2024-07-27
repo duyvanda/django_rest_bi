@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
@@ -9,14 +10,15 @@ import {
     Col,
     Row,
     Container,
-    Dropdown,
     Form,
     Spinner,
-    InputGroup,
-    Stack,
-    FloatingLabel,
+    // Dropdown,
+    // InputGroup,
+    // Stack,
+    // FloatingLabel,
     Card,
-    Image
+    Image,
+    Modal
 } from "react-bootstrap";
 
 function Thi_cmsp({history}) {
@@ -77,7 +79,7 @@ function Thi_cmsp({history}) {
         let new_lst_indx = [];
         // let uniq_lst = [];
 
-        for (const [index, element] of arr_detail.entries()) {
+        for (const element of arr_detail) {
 
         let arr_id = e.target.id.split('@@');
         let select_cau_hoi = arr_id[0];
@@ -175,9 +177,13 @@ function Thi_cmsp({history}) {
         post_form_data(data);
     }
 
-    if (!loading) {
+    // if (!loading) {
+    if (true) {
         return (
         <Container className="bg-teal-100 h-100" fluid>
+        <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
+        <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Loading...</Button>
+        </Modal>
             <Row className="justify-content-center">
                 <Col md={5} >
 

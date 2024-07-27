@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
@@ -10,14 +11,15 @@ import {
     Col,
     Row,
     Container,
-    Dropdown,
     Form,
     Spinner,
-    InputGroup,
-    Stack,
-    FloatingLabel,
     Card,
-    ListGroup
+    ListGroup,
+    Modal,
+    // Dropdown,
+    // InputGroup,
+    // Stack,
+    // FloatingLabel,
 } from "react-bootstrap";
 
 function Tracking_chi_phi_hcp({history}) {
@@ -55,6 +57,7 @@ function Tracking_chi_phi_hcp({history}) {
         } else {
             history.push('/login');
         };
+    // eslint-disable-next-line
     }, [count]);
 
     
@@ -83,7 +86,7 @@ function Tracking_chi_phi_hcp({history}) {
     const handeClick = (e) => {
         (e.target.checked) ? set_hcp(e.target.id) : set_hcp("")
         let lst = [];
-        for (const [index, element] of arr_hcp.entries()) {
+        for (const element of arr_hcp) {
         if(element.ma_hcp_2 === e.target.id) {
             element.check = e.target.checked
             lst.push(element);
@@ -187,9 +190,12 @@ function Tracking_chi_phi_hcp({history}) {
 
     }
 
-    if (!loading) {
+    // if (!loading) {
         return (
         <Container className="bg-teal-100 h-100" fluid>
+            <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
+                <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
+            </Modal>
             <Row className="justify-content-center">
                 <Col md={5} >
 
@@ -337,18 +343,18 @@ function Tracking_chi_phi_hcp({history}) {
         </Container>
         )
     }
-    else {
-        return (
+//     else {
+//         return (
     
-            <div>
-                <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
-                <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-                </Spinner>
-            </div>
+//             <div>
+//                 <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
+//                 <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
+//                 </Spinner>
+//             </div>
             
-        )
-    }
+//         )
+//     }
+// }
 
-}
 
 export default Tracking_chi_phi_hcp

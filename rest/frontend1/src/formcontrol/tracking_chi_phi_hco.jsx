@@ -1,8 +1,9 @@
+/* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
 import './myvnp.css';
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,
@@ -10,14 +11,14 @@ import {
     Col,
     Row,
     Container,
-    Dropdown,
     Form,
     Spinner,
-    InputGroup,
-    Stack,
     FloatingLabel,
     Card,
     ListGroup
+    // Dropdown,
+    // InputGroup,
+    // Stack,
 } from "react-bootstrap";
 
 function Tracking_chi_phi_hco({history}) {
@@ -50,9 +51,9 @@ function Tracking_chi_phi_hco({history}) {
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
         history.push("/formcontrol/tracking_chi_phi_hcp");
-        // userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'tracking_chi_phi_hco', isMB, dv_width);
-        // set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
-        // fetch_tracking_chi_phi_get_data_hco(JSON.parse(localStorage.getItem("userInfo")).manv);
+        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'tracking_chi_phi_hco', isMB, dv_width);
+        set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
+        fetch_tracking_chi_phi_get_data_hco(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
             history.push('/login');
         };

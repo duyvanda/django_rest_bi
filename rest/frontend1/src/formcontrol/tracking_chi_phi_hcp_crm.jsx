@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
@@ -52,12 +53,13 @@ function Tracking_chi_phi_hcp_crm({history}) {
         } else {
             history.push('/login');
         };
+    // eslint-disable-next-line
     }, [count]);
 
     
     const f = new Intl.NumberFormat();
     const [manv, set_manv] = useState("");
-    const current_date = formatDate(Date());
+    // const current_date = formatDate(Date());
     const [arr_hcp, set_arr_hcp] = useState([]);
     const [tong_hcp_da_dau_tu, set_tong_hcp_da_dau_tu] = useState("");
     const [tong_tien_ke_hoach_da_dau_tu, set_tong_tien_ke_hoach_da_dau_tu] = useState("");
@@ -69,7 +71,7 @@ function Tracking_chi_phi_hcp_crm({history}) {
     const handeClick = (e) => {
         (e.target.checked) ? set_sl_da_chon(sl_da_chon+1) : set_sl_da_chon(sl_da_chon-1) 
         let lst = [];
-        for (const [index, element] of arr_hcp.entries()) {
+        for (const element of arr_hcp) {
         if(element.uuid === e.target.id) {
             element.check = e.target.checked
             lst.push(element);

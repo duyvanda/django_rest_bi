@@ -8,8 +8,8 @@ import { FaChartPie } from 'react-icons/fa';
 function ReportList({history}) {
 
   // console.log(window.location.hre, window.location.href==="http://localhost:3000/reports")
-  const URL = window.location.host==="localhost:3000" ? process.env.REACT_APP_LURL : process.env.REACT_APP_PURL
-  const { userInfo, Reports, clearFilterReport, rpScreen, SetRpScreen } = useContext(FeedbackContext)
+  // const URL = window.location.host==="localhost:3000" ? process.env.REACT_APP_LURL : process.env.REACT_APP_PURL
+  const { userInfo, Reports, clearFilterReport, SetRpScreen } = useContext(FeedbackContext)
 
 
   useEffect(() => {
@@ -20,6 +20,7 @@ function ReportList({history}) {
 		} else {
             history.push('/login');
         }
+  // eslint-disable-next-line
 	}, [history, Reports, userInfo]);
 
   console.log("Reports", Reports)

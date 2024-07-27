@@ -1,13 +1,17 @@
 import React from 'react'
-import { Link, NavLink  } from 'react-router-dom'
+import { Link  } from 'react-router-dom'
 import FeedbackContext from '../context/FeedbackContext'
 import { useContext } from 'react'
-import {Nav, Navbar, Container, Button, Row, Dropdown, NavDropdown, DropdownButton} from 'react-bootstrap';
+import {Navbar, Container,
+    NavDropdown, 
+    // Button, Row, Dropdown, 
+    // DropdownButton, Nav
+} from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 
 
 function Navbar1() {
-    const { userInfo, logoutUser, FilterReports, rpScreen, SetRpScreen } = useContext(FeedbackContext)
+    const { userInfo, logoutUser, FilterReports, rpScreen } = useContext(FeedbackContext)
 
     const history = useHistory();
 
@@ -50,12 +54,3 @@ function Navbar1() {
 }
 
 export default Navbar1
-
-{/* <Navbar.Toggle aria-controls="basic-navbar-nav" /> */}
-{/* <Navbar.Collapse id="basic-navbar-nav">
-<Nav >  */}
-
-{/* </Nav>
-</Navbar.Collapse> */}
-{/* <Navbar.Text className='text-truncate'>{FilterReports.tenreport}</Navbar.Text> */}
-{/* Link id="RouterNavLink" to="/profile">Đổi Mật Khẩu</Link> */}

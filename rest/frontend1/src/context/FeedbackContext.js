@@ -4,6 +4,7 @@ import PLReports from "../data/PLReports";
 const FeedbackContext = createContext();
 
 export const FeedbackProvider = ({ children }) => {
+  // eslint-disable-next-line
   const [manv, setManv] = useState("");
   const [userInfo, setUserInfo] = useState("");
   const [rpScreen, SetRpScreen] = useState(false);
@@ -38,6 +39,7 @@ export const FeedbackProvider = ({ children }) => {
       window.location.host,
       window.location.host === "localhost:3000"
     );
+  // eslint-disable-next-line
   }, []);
 
   const fetchReports = async (manv) => {
@@ -121,7 +123,7 @@ export const FeedbackProvider = ({ children }) => {
   };
 
   const get_version = () => {
-    var date = new Date;
+    var date = new Date();
     var seconds = date.getSeconds()< 10 ? '0'+ date.getSeconds().toString() : date.getSeconds().toString();
     var minutes = date.getMinutes()< 10 ? '0'+ date.getMinutes().toString() : date.getMinutes().toString();
     var hour = date.getHours()< 10 ? '0'+ date.getHours().toString() : date.getHours().toString();
