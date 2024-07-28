@@ -26,19 +26,19 @@ export const FeedbackProvider = ({ children }) => {
 
   const URL =
     window.location.host === "localhost:3000"
-      ? process.env.REACT_APP_LURL
+      ? process.env.REACT_APP_PURL
       : process.env.REACT_APP_PURL;
   // const URL = process.env.REACT_PRO_URL
   const LOCALURL = "https://bi.meraplion.com/local"
 
   useEffect(() => {
     getUserInfo();
-    console.log("URL", URL);
-    console.log(
-      "window.location.host ",
-      window.location.host,
-      window.location.host === "localhost:3000"
-    );
+    // console.log("URL", URL);
+    // console.log(
+    //   "window.location.host ",
+    //   window.location.host,
+    //   window.location.host === "localhost:3000"
+    // );
   // eslint-disable-next-line
   }, []);
 

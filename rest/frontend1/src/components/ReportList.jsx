@@ -23,7 +23,7 @@ function ReportList({history}) {
   // eslint-disable-next-line
 	}, [history, Reports, userInfo]);
 
-  console.log("Reports", Reports)
+  // console.log("Reports", Reports)
 
   function removeAccents(str) {
     var AccentsMap = [
