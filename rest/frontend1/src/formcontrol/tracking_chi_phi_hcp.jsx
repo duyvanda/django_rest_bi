@@ -148,6 +148,7 @@ function Tracking_chi_phi_hcp({history}) {
             set_chon_hinh_thuc_hoi_nghi("");
             set_chon_qua_tang_2("");
             set_chon_qua_tang_cam_xuc("");
+            set_hcp("");
             setCount(count+1)
             // window.location.reload();
 
@@ -190,12 +191,12 @@ function Tracking_chi_phi_hcp({history}) {
 
     }
 
-    // if (!loading) {
+    if (!loading) {
         return (
         <Container className="bg-teal-100 h-100" fluid>
-            <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
+            {/* <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
                 <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
-            </Modal>
+            </Modal> */}
             <Row className="justify-content-center">
                 <Col md={5} >
 
@@ -255,7 +256,7 @@ function Tracking_chi_phi_hcp({history}) {
                             <option value='Cặp cho con bs (bé gái)'>Cặp cho con bs (bé gái) - 720,000 đ </option>
                             <option value='Combo set túi du lịch'>Combo set túi du lịch - 300,000 đ </option>
                         )
-                        </Form.Select>                   
+                        </Form.Select>
                         
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang(e.target.value)  }>                                 
                             <option value=''>Chọn Gimmick</option>
@@ -329,7 +330,16 @@ function Tracking_chi_phi_hcp({history}) {
                         {/* <FloatingLabel label="CHI PHÍ GIAO TIẾP" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text1(e.target.value) } value = {text1}/> </FloatingLabel>
                         <FloatingLabel label="HỘI NGHỊ" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text2(e.target.value) } value = {text2}/> </FloatingLabel> */}
                         
-                        <Button disabled={ hcp === "" } className='mt-2' variant="primary" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
+                        <Button disabled={ 
+                        hcp === "" |
+                        (
+                            chon_qua_tang_cam_xuc === "" &
+                            chon_qua_tang === "" &
+                            chon_qua_sn === "" &
+                            chon_hoi_nghi === "" &
+                            chon_qua_tang_2 === ""
+                        )
+                        } className='mt-2' variant="primary" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
                         </Form>
                         {/* END FORM BODY */}
 
@@ -343,18 +353,18 @@ function Tracking_chi_phi_hcp({history}) {
         </Container>
         )
     }
-//     else {
-//         return (
+    else {
+        return (
     
-//             <div>
-//                 <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
-//                 <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-//                 </Spinner>
-//             </div>
+            <div>
+                <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
+                <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
+                </Spinner>
+            </div>
             
-//         )
-//     }
-// }
+        )
+    }
+}
 
 
 export default Tracking_chi_phi_hcp

@@ -55,6 +55,10 @@ import Thi_cmsp from "./formcontrol/thi_cmsp";
 import Thi_cmsp_hcp from "./formcontrol/thi_cmsp_hcp";
 import Thi_cmsp_fmcg from "./formcontrol/thi_cmsp_fmcg";
 
+// BOOTSTRAP
+import Spacing from "./bootstrap/spacing";
+import Display from "./bootstrap/display";
+
 function App() {
   return (
     <FeedbackProvider>
@@ -109,7 +113,13 @@ function App() {
                 <Route exact path="/maps/routes" component={Routes} />
                 <Route exact path="/maps/salesroutes" component={SalesRoutes} />
                 <Route exact path="/maps/mapbox" component={MapBox} />
+
+                {/* BOOTSTRAP */}
+                <Route exact path="/bootstrap/spacing" component={Spacing} />
+                <Route exact path="/bootstrap/display" component={Display} />
                 <Route component={ PageNotFound } />
+
+                
               </Switch>
             </Router>
           </MYVNPProvider>

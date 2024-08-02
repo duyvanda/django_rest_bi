@@ -122,7 +122,7 @@ function Thi_cmsp({history}) {
         
         let loc_cau_hoi = lst.filter(a => a.check === true);
         let lst_cau_hoi = loc_cau_hoi.map(a => a.cauhoi);
-        set_arr_indx([...new Set(lst_cau_hoi)]); 
+        set_arr_indx([...new Set(lst_cau_hoi)]);
 
 
         
