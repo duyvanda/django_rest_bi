@@ -147,15 +147,12 @@ function Thi_cmsp({history}) {
             SetLoading(false);
             const data = await response.json();
             console.log(data);
-            // history.push('/realtime/401?local_url=sp_f_data_cmsp_quy_tp');
-            SetALert(true);
-            SetALertType("alert-success");
-            SetALertText("ĐÃ TẠO THÀNH CÔNG");
-            setTimeout(() => SetALert(false), 3000
-            );
-            
-            setCount(count+1);
-            
+            history.push('/realtime/401?local_url=sp_f_data_cmsp_quy_tp');
+            // SetALert(true);
+            // SetALertType("alert-success");
+            // SetALertText("ĐÃ TẠO THÀNH CÔNG");
+            // setTimeout(() => SetALert(false), 3000);
+            // setCount(count+1);
             // set_seconds(3600);
 
         }
@@ -198,7 +195,7 @@ function Thi_cmsp({history}) {
                         }
                         <></>
                         <Image className="mt-2" src="https://storage.googleapis.com/django_media_biteam/images/cmsp_tp_quy2.jpg" fluid  />
-                        <h6 className="text-center mt-2" id="focus1">TP - THI CMSP QUÝ 02/2024 - {seconds} s - ({Math.round(seconds/60) } p)</h6>
+                        <h6 className="text-center mt-2" id="focus1">TP - THI CMSP QUÝ - {seconds} s - ({Math.round(seconds/60) } p)</h6>
                         
 
                         <Form onSubmit={handle_submit}>

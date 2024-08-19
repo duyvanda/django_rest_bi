@@ -10,14 +10,14 @@ import {
     Col,
     Row,
     Container,
-    Dropdown,
     Form,
     Spinner,
+    Card,
+    Image,
     InputGroup,
     Stack,
     FloatingLabel,
-    Card,
-    Image
+    Dropdown
 } from "react-bootstrap";
 
 function Thi_cmsp_hcp({history}) {
@@ -129,7 +129,7 @@ function Thi_cmsp_hcp({history}) {
 
 
     const post_form_data = async (data) => {
-        // SetLoading(true)
+        SetLoading(true)
         const response = await fetch(`https://bi.meraplion.com/local/insert_data_cmsp_quy_tp/`, {
             method: "POST",
             headers: {
@@ -143,19 +143,15 @@ function Thi_cmsp_hcp({history}) {
             const data = await response.json();
             console.log(data);
         } else {
-            // SetLoading(false);
+            SetLoading(false);
             const data = await response.json();
             console.log(data);
             history.push('/realtime/401?local_url=sp_f_data_cmsp_quy_tp');
             // SetALert(true);
             // SetALertType("alert-success");
             // SetALertText("ĐÃ TẠO THÀNH CÔNG");
-            // document.getElementById("focus1").focus();
-            // setTimeout(() => SetALert(false), 3000
-            // );
-            
+            // setTimeout(() => SetALert(false), 3000);
             // setCount(count+1);
-            
             // set_seconds(3600);
 
         }
@@ -193,8 +189,8 @@ function Thi_cmsp_hcp({history}) {
                         </div>
                         }
                         <></>
-                        {/* <Image className="mt-2" src="https://storage.googleapis.com/django_media_biteam/images/cmsp_tp_quy2.jpg" fluid  /> */}
-                        <h6 className="text-center mt-2" id="focus1">HCP - THI CMSP QUÝ 02/2024 - {seconds} s - ({Math.round(seconds/60) } p) </h6>
+                        <Image className="mt-2" src="https://storage.googleapis.com/django_media_biteam/images/cmsp_hcp_quy2.jpg" fluid  />
+                        <h6 className="text-center mt-2" id="focus1">HCP - THI CMSP QUÝ - {seconds} s - ({Math.round(seconds/60) } p) </h6>
                         
 
                         <Form onSubmit={handle_submit}>
