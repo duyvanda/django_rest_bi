@@ -12,22 +12,21 @@ import {
     Container,
     Form,
     Spinner,
-    // Dropdown,
-    // InputGroup,
-    // Stack,
-    // FloatingLabel,
     Card,
     Image,
-    Modal
+    InputGroup,
+    Stack,
+    FloatingLabel,
+    Dropdown
 } from "react-bootstrap";
 
-function Thi_cmsp({history}) {
+function Thi_cmsp_hcp_test({history}) {
 
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const navigate = useHistory();
     const fetch_data = async (manv) => {
         SetLoading(true);
-        const response = await fetch(`https://bi.meraplion.com/local/cmsp_quy_tp/?manv=${manv}&system=TP`)
+        const response = await fetch(`https://bi.meraplion.com/local/cmsp_quy_tp/?manv=${manv}&system=HCP`)
         if (response.ok) {
             const data = await response.json()
             set_arr_detail(data['detail']);
@@ -42,15 +41,21 @@ function Thi_cmsp({history}) {
     }
     
     const [count, setCount] = useState(0);
-    const [seconds, set_seconds] = useState(1800);
+    const [seconds, set_seconds] = useState(2700);
     useEffect(() => {
-        if (localStorage.getItem("userInfo")) {
+        // if (formatDate(Date()) !== '2024-09-01') {
+        //     history.push('/reports');
+        // }
+        // else
+        if (localStorage.getItem("userInfo") ) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'thi_cmsp_tp', isMB, dv_width);
+        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'thi_cmsp', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_data(JSON.parse(localStorage.getItem("userInfo")).manv);
+
+
         } else {
             history.push('/login?redirect=/formcontrol/thi_cmsp');
         };
@@ -79,7 +84,7 @@ function Thi_cmsp({history}) {
         let new_lst_indx = [];
         // let uniq_lst = [];
 
-        for (const element of arr_detail) {
+        for (const [index, element] of arr_detail.entries()) {
 
         let arr_id = e.target.id.split('@@');
         let select_cau_hoi = arr_id[0];
@@ -122,7 +127,7 @@ function Thi_cmsp({history}) {
         
         let loc_cau_hoi = lst.filter(a => a.check === true);
         let lst_cau_hoi = loc_cau_hoi.map(a => a.cauhoi);
-        set_arr_indx([...new Set(lst_cau_hoi)]);
+        set_arr_indx([...new Set(lst_cau_hoi)]); 
 
 
         
@@ -166,21 +171,17 @@ function Thi_cmsp({history}) {
             "uuid":uuid(),
             "manv":manv,
             "countdown":seconds,
-            "time_limit":1800,
+            "time_limit":2700,
             "answers": arr_detail,
-            "system":"TP"
+            "system":"HCP"
         }
         console.log(data);
         post_form_data(data);
     }
 
-    // if (!loading) {
-    if (true) {
+    if (!loading) {
         return (
         <Container className="bg-teal-100 h-100" fluid>
-        <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
-        <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Loading...</Button>
-        </Modal>
             <Row className="justify-content-center">
                 <Col md={5} >
 
@@ -194,8 +195,8 @@ function Thi_cmsp({history}) {
                         </div>
                         }
                         <></>
-                        <Image className="mt-2" src="https://storage.googleapis.com/django_media_biteam/images/cmsp_tp.jpg" fluid  />
-                        <h6 className="text-center mt-2" id="focus1">TP - THI CMSP QUÝ - {seconds} s - ({Math.round(seconds/60) } p)</h6>
+                        <Image className="mt-2" src="https://storage.googleapis.com/django_media_biteam/images/cmsp_hcp_quy2.jpg" fluid  />
+                        <h6 className="text-center mt-2" id="focus1">HCP - THI CMSP QUÝ - {seconds} s - ({Math.round(seconds/60) } p) </h6>
                         
 
                         <Form onSubmit={handle_submit}>
@@ -205,7 +206,9 @@ function Thi_cmsp({history}) {
                         {arr_input
                         .map( (el, index0) =>
                         <Card className="mt-2" key={index0}>
-                        <Card.Title>{index0+1}{el.type === "M" && "-Chọn Nhiều"}-{el.cauhoi}</Card.Title>
+                        <Card.Title>
+                        {index0+1}{el.type === "M" && "-Chọn Nhiều"}-{el.cauhoi}
+                        </Card.Title>
 
 
                             {arr_detail
@@ -215,14 +218,12 @@ function Thi_cmsp({history}) {
                             // <option value={eli.cacluachon}> {eli.cacluachon} </option>
                             )
                             }
-
-
                         </Card>
                         )
                         }
 
                         <h3 style={{color:"red"}} className="mt-2 text-center">Bạn Đã Chọn:{`\xa0`}  
-                        { arr_indx.length } / 20
+                        { arr_indx.length } / 30
                         </h3>
 
                         {/* <Button disabled={false} className='mt-2' variant="warning" type="button" onClick={console.log(arr_indx)} style={{width: "100%", fontWeight: "bold"}}> CONSOLE LOG </Button> */}
@@ -257,4 +258,4 @@ function Thi_cmsp({history}) {
 
 }
 
-export default Thi_cmsp
+export default Thi_cmsp_hcp_test

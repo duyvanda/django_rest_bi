@@ -33,6 +33,12 @@ function Thi_cmsp_hcp({history}) {
             set_arr_input(data['header']) ;
             set_fst_cauhoi(data['header'][0].cauhoi) ;
             SetLoading(false);
+
+            // xu ly date_thi
+            let date_thi = formatDate(Date());
+            if (data['date_thi_hcp'] !== date_thi) {history.push('/reports');}
+            else { void(0); }
+            // end
         }
         else {
             SetLoading(false);
@@ -47,11 +53,13 @@ function Thi_cmsp_hcp({history}) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'thi_cmsp', isMB, dv_width);
+        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'thi_cmsp_hcp', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_data(JSON.parse(localStorage.getItem("userInfo")).manv);
+
+
         } else {
-            history.push('/login?redirect=/formcontrol/thi_cmsp');
+            history.push('/login?redirect=/formcontrol/thi_cmsp_hcp');
         };
 
     }, [count]);
@@ -189,7 +197,7 @@ function Thi_cmsp_hcp({history}) {
                         </div>
                         }
                         <></>
-                        <Image className="mt-2" src="https://storage.googleapis.com/django_media_biteam/images/cmsp_hcp_quy2.jpg" fluid  />
+                        <Image className="mt-2" src="https://storage.googleapis.com/django_media_biteam/images/cmsp_hcp.jpg" fluid  />
                         <h6 className="text-center mt-2" id="focus1">HCP - THI CMSP QUÝ - {seconds} s - ({Math.round(seconds/60) } p) </h6>
                         
 

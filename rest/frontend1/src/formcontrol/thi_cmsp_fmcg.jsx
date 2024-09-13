@@ -47,7 +47,7 @@ function Thi_cmsp_fmcg({history}) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'thi_cmsp', isMB, dv_width);
+        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'thi_cmsp_tp', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_data(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
@@ -189,7 +189,7 @@ function Thi_cmsp_fmcg({history}) {
                         </div>
                         }
                         <></>
-                        <Image className="mt-2" src="https://storage.googleapis.com/django_media_biteam/images/cmsp_fmcg_quy2.jpg" fluid  />
+                        <Image className="mt-2" src="https://storage.googleapis.com/django_media_biteam/images/cmsp_fmcg.jpg" fluid  />
                         <h6 className="text-center mt-2" id="focus1">FMCG - THI CMSP QUÝ - {seconds} s - ({Math.round(seconds/60) } p)</h6>
                         
 

@@ -73,6 +73,8 @@ export const FeedbackProvider = ({ children }) => {
     let data = JSON.parse(localStorage.getItem("userLstReports"));
     let manv = JSON.parse(localStorage.getItem("userInfo")).manv;
     let lstreports = data.filter((el) => el.manv === manv);
+    let manv_int_0 = manv.replaceAll("MR", "11")
+    // let manv_int = Number(manv_int_0)
     // const manv_el = manv.substring(0, 2);
     setReports(lstreports);
 
@@ -103,8 +105,8 @@ export const FeedbackProvider = ({ children }) => {
       let rppr = isMB ? report_obj.param_mb : report_obj.param;
 
       if ( report_obj.type === 1) {
-        setReportParam(rppr.replace("xxxxxx", manv));
-        console.log(rppr.replace("xxxxxx", manv));
+        setReportParam(rppr.replace("xxxxxx", manv).replaceAll("vvvvvv", manv_int_0));
+        console.log(rppr.replace("xxxxxx", manv).replaceAll("vvvvvv", manv_int_0));
       }
       else {
         setReportParam(rppr.replace("xxxxxx", "MR0000"));

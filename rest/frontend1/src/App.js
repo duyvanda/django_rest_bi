@@ -54,6 +54,7 @@ import Wps_dang_ky_vpp from "./formcontrol/wps_dang_ky_vpp";
 import Thi_cmsp from "./formcontrol/thi_cmsp";
 import Thi_cmsp_hcp from "./formcontrol/thi_cmsp_hcp";
 import Thi_cmsp_fmcg from "./formcontrol/thi_cmsp_fmcg";
+import Thi_cmsp_hcp_test from "./formcontrol/thi_cmsp_hcp_test";
 
 // BOOTSTRAP
 import Spacing from "./bootstrap/spacing";
@@ -102,7 +103,7 @@ function App() {
                 <Route exact path="/formcontrol/thi_cmsp_tp" component={Thi_cmsp} />
                 <Route exact path="/formcontrol/thi_cmsp_hcp" component={Thi_cmsp_hcp} />
                 <Route exact path="/formcontrol/thi_cmsp_fmcg" component={Thi_cmsp_fmcg} />
-                {/* <Route path="/formcontrol/thi_cmsp_tp_v2" component={Thi_cmsp_tp_v2} /> */}
+                <Route path="/formcontrol/thi_cmsp_hcp_test" component={Thi_cmsp_hcp_test} />
                 {/* REPORT */}
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/reports" component={ReportList} />
