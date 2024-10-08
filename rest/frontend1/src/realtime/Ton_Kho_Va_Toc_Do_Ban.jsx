@@ -12,6 +12,27 @@ import {
 
 function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
 
+    useEffect(() => {
+		if (localStorage.getItem("userInfo")) {
+        const media = window.matchMedia('(max-width: 960px)');
+        const isMB = (media.matches);
+        const dv_width = window.innerWidth;
+        console.log("stt", match.params.id)
+        const stt = match.params.id
+        const rpid = stt.slice(0, -1)
+        const lastChar = stt.substr(stt.length - 1);
+        const phancap = lastChar==="0" ? false : true;
+        console.log("phan cap", phancap)
+        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, rpid , isMB, dv_width);
+        SetRpScreen(true);
+        fetchFilerReports(rpid, isMB);
+		} else {
+            history.push('/login');
+        };
+    // eslint-disable-next-line
+	}, []);
+
+    const {formatDate ,userLogger, SetRpScreen, fetchFilerReportsRT, fetchFilerReports, shared, loading, ReportId, ReportParam, vw } = useContext(FeedbackContext)
     const [lst_cn_check, set_lst_cn_check] = useState (
         [
             {cn: "CTO016" ,checked: true},
@@ -33,30 +54,12 @@ function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
             {cn: "MR0016" ,checked: true}       
         ]
     )
-
     const [show_report, set_show_report] = useState(false)
 
+    const current_date = formatDate(Date())
+    const [from_date, set_from_date] = useState(current_date);
+    const [to_date, set_to_date] = useState(current_date);
 
-
-    useEffect(() => {
-		if (localStorage.getItem("userInfo")) {
-        const media = window.matchMedia('(max-width: 960px)');
-        const isMB = (media.matches);
-        const dv_width = window.innerWidth;
-        console.log("stt", match.params.id)
-        const stt = match.params.id
-        const rpid = stt.slice(0, -1)
-        const lastChar = stt.substr(stt.length - 1);
-        const phancap = lastChar==="0" ? false : true;
-        console.log("phan cap", phancap)
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, rpid , isMB, dv_width);
-        SetRpScreen(true);
-        fetchFilerReports(rpid, isMB);
-		} else {
-            history.push('/login');
-        };
-    // eslint-disable-next-line
-	}, []);
 
     const handle_click_chi_nhanh = (e) => {
         let lst = [];
@@ -98,15 +101,15 @@ function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
         }
 
         const filter_data = {
-            "chinhanh":chinhanh
+            "chinhanh":chinhanh,
+            "from_date":from_date,
+            "to_date":to_date
         }
 
         fetchFilerReportsRT(rpid, isMB, phancap, local_url, filter_data);
         set_show_report(true);
 
     }
-
-    const {userLogger, SetRpScreen, fetchFilerReportsRT, fetchFilerReports, shared, loading, ReportId, ReportParam, vw } = useContext(FeedbackContext)
 
 
     if (!shared) {
@@ -122,7 +125,7 @@ function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
         return (
             <div>
                 <Form className='mt-2' onSubmit={ handle_submit }>
-                <Stack direction="horizontal" gap={2} className="col-md-2">
+                <Stack direction="horizontal" gap={2} className="col-md-2 border-1">
                     <Dropdown>
                         <Dropdown.Toggle id="dropdown-basic" className="text-dark bg-warning border border-warning">
                         Chọn CN
@@ -133,7 +136,9 @@ function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
                             .map( el => <Form.Check key={el.cn} className="text-nowrap" type="switch" checked={el.checked} onChange={handle_click_chi_nhanh} id={el.cn} label={el.cn}/>)
                             }
                         </Dropdown.Menu>
-                    </Dropdown>                
+                    </Dropdown>
+                    <Form.Control className="text-dark bg-info border border-0" type="date" value={from_date} htmlSize={8} onChange={(e) => set_from_date(e.target.value)} placeholder="DateRange"></Form.Control>
+                    <Form.Control className="text-dark bg-warning border border-0" type="date" value={to_date} htmlSize={8} onChange={(e) => set_to_date(e.target.value)} placeholder="DateRange"></Form.Control>             
                     <Button className="ml-2 border-0"  type="submit" variant="warning">Submit</Button>
         
                     </Stack>

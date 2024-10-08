@@ -15,6 +15,7 @@ ENV PORT 8000
 # ENV GOOGLE_APPLICATION_CREDENTIALS = $APP_HOME/django_bucket_biteam.json
 
 # Install dependencies
+RUN pip install --no-cache-dir --upgrade pip==24.0
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 

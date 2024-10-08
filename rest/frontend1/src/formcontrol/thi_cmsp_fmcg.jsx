@@ -51,7 +51,7 @@ function Thi_cmsp_fmcg({history}) {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_data(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
-            history.push('/login?redirect=/formcontrol/thi_cmsp');
+            history.push('/login?redirect=/formcontrol/thi_cmsp_fmcg');
         };
 
     }, [count]);
@@ -216,17 +216,16 @@ function Thi_cmsp_fmcg({history}) {
                         )
                         }
 
-                        <h3 style={{color:"red"}} className="mt-2 text-center">Bạn Đã Chọn:{`\xa0`}  
-                        { arr_indx.length } / 10
-                        </h3>
-
-                        {/* <Button disabled={false} className='mt-2' variant="warning" type="button" onClick={console.log(arr_indx)} style={{width: "100%", fontWeight: "bold"}}> CONSOLE LOG </Button> */}
-                        { 
-                        // true ?
-                        arr_input.length > 1 ?
-                        <Button disabled={arr_indx.length<=5} className='mt-5' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> NỘP BÀI VÀ XEM KẾT QUẢ </Button>
-                        :
-                        <h4><Link style={{textDecoration:  ""}} target="_blank" key={3} className="mt-2 border-1 text-primary mx-2" to="/realtime/401?local_url=sp_f_data_cmsp_quy_tp" >XEM LẠI KẾT QUẢ</Link></h4>
+                        {
+                            arr_input.length > 1 ?
+                            <>
+                                <h3 style={{color:"red"}} className="mt-2 text-center">Bạn Đã Chọn:{`\xa0`}  
+                                { arr_indx.length } / 20
+                                </h3>
+                                <Button disabled={arr_indx.length<=5} className='mt-5' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> NỘP BÀI VÀ XEM KẾT QUẢ </Button>
+                            </>
+                            :
+                            <h4><Link style={{textDecoration:  ""}} target="_blank" key={3} className="mt-2 border-1 text-primary mx-2" to="/realtime/401?local_url=sp_f_data_cmsp_quy_tp" >XEM LẠI KẾT QUẢ</Link></h4>
                         }
                         </Form>
                         {/* END FORM BODY */}

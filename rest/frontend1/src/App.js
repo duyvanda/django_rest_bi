@@ -49,7 +49,7 @@ import Tracking_chi_phi_hco from "./formcontrol/tracking_chi_phi_hco";
 import Tracking_chi_phi_hcp from "./formcontrol/tracking_chi_phi_hcp";
 import Tracking_chi_phi_hcp_crm from "./formcontrol/tracking_chi_phi_hcp_crm";
 // import Tracking_chi_phi_pcl from "./formcontrol/tracking_chi_phi_pcl";
-import MdsXuanThinhVuong from "./formcontrol/mds_xuan_thinh_vuong";
+// import MdsXuanThinhVuong from "./formcontrol/mds_xuan_thinh_vuong";
 import Wps_dang_ky_vpp from "./formcontrol/wps_dang_ky_vpp";
 import Thi_cmsp from "./formcontrol/thi_cmsp";
 import Thi_cmsp_hcp from "./formcontrol/thi_cmsp_hcp";
@@ -91,7 +91,7 @@ function App() {
                 {/* <Route exact path="/formcontrol/scn_quan_ly_ncc" component={Scn_quan_ly_ncc} />
                 <Route exact path="/formcontrol/scn_quan_ly_nvl" component={Scn_quan_ly_nvl} />
                 <Route exact path="/formcontrol/scn_quan_ly_dmnvl" component={Scn_quan_ly_dmnvl} /> */}
-                <Route exact path="/formcontrol/mds_xuan_thinh_vuong" component={MdsXuanThinhVuong} />
+                {/* <Route exact path="/formcontrol/mds_xuan_thinh_vuong" component={MdsXuanThinhVuong} /> */}
                 {/* <Route exact path="/formcontrol/chuong_trinh_dau_tu_hcp_test" component={Chuong_trinh_dau_tu_hcp_test} /> */}
                 <Route path="/formcontrol/tracking_chi_phi_hco" component={Tracking_chi_phi_hco} />
                 {/* <Route path="/formcontrol/tracking_chi_phi_hco_crm" component={Tracking_chi_phi_hco_crm} /> */}

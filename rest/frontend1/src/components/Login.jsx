@@ -57,6 +57,17 @@ function Login({history, location}) {
         loginUser(logindata)
         setEmail(''); 
         setPassword('');
+
+        if (location_search.get('redirect'))
+        {
+          const redirect = location.search.split("&")[0].split("=")[1]
+          history.push(redirect);
+        }
+        else {void(0)}
+        
+
+
+
     }
 return (
 

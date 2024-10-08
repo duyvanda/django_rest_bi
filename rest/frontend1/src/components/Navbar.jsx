@@ -30,7 +30,7 @@ function Navbar1() {
         <div>
             <Navbar style={{maxHeight:""}} className="navbar navbar-dark navbar-expand-md bg-dark">
                 <Container className='d-flex justify-content-start'>
-                    {rpScreen ? <Link to="/" className="btn btn-warning">Quay Lại</Link> : <Link to="/" className="navbar-brand">BI PORTAL</Link>}
+                    {rpScreen ? <Link to="/" className="btn btn-warning btn-sm">BACK</Link> : <Link to="/" className="navbar-brand">BI PORTAL</Link>}
 
                                     {userInfo ?
                                             <NavDropdown title={userInfo.manv} className='text-white ml-2 '>
