@@ -2,11 +2,7 @@ import React from 'react'
 import { Link  } from 'react-router-dom'
 import FeedbackContext from '../context/FeedbackContext'
 import { useContext } from 'react'
-import {Navbar, Container,
-    NavDropdown, 
-    // Button, Row, Dropdown, 
-    // DropdownButton, Nav
-} from 'react-bootstrap';
+import {Navbar, Container, NavDropdown} from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 
 

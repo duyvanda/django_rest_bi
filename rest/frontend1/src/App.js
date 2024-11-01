@@ -55,10 +55,13 @@ import Thi_cmsp from "./formcontrol/thi_cmsp";
 import Thi_cmsp_hcp from "./formcontrol/thi_cmsp_hcp";
 import Thi_cmsp_fmcg from "./formcontrol/thi_cmsp_fmcg";
 import Thi_cmsp_hcp_test from "./formcontrol/thi_cmsp_hcp_test";
+import Tao_hcp_bv from "./formcontrol/tao_hcp_bv";
+// import Thi_cmsp_hcp_test from "./formcontrol/thi_cmsp_hcp_test";
 
 // BOOTSTRAP
 import Spacing from "./bootstrap/spacing";
 import Display from "./bootstrap/display";
+import EbookProject from "./bootstrap/EbookProject.jsx";
 
 function App() {
   return (
@@ -66,6 +69,8 @@ function App() {
       <MapProvider>
           <MYVNPProvider>
             <Router>
+            {/* <Route exact path="/bootstrap/display" component={Display} />
+            <Route exact path="/bootstrap/ebookproject" component={EbookProject} /> */}
               <Navbar1 />
               <Switch>
                 <Route exact path="/" component={HomeScreen} />
@@ -98,6 +103,7 @@ function App() {
                 <Route exact path="/formcontrol/tracking_chi_phi_hcp" component={Tracking_chi_phi_hcp} />
                 <Route exact path="/formcontrol/tracking_chi_phi_hcp_crm" component={Tracking_chi_phi_hcp_crm} />
                 {/* <Route exact path="/formcontrol/tracking_chi_phi_pcl" component={Tracking_chi_phi_pcl} /> */}
+                <Route exact path="/formcontrol/tao_hcp_bv" component={Tao_hcp_bv} />
                 <Route exact path="/formcontrol/wps_dang_ky_vpp" component={Wps_dang_ky_vpp} />
                 {/* THI CMSP */}
                 <Route exact path="/formcontrol/thi_cmsp_tp" component={Thi_cmsp} />
@@ -117,7 +123,6 @@ function App() {
 
                 {/* BOOTSTRAP */}
                 <Route exact path="/bootstrap/spacing" component={Spacing} />
-                <Route exact path="/bootstrap/display" component={Display} />
                 <Route component={ PageNotFound } />
 
                 

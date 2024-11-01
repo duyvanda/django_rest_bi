@@ -36,7 +36,13 @@ function Tracking_chi_phi_hcp({history}) {
             set_arr_hcp(data['lst_hcp']);
             set_tong_hcp_da_dau_tu(data['tong_hcp_da_dau_tu']);
             set_tong_tien_ke_hoach_da_dau_tu(data['tong_tien_ke_hoach_da_dau_tu']);
-            set_arr_gimmick(data['lst_gimmick']);
+            set_lst_chon_qua_tang_cam_xuc(data['lst_chon_qua_tang_cam_xuc']);
+            set_lst_chon_qua_1_5(data['lst_chon_qua_1_5']);
+            set_lst_chon_qua_sinh_nhat(data['lst_chon_qua_sinh_nhat']);
+            set_lst_chon_hoi_nghi(data['lst_chon_hoi_nghi']);
+            set_lst_chon_hinh_thuc_hoi_nghi(data['lst_chon_hinh_thuc_hoi_nghi']);
+            set_lst_chon_qua_tang_cam_xuc_2024_dot2(data['lst_chon_qua_tang_cam_xuc_2024_dot2']);
+            set_lst_chon_gimmick(data['lst_chon_gimmick']);
             SetLoading(false)
         }
         else {
@@ -64,7 +70,15 @@ function Tracking_chi_phi_hcp({history}) {
     const f = new Intl.NumberFormat();
     const [manv, set_manv] = useState("");
     // const current_date = formatDate(Date());
-    const [arr_gimmick, set_arr_gimmick] = useState([]); 
+    const [lst_chon_qua_tang_cam_xuc, set_lst_chon_qua_tang_cam_xuc] = useState([]);
+    const [lst_chon_gimmick, set_lst_chon_gimmick] = useState([]);
+    const [lst_chon_qua_1_5, set_lst_chon_qua_1_5] = useState([]);
+    const [lst_chon_hoi_nghi, set_lst_chon_hoi_nghi] = useState([]);
+    const [lst_chon_qua_sinh_nhat, set_lst_chon_qua_sinh_nhat] = useState([]);
+    const [lst_chon_hinh_thuc_hoi_nghi, set_lst_chon_hinh_thuc_hoi_nghi] = useState([]);
+    const [lst_chon_qua_tang_cam_xuc_2024_dot2, set_lst_chon_qua_tang_cam_xuc_2024_dot2] = useState([]);
+
+
     const [chon_qua_tang, set_chon_qua_tang] = useState("");
     const [chon_qua_sn, set_chon_qua_sn] = useState("");
     const [chon_hoi_nghi, set_chon_hoi_nghi] = useState("");
@@ -72,6 +86,7 @@ function Tracking_chi_phi_hcp({history}) {
     const [chon_hinh_thuc_hoi_nghi, set_chon_hinh_thuc_hoi_nghi] = useState("");
     const [chon_qua_tang_2, set_chon_qua_tang_2] = useState("");
     const [chon_qua_tang_cam_xuc, set_chon_qua_tang_cam_xuc] = useState("");
+    const [chon_qua_tang_cam_xuc_2, set_chon_qua_tang_cam_xuc_2] = useState("");
     // const [number1, set_number1] = useState("500000");
     // const [number2, set_number2] = useState("0");
 
@@ -148,6 +163,7 @@ function Tracking_chi_phi_hcp({history}) {
             set_chon_hinh_thuc_hoi_nghi("");
             set_chon_qua_tang_2("");
             set_chon_qua_tang_cam_xuc("");
+            set_chon_qua_tang_cam_xuc_2("");
             set_hcp("");
             setCount(count+1)
             // window.location.reload();
@@ -165,6 +181,8 @@ function Tracking_chi_phi_hcp({history}) {
 
         // set_number2(Number(number2)+1)
 
+        let chon_qua_tang_cam_xuc_final = (chon_qua_tang_cam_xuc !== "") ? chon_qua_tang_cam_xuc : chon_qua_tang_cam_xuc_2
+
         const data = {
             "ma_hcp_2":ma_hcp[0],
             "manv":manv,
@@ -181,7 +199,7 @@ function Tracking_chi_phi_hcp({history}) {
             "approved_uuid":"",
             "chon_hinh_thuc_hoi_nghi": chon_hinh_thuc_hoi_nghi,
             "chon_qua_tang_2": chon_qua_tang_2,
-            "chon_qua_tang_cam_xuc": chon_qua_tang_cam_xuc,
+            "chon_qua_tang_cam_xuc": chon_qua_tang_cam_xuc_final,
         }
         console.log(data);
         post_form_data(data);
@@ -234,7 +252,7 @@ function Tracking_chi_phi_hcp({history}) {
 
                         <ListGroup className="mt-2" style={{maxHeight: "400px", overflowY: "auto"}}>
 
-                        <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="Tìm Mã Hoặc Tên (KHONG DAU) " />
+                        <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="Tìm Mã Hoặc Tên (KHONG DAU) " value={search} />
 
                         {arr_hcp
                             .filter( el => el.clean_ten_hcp.toLowerCase().includes( search.toLowerCase() ) )
@@ -249,76 +267,85 @@ function Tracking_chi_phi_hcp({history}) {
 
                         </ListGroup>
 
-                        <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_cam_xuc(e.target.value)  }>                                 
-                            <option value=''>Chọn Quà Tặng Cảm Xúc</option>
-                            <option value='Bàn chải điện colgate'>Bàn chải điện colgate - 1,000,000 đ</option>
-                            <option value='Cặp cho con bs (bé trai)'>Cặp cho con bs (bé trai) - 720,000 đ </option>
-                            <option value='Cặp cho con bs (bé gái)'>Cặp cho con bs (bé gái) - 720,000 đ </option>
-                            <option value='Combo set túi du lịch'>Combo set túi du lịch - 300,000 đ </option>
-                        )
+                        <Form.Select disabled={chon_qua_tang_cam_xuc_2!==""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_cam_xuc(e.target.value)  }>                                 
+                            <option value=''>
+                                Chọn Quà Tặng Cảm Xúc
+                            </option>
+
+                            {lst_chon_qua_tang_cam_xuc
+                            .map( (el, index) => 
+                            <option value={el.chon_chinh}> {el.chon_chinh} </option>
+                            )
+                            }
+                        
+                        </Form.Select>
+
+                        <Form.Select disabled={chon_qua_tang_cam_xuc!==""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_cam_xuc_2(e.target.value)  }>                                 
+                            <option value=''>
+
+                            Chọn Quà Tặng Cảm Xúc 2024 Đợt 2 (20/11 & 24/12)
+                            </option>
+
+                            {lst_chon_qua_tang_cam_xuc_2024_dot2
+                            .map( (el, index) => 
+                            <option value={el.chon_chinh}> {el.chon_chinh} </option>
+                            )
+                            }
+                        
                         </Form.Select>
                         
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang(e.target.value)  }>                                 
                             <option value=''>Chọn Gimmick</option>
 
-                            {arr_gimmick
+                            {lst_chon_gimmick
                             .map( (el, index) => 
-                            <option value={el.name}> {el.name} ({ f.format(el.value) } đ) </option>
+                            <option value={el.chon_chinh}> {el.chon_chinh} </option>
                             )
                             }
-
-                            {/* <option value='Yến'>Yến - 134,200 đ</option>
-                            <option value='Nón protect'>Nón protect - 234,163 đ </option>
-                            <option value='Sổ tay'>Sổ tay - 29,000 đ </option>
-                            <option value='Áo mưa'>Áo mưa - 65,139 đ </option> */}
-                        )
+                        
                         </Form.Select>
 
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_2(e.target.value)  }>                                 
                             <option value=''>Chọn Quà 1/5</option>
-                            <option value='Combo quà nữ'>Combo quà nữ - 700,000 đ</option>
-                            <option value='Combo quà nam'>Combo quà nam - 700,000 đ </option>
-                            <option value='Atlat TMH'>Atlat TMH - 320,000 đ </option>
-                            <option value='Áo sơ mi An Phước'>Áo sơ mi An Phước - 1,100,000 đ </option>
-                        )
+                            {lst_chon_qua_1_5
+                            .map( (el, index) => 
+                            <option value={el.chon_chinh}> {el.chon_chinh} </option>
+                            )
+                            }
+                    
                         </Form.Select>
 
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_sn(e.target.value)  }>                                 
                             <option value=''>Chọn Quà Sinh Nhật</option>
-                            <option value='Nam'>Nam</option>
-                            <option value='Nữ'>Nữ</option>
-                        )
+                            {lst_chon_qua_sinh_nhat
+                            .map( (el, index) => 
+                            <option value={el.chon_chinh}> {el.chon_chinh} </option>
+                            )
+                            }
+
+                        
                         </Form.Select>
 
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_hoi_nghi(e.target.value)  }>                                 
                             <option value=''>Chọn Hội Nghị</option>
-                            {/* <option value='Dược'>Dược</option>
-                            <option value='TMH MN T3'>TMH MN T3</option>
-                            <option value='TMH MB T5'>TMH MB T5</option>
-                            <option value='TMH TQ T10'>TMH TQ T10</option> */}
-                            <option value='TMH Bán Kỳ T6'>TMH Bán Kỳ T6</option>
-                        )
+                            {lst_chon_hoi_nghi
+                            .map( (el, index) => 
+                            <option value={el.chon_chinh}> {el.chon_chinh} </option>
+                            )
+                            }
                         </Form.Select>
                         
                         { chon_hoi_nghi &&
 
                         <>
 
-                        {/* <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_hoi_nghi(e.target.value)  }>                                 
-                            <option value=''>Ưu Tiên</option>
-                            <option value='Ưu Tiên 1'>Ưu Tiên 1</option>
-                            <option value='Ưu Tiên 2'>Ưu Tiên 2</option>
-                        )
-                        </Form.Select> */}
-
                         <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_hinh_thuc_hoi_nghi(e.target.value)  }>                                 
                             <option value=''>Hình Thức</option>
-                            {/* <option value='Bay'>Bay</option>
-                            <option value='Đi xe'>Đi xe</option>
-                            <option value='Gala'>Gala</option> */}
-                            <option value='Online'>Online</option>
-                            <option value='Offline'>Offline</option>
-                        )
+                            {lst_chon_hinh_thuc_hoi_nghi
+                            .map( (el, index) => 
+                            <option value={el.chon_chinh}> {el.chon_chinh} </option>
+                            )
+                            }
                         </Form.Select>
 
                         </>
@@ -334,6 +361,7 @@ function Tracking_chi_phi_hcp({history}) {
                         hcp === "" |
                         (
                             chon_qua_tang_cam_xuc === "" &
+                            chon_qua_tang_cam_xuc_2 === "" &
                             chon_qua_tang === "" &
                             chon_qua_sn === "" &
                             chon_hoi_nghi === "" &

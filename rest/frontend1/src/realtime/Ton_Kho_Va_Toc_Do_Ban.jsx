@@ -141,7 +141,7 @@ function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
                     <Form.Control className="text-dark bg-warning border border-0" type="date" value={to_date} htmlSize={8} onChange={(e) => set_to_date(e.target.value)} placeholder="DateRange"></Form.Control>             
                     <Button className="ml-2 border-0"  type="submit" variant="warning">Submit</Button>
         
-                    </Stack>
+                </Stack>
                 </Form>
 
 
