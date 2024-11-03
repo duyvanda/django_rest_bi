@@ -53,6 +53,7 @@ function Template({history}) {
     const [item_search1, set_item_search1] = useState("");
     const [edit_sp, set_edit_sp] = useState(false);
     const [edit_sp1, set_edit_sp1] = useState(false);
+    const [selectedFile, setSelectedFile] = useState();
 
     const URL = EDITMODE ? 'ABC' : 'XYZ'
     const [page, set_page] = useState(1);
@@ -164,6 +165,43 @@ function Template({history}) {
         set_sp_ghi_chu(el.ghi_chu);
         set_edit_sp(!edit_sp)
         on_click_xoa_san_pham(el);
+
+    }
+
+    const hand_upload_files = async () => {
+
+        const formData = new FormData();
+
+        let data = {
+            "test":1,
+            "status":0
+        }
+
+        JSON.stringify(data)
+
+        formData.append('data', JSON.stringify(data));
+
+        for (let i of selectedFile) {
+            console.log(i)
+            
+            formData.append('images', i)
+        }
+
+    const response = await fetch(`https://bi.meraplion.com/local/file_upload/`, {
+        method: "POST",
+        headers: {
+        // 'Content-Type': 'multipart/form-data',
+        },
+        body: formData,
+    });
+
+    if (!response.ok) {
+        const data = await response.json();
+        console.log(data);
+    } else {
+        const data = await response.json();
+        console.log(data);
+    }
 
     }
 
@@ -391,6 +429,11 @@ function Template({history}) {
 
                             </tbody>
                         </Table>
+
+                        <label className="form-label" style={{fontWeight: "bold"}}>Upload Hình Ảnh CCCD *</label>
+                        <Form.Control required type="file" multiple={true} accept="image/*"  disabled={false} onChange={e => setSelectedFile(e.target.files)}></Form.Control>
+
+                        <Button className="mt-2 mb-2 border-0"  type="button" onClick ={ (e) => hand_upload_files() } style={{width: "100%", backgroundColor:"#00A79D"}}>Upload files</Button>
 
                         
                         </Form>
