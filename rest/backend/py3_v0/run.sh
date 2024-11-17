@@ -1,0 +1,1 @@
+docker build -t py3:3.8.14_v0 .

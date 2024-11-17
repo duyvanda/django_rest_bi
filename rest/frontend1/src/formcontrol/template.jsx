@@ -187,21 +187,20 @@ function Template({history}) {
             formData.append('images', i)
         }
 
-    const response = await fetch(`https://bi.meraplion.com/local/file_upload/`, {
-        method: "POST",
-        headers: {
-        // 'Content-Type': 'multipart/form-data',
-        },
-        body: formData,
-    });
+        const response = await fetch(`https://bi.meraplion.com/local/file_upload/`, {
+            method: "POST",
+            headers: {
+            },
+            body: formData,
+        });
 
-    if (!response.ok) {
-        const data = await response.json();
-        console.log(data);
-    } else {
-        const data = await response.json();
-        console.log(data);
-    }
+        if (!response.ok) {
+            const data = await response.json();
+            console.log(data);
+        } else {
+            const data = await response.json();
+            console.log(data);
+        }
 
     }
 

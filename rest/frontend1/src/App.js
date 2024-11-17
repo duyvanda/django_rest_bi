@@ -56,6 +56,8 @@ import Thi_cmsp_hcp from "./formcontrol/thi_cmsp_hcp";
 import Thi_cmsp_fmcg from "./formcontrol/thi_cmsp_fmcg";
 import Thi_cmsp_hcp_test from "./formcontrol/thi_cmsp_hcp_test";
 import Tao_hcp_bv from "./formcontrol/tao_hcp_bv";
+import Tao_hcp_pcl from "./formcontrol/tao_hcp_pcl";
+import Mds_bbgh_bo_sung from "./formcontrol/mds_bbgh_bo_sung";
 // import Thi_cmsp_hcp_test from "./formcontrol/thi_cmsp_hcp_test";
 
 // BOOTSTRAP
@@ -104,6 +106,8 @@ function App() {
                 <Route exact path="/formcontrol/tracking_chi_phi_hcp_crm" component={Tracking_chi_phi_hcp_crm} />
                 {/* <Route exact path="/formcontrol/tracking_chi_phi_pcl" component={Tracking_chi_phi_pcl} /> */}
                 <Route exact path="/formcontrol/tao_hcp_bv" component={Tao_hcp_bv} />
+                <Route exact path="/formcontrol/tao_hcp_pcl" component={Tao_hcp_pcl} />
+                <Route exact path="/formcontrol/mds_bbgh_bo_sung" component={Mds_bbgh_bo_sung} />
                 <Route exact path="/formcontrol/wps_dang_ky_vpp" component={Wps_dang_ky_vpp} />
                 {/* THI CMSP */}
                 <Route exact path="/formcontrol/thi_cmsp_tp" component={Thi_cmsp} />

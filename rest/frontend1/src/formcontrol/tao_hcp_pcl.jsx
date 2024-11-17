@@ -25,19 +25,20 @@ import {
     
 } from "react-bootstrap";
 
-function Tao_hcp_bv({history, location}) {
+function Tao_hcp_pcl({history, location}) {
 
     const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const navigate = useHistory();
     const location_search = new URLSearchParams(location.search)
-    // let pcl = true
-    // let lam_them = "Phòng Mạch"
+
+    let pcl = true
+    let lam_them = "Bệnh Viện"
 
     const fetch_initial_data = async (manv) => {
         SetLoading(true);
         // const response = await fetch(`https://bi.meraplion.com/local/tao_hcp_bv_get_data_hcp/?manv=${manv}`)
 
-        const response = await fetch(`https://bi.meraplion.com/local/tao_hcp_bv_get_data_hcp/?manv=MR3047&form_layout=BV&lam_them=PCL`)
+        const response = await fetch(`https://bi.meraplion.com/local/tao_hcp_bv_get_data_hcp/?manv=MR3047&form_layout=PCL&lam_them=BV`)
         
         if (response.ok) {
             const data = await response.json()
@@ -305,7 +306,7 @@ function Tao_hcp_bv({history, location}) {
             "thang_sinh": chon_thang_sinh,
             "nam_sinh": chon_nam_sinh,
             "gioi_tinh": chon_gioi_tinh,
-            "kenh_lam_viec": chon_kenh_lam_viec,
+            "kenh_lam_viec": "PCL",
             "phan_loai_hcp": chon_phan_loai_hcp,
             "chuc_danh": chon_chuc_danh,
             "chuc_vu": chon_chuc_vu,
@@ -318,7 +319,7 @@ function Tao_hcp_bv({history, location}) {
             "hco_chung_bv":"",
             "ma_hcp_1":"",
             "ma_hcp_2":"",
-            "form_input":"BV",
+            "form_input":"PCL",
             "inserted_at":"",
             "uuid":uuid(),
             "so_luot_kham":so_luot_kham,
@@ -380,9 +381,10 @@ function Tao_hcp_bv({history, location}) {
 
                         {EDITMODE &&
 
-                        <FloatingLabel label="MÃ HCP ĐÃ CHỌN" className="border rounded" style={{color:"black"}} > <Form.Control required disabled={true} type="text" placeholder="MÃ HCP ĐÃ CHỌN" style={{backgroundColor:"#FFFFE0"}} className="" onChange={ (e) => console.log(ebc) } value = {"VuHa"}/> </FloatingLabel>
+                        <FloatingLabel label="MÃ HCP ĐÃ CHỌN" className="border rounded" style={{color:"black"}} > <Form.Control disabled={true} required type="text" placeholder="MÃ HCP ĐÃ CHỌN" style={{backgroundColor:"#FFFFE0"}} className="" onChange={ (e) => console.log(ebc) } value = {"VuHa"}/> </FloatingLabel>
                         
                         }
+
                         <FloatingLabel id="focus_1" label="Số điện thoại" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_sdt(e.target.value) } onBlur={ e => handle_on_blur(e.target.value) } value = {sdt}/> </FloatingLabel>
                         {check_trung_sdt &&
                             <p className="ml-1 fw-bold text-danger">SĐT ĐÃ BỊ TRÙNG VUI LÒNG NHẬP SĐT KHÁC</p>
@@ -452,7 +454,7 @@ function Tao_hcp_bv({history, location}) {
                             }
                         </Form.Select>
 
-                        <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_kenh_lam_viec(e.target.value) }>
+                        <Form.Select hidden={pcl} required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_kenh_lam_viec(e.target.value) }>
                             <option value="">Kênh</option>
                             {lst_kenh_lam_viec
                             .map( (el, index) => 
@@ -500,7 +502,7 @@ function Tao_hcp_bv({history, location}) {
                             }
                         </Form.Select>
 
-                        <Form.Select required disabled={chon_nganh===""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_chuyen_khoa(e.target.value) }>
+                        <Form.Select required disabled={chon_nganh===""}  className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_chuyen_khoa(e.target.value) }>
                             <option value="">(Ngành) Chuyên Khoa</option>
                             {lst_nganh_chuyen_khoa
                             .filter (el => el.chon_chinh === chon_nganh)
@@ -510,7 +512,7 @@ function Tao_hcp_bv({history, location}) {
                             }
                         </Form.Select>
 
-                        <Form.Select required disabled={chon_nganh===""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_khoa_phong(e.target.value) }>
+                        <Form.Select required disabled={chon_nganh===""}  className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_khoa_phong(e.target.value) }>
                             <option value="">(Ngành) Khoa Phòng</option>
                             {lst_nganh_khoa_phong
                             .filter (el => el.chon_chinh === chon_nganh)
@@ -522,13 +524,13 @@ function Tao_hcp_bv({history, location}) {
 
                         <Stack direction="horizontal" gap={1} className="border-1">
                             <FloatingLabel style={{width: "50%"}} label="Số lượt khám" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_luot_kham(e.target.value.toLocaleUpperCase()) } value = {so_luot_kham}/> </FloatingLabel>
-                            <FloatingLabel style={{width: "50%"}} label="Tiềm năng" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_tiem_nang(e.target.value.toLocaleUpperCase()) } value = {so_tiem_nang}/> </FloatingLabel>
+                            <FloatingLabel hidden={pcl} style={{width: "50%"}} label="Tiềm năng" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_tiem_nang(e.target.value.toLocaleUpperCase()) } value = {so_tiem_nang}/> </FloatingLabel>
                         </Stack>
                         <div className="mt-2 border border-1 border-success rounded">
 
                         <Card className="">
                             <Card.Title className="ml-2 fw-normal">
-                                Bác sỹ có làm ở phòng mạch ?
+                                {`Bác sỹ có làm ở ${lam_them} ?`}
                             </Card.Title>
 
 
@@ -544,7 +546,7 @@ function Tao_hcp_bv({history, location}) {
                         <Dropdown  className="" autoClose="true" block="true" onSelect = {e =>set_chon_hco_pcl(e)}>
                                 
                                 <Dropdown.Toggle disabled={!chon_co_code} className="mt-1 bg-white border-0 text-dark text-left flex-grow-1 w-100"  style={{height:"60px"}}> 
-                                {chon_hco_pcl ==="" ? "Chọn HCO Phòng Mạch": chon_hco_pcl}
+                                {chon_hco_pcl ==="" ?  `Chọn HCO ${lam_them}` : chon_hco_pcl}
                                 </Dropdown.Toggle>
                                 
                                 <Dropdown.Menu className="w-100" style={{maxHeight: "410px", overflowY: "auto"}}>
@@ -565,7 +567,7 @@ function Tao_hcp_bv({history, location}) {
                                 
                                 <Dropdown.Toggle disabled={!chon_co_code} className="mt-1 bg-white border-0 text-dark text-left flex-grow-1 w-100"  style={{height:"60px"}}> 
                                 
-                                {chon_chuc_vu_pcl ==="" ? "Chọn Chức Vụ Phòng Mạch": chon_chuc_vu_pcl}
+                                {chon_chuc_vu_pcl ==="" ? `Chọn Chức Vụ ${lam_them}` : chon_chuc_vu_pcl}
                                 </Dropdown.Toggle>
                                 
                                 <Dropdown.Menu className="w-100" style={{maxHeight: "410px", overflowY: "auto"}}>                                
@@ -620,4 +622,4 @@ function Tao_hcp_bv({history, location}) {
 }
 
 
-export default Tao_hcp_bv
+export default Tao_hcp_pcl
