@@ -15,15 +15,16 @@ import {
     InputGroup,
     Stack,
     FloatingLabel,
-    Card
+    Card,
+    Modal
 } from "react-bootstrap";
 
-function TemplateSimple({history}) {
+function Tinh_diem_van_nghe({history}) {
 
     const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const fetch_initial_data = async (manv) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/template/?manv=${manv}`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=${manv}`)
         
         if (!response.ok) {
             SetLoading(false)
@@ -31,9 +32,11 @@ function TemplateSimple({history}) {
 
         else {
         const data_arr = await response.json()
-        const data = data_arr[0]
-        set_text(data.id)
-        console.log(data)
+        // const data = data_arr[0]
+        // set_lst_dd1(data_arr.data_hcp)
+        // set_lst_dd2(data_arr.data_hoa_don)
+        set_lst_dd3(data_arr.tick_chon)
+        // console.log(data)
         SetLoading(false)
 
         }
@@ -47,17 +50,62 @@ function TemplateSimple({history}) {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
         } else {
-            history.push('/login');
+            history.push('/login?redirect=/formcontrol/form_claim_chi_phi');
         };
     }, []);
 
     const [manv, set_manv] = useState("");
     const current_date = formatDate(Date());
-    const [text, set_text] = useState("");
-    const [number, set_number] = useState("");
+    const [text1, set_text1] = useState("");
+    const [number1, set_number1] = useState("");
+    const [number2, set_number2] = useState("");
     const [onDate, setDate] = useState(current_date);
 
+    const tick_chon = [
+        { id: 1, value: "Tiết mục 1" },
+        { id: 2, value: "Tiết mục 2" },
+        { id: 3, value: "Tiết mục 3" }      
+    ];
+
+
+    const diem_chon = [
+        { id: 1, value: "Điểm 8" },
+        { id: 2, value: "Điểm 9" },
+        { id: 3, value: "Điểm 10" }      
+    ];
+
+
+
+    // const options = ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"];
+    // const [lst_dd1, set_lst_dd1] = useState([])
+    // const [searchTerm, setSearchTerm] = useState("");
+    // const [selectedValue, setSelectedValue] = useState("Bấm Để Chọn HCP");
+
+    // const [lst_dd2, set_lst_dd2] = useState([])
+    // const [searchTerm2, setSearchTerm2] = useState("");
+    // const [selectedValue2, setSelectedValue2] = useState("Bấm Để Chọn Hóa Đơn");
+
+    const [lst_dd3, set_lst_dd3] = useState([])
+    const [searchTerm3, setSearchTerm3] = useState("");
+    const [selectedValue2, setSelectedValue2] = useState("");
+    const [selectedValue3, setSelectedValue3] = useState("");
+  
+    // const handleSelect = (value) => {
+    //   setSelectedValue(value);
+    // };
+
+    const handleSelect3 = (value) => {
+        setSelectedValue2(value);
+      };
+
     const clear_data = () => {
+        setSearchTerm("");
+        setSearchTerm2("");
+        setSelectedValue("Bấm Để Chọn HCP");
+        setSelectedValue2("Bấm Để Chọn Hóa Đơn");
+        set_number1("");
+        set_number2("");
+        set_text1("");
     }
 
     const post_form_data = async (data) => {
@@ -91,12 +139,13 @@ function TemplateSimple({history}) {
         e.preventDefault();
 
         const data = {
-            "text":text,
-            "number":number,
-            "date":onDate,
+            // "text":text,
+            // "number":number,
+            // "date":onDate,
         }
         console.log(data);
-        post_form_data(data);
+        clear_data()
+        // post_form_data(data);
     }
 
     if (!loading) {
@@ -123,27 +172,47 @@ function TemplateSimple({history}) {
                         <Form onSubmit={handle_submit}>
                         {/* START FORM BODY */}
 
-                        <InputGroup className="ml-1">
-                            <Form.Control type="text" className="" placeholder="ĐCCN ĐẾN THÁNG"  />
-                            <Form.Control type="text" className="" placeholder="MÃ KH" />
-                        </InputGroup>
-                        
-                        {/* TEXT */}
-                        <FloatingLabel label="TEXT" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text(e.target.value) } value = {text}/> </FloatingLabel>
-                        
-                        {/* NUMBER */}
-                        <FloatingLabel label="NUMBER" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_number(e.target.value) } value = {number} /> </FloatingLabel>
-                        
-                        {/* DATE */}
-                        <FloatingLabel label="DATE" className="border rounded mt-2" > <Form.Control required type="date" className="" placeholder="" onChange={(e) => setDate(e.target.value)} value={onDate} /> </FloatingLabel>
-                        
+                        <div className="mt-2" style={{ maxHeight: "200px", overflowY: "auto", border: "1px solid #ccc", padding: "10px", borderRadius: "5px", backgroundColor: "#333", color: "white" }}>
+                        {tick_chon.map((item) => (
+                            <div key={item.id} style={{ padding: "5px 0" }}>
+                            <Form.Check
+                                type="radio"
+                                name="tick_chon"
+                                id={`option-${item.id}`}
+                                label={item.value}
+                                value={item.value}
+                                checked={selectedValue3 === item.value}
+                                onChange={(e) => setSelectedValue3(e.target.value)}
+                            />
+                            </div>
+                        ))}
+                        </div>
+
+                        <div className="mt-2" style={{ maxHeight: "200px", overflowY: "auto", border: "5px solid #333", padding: "10px", borderRadius: "10px", backgroundColor: "##00A79D", color: "black" }}>
+                        {diem_chon.map((item) => (
+                            <div key={item.id} style={{ padding: "5px 0" }}>
+                            <Form.Check
+                                type="radio"
+                                name="diem_chon"
+                                id={`option-${item.id}`}
+                                label={item.value}
+                                value={item.value}
+                                checked={selectedValue2 === item.value}
+                                onChange={(e) => setSelectedValue2(e.target.value)}
+                            />
+                            </div>
+                        ))}
+                        </div>
+
+
+                                                
                         <Button disabled={false} className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
                         </Form>
                         {/* END FORM BODY */}
 
                         {/* CARDS IF NEEDED */}
 
-                        <Card>
+                        {/* <Card>
                             <Card.Body>
                             <Card.Title>Card Title</Card.Title>
                                 <Card.Text>
@@ -152,7 +221,7 @@ function TemplateSimple({history}) {
                                 </Card.Text>
                                 <Button size="sm" variant="primary">Go somewhere</Button>
                             </Card.Body>
-                        </Card>
+                        </Card> */}
 
                         
                     </div>
@@ -175,4 +244,4 @@ function TemplateSimple({history}) {
 
 }
 
-export default TemplateSimple
+export default Tinh_diem_van_nghe

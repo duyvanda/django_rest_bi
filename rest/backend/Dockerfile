@@ -18,7 +18,8 @@ ENV PORT 8000
 RUN pip install --no-cache-dir --upgrade pip==24.0
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
+# COPY requirements_2.txt .
+# RUN pip install --no-cache-dir -r requirements_2.txt
 # Copy local code to the container image.
 COPY . .
 

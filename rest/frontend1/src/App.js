@@ -9,12 +9,12 @@ import ReportScreen from "./components/ReportScreen";
 // import FormScreen from "./components/FormScreen";
 import PageNotFound from "./components/404Page.jsx";
 //MYVNPOST
-import VnpHome from "./myvnpost/VnpHome";
-import VnpEditKH from "./myvnpost/VnpEditKH";
-import VnpCreateKH from "./myvnpost/VnpCreateKH";
-import VnpEditCN from "./myvnpost/VnpEditCN";
-import VnpCreateCN from "./myvnpost/VnpCreateCN";
-import VnpCreateOrder from "./myvnpost/VnpCreateOrder";
+// import VnpHome from "./myvnpost/VnpHome";
+// import VnpEditKH from "./myvnpost/VnpEditKH";
+// import VnpCreateKH from "./myvnpost/VnpCreateKH";
+// import VnpEditCN from "./myvnpost/VnpEditCN";
+// import VnpCreateCN from "./myvnpost/VnpCreateCN";
+// import VnpCreateOrder from "./myvnpost/VnpCreateOrder";
 //REPORT
 import HomeScreen from "./components/HomeScreen";
 import { FeedbackProvider } from "./context/FeedbackContext";
@@ -25,7 +25,7 @@ import ReportList from "./components/ReportList";
 import TestScreenSize from "./components/TestScreenSize.jsx";
 // MAPS
 import Maps from "./components/Maps.jsx";
-import MapBox from "./components/MapBox.jsx";
+// import MapBox from "./components/MapBox.jsx";
 import Routes from "./components/Routes.jsx";
 import SalesRoutes from "./components/SalesRoutes.jsx";
 //REALTIME
@@ -39,7 +39,7 @@ import Theo_doi_bb_giao_nhan_hang_hoa_mds from "./formcontrol/theo_doi_bb_giao_n
 import template from "./formcontrol/template";
 import TemplateSimple from "./formcontrol/template_simple";
 import Danh_muc_dau_thau from "./formcontrol/danh_muc_dau_thau";
-import Theo_doi_dccn from "./formcontrol/theo_doi_dccn";
+// import Theo_doi_dccn from "./formcontrol/theo_doi_dccn";
 // import Scn_quan_ly_ncc from "./formcontrol/scn_quan_ly_ncc";
 // import Scn_quan_ly_nvl from "./formcontrol/scn_quan_ly_nvl";
 // import Scn_quan_ly_dmnvl from "./formcontrol/scn_quan_ly_dmnvl";
@@ -57,8 +57,18 @@ import Thi_cmsp_fmcg from "./formcontrol/thi_cmsp_fmcg";
 import Thi_cmsp_hcp_test from "./formcontrol/thi_cmsp_hcp_test";
 import Tao_hcp_bv from "./formcontrol/tao_hcp_bv";
 import Tao_hcp_pcl from "./formcontrol/tao_hcp_pcl";
+import Tao_hcp_bc from "./formcontrol/tao_hcp_bc";
 import Mds_bbgh_bo_sung from "./formcontrol/mds_bbgh_bo_sung";
-// import Thi_cmsp_hcp_test from "./formcontrol/thi_cmsp_hcp_test";
+import Qua_tri_an_tet_2024 from "./formcontrol/qua_tri_an_tet_2024";
+import Hr_nguoi_phu_thuoc from "./formcontrol/hr_nguoi_phu_thuoc";
+import Mds_tra_thuong_cmm_q12025 from "./formcontrol/mds_tra_thuong_cmm_q12025";
+import Form_log_checkin_nhan_hang from  "./formcontrol/form_log_checkin_nhan_hang";
+import Cong_tac_phi from "./formcontrol/cong_tac_phi";
+import Form_claim_chi_phi from  "./formcontrol/form_claim_chi_phi";
+
+import Tinh_diem_van_nghe from  "./formcontrol/tinh_diem_van_nghe";
+
+import Chat from "./biagent/chat";
 
 // BOOTSTRAP
 import Spacing from "./bootstrap/spacing";
@@ -78,12 +88,12 @@ function App() {
                 <Route exact path="/" component={HomeScreen} />
                 {/* MYVNP */}
                 {/* <Route path="/formmdsvnpost" component={FormScreen} /> */}
-                <Route exact path="/myvnpost" component={VnpHome} />
+                {/* <Route exact path="/myvnpost" component={VnpHome} />
                 <Route exact path="/myvnpost/editkh" component={VnpEditKH} />
                 <Route exact path="/myvnpost/createkh" component={VnpCreateKH} />
                 <Route exact path="/myvnpost/editcn" component={VnpEditCN} />
                 <Route exact path="/myvnpost/createcn" component={VnpCreateCN} />
-                <Route exact path="/myvnpost/createorder" component={VnpCreateOrder} />
+                <Route exact path="/myvnpost/createorder" component={VnpCreateOrder} /> */}
                 {/* Tồn Kho Và Tốc Độ Bán */}
                 <Route exact path="/realtime/ton_kho_va_toc_do_ban/:id" component={Ton_Kho_Va_Toc_Do_Ban} />
                 <Route exact path="/realtime/ton_phan_bo_hang_hoa/:id" component={Ton_phan_bo_hang_hoa} />
@@ -94,7 +104,7 @@ function App() {
                 <Route exact path="/formcontrol/danh_muc_dau_thau" component={Danh_muc_dau_thau} />
                 <Route exact path="/formcontrol/template" component={template} />
                 <Route exact path="/formcontrol/template_simple" component={TemplateSimple} />
-                <Route exact path="/formcontrol/theo_doi_dccn" component={Theo_doi_dccn} />
+                {/* <Route exact path="/formcontrol/theo_doi_dccn" component={Theo_doi_dccn} />
                 {/* <Route exact path="/formcontrol/scn_quan_ly_ncc" component={Scn_quan_ly_ncc} />
                 <Route exact path="/formcontrol/scn_quan_ly_nvl" component={Scn_quan_ly_nvl} />
                 <Route exact path="/formcontrol/scn_quan_ly_dmnvl" component={Scn_quan_ly_dmnvl} /> */}
@@ -107,6 +117,7 @@ function App() {
                 {/* <Route exact path="/formcontrol/tracking_chi_phi_pcl" component={Tracking_chi_phi_pcl} /> */}
                 <Route exact path="/formcontrol/tao_hcp_bv" component={Tao_hcp_bv} />
                 <Route exact path="/formcontrol/tao_hcp_pcl" component={Tao_hcp_pcl} />
+                <Route exact path="/formcontrol/tao_hcp_bc" component={Tao_hcp_bc} />
                 <Route exact path="/formcontrol/mds_bbgh_bo_sung" component={Mds_bbgh_bo_sung} />
                 <Route exact path="/formcontrol/wps_dang_ky_vpp" component={Wps_dang_ky_vpp} />
                 {/* THI CMSP */}
@@ -114,6 +125,13 @@ function App() {
                 <Route exact path="/formcontrol/thi_cmsp_hcp" component={Thi_cmsp_hcp} />
                 <Route exact path="/formcontrol/thi_cmsp_fmcg" component={Thi_cmsp_fmcg} />
                 <Route path="/formcontrol/thi_cmsp_hcp_test" component={Thi_cmsp_hcp_test} />
+                <Route path="/formcontrol/qua_tri_an_tet_2024" component={Qua_tri_an_tet_2024} />
+                <Route path="/formcontrol/hr_nguoi_phu_thuoc" component={Hr_nguoi_phu_thuoc} />
+                <Route path="/formcontrol/mds_tra_thuong_cmm_q12025" component={Mds_tra_thuong_cmm_q12025} />
+                <Route path="/formcontrol/form_ghi_nhan_hang_log" component={Form_log_checkin_nhan_hang} />
+                <Route path="/formcontrol/cong_tac_phi" component={Cong_tac_phi} />
+                <Route path="/formcontrol/form_claim_chi_phi" component={Form_claim_chi_phi} />
+                <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} />
                 {/* REPORT */}
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/reports" component={ReportList} />
@@ -123,7 +141,9 @@ function App() {
                 <Route exact path="/maps/sales" component={Maps} />
                 <Route exact path="/maps/routes" component={Routes} />
                 <Route exact path="/maps/salesroutes" component={SalesRoutes} />
-                <Route exact path="/maps/mapbox" component={MapBox} />
+                {/* <Route exact path="/maps/mapbox" component={MapBox} /> */}
+
+                <Route exact path="/biagent" component={Chat} />
 
                 {/* BOOTSTRAP */}
                 <Route exact path="/bootstrap/spacing" component={Spacing} />

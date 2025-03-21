@@ -20,7 +20,7 @@ import {
     Image
 } from "react-bootstrap";
 
-function Thi_cmsp_fmcg({history}) {
+function Thi_cmsp_fmcg( {history} ) {
 
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const navigate = useHistory();
@@ -33,6 +33,8 @@ function Thi_cmsp_fmcg({history}) {
             set_arr_input(data['header']) ;
             set_fst_cauhoi(data['header'][0].cauhoi) ;
             SetLoading(false);
+            if (data['lst_manv_mt'].includes(manv)) {void(0)} else {history.push('/formcontrol/thi_cmsp_tp')};
+
         }
         else {
             SetLoading(false);
@@ -50,6 +52,9 @@ function Thi_cmsp_fmcg({history}) {
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'thi_cmsp_tp', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_data(JSON.parse(localStorage.getItem("userInfo")).manv);
+        
+        // if JSON.parse(localStorage.getItem("userInfo")).manv
+
         } else {
             history.push('/login?redirect=/formcontrol/thi_cmsp_fmcg');
         };
@@ -71,6 +76,7 @@ function Thi_cmsp_fmcg({history}) {
     const [arr_detail, set_arr_detail] = useState([]);
     const [arr_input, set_arr_input] = useState([]);
     const [fst_cauhoi, set_fst_cauhoi] = useState([]);
+    const [arr_manv_mt, set_arr_manv_mt] = useState([]);
     const [arr_indx, set_arr_indx] = useState([]);
 
     const handeClick = (e) => {

@@ -34,6 +34,7 @@ function Thi_cmsp({history}) {
             set_arr_input(data['header']) ;
             set_fst_cauhoi(data['header'][0].cauhoi) ;
             SetLoading(false);
+            if (data['lst_manv_mt'].includes(manv)) {history.push('/formcontrol/thi_cmsp_fmcg')} else {void(0)};
         }
         else {
             SetLoading(false);

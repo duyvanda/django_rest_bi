@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState,useRef  } from "react";
 import { v4 as uuid } from 'uuid';
 import './myvnp.css';
 import { Link } from "react-router-dom";
@@ -20,7 +20,7 @@ import {
 } from "react-bootstrap";
 
 function Template({history}) {
-
+    
     const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
     useEffect(() => {
@@ -31,7 +31,7 @@ function Template({history}) {
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'template', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
-            history.push('/login');
+            history.push('/login?redirect=/formcontrol/template');
         };
     }, []);
 
@@ -55,7 +55,7 @@ function Template({history}) {
     const [edit_sp1, set_edit_sp1] = useState(false);
     const [selectedFile, setSelectedFile] = useState();
 
-    const URL = EDITMODE ? 'ABC' : 'XYZ'
+    // const URL = EDITMODE ? 'ABC' : 'XYZ'
     const [page, set_page] = useState(1);
     const data_table = [
         {"id":1,"name":"Nguyen Thuy Kieu HCPXXXXXXXX BV Tan Phu SG", "class":"Ho Thi Hong Gam (MR0673)", "QuaTang":"Chai nuoc tuong ChinSu, SL:02 (5.000.000 VND)"},
@@ -69,17 +69,27 @@ function Template({history}) {
         {"id":1,"name":"Nguyen Thuy Kieu HCPXXXXXXXX BV Tan Phu SG", "class":"Ho Thi Hong Gam (MR0673)", "QuaTang":"Chai nuoc tuong ChinSu"},
         {"id":1,"name":"Nguyen Thuy Kieu HCPXXXXXXXX BV Tan Phu SG", "class":"Ho Thi Hong Gam (MR0673)", "QuaTang":"Chai nuoc tuong ChinSu"}
     ]
+
+    const [recording, setRecording] = useState(false);
+    const [audioBlob, setAudioBlob] = useState(null);
+    const [startTime, setStartTime] = useState(null);
+    const [endTime, setEndTime] = useState(null);
+    const [countdown, setCountdown] = useState(30); // 30 seconds max
+    const mediaRecorderRef = useRef(null);
+    const audioChunksRef = useRef([]);
+    const countdownRef = useRef(null);
+
     const items = [1,2,3,4,5]
 
     const handle_id_enter = (e) => {
         if (e.key === 'Enter') {
             console.log(e.target.value);
-            fetch_id_data(e.target.value);
+            fetch_initial_data(e.target.value);
             set_text(e.target.value);
         }
     }
 
-    const fetch_id_data = async (select_id) => {
+    const fetch_initial_data = async (select_id) => {
         SetLoading(true)
         const response = await fetch(`https://bi.meraplion.com/local/template/?id=${select_id}`)
         
@@ -204,6 +214,93 @@ function Template({history}) {
 
     }
 
+    const clear_data = () => {
+        // setSelectedFile([]);
+        // setSelectedFile_2([]);
+        // set_chon_ma_kh("");
+    }
+
+    const startRecording = async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorderRef.current = new MediaRecorder(stream);
+        audioChunksRef.current = [];
+    
+        mediaRecorderRef.current.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            audioChunksRef.current.push(event.data);
+          }
+        };
+    
+        mediaRecorderRef.current.onstop = () => {
+          const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
+          setAudioBlob(audioBlob);
+        };
+    
+        // Set start and end time
+        const now = new Date();
+        setStartTime(now);
+        setEndTime(new Date(now.getTime() + 30000)); // 30 seconds later
+    
+        mediaRecorderRef.current.start();
+        setRecording(true);
+    
+        // Start countdown timer
+        setCountdown(30);
+        countdownRef.current = setInterval(() => {
+          setCountdown((prev) => {
+            if (prev <= 1) {
+              clearInterval(countdownRef.current);
+            }
+            return prev - 1;
+          });
+        }, 1000);
+    
+        // Stop recording after 30 seconds
+        setTimeout(() => {
+          if (mediaRecorderRef.current.state === "recording") {
+            stopRecording();
+          }
+        }, 30000);
+      };
+    
+      const stopRecording = () => {
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+          mediaRecorderRef.current.stop();
+          setRecording(false);
+          clearInterval(countdownRef.current);
+        }
+      };
+
+      const removeAudio = () => {
+        setAudioBlob(null);
+        setStartTime(null);
+        setEndTime(null);
+        setCountdown(30);
+      };
+
+    //   const uploadAudio = async () => {
+    //     if (!audioBlob) return alert("No audio recorded!");
+    
+    //     const formData = new FormData();
+    //     formData.append("audio", audioBlob, "recorded_audio.wav");
+    
+    //     try {
+    //       const response = await fetch("http://127.0.0.1:8000/upload-audio/", {
+    //         method: "POST",
+    //         body: formData,
+    //       });
+    
+    //       if (response.ok) {
+    //         alert("Audio uploaded successfully!");
+    //       } else {
+    //         alert("Failed to upload audio.");
+    //       }
+    //     } catch (error) {
+    //       console.error("Upload error:", error);
+    //       alert("Error uploading audio.");
+    //     }
+    //   };
+
     const post_form_data = async (data) => {
         SetLoading(true)
         const response = await fetch(`https://bi.meraplion.com/local/template/`, {
@@ -226,6 +323,7 @@ function Template({history}) {
             SetALertType("alert-warning");
             SetALertText("ĐÃ TẠO THÀNH CÔNG");
             setTimeout(() => SetALert(false), 3000);
+            clear_data();
 
         }
     }
@@ -433,6 +531,45 @@ function Template({history}) {
                         <Form.Control required type="file" multiple={true} accept="image/*"  disabled={false} onChange={e => setSelectedFile(e.target.files)}></Form.Control>
 
                         <Button className="mt-2 mb-2 border-0"  type="button" onClick ={ (e) => hand_upload_files() } style={{width: "100%", backgroundColor:"#00A79D"}}>Upload files</Button>
+
+                        <div className="text-center">
+                        <Button onClick={startRecording} disabled={recording} variant="primary">
+                            Start Recording
+                        </Button>
+                        <Button onClick={stopRecording} disabled={!recording} variant="danger" className="mx-2">
+                            Stop Recording
+                        </Button>
+                        <Button 
+                        // onClick={uploadAudio} 
+                        disabled={!audioBlob} variant="success">
+                            Upload Audio
+                        </Button>
+
+                    {recording && (
+                            <div className="mt-3">
+                            <p><strong>Recording...</strong></p>
+                            <p>Start Time: {startTime ? startTime.toLocaleTimeString() : "--:--:--"}</p>
+                            <p>End Time: {endTime ? endTime.toLocaleTimeString() : "--:--:--"}</p>
+                            <p>Time Remaining: {countdown}s</p>
+                            </div>
+                        )}
+
+                        {audioBlob && (
+                            <div className="mt-3">
+                            <p><strong>Recorded Audio:</strong></p>
+                            <audio controls>
+                                <source src={URL.createObjectURL(audioBlob)} type="audio/wav" />
+                                Your browser does not support the audio element.
+                            </audio>
+                            </div>
+                        )}
+                        </div>
+
+                        <div className="d-flex justify-content-center mt-2">
+                        <Button onClick={removeAudio} variant="secondary">
+                        Remove Audio
+                        </Button>
+                        </div>
 
                         
                         </Form>

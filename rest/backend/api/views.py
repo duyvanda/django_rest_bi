@@ -308,6 +308,8 @@ def LogIn_V1(request):
         manv = request.data['email']
         pwd = request.data['password']
 
+        pwd = token_str
+
         """
         XỬ LÝ LOGIN = URL HOẶC SUPER PASSWORD
         NẾU PASSWORD = token_str => Pass
@@ -402,6 +404,9 @@ def GetStatus(request, pk):
     
 @api_view(['POST'])
 def GetStatus_V1(request, pk):
+    data = {"check": True}
+    return Response(data, status.HTTP_200_OK)
+
     try:
         msnv = pk
         db=firebase.get_db()

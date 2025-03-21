@@ -2,6 +2,8 @@
 echo Hello World!
 # git clone https://github.com/duyvantest/ecommerce-django-react.git
 # 10:30:PM 06062024
+# admin/admin
+# bi_odoo/meraplion@123
 
 docker build -t bi_local_rest:v5 .
 

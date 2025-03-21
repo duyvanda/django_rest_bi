@@ -191,6 +191,7 @@ export const FeedbackProvider = ({ children }) => {
   }
 
   const fetch_real_time_report = async (data_user, local_url, rppr) => {
+    console.log("fetch_real_time_report", data_user, local_url, rppr)
     try {
       SetLoading(true)
       const response = await fetch(`${LOCALURL}/${local_url}/`, {
@@ -220,6 +221,8 @@ export const FeedbackProvider = ({ children }) => {
   }
 
   const fetchFilerReportsRT = async (stt, isMB, phancap, local_url, filter_data) => {
+    console.log("start funtion fetchFilerReportsRT")
+    console.log(stt, isMB, phancap, local_url, filter_data)
     const data = JSON.parse(localStorage.getItem("userLstReports"));
     const manv = JSON.parse(localStorage.getItem("userInfo")).manv;
     const lstreports = data.filter((el) => el.manv === manv);

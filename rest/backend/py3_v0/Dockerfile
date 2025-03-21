@@ -1,4 +1,4 @@
-FROM python:3.8-slim-buster
+FROM python:3.9.17-slim-buster
 LABEL maintainer="DuyVanMeRap"
 
 # Never prompt the user for choices on installation/configuration of packages
