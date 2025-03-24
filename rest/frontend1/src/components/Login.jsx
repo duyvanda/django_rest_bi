@@ -42,7 +42,7 @@ function Login({history, location}) {
   // userInfo
 
     const handleTextChange = (e) => {
-        setEmail(e.target.value).toUpperCase()
+        setEmail(e.target.value.toUpperCase())
       }
     
     const handlePassChange = (e) => {

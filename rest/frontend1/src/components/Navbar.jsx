@@ -1,52 +1,49 @@
-import React from 'react'
-import { Link  } from 'react-router-dom'
-import FeedbackContext from '../context/FeedbackContext'
-import { useContext } from 'react'
-import {Navbar, Container, NavDropdown} from 'react-bootstrap';
-import { useHistory } from "react-router-dom";
-
+import React, { useContext } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { Navbar, Container, NavDropdown, Button } from 'react-bootstrap';
+import FeedbackContext from '../context/FeedbackContext';
 
 function Navbar1() {
-    const { userInfo, logoutUser, FilterReports, rpScreen } = useContext(FeedbackContext)
+  const { userInfo, logoutUser, FilterReports, rpScreen } = useContext(FeedbackContext);
+  const history = useHistory(); // React Router v5
 
-    const history = useHistory();
+  const handleLogout = () => {
+    logoutUser();
+    history.push('/login');
+    console.log('User logged out');
+  };
 
-    const navigate = useHistory();
-
-    // console.log("userinfo", userInfo) 
-
-    const handleClick = () => {
-        logoutUser();
-        let path = `/login`;
-        history.push(path);
-        console.log("logout")
-    }
-
-    return (
-        <div>
-            <Navbar style={{maxHeight:""}} className="navbar navbar-dark navbar-expand-md bg-dark">
-                <Container className='d-flex justify-content-start'>
-                    {rpScreen ? <Link to="/" className="btn btn-warning btn-sm">BACK</Link> : <Link to="/" className="navbar-brand">BI PORTAL</Link>}
-
-                                    {userInfo ?
-                                            <NavDropdown title={userInfo.manv} className='text-white ml-2 '>
-                                                <NavDropdown.Item  onClick={ () => navigate.push("/reports") }  >
-                                                    <h5>REPORTS</h5>
-                                                </NavDropdown.Item>
-                                                <NavDropdown.Item className='fs-5' onClick={handleClick}><h5>LOGOUT</h5></NavDropdown.Item>
-                                            </NavDropdown >
-                                        :
-                                                <NavDropdown.Item className='text-white mt-2' onClick={ () => navigate.push("/login") }  >
-                                                    <h5>LOGIN</h5>
-                                                </NavDropdown.Item>
-                                    }
-
-                    {FilterReports && <Navbar.Text className='text-white text-truncate ml-3 border-info border-bottom'> {FilterReports.tenreport} </Navbar.Text>}
-                    
-                </Container>
-            </Navbar>
+  return (
+    <Navbar expand="md" style={{ backgroundColor: "#00A79D" }} className="navbar-dark shadow-sm">
+      <Container className="d-flex justify-content-between">
+        {/* Left Section - BACK button + Report Name */}
+        <div className="d-flex align-items-center">
+          {rpScreen ? (
+            <>
+              <Link to="/" className="btn btn-warning btn-sm fw-bold">⬅ BACK</Link>
+              {FilterReports && (
+                <span className="text-white ms-2 fw-bold">{FilterReports.tenreport}</span>
+              )}
+            </>
+          ) : (
+            <div className="d-flex align-items-center">
+              <Link to="/" className="navbar-brand fw-bold text-white">📊 BI PORTAL</Link>
+              {userInfo && (
+                <NavDropdown title={userInfo.manv} className="ms-2 text-white" menuVariant="dark">
+                  <NavDropdown.Item onClick={() => history.push('/reports')}>
+                    📑 <strong>REPORTS</strong>
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={handleLogout} className="text-danger">
+                    🚪 <strong>LOGOUT</strong>
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )}
+            </div>
+          )}
         </div>
-    )
+      </Container>
+    </Navbar>
+  );
 }
 
-export default Navbar1
+export default Navbar1;

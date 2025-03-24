@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState, useRef } from "react";
 // import { fetchMessages, sendMessage } from "./api";
 import ReactMarkdown from "react-markdown";
