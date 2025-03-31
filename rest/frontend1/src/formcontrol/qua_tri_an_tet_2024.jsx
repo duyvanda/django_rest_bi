@@ -129,7 +129,7 @@ function Qua_tri_an_tet_2024({history, location}) {
             formData.append('quatang', j)
         }
 
-        const response = await fetch(`https://bi.meraplion.com/local/file_upload_qua_tri_an_tet_2024/`, {
+        const response = await fetch(`https://bi.meraplion.com/local/insert_form_claim_chi_phi/`, {
             method: "POST",
             headers: {
             // "Content-Type": "application/json",

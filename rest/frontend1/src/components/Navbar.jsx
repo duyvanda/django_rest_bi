@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Navbar, Container, NavDropdown, Button } from 'react-bootstrap';

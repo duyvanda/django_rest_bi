@@ -274,10 +274,6 @@ function Form_log_checkin_nhan_hang({history}) {
                                 <td className="wrap-text" >{el.nhan_vien_tha_hang_2}</td>
                                 <td className="wrap-text" >{el.nguoi_nhan_chang_2}</td>
                                 <td className="wrap-text" >{el.string_agg_sxh}</td>
-                                
-                                {/* <td>Data 5</td>
-                                <td>Data 6</td> */}
-                                {/* Add more data as needed */}
                             </tr>
                             )
                             }

@@ -62,7 +62,7 @@ function TemplateSimple({history}) {
 
     const post_form_data = async (data) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/template/`, {
+        const response = await fetch(`https://bi.meraplion.com/local/insert_data/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -91,9 +91,7 @@ function TemplateSimple({history}) {
         e.preventDefault();
 
         const data = {
-            "text":text,
-            "number":number,
-            "date":onDate,
+
         }
         console.log(data);
         post_form_data(data);
@@ -122,11 +120,6 @@ function TemplateSimple({history}) {
 
                         <Form onSubmit={handle_submit}>
                         {/* START FORM BODY */}
-
-                        <InputGroup className="ml-1">
-                            <Form.Control type="text" className="" placeholder="ĐCCN ĐẾN THÁNG"  />
-                            <Form.Control type="text" className="" placeholder="MÃ KH" />
-                        </InputGroup>
                         
                         {/* TEXT */}
                         <FloatingLabel label="TEXT" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text(e.target.value) } value = {text}/> </FloatingLabel>
@@ -143,7 +136,7 @@ function TemplateSimple({history}) {
 
                         {/* CARDS IF NEEDED */}
 
-                        <Card>
+                        {/* <Card>
                             <Card.Body>
                             <Card.Title>Card Title</Card.Title>
                                 <Card.Text>
@@ -153,6 +146,11 @@ function TemplateSimple({history}) {
                                 <Button size="sm" variant="primary">Go somewhere</Button>
                             </Card.Body>
                         </Card>
+
+                        <InputGroup className="ml-1">
+                            <Form.Control type="text" className="" placeholder="ĐCCN ĐẾN THÁNG"  />
+                            <Form.Control type="text" className="" placeholder="MÃ KH" />
+                        </InputGroup> */}
 
                         
                     </div>

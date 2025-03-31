@@ -65,8 +65,14 @@ import Mds_tra_thuong_cmm_q12025 from "./formcontrol/mds_tra_thuong_cmm_q12025";
 import Form_log_checkin_nhan_hang from  "./formcontrol/form_log_checkin_nhan_hang";
 import Cong_tac_phi from "./formcontrol/cong_tac_phi";
 import Form_claim_chi_phi from  "./formcontrol/form_claim_chi_phi";
+import Form_claim_chi_phi_ql_duyet from  "./formcontrol/form_claim_chi_phi_ql_duyet";
+import Form_claim_chi_phi_final from  "./formcontrol/form_claim_chi_phi_final";
+
 
 import Tinh_diem_van_nghe from  "./formcontrol/tinh_diem_van_nghe";
+import Test from  "./formcontrol/test";
+
+// import Kt_de_xuat_chi_phi from  "./formcontrol/kt_de_xuat_chi_phi";
 
 import Chat from "./biagent/chat";
 
@@ -102,6 +108,7 @@ function App() {
                 <Route exact path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa" component={Theo_doi_bb_giao_nhan_hang_hoa} />
                 <Route exact path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa_mds" component={Theo_doi_bb_giao_nhan_hang_hoa_mds} />
                 <Route exact path="/formcontrol/danh_muc_dau_thau" component={Danh_muc_dau_thau} />
+                <Route exact path="/formcontrol/test" component={Test} />
                 <Route exact path="/formcontrol/template" component={template} />
                 <Route exact path="/formcontrol/template_simple" component={TemplateSimple} />
                 {/* <Route exact path="/formcontrol/theo_doi_dccn" component={Theo_doi_dccn} />
@@ -131,7 +138,10 @@ function App() {
                 <Route path="/formcontrol/form_ghi_nhan_hang_log" component={Form_log_checkin_nhan_hang} />
                 <Route path="/formcontrol/cong_tac_phi" component={Cong_tac_phi} />
                 <Route path="/formcontrol/form_claim_chi_phi" component={Form_claim_chi_phi} />
+                <Route path="/formcontrol/form_claim_chi_phi_ql_duyet" component={Form_claim_chi_phi_ql_duyet} />
+                <Route path="/formcontrol/form_claim_chi_phi_final" component={Form_claim_chi_phi_final} />
                 <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} />
+                {/* <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} /> */}
                 {/* REPORT */}
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/reports" component={ReportList} />

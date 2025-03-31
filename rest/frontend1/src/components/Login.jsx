@@ -73,15 +73,23 @@ return (
 
     !userInfo ?
     <div className="container">
-        <h1>Sign In</h1>
         <form style={{ display: "inline-block" }} onSubmit={handleSubmit}>
             <label className="form-label">Mã Nhân Viên</label>
             <Form.Control required onChange={handleTextChange} value={email} type="text" placeholder="Enter Mã NV" style={{ background: "#f7f7f9", fontFamily: "Arial", border: "none" }}></Form.Control>
             <label className="form-label">Password</label>
-            <Form.Control required onChange={handlePassChange} value={password} type="password" placeholder="Enter your password" style={{ background: "#f7f7f9", fontFamily: "Arial", border: "none" }}></Form.Control>
-            <button className="btn btn-dark mt-3" type="submit" >Sign In</button>
-            <h5 className='mt-2'> VUI LÒNG ĐĂNG NHẬP BẰNG TÀI KHOẢN CLOUD / BITRIX / EOFFICE  </h5>
-            <h5 className='mt-2'> MỌI THẮC MẮC VỀ TÀI KHOẢN VUI LÒNG LIÊN HỆ ANH HUY IT (0902995675 - ZALO) </h5>
+            <Form.Control required onChange={handlePassChange} value={password} type="password" placeholder="Enter MẬT KHẨU" style={{ background: "#f7f7f9", fontFamily: "Arial", border: "none" }}></Form.Control>
+            <button className="btn btn-dark mt-3" type="submit" >ĐĂNG NHẬP</button>
+            <h5 className='mt-2'> VUI LÒNG ĐĂNG NHẬP BẰNG TÀI KHOẢN DMS / ESALES/ CLOUD / BITRIX / EOFFICE  </h5>
+            <h5 className='mt-2'> MỌI THẮC MẮC VỀ TÀI KHOẢN VUI LÒNG LIÊN HỆ ANH HUY IT (0902995675 - ZALO) </h5> <br></br>
+
+            <h5>
+  TRƯỜNG HỢP QUÊN MẬT KHẨU, VUI LÒNG&nbsp;
+  <a href="https://eoffice.meraplion.com/admincp/reset-password?redirect_url=https://eoffice.meraplion.com/workgate/callback" target="_blank" rel="noopener noreferrer">
+    BẤM VÀO ĐÂY
+  </a> 
+  &nbsp;ĐỂ ĐẶT LẠI MẬT KHẨU MỚI.
+</h5>
+
             <p className='mt-2'>{LoginText}</p>
         </form>
         {LoginLoading &&

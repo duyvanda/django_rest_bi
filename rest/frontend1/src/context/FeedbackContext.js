@@ -190,6 +190,11 @@ export const FeedbackProvider = ({ children }) => {
     return str;
   }
 
+  function get_id() {
+    const timestampId = new Date(Date.now() + 7 * 3600000).toISOString().replace(/[-:.TZ]/g, '');
+    return timestampId
+  }
+
   const fetch_real_time_report = async (data_user, local_url, rppr) => {
     console.log("fetch_real_time_report", data_user, local_url, rppr)
     try {
@@ -392,6 +397,7 @@ export const FeedbackProvider = ({ children }) => {
         get_current_dmy,
         Inserted_at,
         removeAccents,
+        get_id,
         loading,
         SetLoading,
         alert,

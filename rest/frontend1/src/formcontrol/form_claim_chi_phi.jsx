@@ -1,27 +1,24 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { v4 as uuid } from 'uuid';
+import Select from "react-select";
 import './myvnp.css';
-import { Link } from "react-router-dom";
-import FeedbackContext from '../context/FeedbackContext'
+import { Link, useLocation  } from "react-router-dom";
+import FeedbackContext from '../context/FeedbackContext';
 import {
+    // ButtonGroup,
+    Modal,
     Button,
     Col,
     Row,
     Container,
-    Dropdown,
     Form,
     Spinner,
-    InputGroup,
-    Stack,
-    FloatingLabel,
-    Card,
-    Modal
 } from "react-bootstrap";
 
-function Form_claim_chi_phi({history}) {
-
-    const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
+function Form_claim_chi_phi({ history }) {
+    const location = useLocation();
+    const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
+    
     const fetch_initial_data = async (manv) => {
         SetLoading(true)
         const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=${manv}`)
@@ -29,74 +26,97 @@ function Form_claim_chi_phi({history}) {
         if (!response.ok) {
             SetLoading(false)
         }
-
         else {
-        const data_arr = await response.json()
-        // const data = data_arr[0]
-        set_lst_dd1(data_arr.data_hcp)
-        set_lst_dd2(data_arr.data_hoa_don)
-        set_lst_dd3(data_arr.tick_chon)
-        // console.log(data)
-        SetLoading(false)
+        const data = await response.json()
+        set_data_kh_chung(data['data_kh_chung'])
+        set_data_hcp(data['data_hcp'])
+        set_manv_info(data['manv_info'][0])
+        console.log(data);
+        SetLoading(false);
 
         }
-    } 
+    }
+    const [count, setCount] = useState(0);
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Form_claim_chi_phi', isMB, dv_width);
+        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, location.pathname, isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
         } else {
-            history.push('/login');
+            history.push(`/login?redirect=${location.pathname}`);
         };
     }, []);
-
     const [manv, set_manv] = useState("");
-    const current_date = formatDate(Date());
-    const [text1, set_text1] = useState("");
-    const [number1, set_number1] = useState("");
-    const [number2, set_number2] = useState("");
-    const [onDate, setDate] = useState(current_date);
+    const [manv_info, set_manv_info] = useState("");
+    const [chon_kh_chung, set_chon_kh_chung] = useState(null);
+    const [chon_hcp, set_chon_hcp] = useState(null);
+    const [qua_tang, set_qua_tang] = useState("");
+    const [kenh, set_kenh] = useState("");
+    const [noi_dung, set_noi_dung] = useState("");
+    const [ghi_chu, set_ghi_chu] = useState("");
+    const [so_ke_hoach, set_so_ke_hoach] = useState("");
+    const [data_kh_chung, set_data_kh_chung] = useState(
+    [
+    ]
+    )
+    const [data_hcp, set_data_hcp] = useState(
+    [
+    ]
 
+);  
+    
+    const kenhs = ["CLC", "INS", "PCL", "TP", "MT" ];
+    // const noi_dungs = ["noi_dung1", "noi_dung2", "noi_dung3"];
 
+    const noi_dungs = [
+        "Chi phí quà tặng tết nguyên đán",
+        "Chi phí quà tặng tết trung thu",
+        "Chi phí quà tặng ngày nhà giáo",
+        "Chi phí quà tặng ngày thầy thuốc",
+        "Chi phí quà tặng dịp sinh nhật",
+        "Chi phí quà tặng dịp thăng cấp",
+        "Chi phí quà tặng mừng sinh con",
+        "Chi phí quà tặng mừng cưới",
+        "Chi phí vòng hoa đám tang",
+        "Chi phí giỏ trái cây đám tang",
+        "Chi phí quà tặng quà dịp 01/01",
+        "Chi phí quà tặng quà dịp 08/03",
+        "Chi phí quà tặng quà dịp 20/03",
+        "Chi phí quà tặng quà dịp Giỗ tổ Hùng Vương",
+        "Chi phí quà tặng quà dịp 01/05",
+        "Chi phí quà tặng ngày Điều dưỡng thế giới 12/05",
+        "Chi phí quà tặng ngày Gia đình Việt Nam 28/06",
+        "Chi phí quà tặng quà dịp Dược sĩ thế giới 25/09",
+        "Chi phí quà tặng sinh nhật Merap 17/10",
+        "Chi phí quà tặng ngày phụ nữ Việt Nam 20/10",
+        "Chi phí quà tặng ngày giáng sinh 24/12"
+    ];
 
-    // const options = ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"];
-    const [lst_dd1, set_lst_dd1] = useState([])
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedValue, setSelectedValue] = useState("Bấm Để Chọn HCP");
-
-    const [lst_dd2, set_lst_dd2] = useState([])
-    const [searchTerm2, setSearchTerm2] = useState("");
-    const [selectedValue2, setSelectedValue2] = useState("Bấm Để Chọn Hóa Đơn");
-
-    const [lst_dd3, set_lst_dd3] = useState([])
-    const [searchTerm3, setSearchTerm3] = useState("");
-    const [selectedValue3, setSelectedValue3] = useState("");
-  
-    const handleSelect = (value) => {
-      setSelectedValue(value);
-    };
-
-    const handleSelect2 = (value) => {
-        setSelectedValue2(value);
-      };
+    const qua_tang_type = [
+        "Quà tặng",
+        "Giao tiếp - Mời cơm",
+    ]
 
     const clear_data = () => {
-        setSearchTerm("");
-        setSearchTerm2("");
-        setSelectedValue("Bấm Để Chọn HCP");
-        setSelectedValue2("Bấm Để Chọn Hóa Đơn");
-        set_number1("");
-        set_number2("");
-        set_text1("");
-    }
+        set_chon_kh_chung(null);
+        set_chon_hcp(null);
+        set_qua_tang("");
+        set_kenh("");
+        set_noi_dung("");
+        set_ghi_chu("");
+        set_so_ke_hoach("");
+    };
+
+    const formatNumber = (value) => {
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
 
     const post_form_data = async (data) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/template/`, {
+        const response = await fetch(`https://bi.meraplion.com/local/insert_form_claim_chi_phi/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -108,39 +128,83 @@ function Form_claim_chi_phi({history}) {
             SetLoading(false);
             const data = await response.json();
             console.log(data);
+            SetALert(true);
+            SetALertType("alert-danger");
+            SetALertText("CHƯA TẠO ĐƯỢC");
+            setTimeout(() => SetALert(false), 3000);
         } else {
             SetLoading(false);
             const data = await response.json();
             console.log(data);
             SetALert(true);
-            SetALertType("alert-warning");
+            SetALertType("alert-success");
             SetALertText("ĐÃ TẠO THÀNH CÔNG");
             setTimeout(() => SetALert(false), 3000);
-            clear_data()
+            clear_data();
+            setCount(count+1);
 
         }
     }
 
     const handle_submit = (e) => {
         e.preventDefault();
-
         const data = {
-            // "text":text,
-            // "number":number,
-            // "date":onDate,
-        }
+            id: get_id(),
+            status:"new",
+            manv: manv,
+            tencvbh: manv_info?.tencvbh,
+            phongdeptsummary: manv_info?.phongdeptsummary,
+            chon_kh_chung: chon_kh_chung?.hco_bv,
+            pubcustname: chon_kh_chung?.pubcustname,
+            chon_hcp: chon_hcp?.ma_hcp_2,
+            ten_hcp: chon_hcp?.ten_hcp,
+            qua_tang,
+            kenh,
+            noi_dung,
+            ghi_chu,
+            so_ke_hoach: so_ke_hoach.replace(/,/g, ""),
+            so_hoa_don: null,
+            ngay_hoa_don: null,
+            so_tien_hoa_don:null,
+            inserted_at: Inserted_at()      
+        };
         console.log(data);
-        clear_data()
-        // post_form_data(data);
-    }
+        post_form_data(data);
+        clear_data();
+    };
 
-    if (!loading) {
+    if (true) {
         return (
-        <Container className="bg-teal-100 h-100" fluid>
-            <Row className="justify-content-center">
-                <Col md={5} >
+            <Container className="bg-teal-100 h-100" fluid>
+      {/* Responsive Full-Width Buttons */}
+      <Row className="justify-noi_dung-center mb-1 mt-1">
+        <Col xs={4}>
+          <Link to="/formcontrol/form_claim_chi_phi">
+            <Button 
+            variant={location.pathname === "/formcontrol/form_claim_chi_phi" ? "primary" : "outline-primary"}
+            className="w-100">ĐỀ XUẤT</Button>
+          </Link>
+        </Col>
+        <Col xs={4}>
+          <Link to="/formcontrol/form_claim_chi_phi_ql_duyet">
+            <Button 
+            variant={location.pathname === "/formcontrol/form_claim_chi_phi_ql_duyet" ? "secondary" : "outline-secondary"} 
+            className="w-100">QL DUYỆT</Button>
+          </Link>
+        </Col>
+        <Col xs={4}>
+          <Link to="/formcontrol/form_claim_chi_phi_final">
+            <Button
+            variant={location.pathname === "/formcontrol/form_claim_chi_phi_final" ? "success" : "outline-success"} 
+            className="w-100">CLAIM CHI PHÍ</Button>
+          </Link>
+        </Col>
+      </Row>
+      
+      {/* Existing noi_dung */}
 
-                    <div>
+                <Row className="justify-noi_dung-center">
+                    <Col xs={12} md={12}>
 
                         {/* ALERT COMPONENT */}
                         <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
@@ -156,117 +220,91 @@ function Form_claim_chi_phi({history}) {
                         </Modal>
 
                         <Form onSubmit={handle_submit}>
-                        {/* START FORM BODY */}
-
-                        <InputGroup className="mt-2 d-flex" style={{ height: "60px" }}>
-                        {/* <InputGroup.Text className="w150px bg-secondary text-white">SELECT ONE</InputGroup.Text> */}
-                        <Dropdown className="d-inline mx-2 w150px">
-                            <Dropdown.Toggle className="text-dark bg-white flex-grow-1 border-0">
-                            {selectedValue}
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu style={{ maxHeight: "410px", overflowY: "auto" }}>
-                            <Form.Control
-                                className="mt-2"
-                                type="text"
-                                placeholder="Tìm Giá Trị"
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                            {/* General chon_hcp Select with Search */}
+                            <Select
+                            className=""
+                            options={data_kh_chung}
+                            getOptionValue={(el) => el.hco_bv}
+                            getOptionLabel={(el) => `${el.hco_bv} - ${el.pubcustname}`}
+                            value={chon_kh_chung}
+                            onChange={set_chon_kh_chung}
+                            // onChange={(selectedOption) => set_chon_kh_chung(selectedOption?.hco_bv)}
+                            isSearchable
+                            placeholder="Chọn khách hàng tổng"
+                            styles={{ placeholder: (base) => ({ ...base, color: "#212529" }) }}
                             />
-                            {lst_dd1
-                                .filter((el) => el.clean_ten_hcp.toLowerCase().includes(searchTerm.toLowerCase()))
-                                .map((el, index) => (
-                                <Dropdown.Item key={index} onClick={() => handleSelect(el.ten_hcp)}>
-                                    {el.ten_hcp}
-                                </Dropdown.Item>
-                                ))}
-                            </Dropdown.Menu>
-                        </Dropdown>
-                        </InputGroup>
-
-                        <InputGroup className="mt-2 d-flex" style={{ height: "60px" }}>
-                        {/* <InputGroup.Text className="w150px bg-secondary text-white">SELECT ONE</InputGroup.Text> */}
-                        <Dropdown className="d-inline mx-2 w150px">
-                            <Dropdown.Toggle className="text-dark bg-white flex-grow-1 border-0">
-                            {selectedValue2}
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu style={{ maxHeight: "410px", overflowY: "auto" }}>
-                            <Form.Control
-                                className="mt-2"
-                                type="text"
-                                placeholder="Tìm Giá Trị"
-                                onChange={(e) => setSearchTerm2(e.target.value)}
-                            />
-                            {lst_dd2
-                                .filter((el) => el.so_ngay_hoa_don.toLowerCase().includes(searchTerm2.toLowerCase()))
-                                .map((el, index) => (
-                                <Dropdown.Item key={index} onClick={() => handleSelect2(el.so_ngay_hoa_don)}>
-                                    {el.so_ngay_hoa_don}
-                                </Dropdown.Item>
-                                ))}
-                            </Dropdown.Menu>
-                        </Dropdown>
-                        </InputGroup>
-
-                        {/* <InputGroup className="ml-1">
-                            <Form.Control type="text" className="" placeholder="ĐCCN ĐẾN THÁNG"  />
-                            <Form.Control type="text" className="" placeholder="MÃ KH" />
-                        </InputGroup> */}
                             
-                        {/* NUMBER */}
-                        <FloatingLabel label="ĐỀ XUẤT KẾ HOẠCH" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_number1(e.target.value) } value = {number1} /> </FloatingLabel>
-                        <FloatingLabel label="DUYỆT KẾ HOẠCH" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_number2(e.target.value) } value = {number2} /> </FloatingLabel>
-                        
-                        <Form.Select
-                            required
+                            {/* chon_hcp Select with Search */}
+                            <Select
                             className="mt-2"
-                            style={{ height: "60px" }}
-                            onChange={(e) => setSelectedValue3(e.target.value)}
-                            >
-                            <option value="">CHỌN NỘI DUNG</option>
-                            {lst_dd3.map((item) => (
-                                <option key={item.id} value={item.value}>
-                                {item.value}
-                                </option>
-                            ))}
-                        </Form.Select>
-                        
-                        <FloatingLabel label="GHI CHÚ" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text1(e.target.value) } value = {text1}/> </FloatingLabel>
-                        
-                        <Button disabled={false} className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
+                            options={data_hcp.filter((el) => el.hco_bv === chon_kh_chung?.hco_bv)} // Filter data_hcp
+                            getOptionValue={(el) => el.ma_hcp_2}
+                            getOptionLabel={(el) => `${el.ma_hcp_2} - ${el.ten_hcp}`}
+                            value={chon_hcp}
+                            onChange={set_chon_hcp}
+                            // onChange={ (selectedOption) => set_chon_hcp(selectedOption?.ma_hcp_2) }
+                            isSearchable
+                            placeholder="Chọn khách hàng"
+                            styles={{ placeholder: (base) => ({ ...base, color: "#212529" }) }}
+                            />
+
+                            {/* kenh Select */}
+                            <Form.Select className='mt-2' required onChange={(e) => set_qua_tang(e.target.value)} value={qua_tang}>
+                                <option value="">Chọn loại quà</option>
+                                {qua_tang_type.map((ch, idx) => (
+                                <option key={idx} value={ch}>{ch}</option>
+                                ))}
+                            </Form.Select>
+                            
+                            {/* kenh Select */}
+                            <Form.Select className='mt-2' required onChange={(e) => set_kenh(e.target.value)} value={kenh}>
+                                <option value="">Chọn kênh</option>
+                                {kenhs.map((ch, idx) => (
+                                    <option key={idx} value={ch}>{ch}</option>
+                                ))}
+                            </Form.Select>
+                            
+                            {/* noi_dung Select */}
+                            <Form.Select className='mt-2' required onChange={(e) => set_noi_dung(e.target.value)} value={noi_dung}>
+                                <option value="">Chọn nội dung</option>
+                                {noi_dungs.map((cnt, idx) => (
+                                    <option key={idx} value={cnt}>{cnt}</option>
+                                ))}
+                            </Form.Select>
+                            
+                            {/* ghi_chu Input */}
+                            <Form.Control className='mt-2 dark-placeholder' required type="text" placeholder="Ghi chú" onChange={(e) => set_ghi_chu(e.target.value)} value={ghi_chu} style={{ '::placeholder': { color: '#333' } }}/>
+                            
+                            {/* Planning Number Input */}
+                            <Form.Control className='mt-2 dark-placeholder' required type="text" placeholder="Số kế hoạch" onChange={(e) => set_so_ke_hoach( formatNumber(e.target.value.replace(/\D/g, "")) )} value={so_ke_hoach} style={{ '::placeholder': { color: '#333' } }}/>
+                            
+                            <Button className='mt-2' variant="warning" type="submit" style={{ width: "100%", fontWeight: "bold" }}>GỬI QL DUYỆT</Button>
+
                         </Form>
-                        {/* END FORM BODY */}
+                    </Col>
+                </Row>
+            <style>
+            {`
+            .dark-placeholder::placeholder {
+            color: #333; /* Dark color */
+            }
+            `}
+            </style>
+            </Container>
 
-                        {/* CARDS IF NEEDED */}
 
-                        {/* <Card>
-                            <Card.Body>
-                            <Card.Title>Card Title</Card.Title>
-                                <Card.Text>
-                                Some quick example text to build on the card title and make up the
-                                bulk of the card's content.
-                                </Card.Text>
-                                <Button size="sm" variant="primary">Go somewhere</Button>
-                            </Card.Body>
-                        </Card> */}
-
-                        
-                    </div>
-                </Col>
-            </Row>
-        </Container>
-        )
-    }
-    else {
+        );
+    } else {
         return (
-    
             <div>
                 <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
                 <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
                 </Spinner>
             </div>
-            
-        )
+        );
     }
-
 }
 
-export default Form_claim_chi_phi
+export default Form_claim_chi_phi;
+
+
