@@ -175,7 +175,7 @@ function Form_claim_chi_phi({ history }) {
 
     if (true) {
         return (
-            <Container className="bg-teal-100 h-100" fluid>
+    <Container className="bg-teal-100 h-100" fluid>
       {/* Responsive Full-Width Buttons */}
       <Row className="justify-noi_dung-center mb-1 mt-1">
         <Col xs={4}>

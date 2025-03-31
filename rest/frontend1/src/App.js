@@ -67,6 +67,7 @@ import Cong_tac_phi from "./formcontrol/cong_tac_phi";
 import Form_claim_chi_phi from  "./formcontrol/form_claim_chi_phi";
 import Form_claim_chi_phi_ql_duyet from  "./formcontrol/form_claim_chi_phi_ql_duyet";
 import Form_claim_chi_phi_final from  "./formcontrol/form_claim_chi_phi_final";
+import Form_claim_chi_phi_ql_duyet_invmapped from  "./formcontrol/form_claim_chi_phi_ql_duyet_invmapped";
 
 
 import Tinh_diem_van_nghe from  "./formcontrol/tinh_diem_van_nghe";
@@ -140,6 +141,7 @@ function App() {
                 <Route path="/formcontrol/form_claim_chi_phi" component={Form_claim_chi_phi} />
                 <Route path="/formcontrol/form_claim_chi_phi_ql_duyet" component={Form_claim_chi_phi_ql_duyet} />
                 <Route path="/formcontrol/form_claim_chi_phi_final" component={Form_claim_chi_phi_final} />
+                <Route path="/formcontrol/form_claim_chi_phi_ql_duyet_invmapped" component={Form_claim_chi_phi_ql_duyet_invmapped} />
                 <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} />
                 {/* <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} /> */}
                 {/* REPORT */}

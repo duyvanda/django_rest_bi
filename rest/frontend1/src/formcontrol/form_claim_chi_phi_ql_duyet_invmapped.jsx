@@ -16,13 +16,13 @@ import {
     Table
 } from "react-bootstrap";
 
-const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
+const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
     const location = useLocation();
     const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
     
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
-      const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_ql_duyet/?manv=${manv}`)
+      const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_invmapped/?manv=${manv}`)
       
       if (!response.ok) {
           SetLoading(false)
@@ -87,7 +87,7 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
 }
 
   const handleApproval = async (isApproved) => {
-    const ql_duyet = isApproved ? "approved" : "rejected"
+    const ql_duyet = isApproved ? "approved_invmapped" : "rejected_invmapped"
     // Create a new list of records with updated status
     const updatedRecords = data_submit.map((record) => {
       if (record.checked) {
@@ -150,7 +150,7 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
   };
 
   return (
-    <Container className="h-100" fluid> 
+    <Container className="mt-4">
       <Row className="justify-noi_dung-center mb-1 mt-1">
       <Col xs={4}>
       <Link to="/formcontrol/form_claim_chi_phi">
@@ -203,8 +203,11 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
           <tr style={{ padding: '5px', fontSize: '12px' }}>
           <th style={{ width: '150px' }}>ID</th>
           <th style={{ width: '70px', textAlign: "center" }}>Chuyển</th>
-          <th style={{ width: '70px' }}>Status</th>
-          <th style={{ width: '150px' }}>Số kế hoạch</th>
+          <th style={{ width: '100px' }}>Status</th>
+          <th style={{ width: '150px' }}>Số duyệt</th>
+          <th style={{ width: '100px' }}>Số hóa đơn</th>
+          <th style={{ width: '100px' }}>Ngày hóa đơn</th>
+          <th style={{ width: '100px' }}>Tổng tiền</th>
           <th style={{ width: '70px' }}>Mã NV</th>
           <th style={{ width: '150px' }}>Tên CVBH</th>
           <th style={{ width: '150px' }}>Tên KHC</th>
@@ -236,7 +239,9 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
                   onChange={(e) => handlePlanningNumberChange(record.id, e.target.value.replace(/\D/g, "") )}
                 />
               </td>
-
+              <td>{record.so_hoa_don}</td>
+              <td>{new Date(record.ngay_hoa_don).toLocaleDateString("vi-VN")}</td>
+              <td>{ f.format(record.so_tien_hoa_don) }</td>
               <td>{record.manv}</td>
               <td>{record.tencvbh}</td>
               <td>{record.pubcustname}</td>
@@ -262,4 +267,4 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
   );
 };
 
-export default Form_claim_chi_phi_ql_duyet;
+export default Form_claim_chi_phi_ql_duyet_invmapped;

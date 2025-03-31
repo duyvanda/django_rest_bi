@@ -54,12 +54,12 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     }, [count]);
 
     const [data_submit, set_data_submit] = useState([])
-    const [hoa_don, set_hoa_don] = useState([])
+    // const [hoa_don, set_hoa_don] = useState([])
 
     const invoices = [
-      { nguoi_mua_hang: "MR0673", ky_hieu: "K25TDL", so_hoa_don: "63182", ngay_hoa_don: "28/02/2025", tong_tien_thanh_toan: "681855" },
-      { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19298", ngay_hoa_don: "28/02/2025", tong_tien_thanh_toan: "3592906" },
-      { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19299", ngay_hoa_don: "28/02/2025", tong_tien_thanh_toan: "4163723" }
+      { nguoi_mua_hang: "MR0673", ky_hieu: "K25TDL", so_hoa_don: "63182", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: "681855" },
+      { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19298", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: "3592906" },
+      { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19299", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: "4163723" }
     ];
     
   const f = new Intl.NumberFormat()
@@ -116,6 +116,8 @@ const Form_claim_chi_phi_final = ( {history} ) => {
   
     // Update state with the modified records list
     set_data_submit(updatedRecords);
+
+    console.log(updatedRecords)
     post_form_data(updatedRecords);
 
   };
@@ -141,18 +143,31 @@ const Form_claim_chi_phi_final = ( {history} ) => {
       if (record.id === id) {
         let updatedRecord = Object.assign({}, record); // Clone the object
         updatedRecord.so_hoa_don = selectedInvoice.so_hoa_don;
-        updatedRecord.tong_tien_thanh_toan = selectedInvoice.tong_tien_thanh_toan;
+        updatedRecord.so_tien_hoa_don = selectedInvoice.so_tien_hoa_don;
         updatedRecord.ngay_hoa_don = selectedInvoice.ngay_hoa_don;
         return updatedRecord;
       }
       return record;
     });
-    console.log(updatedRecords)
+    // console.log(updatedRecords)
     set_data_submit(updatedRecords);
   };
 
+  const handleNoteChange = (id, newValue) => {
+    // Create a new list of records
+    const updatedRecords = data_submit.map((record) => {
+      if (record.id === id) {
+        let updatedRecord = Object.assign({}, record); // Clone the object
+        updatedRecord.so_ke_hoach = newValue; // Update the value
+        return updatedRecord;
+      }
+      return record;
+    });
+      set_data_submit(updatedRecords);
+  };
+
   return (
-    <Container className="mt-4">
+    <Container className="h-100" fluid> 
       <Row className="justify-noi_dung-center mb-1 mt-1">
       <Col xs={4}>
       <Link to="/formcontrol/form_claim_chi_phi">
@@ -204,20 +219,20 @@ const Form_claim_chi_phi_final = ( {history} ) => {
         <thead>
           <tr style={{ padding: '5px', fontSize: '12px' }}>
             <th style={{ width: '150px' }}>ID</th>
-            <th style={{ width: '150px' }}>Số kế hoạch</th>
+            <th style={{ width: '150px' }}>Số duyệt</th>
             <th style={{ width: '300px' }}>Hóa đơn</th>
             <th style={{ width: '100px' }}>Số hóa đơn</th>
             <th style={{ width: '100px' }}>Ngày hóa đơn</th>
             <th style={{ width: '100px' }}>Tổng tiền</th>
             <th style={{ width: '70px' }}>Status</th>
-            <th style={{ width: '70px' }}>manv</th>
-            <th style={{ width: '150px' }}>tencvbh</th>
-            <th style={{ width: '150px' }}>pubcustname</th>
-            <th style={{ width: '150px' }}>ten_hcp</th>
-            <th style={{ width: '150px' }}>qua_tang</th>
-            <th style={{ width: '70px' }}>kenh</th>
-            <th style={{ width: '200px' }}>noi_dung</th>
-            <th style={{ width: '200px' }}>ghi_chu</th>
+            <th style={{ width: '70px' }}>Mã NV</th>
+            <th style={{ width: '150px' }}>Tên CVBH</th>
+            <th style={{ width: '150px' }}>Tên KHC</th>
+            <th style={{ width: '150px' }}>Tên HCP</th>
+            <th style={{ width: '150px' }}>Quà tặng</th>
+            <th style={{ width: '70px' }}>Kênh</th>
+            <th style={{ width: '200px' }}>Nội dung</th>
+            <th style={{ width: '200px' }}>Ghi chú</th>
           </tr>
         </thead>
         <tbody>
@@ -225,7 +240,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
             <tr key={record.id} style={{ 
               padding: '5px', 
               fontSize: '14px', 
-              backgroundColor: record.tong_tien_thanh_toan && Number(record.tong_tien_thanh_toan) < Number(record.so_ke_hoach) ? 'red' : 'transparent' } }>
+              backgroundColor: record.so_tien_hoa_don && Number(record.so_tien_hoa_don) < Number(record.so_ke_hoach) ? 'red' : 'transparent' } }>
               <td>{record.id}</td>
               <td>
                 <Form.Control
@@ -239,7 +254,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
                 <Select
                   options={invoices}
                   getOptionValue={(el) => el.so_hoa_don}
-                  getOptionLabel={(el) => `${el.so_hoa_don} - ${f.format(el.tong_tien_thanh_toan)} - ${el.ngay_hoa_don}`}
+                  getOptionLabel={(el) => `${el.so_hoa_don} - ${f.format(el.so_tien_hoa_don)} - ${el.ngay_hoa_don}`}
                   value={invoices.find((inv) => inv.so_hoa_don === record.so_hoa_don) || null}
                   onChange={(selectedInvoice) => handleInvoiceChange(record.id, selectedInvoice)}
                   isSearchable
@@ -256,7 +271,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
 
               <td>{record.so_hoa_don}</td>
               <td>{record.ngay_hoa_don}</td>
-              <td>{ f.format(record.tong_tien_thanh_toan) }</td>
+              <td>{ f.format(record.so_tien_hoa_don) }</td>
 
               <td>{record.status}</td>
               <td>{record.manv}</td>
@@ -266,7 +281,13 @@ const Form_claim_chi_phi_final = ( {history} ) => {
               <td>{record.qua_tang}</td>
               <td>{record.kenh}</td>
               <td>{record.noi_dung}</td>
-              <td>{record.ghi_chu}</td>
+              <td>
+                <Form.Control
+                  type="text"
+                  value={ record.ghi_chu }
+                  onChange={(e) => handleNoteChange(record.id, e.target.value)}
+                />
+              </td>
             </tr>
           ))}
         </tbody>
