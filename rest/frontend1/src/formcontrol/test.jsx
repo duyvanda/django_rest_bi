@@ -1,144 +1,244 @@
 import React, { useState } from "react";
-import { Container, Card, Form, Button } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { Form, Button, Table } from "react-bootstrap";
 
-const ManagerApprovalForm = () => {
-  const [records, setRecords] = useState([
-    {
-      id: 1,
-      generalCustomer: "000203 - BVĐK VẠN HẠNH - SG",
-      customer: "HCP1000000140-H - NGUYỄN THỊ KIM LOAN",
-      gift: "Quà tặng",
-      channel: "CLC",
-      content: "Chi phí quà tặng quà dịp 20/03",
-      note: "hhhhhhhhhhhhhhhhhh",
-      planningNumber: 500000,
-      status: false,
-      checked: true,
-    },
-    {
-      id: 2,
-      generalCustomer: "000204 - BVĐK TÂN PHÚ - SG",
-      customer: "HCP1000000141-H - TRẦN VĂN AN",
-      gift: "Quà tặng",
-      channel: "CLC",
-      content: "Chi phí quà tặng quà dịp 21/03",
-      note: "nnnnnnnnnnnnnnnnnn",
-      planningNumber: 600000,
-      status: false,
-      checked: true,
-    },
+const cleanDataColumn = (input) => {
+  const normalized = input.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const corrected = normalized.replace(/Đ/g, "d").replace(/đ/g, "d");
+  const lowercased = corrected.toLowerCase();
+  // Remove spaces after commas and replace spaces with underscores
+  const noSpacesAfterComma = lowercased.replace(/,\s+/g, ","); // Remove spaces after commas
+  // const noSpacesAfterComma_2 = noSpacesAfterComma.replace(/,\s+/g, ",");
+  const replacedSpaces = noSpacesAfterComma.replace(/\s+/g, "_"); // Replace spaces with underscores
+  // Remove any non-alphanumeric characters except for commas and underscores
+  const cleaned = replacedSpaces.replace(/[^a-z0-9,_]/g, "");
+  // Replace ",_" with ","
+  const noUnderscoreAfterComma = cleaned.replace(/,_/g, ",");
+  // Remove trailing comma if it exists
+  const finalCleaned = noUnderscoreAfterComma.replace(/,$/, "");
+  return finalCleaned;
+};
+
+const DataForm = () => {
+  const [formData, setFormData] = useState({
+    tableName: "",
+    sheetId: "",
+    dataRange: "",
+    dataColumns: "",
+    googleLink: "",
+    dropIfNa: "",
+    schema: [],
+  });
+
+  const [showTable, setShowTable] = useState(false); // State to control table visibility
+
+  const [tableData, setTableData] = useState([
+    { tableName: "Customers", googleLink: "https://www.google.com" },
+    { tableName: "Orders", googleLink: "https://www.example.com" },
+    { tableName: "Products", googleLink: "https://www.sample.com" },
+    { tableName: "Employees", googleLink: "https://www.company.com" },
+    { tableName: "Sales", googleLink: "https://www.sales.com" },
   ]);
 
-
-  const handleApproval = async (isApproved) => {
-    // Create a new list of records with updated status
-    const updatedRecords = records.map((record) => {
-      if (record.checked) {
-        let updatedRecord = Object.assign({}, record); // Clone the object
-        updatedRecord.status = isApproved; // Update status
-        return updatedRecord;
-      }
-      return record;
+  const clear_data = () => {
+    setFormData({
+      tableName: "",
+      sheetId: "",
+      dataRange: "",
+      dataColumns: "",
+      googleLink: "",
+      dropIfNa: "",
+      schema: [],
     });
-  
-    // Update state with the modified records list
-    setRecords(updatedRecords);
+  };
 
-    try {
-      const response = await fetch("/api/approval", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedRecords),
-      });
-      if (!response.ok) {
-        console.error("Failed to send approval data");
-      }
-    } catch (error) {
-      console.error("Error sending approval data:", error);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Clean the dataColumns input before updating state
+    if (name === "dataColumns") {
+      setFormData({ ...formData, [name]: cleanDataColumn(value) });
+    } else {
+      setFormData({ ...formData, [name]: value });
     }
-
   };
-  
 
-  const handleCheckboxChange = (id) => {
-    // Create a new list of records with updated checked status
-    const updatedRecords = records.map((record) => {
-      if (record.id === id) {
-        let updatedRecord = Object.assign({}, record); // Clone the object
-        updatedRecord.checked = !updatedRecord.checked; // Toggle the checked status
-        return updatedRecord;
-      }
-      return record;
+  const handleSchemaChange = (index, field, value) => {
+    const updatedSchema = [...formData.schema];
+    updatedSchema[index][field] = value;
+    setFormData({ ...formData, schema: updatedSchema });
+  };
+
+  const addSchemaRow = () => {
+    setFormData({
+      ...formData,
+      schema: [...formData.schema, { column: "", dataType: "STRING" }],
     });
-  
-    // Update state with the modified records list
-    setRecords(updatedRecords);
-
   };
-  
-  
 
-  const handlePlanningNumberChange = (id, newValue) => {
-    // Create a new list of records
-    const updatedRecords = records.map((record) => {
-      if (record.id === id) {
-        let updatedRecord = Object.assign({}, record); // Clone the object
-        updatedRecord.planningNumber = newValue; // Update the value
-        return updatedRecord;
-      }
-      return record;
-    });
-  
-    // Update state
-    setRecords(updatedRecords);
+  const removeSchemaRow = (index) => {
+    const updatedSchema = formData.schema.filter((_, i) => i !== index);
+    setFormData({ ...formData, schema: updatedSchema });
   };
-  
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const schemaObject = formData.schema.reduce((acc, item) => {
+      acc[item.column.toLowerCase()] = item.dataType.toLowerCase();
+      return acc;
+    }, {});
+
+    console.log(formData);
+    clear_data();
+  };
+
+  const handleAddTableData = () => {
+    // Add the current Table Name and Google Link to the tableData state
+    const newTableData = [...tableData, { tableName: formData.tableName, googleLink: formData.googleLink }];
+    setTableData(newTableData);
+  };
+
+  const toggleTable = () => {
+    setShowTable(!showTable); // Toggle the visibility of the table
+  };
+
   
 
   return (
-    <Container className="mt-4">
-      <h3>Manager Approval</h3>
-      <div className="d-flex gap-2 mb-3">
-        <Button variant="success" onClick={() => handleApproval(true)}>
-          Approve
+    <Form onSubmit={handleSubmit} className="p-3">
+      {/* Button to toggle table visibility */}
+
+    <Button
+    onClick={toggleTable}
+    variant="info"
+    className="mt-2 d-inline-block"
+    >
+    Show Table
+    </Button>
+
+      {/* Conditionally render table */}
+      {showTable && (
+        <Table striped bordered hover className="mt-2">
+          <thead>
+            <tr>
+              <th>Table Name</th>
+              <th>Google Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tableData.map((row, index) => (
+              <tr key={index}>
+                <td>{row.tableName}</td>
+                <td>{row.googleLink}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
+
+      <h2>Create more table: </h2>
+
+      <Form.Control
+        type="text"
+        name="googleLink"
+        value={formData.googleLink}
+        onChange={handleChange}
+        placeholder="Google Link"
+        className="mt-2"
+      />
+      <Form.Control
+        type="text"
+        name="tableName"
+        value={formData.tableName}
+        onChange={handleChange}
+        placeholder="Table Name"
+        className="mt-2"
+      />
+      <Form.Control
+        type="text"
+        name="sheetId"
+        value={formData.sheetId}
+        onChange={handleChange}
+        placeholder="Sheet ID"
+        className="mt-2"
+      />
+      <Form.Control
+        type="text"
+        name="dataRange"
+        value={formData.dataRange}
+        onChange={handleChange}
+        placeholder="Data Range"
+        className="mt-2"
+      />
+      <Form.Control
+        type="text"
+        name="dataColumns"
+        value={formData.dataColumns}
+        onChange={handleChange}
+        placeholder="Data Columns"
+        className="mt-2"
+      />
+
+      {/* DropIfNa Input */}
+      <Form.Control
+        type="text"
+        name="dropIfNa"
+        value={formData.dropIfNa}
+        onChange={handleChange}
+        placeholder="Drop If Na"
+        className="mt-2"
+      />
+
+      <Table striped bordered hover className="mt-2">
+        <thead>
+          <tr>
+            <th>Column Name</th>
+            <th>Data Type</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {formData.schema.map((row, index) => (
+            <tr key={index}>
+              <td>
+                <Form.Control
+                  type="text"
+                  value={row.column}
+                  onChange={(e) => handleSchemaChange(index, "column", e.target.value)}
+                  placeholder="Column Name"
+                  className="mt-2"
+                />
+              </td>
+              <td>
+                <Form.Select
+                  value={row.dataType}
+                  onChange={(e) => handleSchemaChange(index, "dataType", e.target.value)}
+                  className="mt-2"
+                >
+                  <option value="STRING">STRING</option>
+                  <option value="FLOAT">FLOAT</option>
+                  <option value="TIMESTAMP">TIMESTAMP</option>
+                </Form.Select>
+              </td>
+              <td className="d-flex justify-content-center">
+                <Button variant="danger" onClick={() => removeSchemaRow(index)} className="mt-2">
+                  Remove
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+
+      <div className="d-flex gap-3 mt-2">
+        <Button onClick={addSchemaRow} variant="success" className="w-auto">
+          Add Column
         </Button>
-        <Button variant="danger" onClick={() => handleApproval(false)}>
-          Reject
+        <Button type="submit" variant="primary" className="w-100">
+          Submit
         </Button>
       </div>
-      <div className="d-flex flex-wrap gap-3">
-        {records.map((record) => (
-          <Card key={record.id} className="p-3 shadow" style={{ width: "350px" }}>
-            <Card.Body className="p-0">
-              <Form.Check 
-                type="switch"
-                id={`switch-${record.id}`}
-                checked={record.checked}
-                onChange={() => handleCheckboxChange(record.id)}
-                className="mb-4"
-              />
-              <Card.Title>ID: {record.id}</Card.Title>
-              <div><strong>Status:</strong> {record.status ? "Approved" : "Rejected"}</div>
-              <div><strong>Customer:</strong>{record.customer}</div>
-              <div><strong>Gift:</strong>{record.gift}</div>
-              <div><strong>Channel:</strong>{record.channel}</div>
-              <div><strong>Content:</strong>{record.content}</div>
-              <div><strong>Note:</strong>{record.note}</div>
-              <Form.Group>
-              <Form.Label><strong>Planning Number:</strong></Form.Label>
-              <Form.Control
-                type="number"
-                value={record.planningNumber} // Use record's value directly
-                onChange={(e) => handlePlanningNumberChange(record.id, e.target.value)}
-              />
-            </Form.Group>
-            </Card.Body>
-          </Card>
-        ))}
-      </div>
-    </Container>
+    </Form>
   );
 };
 
-export default ManagerApprovalForm;
+export default DataForm;

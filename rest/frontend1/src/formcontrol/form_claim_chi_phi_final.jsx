@@ -16,6 +16,8 @@ import {
     Card,
     Table
 } from "react-bootstrap";
+import dayjs from "dayjs";
+import { FaDownload } from "react-icons/fa";
 
 const Form_claim_chi_phi_final = ( {history} ) => {
     const location = useLocation();
@@ -64,11 +66,12 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     
   const f = new Intl.NumberFormat()
   const [manv, set_manv] = useState("");
-
-  // const parseCurrency = (value) => {
-  //   if (typeof value !== 'string') return 0;
-  //   return Number(value.replace(/,/g, '')) || 0;
-  // };
+  const [showModal, setShowModal] = useState(false);
+  const [fromDate, setFromDate] = useState(dayjs().startOf("month").format("YYYY-MM-DD"));
+  const [toDate, setToDate] = useState(dayjs().format("YYYY-MM-DD"));
+  const [downloadUrl, setDownloadUrl] = useState("https://bi.meraplion.com/DMS/data_mds_tra_thuong_cmm_2025/0_008828.jpeg");
+  const [spinning, setSpinning] = useState(false);  // Replaced `loading` with `spinning`
+  const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
   const post_form_data = async (data) => {
     SetLoading(true)
@@ -166,6 +169,39 @@ const Form_claim_chi_phi_final = ( {history} ) => {
       set_data_submit(updatedRecords);
   };
 
+  const handleConfirm = async () => {
+    setSpinning(true);
+    setErrorMessage(""); // Reset error message before new request
+    const requestData = { fromDate, toDate, manv };
+    console.log(requestData)
+    try {
+      const response = await fetch("/api/data-download/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      if (result.url) {
+        setDownloadUrl(result.url);
+      } else {
+        throw new Error('No download URL found in response');
+      }
+    } catch (error) {
+      console.error("Error sending request:", error);
+      setErrorMessage("There was an error processing your request. Please try again later.");
+    } finally {
+      setSpinning(false);
+    }
+  }
+
   return (
     <Container className="h-100" fluid> 
       <Row className="justify-noi_dung-center mb-1 mt-1">
@@ -209,9 +245,9 @@ const Form_claim_chi_phi_final = ( {history} ) => {
         <Button variant="success" onClick={() => handleApproval()}>
           Gửi đề nghị
         </Button>
-        {/* <Button variant="danger" onClick={() => handleApproval(false)}>
-          Reject
-        </Button> */}
+        <Button variant="outline-success" onClick={() => setShowModal(true)}>
+          Tải dữ liệu đã được duyệt
+        </Button>
       </div>
 
       <div style={{ overflowX: 'auto' }}>
@@ -292,6 +328,55 @@ const Form_claim_chi_phi_final = ( {history} ) => {
           ))}
         </tbody>
       </Table>
+
+      {/* MODAL */}
+
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Chọn khoảng thời gian</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Từ ngày</Form.Label>
+              <Form.Control
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Đến ngày</Form.Label>
+              <Form.Control
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+              />
+            </Form.Group>
+            {downloadUrl && (
+            <div className="mt-3">
+              <a 
+                href={downloadUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="btn btn-outline-success d-flex align-items-center"
+                style={{ padding: "10px 20px", textDecoration: "none" }}
+              >
+                <FaDownload className="mr-2" /> Tải xuống dữ liệu
+              </a>
+            </div>
+          )}
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Đóng
+          </Button>
+          <Button variant="primary" onClick={handleConfirm} disabled={loading} >
+          {loading ? <Spinner as="span" animation="border" size="sm" /> : "Xác nhận"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
     </Container>
   );
