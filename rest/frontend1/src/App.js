@@ -69,6 +69,7 @@ import Form_claim_chi_phi_ql_duyet from  "./formcontrol/form_claim_chi_phi_ql_du
 import Form_claim_chi_phi_final from  "./formcontrol/form_claim_chi_phi_final";
 import Form_claim_chi_phi_ql_duyet_invmapped from  "./formcontrol/form_claim_chi_phi_ql_duyet_invmapped";
 
+import Get_new_upload_files from  "./formcontrol/get_new_upload_files";
 
 import Tinh_diem_van_nghe from  "./formcontrol/tinh_diem_van_nghe";
 import Test from  "./formcontrol/test";
@@ -142,6 +143,7 @@ function App() {
                 <Route path="/formcontrol/form_claim_chi_phi_ql_duyet" component={Form_claim_chi_phi_ql_duyet} />
                 <Route path="/formcontrol/form_claim_chi_phi_final" component={Form_claim_chi_phi_final} />
                 <Route path="/formcontrol/form_claim_chi_phi_ql_duyet_invmapped" component={Form_claim_chi_phi_ql_duyet_invmapped} />
+                <Route path="/formcontrol/get_new_upload_files" component={Get_new_upload_files} />
                 <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} />
                 {/* <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} /> */}
                 {/* REPORT */}

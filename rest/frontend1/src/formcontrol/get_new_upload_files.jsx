@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { v4 as uuid } from 'uuid';
+// import { v4 as uuid } from 'uuid';
 import './myvnp.css';
 import { Link, useLocation  } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
@@ -11,7 +11,9 @@ import {
   // Container,
   // Dropdown,
   Form,
-  // Spinner,
+  InputGroup,
+  Modal,
+  Spinner,
   // InputGroup,
   // Stack,
   // FloatingLabel,
@@ -37,7 +39,8 @@ const cleanDataColumn = (input) => {
   return finalCleaned;
 };
 
-const DataForm = () => {
+const Get_new_upload_files = () => {
+    const location = useLocation();
 
   const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
@@ -54,19 +57,19 @@ const DataForm = () => {
       SetLoading(false)
       }
     }
-    // const [count, setCount] = useState(0);    
+    const [count, setCount] = useState(0);
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, location.pathname, isMB, dv_width);
-        // set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
+        set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
         } else {
             history.push(`/login?redirect=${location.pathname}`);
         };
-    }, []);
+    }, [count]);
 
   const [formData, setFormData] = useState({
     tableName: "",
@@ -77,10 +80,10 @@ const DataForm = () => {
     dropIfNa: "",
     schema: [],
   });
+    const [manv, set_manv] = useState("");
+    const [showTable, setShowTable] = useState(false); // State to control table visibility
 
-  const [showTable, setShowTable] = useState(false); // State to control table visibility
-
-  const [tableData, setTableData] = useState([]);
+    const [tableData, setTableData] = useState([]);
 
   const clear_data = () => {
     setFormData({
@@ -205,7 +208,7 @@ function handleEditRow(index) {
         SetALertText("ĐÃ TẠO THÀNH CÔNG");
         setTimeout(() => SetALert(false), 3000);
         clear_data();
-        // setCount(count+1);
+        setCount(count+1);
 
     }
 }
@@ -233,9 +236,27 @@ function handleEditRow(index) {
   };
 
   
+  const inputLabelStyle = {
+    minWidth: "150px", // Adjust width as needed
+    justifyContent: "left"
+  };
 
   return (
+    
     <Form onSubmit={handleSubmit} className="p-3">
+
+      {/* ALERT COMPONENT */}
+      <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
+          <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
+
+      {alert &&
+      <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
+          <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
+          </button>
+          <span><strong>Cảnh Báo:  </strong>{alertText}</span>
+      </div>
+      }
+      </Modal>
       {/* Button to toggle table visibility */}
 
     <Button
@@ -280,56 +301,73 @@ function handleEditRow(index) {
 
       <h2>Create more table: </h2>
 
-      <Form.Control
-        type="text"
-        name="googleLink"
-        value={formData.googleLink}
-        onChange={handleChange}
-        placeholder="Google Link"
-        className="mt-2"
-      />
-      <Form.Control
-        type="text"
-        name="tableName"
-        value={formData.tableName}
-        onChange={handleChange}
-        placeholder="Table Name"
-        className="mt-2"
-      />
-      <Form.Control
-        type="text"
-        name="sheetId"
-        value={formData.sheetId}
-        onChange={handleChange}
-        placeholder="Sheet ID"
-        className="mt-2"
-      />
-      <Form.Control
-        type="text"
-        name="dataRange"
-        value={formData.dataRange}
-        onChange={handleChange}
-        placeholder="Data Range"
-        className="mt-2"
-      />
-      <Form.Control
-        type="text"
-        name="dataColumns"
-        value={formData.dataColumns}
-        onChange={handleChange}
-        placeholder="Data Columns"
-        className="mt-2"
-      />
 
-      {/* DropIfNa Input */}
-      <Form.Control
-        type="text"
-        name="dropIfNa"
-        value={formData.dropIfNa}
-        onChange={handleChange}
-        placeholder="Drop If Na"
-        className="mt-2"
-      />
+<InputGroup className="mt-2">
+  <InputGroup.Text style={inputLabelStyle}>Google Link</InputGroup.Text>
+  <Form.Control
+    type="text"
+    name="googleLink"
+    value={formData.googleLink}
+    onChange={handleChange}
+    placeholder="Google Link"
+  />
+</InputGroup>
+
+<InputGroup className="mt-2">
+  <InputGroup.Text style={inputLabelStyle}>Sheet ID</InputGroup.Text>
+  <Form.Control
+    type="text"
+    name="sheetId"
+    value={formData.sheetId}
+    onChange={handleChange}
+    placeholder="Sheet ID"
+  />
+</InputGroup>
+
+<InputGroup className="mt-2">
+  <InputGroup.Text style={inputLabelStyle}>Table Name</InputGroup.Text>
+  <Form.Control
+    type="text"
+    name="tableName"
+    value={formData.tableName}
+    onChange={handleChange}
+    placeholder="Table Name"
+  />
+</InputGroup>
+
+
+<InputGroup className="mt-2">
+  <InputGroup.Text style={inputLabelStyle}>Data Range</InputGroup.Text>
+  <Form.Control
+    type="text"
+    name="dataRange"
+    value={formData.dataRange}
+    onChange={handleChange}
+    placeholder="Data Range"
+  />
+</InputGroup>
+
+<InputGroup className="mt-2">
+  <InputGroup.Text style={inputLabelStyle}>Data Columns</InputGroup.Text>
+  <Form.Control
+    type="text"
+    name="dataColumns"
+    value={formData.dataColumns}
+    onChange={handleChange}
+    placeholder="Data Columns"
+  />
+</InputGroup>
+
+<InputGroup className="mt-2">
+  <InputGroup.Text style={inputLabelStyle}>Drop If Na</InputGroup.Text>
+  <Form.Control
+    type="text"
+    name="dropIfNa"
+    value={formData.dropIfNa}
+    onChange={handleChange}
+    placeholder="Drop If Na"
+  />
+</InputGroup>
 
       <Table bordered hover className="mt-2">
         <thead>
@@ -384,4 +422,4 @@ function handleEditRow(index) {
   );
 };
 
-export default DataForm;
+export default Get_new_upload_files;

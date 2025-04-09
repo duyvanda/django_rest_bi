@@ -18,6 +18,7 @@ import {
 } from "react-bootstrap";
 import dayjs from "dayjs";
 import { FaDownload } from "react-icons/fa";
+import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
 
 const Form_claim_chi_phi_final = ( {history} ) => {
     const location = useLocation();
@@ -25,7 +26,9 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
-      const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_final/?manv=${manv}`)
+      // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_final/?manv=${manv}`)
+      const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_final/?manv=MR0673`)
+
       
       if (!response.ok) {
           SetLoading(false)
@@ -204,29 +207,8 @@ const Form_claim_chi_phi_final = ( {history} ) => {
 
   return (
     <Container className="h-100" fluid> 
-      <Row className="justify-noi_dung-center mb-1 mt-1">
-      <Col xs={4}>
-      <Link to="/formcontrol/form_claim_chi_phi">
-      <Button 
-      variant={location.pathname === "/formcontrol/form_claim_chi_phi" ? "primary" : "outline-primary"}
-      className="w-100">ĐỀ XUẤT</Button>
-      </Link>
-      </Col>
-      <Col xs={4}>
-      <Link to="/formcontrol/form_claim_chi_phi_ql_duyet">
-      <Button 
-      variant={location.pathname === "/formcontrol/form_claim_chi_phi_ql_duyet" ? "secondary" : "outline-secondary"} 
-      className="w-100">QL DUYỆT</Button>
-      </Link>
-      </Col>
-      <Col xs={4}>
-      <Link to="/formcontrol/form_claim_chi_phi_final">
-      <Button
-      variant={location.pathname === "/formcontrol/form_claim_chi_phi_final" ? "success" : "outline-success"} 
-      className="w-100">CLAIM CHI PHÍ</Button>
-      </Link>
-      </Col>
-      </Row>
+        {/* Responsive Full-Width Buttons */}
+        <ClaimNavTabs />
 
       {/* ALERT COMPONENT */}
       <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">

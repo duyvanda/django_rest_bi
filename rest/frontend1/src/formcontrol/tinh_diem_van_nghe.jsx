@@ -37,17 +37,10 @@ function Tinh_diem_van_nghe({history}) {
         if (!response.ok) {
             SetLoading(false)
         }
-
         else {
         const data_arr = await response.json()
         set_tick_chon(data_arr['tick_chon'])
-        // const data = data_arr[0]
-        // set_lst_dd1(data_arr.data_hcp)
-        // set_lst_dd2(data_arr.data_hoa_don)
-        // set_lst_dd3(data_arr.tick_chon)
-        // console.log(data)
         SetLoading(false)
-
         }
     }
     const [count, setCount] = useState(0);    

@@ -14,6 +14,7 @@ import {
     Form,
     Spinner,
 } from "react-bootstrap";
+import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
 
 function Form_claim_chi_phi({ history }) {
     const location = useLocation();
@@ -21,8 +22,8 @@ function Form_claim_chi_phi({ history }) {
     
     const fetch_initial_data = async (manv) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=${manv}`)
-        
+        // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=${manv}`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=MR0673`)
         if (!response.ok) {
             SetLoading(false)
         }
@@ -49,6 +50,7 @@ function Form_claim_chi_phi({ history }) {
             history.push(`/login?redirect=${location.pathname}`);
         };
     }, []);
+    
     const [manv, set_manv] = useState("");
     const [manv_info, set_manv_info] = useState("");
     const [chon_kh_chung, set_chon_kh_chung] = useState(null);
@@ -151,7 +153,8 @@ function Form_claim_chi_phi({ history }) {
         const data = {
             id: get_id(),
             status:"new",
-            manv: manv,
+            // manv: manv,
+            manv: "MR0673",
             tencvbh: manv_info?.tencvbh,
             phongdeptsummary: manv_info?.phongdeptsummary,
             chon_kh_chung: chon_kh_chung?.hco_bv,
@@ -176,32 +179,10 @@ function Form_claim_chi_phi({ history }) {
     if (true) {
         return (
     <Container className="bg-teal-100 h-100" fluid>
-      {/* Responsive Full-Width Buttons */}
-      <Row className="justify-noi_dung-center mb-1 mt-1">
-        <Col xs={4}>
-          <Link to="/formcontrol/form_claim_chi_phi">
-            <Button 
-            variant={location.pathname === "/formcontrol/form_claim_chi_phi" ? "primary" : "outline-primary"}
-            className="w-100">ĐỀ XUẤT</Button>
-          </Link>
-        </Col>
-        <Col xs={4}>
-          <Link to="/formcontrol/form_claim_chi_phi_ql_duyet">
-            <Button 
-            variant={location.pathname === "/formcontrol/form_claim_chi_phi_ql_duyet" ? "secondary" : "outline-secondary"} 
-            className="w-100">QL DUYỆT</Button>
-          </Link>
-        </Col>
-        <Col xs={4}>
-          <Link to="/formcontrol/form_claim_chi_phi_final">
-            <Button
-            variant={location.pathname === "/formcontrol/form_claim_chi_phi_final" ? "success" : "outline-success"} 
-            className="w-100">CLAIM CHI PHÍ</Button>
-          </Link>
-        </Col>
-      </Row>
-      
-      {/* Existing noi_dung */}
+        {/* Responsive Full-Width Buttons */}
+        <ClaimNavTabs />
+
+        {/* Existing noi_dung */}
 
                 <Row className="justify-noi_dung-center">
                     <Col xs={12} md={12}>

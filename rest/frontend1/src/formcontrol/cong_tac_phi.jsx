@@ -20,6 +20,7 @@ import {
     // Stack,
     // Dropdown
 } from "react-bootstrap";
+import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
 
 // import { Trash } from "react-bootstrap-icons";
 
@@ -49,11 +50,11 @@ function Cong_tac_phi({history}) {
 
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {        
-        navigator.geolocation.getCurrentPosition(position => {
-            const { latitude, longitude } = position.coords;
-            setInitialPosition([latitude, longitude]);
-            console.log("current loc", [latitude, longitude])
-        });
+        // navigator.geolocation.getCurrentPosition(position => {
+        //     const { latitude, longitude } = position.coords;
+        //     setInitialPosition([latitude, longitude]);
+        //     console.log("current loc", [latitude, longitude])
+        // });
         
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
@@ -217,6 +218,8 @@ function Cong_tac_phi({history}) {
     if (true) {
         return (
         <Container className="bg-teal-100 h-100" fluid>
+        {/* Responsive Full-Width Buttons */}
+        <ClaimNavTabs />
             <Row className="justify-content-center">
                 <Col md={5} >
 
@@ -239,7 +242,7 @@ function Cong_tac_phi({history}) {
                         <Form onSubmit={handle_submit}>
                         {/* START FORM BODY */}
                         
-                        <h3>FORM GHI NHẬN HÀNG CHI PHÍ PKH</h3>
+                        {/* <h3>FORM GHI NHẬN HÀNG CHI PHÍ PKH</h3> */}
 
                             <div className="text-center">
                             <Button onClick={startRecording} disabled={recording} variant="primary">

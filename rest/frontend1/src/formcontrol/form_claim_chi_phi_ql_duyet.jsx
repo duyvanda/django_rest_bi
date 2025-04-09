@@ -15,6 +15,7 @@ import {
     Card,
     Table
 } from "react-bootstrap";
+import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
 
 const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
     const location = useLocation();
@@ -22,8 +23,8 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
     
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
-      const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_ql_duyet/?manv=${manv}`)
-      
+      // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_ql_duyet/?manv=${manv}`)
+      const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_ql_duyet/?manv=MR0673`)
       if (!response.ok) {
           SetLoading(false)
       }
@@ -151,29 +152,8 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
 
   return (
     <Container className="h-100" fluid> 
-      <Row className="justify-noi_dung-center mb-1 mt-1">
-      <Col xs={4}>
-      <Link to="/formcontrol/form_claim_chi_phi">
-      <Button 
-      variant={location.pathname === "/formcontrol/form_claim_chi_phi" ? "primary" : "outline-primary"}
-      className="w-100">ĐỀ XUẤT</Button>
-      </Link>
-      </Col>
-      <Col xs={4}>
-      <Link to="/formcontrol/form_claim_chi_phi_ql_duyet">
-      <Button 
-      variant={location.pathname === "/formcontrol/form_claim_chi_phi_ql_duyet" ? "secondary" : "outline-secondary"} 
-      className="w-100">QL DUYỆT</Button>
-      </Link>
-      </Col>
-      <Col xs={4}>
-      <Link to="/formcontrol/form_claim_chi_phi_final">
-      <Button
-      variant={location.pathname === "/formcontrol/form_claim_chi_phi_final" ? "success" : "outline-success"} 
-      className="w-100">CLAIM CHI PHÍ</Button>
-      </Link>
-      </Col>
-      </Row>
+        {/* Responsive Full-Width Buttons */}
+        <ClaimNavTabs />
 
       {/* ALERT COMPONENT */}
       <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
@@ -190,11 +170,17 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
 
       <div className="d-flex gap-2 mb-3">
         <Button variant="success" onClick={() => handleApproval(true)}>
-          Approve
+          CONFIRM
         </Button>
         <Button variant="danger" onClick={() => handleApproval(false)}>
-          Reject
+          DENY
         </Button>
+        <Link to="/formcontrol/form_claim_chi_phi_ql_duyet_invmapped">
+          <Button
+          variant={location.pathname === "/formcontrol/form_claim_chi_phi_ql_duyet_invmapped" ? "secondary" : "outline-secondary"} 
+          className="w-100">DUYỆT HÓA ĐƠN
+          </Button>
+        </Link>
       </div>
 
       <div style={{ overflowX: 'auto' }}>
