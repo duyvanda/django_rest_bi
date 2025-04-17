@@ -18,12 +18,13 @@ import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as
 
 function Form_claim_chi_phi({ history }) {
     const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
     const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
     
     const fetch_initial_data = async (manv) => {
         SetLoading(true)
-        // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=${manv}`)
-        const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=MR0673`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=${queryParams.get('manv')}`)
+        // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=MR0673`)
         if (!response.ok) {
             SetLoading(false)
         }
@@ -52,11 +53,13 @@ function Form_claim_chi_phi({ history }) {
     }, []);
     
     const [manv, set_manv] = useState("");
-    const [manv_info, set_manv_info] = useState("");
+    const [manv_info, set_manv_info] = useState(null);
     const [chon_kh_chung, set_chon_kh_chung] = useState(null);
     const [chon_hcp, set_chon_hcp] = useState(null);
     const [qua_tang, set_qua_tang] = useState("");
     const [kenh, set_kenh] = useState("");
+    const [ty_le, set_ty_le] = useState({ value: '5:5', label: '5:5' });
+    const [current_noi_dung, set_current_noi_dung] = useState([]);
     const [noi_dung, set_noi_dung] = useState("");
     const [ghi_chu, set_ghi_chu] = useState("");
     const [so_ke_hoach, set_so_ke_hoach] = useState("");
@@ -70,7 +73,7 @@ function Form_claim_chi_phi({ history }) {
 
 );  
     
-    const kenhs = ["CLC", "INS", "PCL", "TP", "MT" ];
+    const kenhs = ["CLC & INS","CLC", "INS", "PCL"];
     // const noi_dungs = ["noi_dung1", "noi_dung2", "noi_dung3"];
 
     const noi_dungs = [
@@ -97,10 +100,51 @@ function Form_claim_chi_phi({ history }) {
         "Chi phí quà tặng ngày giáng sinh 24/12"
     ];
 
+    const noi_dungs_giao_tiep = [
+        "Chi phí gặp gỡ giao tiếp trao đổi thông tin",
+        "Chi phí gặp sở chia sẻ thông tin ngành",
+        "Chi phí giao tiếp tư vấn chuyên môn",
+        "Chi phí giao tiếp cập nhật kiến thức về sản phẩm",
+        "Chi phí giao tiếp đánh giá về hiệu quả của thuốc"
+      ];
+
     const qua_tang_type = [
         "Quà tặng",
         "Giao tiếp - Mời cơm",
     ]
+
+    const handleQuaTangChange = (e) => {
+        const selectedValue = e.target.value;
+        set_qua_tang(selectedValue);
+        set_noi_dung(null); // Reset nội dung
+    
+        if (selectedValue === 'Giao tiếp - Mời cơm') {
+          set_current_noi_dung(noi_dungs_giao_tiep);
+        } else {
+          set_current_noi_dung(noi_dungs);
+        }
+      };
+
+
+// So every time current_noi_dung changes (from set_current_noi_dung()), React re-renders the component, and this line re-executes to generate new options. That’s why it still works even though it’s not inside the handler.
+// It’s totally valid (and preferred) to keep this mapping outside like that — it's declarative and aligns with React's reactive design.
+
+    // Check if phongdeptsummary is "MT" or "TP"
+    const isKenhDisabled = manv_info?.phongdeptsummary === 'MT' || manv_info?.phongdeptsummary === 'TP';
+    // If phongdeptsummary is "MT" or "TP", set kenh to that value
+    const currentKenhValue = isKenhDisabled ? manv_info?.phongdeptsummary : kenh;
+    
+    // Automatically set kenh to "MT" or "TP" if necessary
+    useEffect(() => {
+    if (manv_info?.phongdeptsummary === 'MT' || manv_info?.phongdeptsummary === 'TP') {
+        set_kenh(manv_info?.phongdeptsummary); // Set kenh to "MT" or "TP"
+    }
+    }, [manv_info]); // Run this effect when manv_info changes
+
+    const noi_dung_options = current_noi_dung.map(item => ({
+        value: item,
+        label: item
+        }));
 
     const clear_data = () => {
         set_chon_kh_chung(null);
@@ -150,8 +194,8 @@ function Form_claim_chi_phi({ history }) {
 
     const handle_submit = (e) => {
         e.preventDefault();
-        const data = {
-            id: get_id(),
+        const baseData = {
+            id: null,
             status:"new",
             // manv: manv,
             manv: "MR0673",
@@ -162,18 +206,59 @@ function Form_claim_chi_phi({ history }) {
             chon_hcp: chon_hcp?.ma_hcp_2,
             ten_hcp: chon_hcp?.ten_hcp,
             qua_tang,
-            kenh,
-            noi_dung,
+            kenh: null,
+            noi_dung: noi_dung,
             ghi_chu,
-            so_ke_hoach: so_ke_hoach.replace(/,/g, ""),
+            so_ke_hoach: null,
             so_hoa_don: null,
             ngay_hoa_don: null,
             so_tien_hoa_don:null,
             inserted_at: Inserted_at()      
         };
-        console.log(data);
-        post_form_data(data);
-        clear_data();
+        const plan = Number(so_ke_hoach.replace(/,/g, ""));
+
+        let dataEntries = [];  // Initialize an array to hold the data entries
+
+        if (ty_le && (kenh === "CLC & INS")) {
+
+            const rawId = get_id(); // "20250413215410748"
+            const id1 = rawId;
+            const id2 = (BigInt(rawId) + 1n).toString(); // ← BigInt handles large integers safely
+            console.log('id1:', id1, 'id2:', id2);  // Check if id1 and id2 are different
+            const [clcRatio, insRatio] = ty_le.value.split(':').map(Number);
+            const total = clcRatio + insRatio;
+            const clcValue = Math.round(plan * (clcRatio / total));
+            const insValue = plan - clcValue; // ensure it totals correctly
+        
+            const data1 = {
+              ...baseData,
+              id: id1,
+              kenh: "CLC",
+              so_ke_hoach: clcValue
+            };
+        
+            const data2 = {
+              ...baseData,
+              id: id2,
+              kenh: "INS",
+              so_ke_hoach: insValue
+            };
+        
+            console.log("Multiple data entries:", [data1, data2]);
+            dataEntries.push(data1, data2);
+        } else {
+            const data = {
+              ...baseData,
+              kenh,
+              so_ke_hoach: plan
+            };
+            console.log("Single data entry:", [data]);
+            dataEntries.push(data);
+        }
+
+        // console.log(data);
+        post_form_data(dataEntries);
+        // clear_data();
     };
 
     if (true) {
@@ -218,19 +303,20 @@ function Form_claim_chi_phi({ history }) {
                             {/* chon_hcp Select with Search */}
                             <Select
                             className="mt-2"
-                            options={data_hcp.filter((el) => el.hco_bv === chon_kh_chung?.hco_bv)} // Filter data_hcp
+                            options={data_hcp.filter((el) => el.hco_bv === chon_kh_chung?.hco_bv)}
                             getOptionValue={(el) => el.ma_hcp_2}
                             getOptionLabel={(el) => `${el.ma_hcp_2} - ${el.ten_hcp}`}
                             value={chon_hcp}
                             onChange={set_chon_hcp}
                             // onChange={ (selectedOption) => set_chon_hcp(selectedOption?.ma_hcp_2) }
                             isSearchable
+                            isDisabled={isKenhDisabled}
                             placeholder="Chọn khách hàng"
                             styles={{ placeholder: (base) => ({ ...base, color: "#212529" }) }}
                             />
 
-                            {/* kenh Select */}
-                            <Form.Select className='mt-2' required onChange={(e) => set_qua_tang(e.target.value)} value={qua_tang}>
+                            {/* Chon Loai Qua Select */}
+                            <Form.Select className='mt-2' required onChange={handleQuaTangChange} value={qua_tang}>
                                 <option value="">Chọn loại quà</option>
                                 {qua_tang_type.map((ch, idx) => (
                                 <option key={idx} value={ch}>{ch}</option>
@@ -238,20 +324,68 @@ function Form_claim_chi_phi({ history }) {
                             </Form.Select>
                             
                             {/* kenh Select */}
-                            <Form.Select className='mt-2' required onChange={(e) => set_kenh(e.target.value)} value={kenh}>
-                                <option value="">Chọn kênh</option>
-                                {kenhs.map((ch, idx) => (
-                                    <option key={idx} value={ch}>{ch}</option>
-                                ))}
+                            <Form.Select className='mt-2' required 
+                            onChange={(e) => set_kenh(e.target.value)} 
+                            value={currentKenhValue}
+                            disabled={isKenhDisabled}
+                            >
+                            
+                            <option value="">Chọn kênh</option>
+                            {kenhs.map((ch, idx) => (
+                                <option key={idx} value={ch}>{ch}</option>
+                            ))}
                             </Form.Select>
+
+                            {(kenh === 'CLC & INS') && (
+                                <Select
+                                required
+                                className="mt-2"
+                                options={[
+                                { value: '5:5', label: '5:5' },
+                                { value: '6:4', label: '6:4' },
+                                { value: '7:3', label: '7:3' }
+                                ]}
+                                value={ty_le} // state for selected option
+                                onChange={(selected) => set_ty_le(selected)} // or set_ty_le(selected?.value) if storing string
+                                placeholder="Chọn tỷ lệ"
+                                isSearchable
+                                styles={{
+                                placeholder: (base) => ({ ...base, color: "#212529" })
+                                }}
+                            />
+                            )}
                             
                             {/* noi_dung Select */}
-                            <Form.Select className='mt-2' required onChange={(e) => set_noi_dung(e.target.value)} value={noi_dung}>
+                            {/* <Form.Select className='mt-2' required onChange={(e) => set_noi_dung(e.target.value)} value={noi_dung}>
                                 <option value="">Chọn nội dung</option>
-                                {noi_dungs.map((cnt, idx) => (
+                                {current_noi_dung.map((cnt, idx) => (
                                     <option key={idx} value={cnt}>{cnt}</option>
                                 ))}
-                            </Form.Select>
+                            </Form.Select> */}
+
+                            {(manv_info?.phongdeptsummary === 'MT' || manv_info?.phongdeptsummary === 'TP') ? (
+                            <textarea
+                                className="form-control mt-2"
+                                placeholder="Nhập nội dung"
+                                value={noi_dung}
+                                onChange={(e) => set_noi_dung(e.target.value)}
+                                required
+                            />
+                            ) : 
+                            
+                            (
+                                <Select
+                                className="mt-2"
+                                options={noi_dung_options}
+                                value={noi_dung_options.find(option => option.value === noi_dung) || null}
+                                onChange={(selected) => set_noi_dung(selected?.value || '')}
+                                isSearchable
+                                placeholder="Chọn nội dung"
+                                styles={{ placeholder: (base) => ({ ...base, color: "#212529" }) }}
+                                />
+                            )}
+
+
                             
                             {/* ghi_chu Input */}
                             <Form.Control className='mt-2 dark-placeholder' required type="text" placeholder="Ghi chú" onChange={(e) => set_ghi_chu(e.target.value)} value={ghi_chu} style={{ '::placeholder': { color: '#333' } }}/>
@@ -288,4 +422,25 @@ function Form_claim_chi_phi({ history }) {
 
 export default Form_claim_chi_phi;
 
+
+// {
+//     "id": "20250413220210839",
+//     "status": "new",
+//     "manv": "MR0673",
+//     "tencvbh": "Hồ Thị Hồng Gấm",
+//     "phongdeptsummary": "HCP",
+//     "chon_kh_chung": "004524",
+//     "pubcustname": "PK NGUYỄN HỮU DŨNG - SG",
+//     "chon_hcp": "HCP00032099-P",
+//     "ten_hcp": "Nguyễn Thị Thanh Thúy",
+//     "qua_tang": "Giao tiếp - Mời cơm",
+//     "kenh": "CLC",
+//     "noi_dung": "Chi phí gặp sở chia sẻ thông tin ngành",
+//     "ghi_chu": "abc",
+//     "so_ke_hoach": 420000,
+//     "so_hoa_don": null,
+//     "ngay_hoa_don": null,
+//     "so_tien_hoa_don": null,
+//     "inserted_at": "2025-04-13T15:02:10.839"
+// }
 

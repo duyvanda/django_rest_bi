@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import PLReports from "../data/PLReports";
+// import { useHistory, useLocation } from "react-router-dom";
 
 const FeedbackContext = createContext();
 
@@ -23,7 +24,8 @@ export const FeedbackProvider = ({ children }) => {
   const [alertType, SetALertType] = useState("alert-success");
   const [alertText, SetALertText] = useState("SUCCESS");
   // const [rt_report, set_rt_report] = useState("https://lookerstudio.google.com/embed/reporting/1ccb8576-9fae-4c46-a757-5a7aa361140d/page/7qYcD");
-
+  // const history = useHistory();
+  // const location = useLocation();
   const URL =
     window.location.host === "localhost:3000"
       ? process.env.REACT_APP_PURL
@@ -41,6 +43,34 @@ export const FeedbackProvider = ({ children }) => {
     // );
   // eslint-disable-next-line
   }, []);
+
+  const loginUser = async (logindata) => {
+    setLoginLoading(true);
+    const response = await fetch(`${URL}/loginv1/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(logindata),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      setLoginText(data.message);
+      setLoginLoading(false);
+    } else {
+      const data = await response.json();
+      console.log("loginUser response", data)
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
+
+      const data1 = JSON.parse(localStorage.getItem("userInfo"));
+      await fetchReports(data1.manv);
+      await fetchUserStatus(data1.manv, data1.token);
+      setLoginLoading(false);
+      setLoginText("");
+    }
+  };
 
   const fetchReports = async (manv) => {
     const response = await fetch(
@@ -65,33 +95,18 @@ export const FeedbackProvider = ({ children }) => {
 
       // console.log(lstreports)
       localStorage.setItem("userLstReports", JSON.stringify(lstreports));
+      console.log("lstreports", lstreports)
     }
     // end
   };
+  
 
   const fetchFilerReports = async (stt, isMB) => {
     let data = JSON.parse(localStorage.getItem("userLstReports"));
     let manv = JSON.parse(localStorage.getItem("userInfo")).manv;
     let lstreports = data.filter((el) => el.manv === manv);
     let manv_int_0 = manv.replaceAll("MR", "11")
-    // let manv_int = Number(manv_int_0)
-    // const manv_el = manv.substring(0, 2);
     setReports(lstreports);
-
-    // public reports
-    // if (manv_el === "EL") {
-    //   setReports(lstreports);
-    // } else {
-    //   let plreports = PLReports;
-    //   plreports[0].manv = manv;
-    //   lstreports.push(plreports[0]);
-    //   plreports[1].manv = manv;
-    //   lstreports.push(plreports[1]);
-
-    //   setReports(lstreports);
-    // }
-    // end
-
     let report_obj = lstreports.filter((el) => el.stt === stt)[0];
     console.log("report_obj", report_obj);
     setFilterReports(report_obj);
@@ -112,13 +127,6 @@ export const FeedbackProvider = ({ children }) => {
         setReportParam(rppr.replace("xxxxxx", "MR0000"));
         console.log(rppr.replace("xxxxxx", "MR0000"));
       }
-      // report_obj.type === 1
-      //   ? ( 
-      //     setReportParam(rppr.replace("xxxxxx", manv))
-      //     )
-      //   : ( 
-      //     setReportParam(rppr.replace("xxxxxx", "MR0000"))
-      //     );
     } else {
       setShared(false);
     }
@@ -331,45 +339,7 @@ export const FeedbackProvider = ({ children }) => {
     !data.check ? window.localStorage.removeItem("userLstReports") : void(0);
   };
 
-  const loginUser = async (logindata) => {
-    setLoginLoading(true);
-    const response = await fetch(`${URL}/loginv1/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(logindata),
-    });
 
-    if (!response.ok) {
-      const data = await response.json();
-      setLoginText(data.message);
-      setLoginLoading(false);
-    } else {
-      const data = await response.json();
-      console.log("loginUser response", data)
-      localStorage.setItem("userInfo", JSON.stringify(data));
-      setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
-
-      const data1 = JSON.parse(localStorage.getItem("userInfo"));
-      fetchReports(data1.manv);
-      fetchUserStatus(data1.manv, data1.token);
-      setLoginLoading(false);
-      setLoginText("");
-    }
-  };
-
-  // const changePassUser = async (changedata) => {
-  //   const response = await fetch(`${URL}/changepass/`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(changedata),
-  //   });
-  //   const data = await response.json();
-  //   logoutUser();
-  // };
 
   const getUserInfo = () => {
     if (JSON.parse(localStorage.getItem("userInfo"))) {

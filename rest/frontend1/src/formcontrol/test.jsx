@@ -1,387 +1,123 @@
-/* eslint-disable */
-import { useContext, useEffect, useState } from "react";
-import { v4 as uuid } from 'uuid';
-import './myvnp.css';
-import { Link, useLocation  } from "react-router-dom";
-import FeedbackContext from '../context/FeedbackContext'
-import {
-  Button,
-  // Col,
-  // Row,
-  // Container,
-  // Dropdown,
-  Form,
-  // Spinner,
-  // InputGroup,
-  // Stack,
-  // FloatingLabel,
-  // Card,
-  // Modal,
-  Table
-} from "react-bootstrap";
+import React, { useState } from "react";
+import { Table, Form, Button } from "react-bootstrap";
 
-const cleanDataColumn = (input) => {
-  const normalized = input.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const corrected = normalized.replace(/Đ/g, "d").replace(/đ/g, "d");
-  const lowercased = corrected.toLowerCase();
-  // Remove spaces after commas and replace spaces with underscores
-  const noSpacesAfterComma = lowercased.replace(/,\s+/g, ","); // Remove spaces after commas
-  // const noSpacesAfterComma_2 = noSpacesAfterComma.replace(/,\s+/g, ",");
-  const replacedSpaces = noSpacesAfterComma.replace(/\s+/g, "_"); // Replace spaces with underscores
-  // Remove any non-alphanumeric characters except for commas and underscores
-  const cleaned = replacedSpaces.replace(/[^a-z0-9,_]/g, "");
-  // Replace ",_" with ","
-  const noUnderscoreAfterComma = cleaned.replace(/,_/g, ",");
-  // Remove trailing comma if it exists
-  const finalCleaned = noUnderscoreAfterComma.replace(/,$/, "");
-  return finalCleaned;
+// Function to format date in dd-mm-yyyy format
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-GB"); // This will return the date in dd/mm/yyyy format
 };
 
-const DataForm = () => {
-
-  const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-
-    const fetch_initial_data = async (manv) => {
-      SetLoading(true)
-      const response = await fetch(`https://bi.meraplion.com/local/get_google_sync_data/`)
-      
-      if (!response.ok) {
-          SetLoading(false)
-      }
-      else {
-      const data_arr = await response.json()
-      setTableData(data_arr)
-      SetLoading(false)
-      }
+const MyForm = () => {
+  // Sample data for the table
+  const [data, setData] = useState([
+    {
+      manv: "mr001",
+      ten_cvbh: "mr001",
+      fromDate: "2025-04-15",
+      toDate: "2025-04-15",
+      days: "6",
+      reason: "di nghi mat",
+      uuid: "609e8c53-2d8b-4313-9ac7-a43847cbc8f4",
+      status: "new",
+      checked: true
+    },
+    {
+      manv: "mr002",
+      ten_cvbh: "mr002",
+      fromDate: "2025-05-10",
+      toDate: "2025-05-15",
+      days: "5",
+      reason: "vacation",
+      uuid: "42f899e7-e6ab-493d-b1f3-cf5bc77f9d3e",
+      status: "new",
+      checked: false
     }
-    // const [count, setCount] = useState(0);    
-    useEffect(() => {
-        if (localStorage.getItem("userInfo")) {
-        const media = window.matchMedia('(max-width: 960px)');
-        const isMB = (media.matches);
-        const dv_width = window.innerWidth;
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, location.pathname, isMB, dv_width);
-        // set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
-        fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
-        } else {
-            history.push(`/login?redirect=${location.pathname}`);
-        };
-    }, []);
+  ]);
 
-  const [formData, setFormData] = useState({
-    tableName: "",
-    sheetId: "",
-    dataRange: "",
-    dataColumns: "",
-    googleLink: "",
-    dropIfNa: "",
-    schema: [],
-  });
-
-  const [showTable, setShowTable] = useState(false); // State to control table visibility
-
-  const [tableData, setTableData] = useState([]);
-
-  const clear_data = () => {
-    setFormData({
-      tableName: "",
-      sheetId: "",
-      dataRange: "",
-      dataColumns: "",
-      googleLink: "",
-      dropIfNa: "",
-      schema: [],
+  // Update the 'checked' status when the switch is toggled
+  const handleSwitchChange = (uuid) => {
+    const updatedData = data.map((item) => {
+      if (item.uuid === uuid) {
+        item.checked = !item.checked;
+      }
+      return item;
     });
+    setData(updatedData);
   };
 
-  // Function to handle row edit and populate form with row data
-function handleEditRow(index) {
-  // Get the selected row data from the table
-  const selectedRow = tableData[index];
-
-  // Set the formData state with the data from the selected row
-  setFormData({
-    tableName: selectedRow.tableName,
-    sheetId: selectedRow.sheetId,
-    dataRange: selectedRow.dataRange,
-    dataColumns: selectedRow.dataColumns,
-    googleLink: selectedRow.googleLink,
-    dropIfNa: selectedRow.dropIfNa,
-    schema: selectedRow.schema,  // Assuming schema is an array
-  });
-}
-
-
-  function handleChange(e) {
-    let name = e.target.name;
-    let value = e.target.value;
-    let newValue = value;
-  
-    if (name === "dataColumns") {
-      newValue = cleanDataColumn(value);
-    } else {
-      if (
-        name === "tableName" ||
-        name === "googleLink" ||
-        name === "sheetId" ||
-        name === "dataRange" ||
-        name === "dropIfNa"
-      ) {
-        newValue = value.trim();
+  // Handle approving selected items
+  const handleApprove = () => {
+    const updatedData = data.map((item) => {
+      if (item.checked) {
+        item.status = "approved";
       }
-    }
-    let updatedFormData = Object.assign({}, formData); // Clone the object
-    updatedFormData[name] = newValue;
-    setFormData(updatedFormData);
-  }
-  
-
-
-  function handleSchemaChange(index, field, value) {
-    let updatedSchema = [];
-    for (let i = 0; i < formData.schema.length; i++) {
-      let row = Object.assign({}, formData.schema[i]);
-      updatedSchema.push(row);
-    }
-    updatedSchema[index][field] = value;
-    //Object.assign({}, obj) safely clones objects (like Python's dict.copy())
-    let updatedFormData = Object.assign({}, formData);
-    updatedFormData.schema = updatedSchema;
-    setFormData(updatedFormData);
-  }
-  
-
-  function addSchemaRow() {
-    let newSchema = [];
-    for (let i = 0; i < formData.schema.length; i++) {
-      let row = Object.assign({}, formData.schema[i]);
-      newSchema.push(row);
-    }
-    newSchema.push({ column: "", dataType: "STRING" });
-    let updatedFormData = Object.assign({}, formData);
-    updatedFormData.schema = newSchema;
-  
-    setFormData(updatedFormData);
-  }
-
-  function removeSchemaRow(index) {
-    let updatedSchema = [];
-    for (let i = 0; i < formData.schema.length; i++) {
-      if (i !== index) {
-        let row = Object.assign({}, formData.schema[i]);
-        updatedSchema.push(row);
-      }
-    }
-    let updatedFormData = Object.assign({}, formData);
-    updatedFormData.schema = updatedSchema;
-    setFormData(updatedFormData);
-  }
-  
-
-  const post_form_data = async (data) => {
-    SetLoading(true)
-    const response = await fetch(`https://bi.meraplion.com/local/insert_google_sync_data/`, {
-        method: "POST",
-        headers: {
-        "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+      return item;
     });
-
-    if (!response.ok) {
-        SetLoading(false);
-        const data = await response.json();
-        console.log(data);
-        SetALert(true);
-        SetALertType("alert-danger");
-        SetALertText("CHƯA TẠO ĐƯỢC");
-        setTimeout(() => SetALert(false), 3000);
-    } else {
-        SetLoading(false);
-        const data = await response.json();
-        console.log(data);
-        SetALert(true);
-        SetALertType("alert-success");
-        SetALertText("ĐÃ TẠO THÀNH CÔNG");
-        setTimeout(() => SetALert(false), 3000);
-        clear_data();
-        // setCount(count+1);
-
-    }
-}
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // const schemaObject = formData.schema.reduce((acc, item) => {
-    //   acc[item.column.toLowerCase()] = item.dataType.toLowerCase();
-    //   return acc;
-    // }, {});
-
-    console.log(formData);
-    post_form_data(formData);
-    // clear_data();
+    setData(updatedData);
   };
 
-  // const handleAddTableData = () => {
-  //   // Add the current Table Name and Google Link to the tableData state
-  //   const newTableData = [...tableData, { tableName: formData.tableName, googleLink: formData.googleLink }];
-  //   setTableData(newTableData);
-  // };
-
-  const toggleTable = () => {
-    setShowTable(!showTable); // Toggle the visibility of the table
+  // Handle denying selected items
+  const handleDeny = () => {
+    const updatedData = data.map((item) => {
+      if (item.checked) {
+        item.status = "denied";
+      }
+      return item;
+    });
+    setData(updatedData);
   };
-
-  
 
   return (
-    <Form onSubmit={handleSubmit} className="p-3">
-      {/* Button to toggle table visibility */}
-
-    <Button
-    onClick={toggleTable}
-    variant="info"
-    className="mt-2 d-inline-block"
-    >
-    Show Tables
-    </Button>
-
-      {/* Conditionally render table */}
-      {showTable && (
-        <Table bordered hover className="mt-2">
-        <thead>
-          <tr>
-            <th>Table Name</th>
-            <th>Google Link</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tableData.map((row, index) => (
-            <tr key={index}>
-              <td>{row.tableName}</td>
-              <td>{row.googleLink}</td>
-              <td className="d-flex justify-content-center">
-                {/* Edit Button */}
-                <Button
-                  variant="primary"
-                  onClick={() => handleEditRow(index)}
-                  className="mt-2"
-                  aria-label={`Edit row ${index + 1}`}
-                >
-                  Edit
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-      )}
-
-      <h2>Create more table: </h2>
-
-      <Form.Control
-        type="text"
-        name="googleLink"
-        value={formData.googleLink}
-        onChange={handleChange}
-        placeholder="Google Link"
-        className="mt-2"
-      />
-      <Form.Control
-        type="text"
-        name="tableName"
-        value={formData.tableName}
-        onChange={handleChange}
-        placeholder="Table Name"
-        className="mt-2"
-      />
-      <Form.Control
-        type="text"
-        name="sheetId"
-        value={formData.sheetId}
-        onChange={handleChange}
-        placeholder="Sheet ID"
-        className="mt-2"
-      />
-      <Form.Control
-        type="text"
-        name="dataRange"
-        value={formData.dataRange}
-        onChange={handleChange}
-        placeholder="Data Range"
-        className="mt-2"
-      />
-      <Form.Control
-        type="text"
-        name="dataColumns"
-        value={formData.dataColumns}
-        onChange={handleChange}
-        placeholder="Data Columns"
-        className="mt-2"
-      />
-
-      {/* DropIfNa Input */}
-      <Form.Control
-        type="text"
-        name="dropIfNa"
-        value={formData.dropIfNa}
-        onChange={handleChange}
-        placeholder="Drop If Na"
-        className="mt-2"
-      />
-
-      <Table bordered hover className="mt-2">
-        <thead>
-          <tr>
-            <th>Column Name</th>
-            <th>Data Type</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {formData.schema.map((row, index) => (
-            <tr key={index}>
-              <td>
-                <Form.Control
-                  type="text"
-                  value={row.column}
-                  onChange={(e) => handleSchemaChange(index, "column", e.target.value)}
-                  placeholder="Column Name"
-                  className="mt-2"
-                />
-              </td>
-              <td>
-                <Form.Select
-                  value={row.dataType}
-                  onChange={(e) => handleSchemaChange(index, "dataType", e.target.value)}
-                  className="mt-2"
-                >
-                  <option value="STRING">STRING</option>
-                  <option value="FLOAT">FLOAT</option>
-                  <option value="TIMESTAMP">TIMESTAMP</option>
-                </Form.Select>
-              </td>
-              <td className="d-flex justify-content-center">
-                <Button variant="danger" onClick={() => removeSchemaRow(index)} className="mt-2">
-                  Remove
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-
-      <div className="d-flex gap-3 mt-2">
-        <Button onClick={addSchemaRow} variant="success" className="w-auto">
-          Add Column
+    <div>
+      {/* Buttons for approving or denying */}
+      <div className="mt-2" style={{ marginBottom: "20px" }}>
+        <Button variant="success" onClick={handleApprove} style={{ marginRight: "10px" }}>
+          Approve
         </Button>
-        <Button type="submit" variant="primary" className="w-100">
-          Submit
+        <Button variant="danger" onClick={handleDeny}>
+          Deny
         </Button>
       </div>
-    </Form>
+
+      <div style={{ overflowX: 'auto' }}>
+        <Table striped bordered hover style={{ tableLayout: 'fixed', backgroundColor: '#f0f8ff' }}>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Switch</th>
+              <th>Tên NV</th>
+              <th>Mã NV</th>
+              <th>Lý do</th>
+              <th>Từ ngày</th>
+              <th>Đến ngày</th>
+              <th>Số ngày</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item) => (
+              <tr key={item.uuid}>
+                
+                <td>{item.uuid}</td>
+                <td>
+                  <Form.Check
+                    type="switch"
+                    checked={item.checked}
+                    onChange={() => handleSwitchChange(item.uuid)}
+                  />
+                </td>
+                <td>{item.ten_cvbh}</td>
+                <td>{item.manv}</td>
+                <td>{item.reason}</td>
+                <td>{formatDate(item.fromDate)}</td>
+                <td>{formatDate(item.toDate)}</td>
+                <td>{item.days}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+    </div>
   );
 };
 
-export default DataForm;
+export default MyForm;

@@ -1,8 +1,9 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 // import 'leaflet/dist/leaflet.css'
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, useLocation } from "react-router-dom";
 import Navbar1 from "./components/Navbar.jsx";
+import Navbar_NVBC from './components/Navbar_nvbc';
 // import Navbar_2 from "./components/Navbar_2.jsx";
 import Login from "./components/Login";
 import ReportScreen from "./components/ReportScreen";
@@ -72,27 +73,44 @@ import Form_claim_chi_phi_ql_duyet_invmapped from  "./formcontrol/form_claim_chi
 import Get_new_upload_files from  "./formcontrol/get_new_upload_files";
 
 import Tinh_diem_van_nghe from  "./formcontrol/tinh_diem_van_nghe";
+import Dang_ky_nghi_phep_pkh from  "./formcontrol/dang_ky_nghi_phep_pkh";
+import Dang_ky_nghi_phep_pkh_ncrm from  "./formcontrol/dang_ky_nghi_phep_pkh_ncrm";
+
 import Test from  "./formcontrol/test";
+
+import Introduction from  "./formcontrol/introduction";
 
 // import Kt_de_xuat_chi_phi from  "./formcontrol/kt_de_xuat_chi_phi";
 
 import Chat from "./biagent/chat";
 
 // BOOTSTRAP
-import Spacing from "./bootstrap/spacing";
-import Display from "./bootstrap/display";
-import EbookProject from "./bootstrap/EbookProject.jsx";
+// import Spacing from "./bootstrap/spacing";
+// import Display from "./bootstrap/display";
+// import EbookProject from "./bootstrap/EbookProject.jsx";
 
-function App() {
+
+function AppContent() {
+  const location = useLocation();
+
+  const path = location.pathname;
+
+  const isLogin = path === '/loginabc';
+  const noNavbarPaths = ['/formcontrol/introduction', '/login_nvbc'];
+
+  // Explanation:
+  // noNavbarPaths is a list of paths that should show no nav at all.
+  // Then we use .includes() to check if the current path is in that list.
+  const showNavbar1 = !['/loginabc', ...noNavbarPaths].includes(path);
+  
+  const showNavbar2 = isLogin; // ONLY show Navbar2 on /login
+
   return (
-    <FeedbackProvider>
-      <MapProvider>
-          <MYVNPProvider>
-            <Router>
-            {/* <Route exact path="/bootstrap/display" component={Display} />
-            <Route exact path="/bootstrap/ebookproject" component={EbookProject} /> */}
-              <Navbar1 />
-              <Switch>
+    <>
+      {showNavbar1 && <Navbar1 />}
+      {showNavbar2 && <Navbar_NVBC />}
+
+      <Switch>
                 <Route exact path="/" component={HomeScreen} />
                 {/* MYVNP */}
                 {/* <Route path="/formmdsvnpost" component={FormScreen} /> */}
@@ -145,6 +163,9 @@ function App() {
                 <Route path="/formcontrol/form_claim_chi_phi_ql_duyet_invmapped" component={Form_claim_chi_phi_ql_duyet_invmapped} />
                 <Route path="/formcontrol/get_new_upload_files" component={Get_new_upload_files} />
                 <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} />
+                <Route path="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh" component={Dang_ky_nghi_phep_pkh} />
+                <Route path="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh_ncrm" component={Dang_ky_nghi_phep_pkh_ncrm} />
+                <Route exact path="/formcontrol/introduction" component={Introduction} />
                 {/* <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} /> */}
                 {/* REPORT */}
                 <Route exact path="/login" component={Login} />
@@ -156,15 +177,26 @@ function App() {
                 <Route exact path="/maps/routes" component={Routes} />
                 <Route exact path="/maps/salesroutes" component={SalesRoutes} />
                 {/* <Route exact path="/maps/mapbox" component={MapBox} /> */}
-
+                
                 <Route exact path="/biagent" component={Chat} />
 
                 {/* BOOTSTRAP */}
-                <Route exact path="/bootstrap/spacing" component={Spacing} />
+                {/* <Route exact path="/bootstrap/spacing" component={Spacing} /> */}
                 <Route component={ PageNotFound } />
 
                 
               </Switch>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <FeedbackProvider>
+      <MapProvider>
+          <MYVNPProvider>
+            <Router>
+              <AppContent />
             </Router>
           </MYVNPProvider>
       </MapProvider>

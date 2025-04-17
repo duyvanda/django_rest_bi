@@ -1,0 +1,57 @@
+.login-wrapper {
+    background-color: #fff;
+    min-height: 100vh;
+  }
+  
+  .top-image-section {
+    position: relative;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .top-banner {
+    width: 100%;
+    height: auto;
+  }
+  
+  .overlay-text {
+    position: absolute;
+    top: 20%;
+    width: 100%;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .overlay-text h2 {
+    font-size: 2.5rem;
+    color: #083a6c;
+  }
+  
+  .overlay-text p {
+    font-size: 1.2rem;
+    color: #ffffff;
+  }
+  
+  .form-container {
+    max-width: 400px;
+    margin: auto;
+    padding: 30px 15px;
+  }
+  
+  .logo {
+    width: 100px;
+    margin-bottom: 20px;
+  }
+  
+  .login-button {
+    background-color: #00A89D;
+    border-color: #00A89D;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+  }
+  
+  .login-button:hover {
+    background-color: #008f85;
+    border-color: #008f85;
+  }

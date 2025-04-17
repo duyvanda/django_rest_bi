@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { v4 as uuid } from 'uuid';
+// import { v4 as uuid } from 'uuid';
 import './myvnp.css';
-import { Link } from "react-router-dom";
+import { Link, useLocation  } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,
@@ -15,39 +15,46 @@ import {
     InputGroup,
     Stack,
     FloatingLabel,
-    Card
+    Table,
+    Card,
+    Modal
+
 } from "react-bootstrap";
 
-function TemplateSimple({history}) {
-
-    const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
+function TemplateSimple( {history} ) {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
     const fetch_initial_data = async (manv) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/template/?manv=${manv}`)
-        
+        const response = await fetch(`https://bi.meraplion.com/local/template/?manv=${queryParams.get('manv')}`)
+        // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=MR0673`)
         if (!response.ok) {
             SetLoading(false)
         }
-
         else {
-        const data_arr = await response.json()
-        const data = data_arr[0]
-        set_text(data.id)
-        console.log(data)
-        SetLoading(false)
+        const data = await response.json()
+        // set_data_kh_chung(data['data_kh_chung'])
+        // set_data_hcp(data['data_hcp'])
+        // set_manv_info(data['manv_info'][0])
+        console.log(data);
+        SetLoading(false);
 
         }
-    } 
+    }
+
+    
+    const [count, setCount] = useState(0);
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Theo_doi_dccn', isMB, dv_width);
+        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, location.pathname, isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
         } else {
-            history.push('/login');
+            history.push(`/login?redirect=${location.pathname}`);
         };
     }, []);
 
@@ -62,7 +69,7 @@ function TemplateSimple({history}) {
 
     const post_form_data = async (data) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/insert_data/`, {
+        const response = await fetch(`https://bi.meraplion.com/local/template/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -74,15 +81,20 @@ function TemplateSimple({history}) {
             SetLoading(false);
             const data = await response.json();
             console.log(data);
+            SetALert(true);
+            SetALertType("alert-danger");
+            SetALertText("CHƯA TẠO ĐƯỢC");
+            setTimeout(() => SetALert(false), 3000);
         } else {
             SetLoading(false);
             const data = await response.json();
             console.log(data);
             SetALert(true);
-            SetALertType("alert-warning");
+            SetALertType("alert-success");
             SetALertText("ĐÃ TẠO THÀNH CÔNG");
             setTimeout(() => SetALert(false), 3000);
-            clear_data()
+            clear_data();
+            setCount(count+1);
 
         }
     }

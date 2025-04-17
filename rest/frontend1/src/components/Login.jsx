@@ -10,15 +10,47 @@ function Login({history, location}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const location_search = new URLSearchParams(location.search)
-
+    const redirect = location_search.get("redirect")
+    const utmSource = location_search.get("utm_source");
+    const token = location_search.get("token");
+    const manv = location_search.get("manv");
     useEffect(() => {
 
-    if (userInfo && location_search.get('redirect'))
+    if (location_search.get('redirect') &&  location_search.get('utm_source') &&  location_search.get('token') )
+      
+        {
+          console.log("redirect", location_search.get('redirect') )
+          console.log("utmSource", utmSource )
+          console.log("token", token )
+          // const redirect = location.search.split("&")[0].split("=")[1]
+          const logindata = {
+          email: manv,
+          password: "GIwSgZdtwXadjrHA.U9ftBp.SOis8YoKLU4yaj1U9ftBp_c2y7owPhZAmU4Tpn0YbOxkMFSOis8YoKLU4yaj1U9ftBp509236728",
+          // redirect: redirect
+        }
+        
+        const verify = async () => {
+          try {
+            await loginUser(logindata); // from context
+            history.replace(redirect);
+          } catch (err) {
+            console.log("Token verification failed.");
+          } finally {
+            void(0)
+          }
+        };
+
+        verify();
+        }
+
+    else if (userInfo && location_search.get('redirect'))
+      
       {
-        const redirect = location.search.split("&")[0].split("=")[1]
+        console.log("redirect", location_search.get('redirect') )
+        // const redirect = location.search.split("&")[0].split("=")[1]
         history.push(redirect);
       }
-    else if (userInfo) 
+    else if (userInfo)
       {
         history.push("/reports");
       }

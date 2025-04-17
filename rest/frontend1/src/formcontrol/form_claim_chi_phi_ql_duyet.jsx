@@ -85,7 +85,7 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
         setCount(count+1);
 
     }
-}
+  }
 
   const handleApproval = async (isApproved) => {
     const ql_duyet = isApproved ? "approved" : "rejected"
