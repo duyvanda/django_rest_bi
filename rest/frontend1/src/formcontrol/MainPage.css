@@ -111,3 +111,13 @@
     height: 100vh; /* Ensure the content takes full height */
   }
   
+  /* Remove bullets from list items */
+
+
+/* Remove borders or lines from the links or list items */
+/* ul li {
+  border: none;  /* Removes any border around list items */
+
+/* Optionally, remove any underlines from the links */
+/* ul li a {
+  text-decoration: none; /* Removes underline from links */

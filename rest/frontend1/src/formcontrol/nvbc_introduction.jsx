@@ -1,15 +1,39 @@
 import React from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+// import { Container, Row, Col, Button } from 'react-bootstrap';
 import './IntroductionPage.css';
 import topBanner from '../images/georgie-cobbs-bKjHgo_Lbpo-unsplash.jpg';
 import iconInfo from '../images/digital-campaign.png';
 import iconLightning from '../images/digital-campaign.png';
 
-const Introduction = () => {
+import {
+  Button,
+  Col,
+  Row,
+  Container,
+  Dropdown,
+  Form,
+  Spinner,
+  InputGroup,
+  Stack,
+  FloatingLabel,
+  Table,
+  Card,
+  Modal
+} from "react-bootstrap";
+
+const Nvbc_introduction = () => {
   return (
+  <Row className="justify-content-center">
+  <Col md={4}>
     <div className="intro-wrapper">
       {/* Top Banner */}
-      <img src={topBanner} alt="Top Banner" className="top-banner" />
+      <div style={{ display: 'flex', justifyContent: 'center', maxHeight: '300px', overflow: 'hidden' }}>
+        <img
+          src="https://storage.googleapis.com/django_media_biteam/nvbc/Gio%CC%9B%CC%81i%20thie%CC%A3%CC%82u-2x.png"
+          alt="Top Banner"
+          style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+        />
+      </div>
 
       {/* Greeting Text Section */}
       <div className="greeting-box text-center">
@@ -44,7 +68,9 @@ const Introduction = () => {
         <Button className="start-button">BẮT ĐẦU</Button>
       </Container>
     </div>
+  </Col>
+</Row>
   );
 };
 
-export default Introduction;
+export default Nvbc_introduction;

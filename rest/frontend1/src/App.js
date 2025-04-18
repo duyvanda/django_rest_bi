@@ -78,7 +78,13 @@ import Dang_ky_nghi_phep_pkh_ncrm from  "./formcontrol/dang_ky_nghi_phep_pkh_ncr
 
 import Test from  "./formcontrol/test";
 
-import Introduction from  "./formcontrol/introduction";
+import Nvbc_login from  "./formcontrol/nvbc_login";
+import Nvbc_introduction from  "./formcontrol/nvbc_introduction";
+import Nvbc_mainpage from  "./formcontrol/nvbc_mainpage";
+import Nvbc_view_pdf from  "./formcontrol/nvbc_view_pdf";
+import Nvbc_view_video from  "./formcontrol/nvbc_view_video";
+
+// import Introduction from  "./formcontrol/introduction";
 
 // import Kt_de_xuat_chi_phi from  "./formcontrol/kt_de_xuat_chi_phi";
 
@@ -96,7 +102,7 @@ function AppContent() {
   const path = location.pathname;
 
   const isLogin = path === '/loginabc';
-  const noNavbarPaths = ['/formcontrol/introduction', '/login_nvbc'];
+  const noNavbarPaths = ['/formcontrol/introduction', '/login_nvbc', '/formcontrol/nvbc_view_video', '/formcontrol/nvbc_mainpage','/formcontrol/nvbc_view_pdf'];
 
   // Explanation:
   // noNavbarPaths is a list of paths that should show no nav at all.
@@ -165,7 +171,13 @@ function AppContent() {
                 <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} />
                 <Route path="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh" component={Dang_ky_nghi_phep_pkh} />
                 <Route path="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh_ncrm" component={Dang_ky_nghi_phep_pkh_ncrm} />
-                <Route exact path="/formcontrol/introduction" component={Introduction} />
+
+                <Route exact path="/formcontrol/nvbc_login" component={Nvbc_login} />
+                <Route exact path="/formcontrol/nvbc_introduction" component={Nvbc_introduction} />
+                <Route exact path="/formcontrol/nvbc_mainpage" component={Nvbc_mainpage} />
+                <Route exact path="/formcontrol/nvbc_view_pdf" component={Nvbc_view_pdf} />
+                <Route exact path="/formcontrol/nvbc_view_video" component={Nvbc_view_video} />
+                {/* <Route exact path="/formcontrol/introduction" component={Introduction} /> */}
                 {/* <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} /> */}
                 {/* REPORT */}
                 <Route exact path="/login" component={Login} />
