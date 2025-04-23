@@ -61,11 +61,11 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     const [data_submit, set_data_submit] = useState([])
     // const [hoa_don, set_hoa_don] = useState([])
 
-    const invoices = [
-      { nguoi_mua_hang: "MR0673", ky_hieu: "K25TDL", so_hoa_don: "63182", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: "681855" },
-      { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19298", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: "3592906" },
-      { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19299", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: "4163723" }
-    ];
+    const [invoices,set_invoices] = useState ([
+      { nguoi_mua_hang: "MR0673", ky_hieu: "K25TDL", so_hoa_don: "63182", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 681855},
+      { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19298", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 3592906},
+      { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19299", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 4163723}
+    ]);
     
   const f = new Intl.NumberFormat()
   const [manv, set_manv] = useState("");
@@ -75,6 +75,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
   const [downloadUrl, setDownloadUrl] = useState("https://bi.meraplion.com/DMS/data_mds_tra_thuong_cmm_2025/0_008828.jpeg");
   const [spinning, setSpinning] = useState(false);  // Replaced `loading` with `spinning`
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
+  const [disable, setdisable] = useState(false); // State to track if submit button should be disabled
 
   const post_form_data = async (data) => {
     SetLoading(true)
@@ -122,7 +123,6 @@ const Form_claim_chi_phi_final = ( {history} ) => {
   
     // Update state with the modified records list
     set_data_submit(updatedRecords);
-
     console.log(updatedRecords)
     post_form_data(updatedRecords);
 
@@ -148,6 +148,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     const updatedRecords = data_submit.map((record) => {
       if (record.id === id) {
         let updatedRecord = Object.assign({}, record); // Clone the object
+        updatedRecord.so_ke_hoach = selectedInvoice.so_tien_hoa_don;
         updatedRecord.so_hoa_don = selectedInvoice.so_hoa_don;
         updatedRecord.so_tien_hoa_don = selectedInvoice.so_tien_hoa_don;
         updatedRecord.ngay_hoa_don = selectedInvoice.ngay_hoa_don;
@@ -155,7 +156,6 @@ const Form_claim_chi_phi_final = ( {history} ) => {
       }
       return record;
     });
-    // console.log(updatedRecords)
     set_data_submit(updatedRecords);
   };
 
@@ -205,6 +205,46 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     }
   }
 
+    // Step 1: Group by invoice_number
+    const groupByInvoiceNumber = data_submit.reduce((groups, { so_hoa_don, ...rest }) => {
+      groups[so_hoa_don] = groups[so_hoa_don] || [];
+      groups[so_hoa_don].push({ so_hoa_don, ...rest });
+      return groups;
+    }, {});
+  
+    // Step 2: For each group, calculate the total claim money, total_claim_money, and determine overbudget
+    const data_submit_check_invoice_budget = data_submit.map(item => {
+      // Ensure claim_money is treated as a number
+      const totalClaimMoney = groupByInvoiceNumber[item.so_hoa_don].reduce((sum, { so_ke_hoach }) => {
+        return sum + Number(so_ke_hoach); // Ensure each claim_money is a number before summing
+      }, 0);
+  
+      // Handle cases where invoice_number_original_budget is invalid, empty, or NaN
+      const budget = isNaN(item.so_tien_hoa_don) || item.so_tien_hoa_don === "" 
+                      ? 0 
+                      : Number(item.so_tien_hoa_don); // Ensure the budget is a number
+  
+      // Flag to determine if the record is over budget
+      const overbudget = (budget > 0 && totalClaimMoney > budget) ? 1 : 0;
+  
+      return { ...item, total_claim_money: totalClaimMoney, overbudget };
+    });
+
+  /*
+  {"recordid":1,"claim_money":"300000","invoice_number":2,"invoice_number_original_budget":1000000,"total_claim_money":1100000,"overbudget":1}
+  {"recordid":2,"claim_money":"300000","invoice_number":2,"invoice_number_original_budget":1000000,"total_claim_money":1100000,"overbudget":1}
+  {"recordid":3,"claim_money":500000,"invoice_number":2,"invoice_number_original_budget":1000000,"total_claim_money":1100000,"overbudget":1}
+  {"recordid":4,"claim_money":500000,"invoice_number":3,"invoice_number_original_budget":600000,"total_claim_money":500000,"overbudget":0}
+  {"recordid":5,"claim_money":"500000","invoice_number":3,"invoice_number_original_budget":"","total_claim_money":500000,"overbudget":0}
+  */
+
+  useEffect(() => {
+    // Check if any record has overbudget flag set to 1
+    const isAnyOverBudget = data_submit_check_invoice_budget.some(item => item.overbudget === 1);
+    setdisable(isAnyOverBudget); // Disable button if any record is overbudget
+    console.log("isAnyOverBudget", isAnyOverBudget)
+  }, [data_submit_check_invoice_budget]); // Re-run when `updatedData` changes (i.e., when user updates data)
+
   return (
     <Container className="h-100" fluid> 
         {/* Responsive Full-Width Buttons */}
@@ -224,7 +264,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
       </Modal>
 
       <div className="d-flex gap-2 mb-3">
-        <Button variant="success" onClick={() => handleApproval()}>
+        <Button disabled={disable} variant="success" onClick={() => handleApproval()}>
           Gửi đề nghị
         </Button>
         <Button variant="outline-success" onClick={() => setShowModal(true)}>
@@ -237,11 +277,11 @@ const Form_claim_chi_phi_final = ( {history} ) => {
         <thead>
           <tr style={{ padding: '5px', fontSize: '12px' }}>
             <th style={{ width: '150px' }}>ID</th>
-            <th style={{ width: '150px' }}>Số duyệt</th>
+            <th style={{ width: '150px' }}>Số tiền cần TT</th>
             <th style={{ width: '300px' }}>Hóa đơn</th>
             <th style={{ width: '100px' }}>Số hóa đơn</th>
             <th style={{ width: '100px' }}>Ngày hóa đơn</th>
-            <th style={{ width: '100px' }}>Tổng tiền</th>
+            <th style={{ width: '100px' }}>Tiền hóa đơn</th>
             <th style={{ width: '70px' }}>Status</th>
             <th style={{ width: '70px' }}>Mã NV</th>
             <th style={{ width: '150px' }}>Tên CVBH</th>
@@ -254,11 +294,11 @@ const Form_claim_chi_phi_final = ( {history} ) => {
           </tr>
         </thead>
         <tbody>
-          {data_submit.map((record) => (
+          {data_submit_check_invoice_budget.map((record) => (
             <tr key={record.id} style={{ 
               padding: '5px', 
               fontSize: '14px', 
-              backgroundColor: record.so_tien_hoa_don && Number(record.so_tien_hoa_don) < Number(record.so_ke_hoach) ? 'red' : 'transparent' } }>
+              backgroundColor: (record.overbudget === 1 && record.so_hoa_don) ? 'red' : 'transparent' } }>
               <td>{record.id}</td>
               <td>
                 <Form.Control
@@ -365,3 +405,5 @@ const Form_claim_chi_phi_final = ( {history} ) => {
 };
 
 export default Form_claim_chi_phi_final;
+
+

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { Spinner, Form } from "react-bootstrap";
 
 
-function Login({history, location}) {
+function Login( {history, location} ) {
     const { loginUser, userInfo, LoginText, LoginLoading } = useContext(FeedbackContext)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')

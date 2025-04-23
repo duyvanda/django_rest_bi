@@ -24,7 +24,6 @@ function Form_claim_chi_phi({ history }) {
     const fetch_initial_data = async (manv) => {
         SetLoading(true)
         const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=${queryParams.get('manv')}`)
-        // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=MR0673`)
         if (!response.ok) {
             SetLoading(false)
         }
@@ -63,13 +62,9 @@ function Form_claim_chi_phi({ history }) {
     const [noi_dung, set_noi_dung] = useState("");
     const [ghi_chu, set_ghi_chu] = useState("");
     const [so_ke_hoach, set_so_ke_hoach] = useState("");
-    const [data_kh_chung, set_data_kh_chung] = useState(
-    [
-    ]
+    const [data_kh_chung, set_data_kh_chung] = useState([]
     )
-    const [data_hcp, set_data_hcp] = useState(
-    [
-    ]
+    const [data_hcp, set_data_hcp] = useState([]
 
 );  
     
@@ -194,8 +189,10 @@ function Form_claim_chi_phi({ history }) {
 
     const handle_submit = (e) => {
         e.preventDefault();
+        const rawId = get_id();
+        const insert = Inserted_at();
         const baseData = {
-            id: null,
+            id: rawId,
             status:"new",
             // manv: manv,
             manv: "MR0673",
@@ -206,58 +203,36 @@ function Form_claim_chi_phi({ history }) {
             chon_hcp: chon_hcp?.ma_hcp_2,
             ten_hcp: chon_hcp?.ten_hcp,
             qua_tang,
-            kenh: null,
+            kenh: kenh,
             noi_dung: noi_dung,
             ghi_chu,
-            so_ke_hoach: null,
+            so_ke_hoach: Number(so_ke_hoach.replace(/,/g, "")),
             so_hoa_don: null,
             ngay_hoa_don: null,
             so_tien_hoa_don:null,
-            inserted_at: Inserted_at()      
+            inserted_at: insert     
         };
         const plan = Number(so_ke_hoach.replace(/,/g, ""));
 
         let dataEntries = [];  // Initialize an array to hold the data entries
-
-        if (ty_le && (kenh === "CLC & INS")) {
-
-            const rawId = get_id(); // "20250413215410748"
-            const id1 = rawId;
-            const id2 = (BigInt(rawId) + 1n).toString(); // ← BigInt handles large integers safely
-            console.log('id1:', id1, 'id2:', id2);  // Check if id1 and id2 are different
-            const [clcRatio, insRatio] = ty_le.value.split(':').map(Number);
-            const total = clcRatio + insRatio;
-            const clcValue = Math.round(plan * (clcRatio / total));
-            const insValue = plan - clcValue; // ensure it totals correctly
-        
-            const data1 = {
-              ...baseData,
-              id: id1,
-              kenh: "CLC",
-              so_ke_hoach: clcValue
-            };
-        
-            const data2 = {
-              ...baseData,
-              id: id2,
-              kenh: "INS",
-              so_ke_hoach: insValue
-            };
-        
-            console.log("Multiple data entries:", [data1, data2]);
-            dataEntries.push(data1, data2);
-        } else {
-            const data = {
-              ...baseData,
-              kenh,
-              so_ke_hoach: plan
-            };
-            console.log("Single data entry:", [data]);
-            dataEntries.push(data);
+        const [clcRatio, insRatio] = ty_le.value.split(':').map(Number);
+        const total = clcRatio + insRatio;
+        const clcValue = Math.round(plan * (clcRatio / total));
+        // const insValue = plan - clcValue;
+        let data_tyle = {
+            id:rawId,
+            kenh: kenh,
+            ty_le: ty_le,
+            clc_ratio: clcRatio,
+            ins_ratio: insRatio,
+            inserted_at: insert
         }
+        dataEntries.push(baseData);
+        dataEntries.push(data_tyle);
+        post_form_data(dataEntries);
 
         // console.log(data);
-        post_form_data(dataEntries);
+
         // clear_data();
     };
 
@@ -422,25 +397,66 @@ function Form_claim_chi_phi({ history }) {
 
 export default Form_claim_chi_phi;
 
+// const handle_submit = (e) => {
+//     e.preventDefault();
+//     const rawId = get_id();
+//     const baseData = {
+//         id: rawId,
+//         status:"new",
+//         // manv: manv,
+//         manv: "MR0673",
+//         tencvbh: manv_info?.tencvbh,
+//         phongdeptsummary: manv_info?.phongdeptsummary,
+//         chon_kh_chung: chon_kh_chung?.hco_bv,
+//         pubcustname: chon_kh_chung?.pubcustname,
+//         chon_hcp: chon_hcp?.ma_hcp_2,
+//         ten_hcp: chon_hcp?.ten_hcp,
+//         qua_tang,
+//         kenh: kenh,
+//         noi_dung: noi_dung,
+//         ghi_chu,
+//         so_ke_hoach: Number(so_ke_hoach.replace(/,/g, "")),
+//         so_hoa_don: null,
+//         ngay_hoa_don: null,
+//         so_tien_hoa_don:null,
+//         inserted_at: Inserted_at()      
+//     };
+//     const plan = Number(so_ke_hoach.replace(/,/g, ""));
 
-// {
-//     "id": "20250413220210839",
-//     "status": "new",
-//     "manv": "MR0673",
-//     "tencvbh": "Hồ Thị Hồng Gấm",
-//     "phongdeptsummary": "HCP",
-//     "chon_kh_chung": "004524",
-//     "pubcustname": "PK NGUYỄN HỮU DŨNG - SG",
-//     "chon_hcp": "HCP00032099-P",
-//     "ten_hcp": "Nguyễn Thị Thanh Thúy",
-//     "qua_tang": "Giao tiếp - Mời cơm",
-//     "kenh": "CLC",
-//     "noi_dung": "Chi phí gặp sở chia sẻ thông tin ngành",
-//     "ghi_chu": "abc",
-//     "so_ke_hoach": 420000,
-//     "so_hoa_don": null,
-//     "ngay_hoa_don": null,
-//     "so_tien_hoa_don": null,
-//     "inserted_at": "2025-04-13T15:02:10.839"
-// }
+//     let dataEntries = [];  
 
+//     if (ty_le && (kenh === "CLC & INS")) {
+//         const id1 = rawId;
+//         const id2 = (BigInt(rawId) + 1n).toString(); 
+//         console.log('id1:', id1, 'id2:', id2);
+//         const [clcRatio, insRatio] = ty_le.value.split(':').map(Number);
+//         const total = clcRatio + insRatio;
+//         const clcValue = Math.round(plan * (clcRatio / total));
+//         const insValue = plan - clcValue;
+    
+//         const data1 = {
+//           ...baseData,
+//           id: id1,
+//           kenh: "CLC",
+//           so_ke_hoach: clcValue
+//         };
+    
+//         const data2 = {
+//           ...baseData,
+//           id: id2,
+//           kenh: "INS",
+//           so_ke_hoach: insValue
+//         };
+//         console.log("Multiple data entries:", [data1, data2]);
+//         dataEntries.push(data1, data2);
+//     } else {
+//         const data = {
+//           ...baseData,
+//           kenh,
+//           so_ke_hoach: plan
+//         };
+//         console.log("Single data entry:", [data]);
+//         dataEntries.push(data);
+//     }
+//     post_form_data(dataEntries);
+// };

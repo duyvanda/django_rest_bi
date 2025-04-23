@@ -102,7 +102,7 @@ function AppContent() {
   const path = location.pathname;
 
   const isLogin = path === '/loginabc';
-  const noNavbarPaths = ['/formcontrol/introduction', '/login_nvbc', '/formcontrol/nvbc_view_video', '/formcontrol/nvbc_mainpage','/formcontrol/nvbc_view_pdf'];
+  const noNavbarPaths = ['/formcontrol/nvbc_introduction', '/formcontrol/nvbc_login', '/formcontrol/nvbc_view_video', '/formcontrol/nvbc_mainpage','/formcontrol/nvbc_view_pdf'];
 
   // Explanation:
   // noNavbarPaths is a list of paths that should show no nav at all.
@@ -177,6 +177,8 @@ function AppContent() {
                 <Route exact path="/formcontrol/nvbc_mainpage" component={Nvbc_mainpage} />
                 <Route exact path="/formcontrol/nvbc_view_pdf" component={Nvbc_view_pdf} />
                 <Route exact path="/formcontrol/nvbc_view_video" component={Nvbc_view_video} />
+
+
                 {/* <Route exact path="/formcontrol/introduction" component={Introduction} /> */}
                 {/* <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} /> */}
                 {/* REPORT */}

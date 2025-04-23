@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 // import {  } from 'react-router-dom';
@@ -15,7 +16,8 @@ import {
   FloatingLabel,
   Table,
   Card,
-  Modal
+  Modal,
+  Ratio
 } from "react-bootstrap";
 
 const Nvbc_view_video = () => {
@@ -24,14 +26,51 @@ const Nvbc_view_video = () => {
     const location = useLocation();
 
   useEffect(() => {
-    // Extract the 'pdf' query parameter from the URL
+
+    const storedUser = localStorage.getItem("nvbc_user");
+    if (!storedUser) {
+      history.push("/formcontrol/nvbc_login");
+      return;
+    }
+    const user = JSON.parse(storedUser);
+    const phone = user?.phone;
     window.scrollTo(0, 0);
     const queryParams = new URLSearchParams(location.search);
     const videoUrlp = queryParams.get('video');
+    const documentId = queryParams.get("document_id");
     if (videoUrlp) {
       setvideoUrl(videoUrlp);
     }
-  }, [location]);
+
+    const timer = setTimeout(() => {
+      const data = {
+        phone: phone,
+        document_id: documentId
+      }
+      console.log(data)
+      if (phone && documentId) {
+        // console.log()
+        fetch("https://bi.meraplion.com/local/nvbc_track_view/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("Failed to track view");
+            return res.json();
+          })
+          .then((data) => {
+            console.log("Tracked successfully:", data);
+          })
+          .catch((error) => {
+            console.error("Tracking error:", error);
+          });
+      }
+    }, 10000); // 10 seconds delay
+    return () => clearTimeout(timer); // cleanup
+  }, [location, history]);
 
   // Function to handle back navigation
   const handleGoBack = () => {
@@ -41,80 +80,35 @@ const Nvbc_view_video = () => {
   return (
     <div
     style={{
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      backgroundColor: '#fff',  // Set white background for the whole page
-      color: '#000',  // Make text black for contrast
+      height: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      backgroundColor: "#fff", // White background
+      color: "#000", // Black text
     }}
+  > 
+    <Container className="my-auto"
     >
-      {/* Go Back Button */}
-      <div style={{ textAlign: 'center' }}>
-        <Button variant="success" size="sm" onClick={handleGoBack}>
+      <Row className="justify-content-center">
+        <Col md={8}>
+          {/* Back Button */}
+          <div style={{ textAlign: 'center'}}>
+          <Button variant="success" size="sm" onClick={handleGoBack}>
           Quay lại
-        </Button>
-      </div>
-
-      {/* <h1 style={{ textAlign: 'center', margin: '20px 0', fontSize: '24px' }}>View Video</h1> */}
-
-      {/* Video iframe with a max-width like Google Drive */}
-      <div
-        style={{
-          height: '100vh',
-          display: 'flex',
-          justifyContent: 'center',
-          flex: 1,
-          padding: 0,
-          margin: 0,
-          backgroundColor: '#fff',  // Ensure iframe background is white
-        }}
-      >
-        {/* Container to maintain 16:9 aspect ratio, take up full screen */}
-        <div
-          style={{
-            position: 'relative',
-            width: '100%',  // Set width to 100% of the viewport width
-            height: '0',
-            paddingBottom: '56.25%',  // 16:9 aspect ratio
-            overflow: 'hidden',
-            backgroundColor: '#fff',  // Optional: white background around the video
-          }}
-        >
-          <iframe
-            src={videoUrl}
-            frameBorder="0"  // No borders around the iframe
-            title="Video Viewer"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowFullScreen  // Ensure full screen functionality is enabled
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',  // Ensure the iframe takes the full width
-              height: '75%',  // Ensure the iframe takes the full height
-              border: 'none',  // Remove any border around the iframe
-            }}
-          ></iframe>
-
-      {/* Media Query for Mobile: Make the video fill 100% width and height on small screens */}
-      <style>
-        {`
-          /* Responsive adjustments for mobile */
-          @media (max-width: 768px) {
-            div[style*="position: relative"] {
-              width: 100%;  /* Make the video fill the entire width on mobile */
-              height: 100vh;  /* Set height to 100% of the viewport height on small screens */
-              padding-bottom: 56.25%;  /* 16:9 aspect ratio */
-            }
-
-            h1 {
-              font-size: 20px;  /* Reduce title font size for mobile */
-            }
-          }
-        `}
-      </style>
-        </div>
-      </div>
+          </Button>
+          </div>
+          <Ratio aspectRatio="16x9">
+            <iframe
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              // src={`${pdfUrl}`}
+              src={`${videoUrl}`}
+              title="YouTube video"
+              allowFullScreen
+            />
+          </Ratio>
+        </Col>
+      </Row>
+    </Container>
     </div>
   );
 };

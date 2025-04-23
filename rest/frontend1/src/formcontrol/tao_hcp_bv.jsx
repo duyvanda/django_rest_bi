@@ -18,7 +18,10 @@ import {
     Modal,
     FloatingLabel,
     Stack,
-    Dropdown
+    Dropdown,
+    // Badge
+    // InputGroup,
+    
     
 } from "react-bootstrap";
 
@@ -128,10 +131,14 @@ function Tao_hcp_bv({history, location}) {
     const [chon_nganh, set_chon_nganh] = useState("");
     const [lst_nganh_chuyen_khoa, set_lst_nganh_chuyen_khoa] = useState([]);
     const [chon_nganh_chuyen_khoa, set_chon_nganh_chuyen_khoa] = useState("");
+    const [chon_nganh_chuyen_khoa_khac, set_chon_nganh_chuyen_khoa_khac] = useState('');
+
     const [lst_nganh_khoa_phong, set_lst_nganh_khoa_phong] = useState([]);
     const [chon_nganh_khoa_phong, set_chon_nganh_khoa_phong] = useState("");
-    const [so_tiem_nang, set_so_tiem_nang] = useState("");
-    const [so_luot_kham, set_so_luot_kham] = useState("");
+    const [chon_nganh_khoa_phong_khac, set_chon_nganh_khoa_phong_khac] = useState("");
+
+    const [so_tiem_nang, set_so_tiem_nang] = useState(0);
+    const [so_luot_kham, set_so_luot_kham] = useState(0);
     const [lst_chuc_vu_pcl, set_lst_chuc_vu_pcl] = useState([]);
     const [chon_chuc_vu_pcl, set_chon_chuc_vu_pcl] = useState("");
     const [uuid_old, set_uuid_old] = useState("");
@@ -187,6 +194,8 @@ function Tao_hcp_bv({history, location}) {
         set_inserted_at("");
         set_ma_hcp_1("");
         set_ma_hcp_2("");
+        set_chon_nganh_chuyen_khoa_khac("");
+        set_chon_nganh_khoa_phong_khac("");
     }
 
     const post_form_data = async (data) => {
@@ -245,46 +254,58 @@ function Tao_hcp_bv({history, location}) {
 
     const handle_on_click_dropdown = async (e) => {
     
-    let ten = e.split("@@")[0];
-    let id = e.split("@@")[1];
+        let ten = e.split("@@")[0];
+        let id = e.split("@@")[1];
 
-    let arr_hcpp = lst_hcp2_bv.filter( (el) => el.uuid ===  id )
-    arr_hcpp = arr_hcpp[0]
-    console.log(arr_hcpp)
+        let arr_hcpp = lst_hcp2_bv.filter( (el) => el.uuid ===  id )
+        arr_hcpp = arr_hcpp[0]
+        console.log(arr_hcpp)
 
-    set_sdt( arr_hcpp['sdt'] )
-    set_ten_hcp( arr_hcpp['ten_hcp'] )
-    set_chon_hco_bv(arr_hcpp['hco_bv'])
-    set_chon_ngay_sinh(arr_hcpp['ngay_sinh'])
-    set_chon_thang_sinh(arr_hcpp['thang_sinh'])
-    set_chon_nam_sinh(arr_hcpp['nam_sinh'])
-    set_chon_gioi_tinh(arr_hcpp['gioi_tinh'])
-    set_chon_kenh_lam_viec(arr_hcpp['kenh_lam_viec'])
-    set_chon_phan_loai_hcp(arr_hcpp['phan_loai_hcp'])
-    set_chon_chuc_danh(arr_hcpp['chuc_danh'])
-    set_chon_chuc_vu(arr_hcpp['chuc_vu'])
-    set_chon_nganh(arr_hcpp['nganh'])
-    set_chon_nganh_chuyen_khoa(arr_hcpp['nganh_chuyen_khoa'])
-    set_chon_nganh_khoa_phong(arr_hcpp['nganh_khoa_phong'])
-    set_so_luot_kham(arr_hcpp['so_luot_kham'])
-    set_so_tiem_nang(arr_hcpp['so_tiem_nang'])
+        set_sdt( arr_hcpp['sdt'] )
+        set_ten_hcp( arr_hcpp['ten_hcp'] )
+        set_chon_hco_bv(arr_hcpp['hco_bv'])
+        set_chon_ngay_sinh(arr_hcpp['ngay_sinh'])
+        set_chon_thang_sinh(arr_hcpp['thang_sinh'])
+        set_chon_nam_sinh(arr_hcpp['nam_sinh'])
+        set_chon_gioi_tinh(arr_hcpp['gioi_tinh'])
+        set_chon_kenh_lam_viec(arr_hcpp['kenh_lam_viec'])
+        set_chon_phan_loai_hcp(arr_hcpp['phan_loai_hcp'])
+        set_chon_chuc_danh(arr_hcpp['chuc_danh'])
+        set_chon_chuc_vu(arr_hcpp['chuc_vu'])
+        set_chon_nganh(arr_hcpp['nganh'])
+        set_chon_nganh_chuyen_khoa(arr_hcpp['nganh_chuyen_khoa'])
+        set_chon_nganh_khoa_phong(arr_hcpp['nganh_khoa_phong'])
+        set_so_luot_kham(arr_hcpp['so_luot_kham'])
+        set_so_tiem_nang(arr_hcpp['so_tiem_nang'])
 
-    let data_lam_them =[{"cacluachon": "Có code","check": true}]
+        let data_lam_them =[{"cacluachon": "Có code","check": true}]
 
-    if (arr_hcpp['co_lam_them']===1) {
-        set_arr_co_lam_phong_mach(data_lam_them);
-        set_chon_co_code(true);
-    } else {void(0)}
+        if (arr_hcpp['co_lam_them']===1) {
+            set_arr_co_lam_phong_mach(data_lam_them);
+            set_chon_co_code(true);
+        } else {void(0)}
 
-    set_chon_hco_pcl(arr_hcpp['hco_lam_them']);
-    set_chon_chuc_vu_pcl(arr_hcpp['chuc_vu_lam_them']);
-    set_uuid_old(arr_hcpp['uuid']);
-    set_inserted_at(arr_hcpp['inserted_at']);
-    set_ma_hcp_1(arr_hcpp['ma_hcp_1']);
-    set_ma_hcp_2(arr_hcpp['ma_hcp_2']);
+        set_chon_hco_pcl(arr_hcpp['hco_lam_them']);
+        set_chon_chuc_vu_pcl(arr_hcpp['chuc_vu_lam_them']);
+        set_uuid_old(arr_hcpp['uuid']);
+        set_inserted_at(arr_hcpp['inserted_at']);
+        set_ma_hcp_1(arr_hcpp['ma_hcp_1']);
+        set_ma_hcp_2(arr_hcpp['ma_hcp_2']);
 
-    set_chon_mahcp2_bv( ten )
+        set_chon_mahcp2_bv( ten )
     }
+
+    const handle_chon_chuc_vu = (e) => {
+        const selectedChucVu = e.target.value;
+        set_chon_chuc_vu(selectedChucVu);
+    
+        // Find the corresponding 'PHÂN LOẠI HCP' based on the selected value
+        const selectedItem = lst_phan_loai_hcp.find(item => item.chon_chinh === selectedChucVu);
+        
+        if (selectedItem) {
+          set_chon_phan_loai_hcp(selectedItem.phan_loai_hcp);
+        }
+      };
 
     const handle_submit = (e) => {
         e.preventDefault();
@@ -313,8 +334,8 @@ function Tao_hcp_bv({history, location}) {
             "chuc_danh": chon_chuc_danh,
             "chuc_vu": chon_chuc_vu,
             "nganh": chon_nganh,
-            "nganh_chuyen_khoa": chon_nganh_chuyen_khoa,
-            "nganh_khoa_phong": chon_nganh_khoa_phong,
+            "nganh_chuyen_khoa": chon_nganh_chuyen_khoa_khac ? chon_nganh_chuyen_khoa + "--" + chon_nganh_chuyen_khoa_khac : chon_nganh_chuyen_khoa,
+            "nganh_khoa_phong": chon_nganh_khoa_phong_khac ? chon_nganh_khoa_phong + "--" + chon_nganh_khoa_phong_khac : chon_nganh_khoa_phong,
             "co_lam_them": chon_co_code,
             "hco_lam_them": chon_hco_pcl.split("-")[0],
             "chuc_vu_lam_them": chon_chuc_vu_pcl,
@@ -413,7 +434,7 @@ function Tao_hcp_bv({history, location}) {
 
                         <Stack direction="horizontal" gap={2} className="border-1">
 
-                        <Form.Select required className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => set_chon_ngay_sinh(e.target.value)  }>
+                        <Form.Select className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => set_chon_ngay_sinh(e.target.value)  }>
                         <option style={{fontSize:"15px"}} value= {chon_ngay_sinh} > {chon_ngay_sinh ==="" ? "Ngày Sinh": chon_ngay_sinh} </option>
                             {arr_ngay_sinh
                             .map( (el, index) => 
@@ -422,7 +443,7 @@ function Tao_hcp_bv({history, location}) {
                             }    
                         </Form.Select>
 
-                        <Form.Select required className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => set_chon_thang_sinh(e.target.value)  }>
+                        <Form.Select className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => set_chon_thang_sinh(e.target.value)  }>
                         <option style={{fontSize:"15px"}} value= {chon_thang_sinh} > {chon_thang_sinh ==="" ? "Tháng Sinh": chon_thang_sinh} </option>
                             {arr_thang_sinh
                             .map( (el, index) => 
@@ -444,7 +465,7 @@ function Tao_hcp_bv({history, location}) {
 
                         <Stack direction="horizontal" gap={2} className="border-1">
 
-                        <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_gioi_tinh(e.target.value) }>
+                        <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_gioi_tinh(e.target.value) }>
                             <option value= {chon_gioi_tinh} > {chon_gioi_tinh ==="" ? "Giới Tính": chon_gioi_tinh} </option>
                             {lst_gioi_tinh
                             .map( (el, index) => 
@@ -453,19 +474,10 @@ function Tao_hcp_bv({history, location}) {
                             }
                         </Form.Select>
                         
-                        {/* if PCL then comment */}
+                        {/* if PCL then comment vì PCL chỉ có 1 kênh */}
                         <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_kenh_lam_viec(e.target.value) }>
                             <option value= {chon_kenh_lam_viec}> {chon_kenh_lam_viec ==="" ? "Kênh": chon_kenh_lam_viec} </option>
                             {lst_kenh_lam_viec
-                            .map( (el, index) => 
-                            <option key={index} value={el.chon_chinh}> {el.chon_chinh} </option>
-                            )
-                            }
-                        </Form.Select>
-
-                        <Form.Select required className="mt-2" style={{height:"60px" , fontSize:"15px"}}  onChange={ (e) => set_chon_phan_loai_hcp(e.target.value) }>
-                            <option value = {chon_phan_loai_hcp} >  {chon_phan_loai_hcp ==="" ? "Phân Loại HCP": chon_phan_loai_hcp} </option>
-                            {lst_phan_loai_hcp
                             .map( (el, index) => 
                             <option key={index} value={el.chon_chinh}> {el.chon_chinh} </option>
                             )
@@ -483,8 +495,7 @@ function Tao_hcp_bv({history, location}) {
                             }
                         </Form.Select>
 
-
-                        <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_chuc_vu(e.target.value) }>
+                        <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => handle_chon_chuc_vu(e) }>
                             <option value= {chon_chuc_vu} > {chon_chuc_vu ==="" ? "Chức Vụ": chon_chuc_vu} </option>
                             {lst_chuc_vu
                             .map( (el, index) => 
@@ -493,7 +504,22 @@ function Tao_hcp_bv({history, location}) {
                             }
                         </Form.Select>
 
-                        <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh(e.target.value) }>
+                        <Form.Select disabled={chon_chuc_vu===""} required className="mt-2" style={{height:"60px" , fontSize:"15px"}}  onChange={ (e) => set_chon_phan_loai_hcp(e.target.value) }>
+                            {/* <option value = {chon_phan_loai_hcp} >  {chon_phan_loai_hcp ==="" ? "Phân Loại HCP": chon_phan_loai_hcp} </option> */}
+                            {lst_phan_loai_hcp
+                            .filter (el => el.chon_chinh === chon_chuc_vu)
+                            .map( (el, index) => 
+                            <option key={index} value={el.chon_phu}> {el.chon_phu} </option>
+                            )
+                            }
+                        </Form.Select>
+                        {/* IF PCL then comment */}
+                        <Stack direction="horizontal" gap={1} className="border-1">
+                            <FloatingLabel style={{width: "50%"}} label="Số lượt khám" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_luot_kham(e.target.value.toLocaleUpperCase()) } value = {so_luot_kham}/> </FloatingLabel>
+                            <FloatingLabel style={{width: "50%"}} label="Tiềm năng" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_tiem_nang(e.target.value.toLocaleUpperCase()) } value = {so_tiem_nang}/> </FloatingLabel>
+                        </Stack>
+
+                        <Form.Select hidden={true} required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh(e.target.value) }>
                             <option value= {chon_nganh} > {chon_nganh ==="" ? "Ngành": chon_nganh} </option>
                             {lst_nganh
                             .map( (el, index) => 
@@ -502,33 +528,50 @@ function Tao_hcp_bv({history, location}) {
                             }
                         </Form.Select>
 
-                        <Form.Select required disabled={chon_nganh===""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_chuyen_khoa(e.target.value) }>
-                            <option value= {chon_nganh_chuyen_khoa} >  {chon_nganh_chuyen_khoa ==="" ? "(Ngành) Chuyên Khoa": chon_nganh_chuyen_khoa} </option>
+                        <Form.Select required disabled={chon_chuc_vu===""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_chuyen_khoa(e.target.value) }>
+                            <option value= {chon_nganh_chuyen_khoa} >  {chon_nganh_chuyen_khoa ==="" ? "KHOA PHÒNG HCP LÀM VIỆC": chon_nganh_chuyen_khoa} </option>
                             {lst_nganh_chuyen_khoa
-                            .filter (el => el.chon_chinh === chon_nganh)
+                            .filter (el => el.chon_chinh === chon_chuc_vu)
                             .map( (el, index) => 
                             <option key={index} value={el.chon_phu}> {el.chon_phu} </option>
                             )
                             }
                         </Form.Select>
+
+                        {/* Show text input if "KHÁC" is selected */}
+                        {chon_nganh_chuyen_khoa === 'KHÁC' && (
+                            <Form.Control
+                            type="text"
+                            placeholder="Vui lòng ghi cụ thể"
+                            className="mt-2"
+                            value={chon_nganh_chuyen_khoa_khac} // Controlled input with the state
+                            onChange={(e) => set_chon_nganh_chuyen_khoa_khac(e.target.value)} // Update state inline on input change
+                            />
+                        )}
+
                         {/* if PCL then comment */}
-                        <Form.Select required disabled={chon_nganh===""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_khoa_phong(e.target.value) }>
-                            <option value= {chon_nganh_khoa_phong} > {chon_nganh_khoa_phong ==="" ? "(Ngành) Khoa Phòng": chon_nganh_khoa_phong} </option>
+                        <Form.Select required disabled={chon_chuc_vu===""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_khoa_phong(e.target.value) }>
+                            <option value= {chon_nganh_khoa_phong} > {chon_nganh_khoa_phong ==="" ? "CHUYÊN KHOA HCP HỌC": chon_nganh_khoa_phong} </option>
                             {lst_nganh_khoa_phong
-                            .filter (el => el.chon_chinh === chon_nganh)
+                            .filter (el => el.chon_chinh === chon_chuc_vu)
                             .map( (el, index) =>
                             <option key={index} value={el.chon_phu}> {el.chon_phu} </option>
                             )
                             }
                         </Form.Select>
 
-                        <Stack direction="horizontal" gap={1} className="border-1">
-                            <FloatingLabel style={{width: "50%"}} label="Số lượt khám" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_luot_kham(e.target.value.toLocaleUpperCase()) } value = {so_luot_kham}/> </FloatingLabel>
-                            {/* if PCL then comment */}
-                            <FloatingLabel style={{width: "50%"}} label="Tiềm năng" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_tiem_nang(e.target.value.toLocaleUpperCase()) } value = {so_tiem_nang}/> </FloatingLabel>
-                        </Stack>
-                        <div className="mt-2 border border-1 border-success rounded">
+                        {/* Show text input if "KHÁC" is selected */}
+                        {chon_nganh_khoa_phong === 'KHÁC' && (
+                            <Form.Control 
+                            type="text" 
+                            placeholder="Vui lòng ghi cụ thể" 
+                            className="mt-2"
+                            value={chon_nganh_khoa_phong_khac} // Controlled input with the state
+                            onChange={(e) => set_chon_nganh_khoa_phong_khac(e.target.value)} // Update state inline on input change
+                            />
+                        )}
 
+                        <div className="mt-2 border border-1 border-success rounded">
                         {/* if PCL then BV */}
                         <Card className="">
                             <Card.Title className="ml-2 fw-normal">

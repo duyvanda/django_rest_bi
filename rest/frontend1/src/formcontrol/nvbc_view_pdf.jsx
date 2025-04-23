@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 // import {  } from 'react-router-dom';
@@ -29,13 +30,50 @@ const Nvbc_view_pdf = () => {
   };
 
   useEffect(() => {
+    const storedUser = localStorage.getItem("nvbc_user");
+    if (!storedUser) {
+      history.push("/formcontrol/nvbc_login");
+      return;
+    }
+    const user = JSON.parse(storedUser);
+    const phone = user?.phone;
     // Extract the 'pdf' query parameter from the URL
     const queryParams = new URLSearchParams(location.search);
     const pdf = queryParams.get('pdf');
+    const documentId = queryParams.get("document_id");
     if (pdf) {
       setPdfUrl(pdf);
     }
-  }, [location]);
+
+    const timer = setTimeout(() => {
+      const data = {
+        phone: phone,
+        document_id: documentId
+      }
+      console.log(data)
+      if (phone && documentId) {
+        // console.log()
+        fetch("https://bi.meraplion.com/local/nvbc_track_view/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("Failed to track view");
+            return res.json();
+          })
+          .then((data) => {
+            console.log("Tracked successfully:", data);
+          })
+          .catch((error) => {
+            console.error("Tracking error:", error);
+          });
+      }
+    }, 10000); // 10 seconds delay
+    return () => clearTimeout(timer); // cleanup
+  }, [location, history]);
 
   return (
     <div

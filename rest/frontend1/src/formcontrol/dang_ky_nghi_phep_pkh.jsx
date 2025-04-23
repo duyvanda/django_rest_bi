@@ -242,7 +242,7 @@ const Dang_ky_nghi_phep_pkh = ({ history } ) => {
         </Col>
 
         <Col sm={12}>
-        <Link to="/formcontrol/dang_ky_nghi_phep_pkh_ncrm">
+        <Link to="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh_ncrm">
           <Button
           variant="outline-secondary"
           className="mt-2">ĐI ĐẾN NCRM
