@@ -306,31 +306,31 @@ function Form_log_checkin_nhan_hang({history}) {
                         }
                         
                         <Card className="mt-2 border-success" style={{ borderWidth: "0.1rem" }}>
-                        <Card.Title >Upload ít nhất 02 Hình Ảnh nhận hàng*</Card.Title>
-                        <Card.Text >Tọa độ hiện tại của bạn {initialPosition[0]}-{initialPosition[1]} </Card.Text>
-                        <Form.Control id='customFileInput' required type="file" accept="image/*" capture="environment" style={{width: "115px", fontWeight: "bold", display: "none" }} multiple={true} onChange={ (e) => choose_images(e) } ></Form.Control>
-                        <Button style={{ width: '16rem' }} size="sm" variant="secondary" onClick={() => document.getElementById("customFileInput").click()}>
-                            CHỌN HÌNH
-                        </Button>
-                        <h5 className="ml-1 mt-1 text-wrap">{Array.from(selectedFile).length} hình đã up</h5>
-                        
-                        {Array.from(selectedFile)
-                        .map( (file, index) =>
-                            <ListGroup horizontal key={index}>
-                            <ListGroup.Item className="text-wrap">{file.name}</ListGroup.Item>
-                            <ListGroup.Item>
-                            <Button className="" size="sm" variant="danger" onClick={ () => handle_click_xoa_file(file.name) }> Xóa </Button>
-                            </ListGroup.Item>
-                            </ListGroup>
-                        )
-                        }
+                            <Card.Title >Upload ít nhất 02 Hình Ảnh nhận hàng*</Card.Title>
+                            <Card.Text >Tọa độ hiện tại của bạn {initialPosition[0]}-{initialPosition[1]} </Card.Text>
+                            <Form.Control id='file-input-thing' required type="file" accept="image/*" style={{width: "115px", fontWeight: "bold", display: "none" }} multiple={true} onChange={ (e) => choose_images(e) } ></Form.Control>
+                            <Button style={{ width: '16rem' }} size="sm" variant="secondary" onClick={() => document.getElementById("file-input-thing").click()}>
+                                CHỌN HÌNH
+                            </Button>
+                            <h5 className="ml-1 mt-1 text-wrap">{Array.from(selectedFile).length} hình đã up</h5>
+                            
+                            {Array.from(selectedFile)
+                            .map( (file, index) =>
+                                <ListGroup horizontal key={index}>
+                                <ListGroup.Item className="text-wrap">{file.name}</ListGroup.Item>
+                                <ListGroup.Item>
+                                <Button className="" size="sm" variant="danger" onClick={ () => handle_click_xoa_file(file.name) }> Xóa </Button>
+                                </ListGroup.Item>
+                                </ListGroup>
+                            )
+                            }
                         </Card>
 
                         <Button disabled={
                             Array.from(selectedFile).length < 2 |
                             data_table.length === 0
                             } className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
-                        <p>version 1.9(03/03/2025)
+                        <p>version 1.10(14/05/2025)
                         </p>
                         
                         </Form>

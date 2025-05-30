@@ -325,6 +325,27 @@ function Cong_tac_phi({history}) {
                                 ></Form.Control>
                                 </FloatingLabel>
 
+                                <FloatingLabel label="Chi phí khách sạn" className="border rounded mt-2">
+                                <Form.Control
+                                className=""
+                                placeholder=""
+                                type="text"
+                                name="chi_phi_khach_san"
+                                value={extracted_data?.chi_phi_khach_san || ''}
+                                onChange={handleInputChange}
+                                ></Form.Control>
+                                </FloatingLabel>
+
+                                <FloatingLabel label="Phụ cấp đi lại" className="border rounded mt-2">
+                                <Form.Control
+                                className=""
+                                placeholder=""
+                                type="text"
+                                name="phu_cap_di_lai"
+                                value={extracted_data?.phu_cap_di_lai || ''}
+                                onChange={handleInputChange}
+                                ></Form.Control>
+                                </FloatingLabel>
 
                                 {/* <FloatingLabel>Từ ngày (dd-mm-yyyy)</FloatingLabel>
                                 <Form.Control
@@ -376,7 +397,9 @@ function Cong_tac_phi({history}) {
                                 Từ ngày <strong>...</strong> <br />
                                 Đến ngày <strong>...</strong> <br />
                                 Ở tỉnh <strong>...</strong> <br />
-                                Vé xe: <strong>...</strong> nghìn
+                                Vé xe: <strong>...</strong> nghìn <br />
+                                Chi phí khách sạn: <strong>...</strong> nghìn <br />
+                                Phụ cấp đi lại: <strong>...</strong> nghìn <br />
                               </p>
                               <p>Thời gian còn lại: {countdown}s</p>
                             </div>

@@ -57,7 +57,7 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
 
   const post_form_data = async (data) => {
     SetLoading(true)
-    const response = await fetch(`https://bi.meraplion.com/local/insert_form_claim_chi_phi_ql_duyet/`, {
+    const response = await fetch(`https://bi.meraplion.com/local/insert_form_claim_chi_phi_invmapped/`, {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -101,6 +101,7 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
   
     // Update state with the modified records list
     set_data_submit(updatedRecords);
+    console.log(updatedRecords)
     post_form_data(updatedRecords);
 
   };

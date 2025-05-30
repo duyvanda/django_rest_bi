@@ -39,33 +39,129 @@ const Nvbc_introduction = () => {
     }
   }, [history]);
 
+  const [showContent, setShowContent] = useState(false); // State to control visibility
+
+
+  const [rewardData, setRewardData] = useState([
+  {
+    time: "Tháng",
+    condition: "Top 100 NVBC có điểm tích lũy cao nhất của tháng xét thưởng.",
+    name: "Ô dù gấp gọn kèm hộp đựng chống sốc",
+    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20200k%20-%20%C3%94%20c%E1%BA%A7m%20tay.jpg"
+  },
+  {
+    time: "Tháng",
+    condition: "Top 100 NVBC có điểm tích lũy cao nhất của tháng xét thưởng.",
+    name: "Túi đựng mỹ phẩm, đồ du lịch da PU thoáng khí",
+    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20200k%20-%20T%C3%BAi%20%C4%91%E1%BB%B1ng%20m%E1%BB%B9%20ph%E1%BA%A9m%20du%20l%E1%BB%8Bch.jpg"
+  },
+  {
+    time: "Tháng",
+    condition: "Top 100 NVBC có điểm tích lũy cao nhất của tháng xét thưởng.",
+    name: "Máy sấy tóc Philips HP8108 1000W",
+    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20200k%20-%20M%C3%A1y%20s%E1%BA%A5y%20t%C3%B3c%20Philips.jpg"
+  },
+  {
+    time: "Quý",
+    condition: "Top 50 NVBC có điểm tích lũy cao nhất của quý xét thưởng",
+    name: "Bộ quà tặng máy xông tinh dầu và tinh dầu",
+    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20500k%20-%20M%C3%A1y%20x%C3%B4ng%20tinh%20d%E1%BA%A7u.jpg"
+  },
+  {
+    time: "Quý",
+    condition: "Top 50 NVBC có điểm tích lũy cao nhất của quý xét thưởng",
+    name: "Máy xay sinh tố cầm tay Bear",
+    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20500k%20-%20M%C3%A1y%20xay%20sinh%20t%E1%BB%91%20c%E1%BA%A7m%20tay%20Bear.jpg"
+  },
+  {
+    time: "Quý",
+    condition: "Top 50 NVBC có thời gian tra cứu thư viện 30 phút/ ngày (ít nhất 30 ngày/ quý)",
+    name: "Đồng hồ tích hợp đèn ngủ có điều khiển từ xa và điều chỉnh độ sáng vô cấp",
+    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20300k%20-%20%C4%90%E1%BB%93ng%20h%E1%BB%93%20ki%C3%AAm%20%C4%91%C3%A8n%20ng%E1%BB%A7.jpg"
+  },
+  {
+    time: "Quý",
+    condition: "Top 50 NVBC có thời gian tra cứu thư viện 30 phút/ ngày (ít nhất 30 ngày/ quý)",
+    name: "Túi cói kèm charm đáng yêu",
+    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20300k%20-%20T%C3%BAi%20c%C3%B3i%20k%C3%A8m%20charm.jpg"
+  }
+]);
+
+
+  const filterBy = (type, description) =>
+    rewardData.filter((item) => item.time === type && item.condition === description);
+
+const renderCards = (items) => (
+  <Row className="mt-3">
+    {items.map((item, index) => (
+      <Col key={index} xs={12} className="mb-4"> {/* Full width on small screens */}
+        <Card
+          className="shadow-sm"
+          style={{
+            height: "auto", // Let height expand naturally
+            overflow: "hidden",
+          }}
+        >
+          <Card.Img
+            variant="top"
+            src={item.link}
+            style={{
+              width: "100%",
+              height: "200px",        // ⬅️ Make image taller for mobile
+              objectFit: "cover",     // Fills area nicely (can use 'contain' if needed)
+            }}
+          />
+
+          <Card.Body style={{ padding: "10px" }}>
+            <Card.Title
+              style={{
+                fontSize: "14px",
+                fontWeight: "600",
+                lineHeight: "1.3",
+                maxHeight: "2.6em",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {item.name}
+            </Card.Title>
+          </Card.Body>
+        </Card>
+      </Col>
+    ))}
+  </Row>
+);
+
 
   const markdownContent = `
-  ### Công thức tính điểm trên 1 lượt truy cập:
-  **Điểm = Hệ số chủ đề x Hệ số thời gian**
-  
-  - **Hệ số chủ đề:** Mỗi chủ đề có một hệ số riêng (có thể thay đổi theo thời gian).
-  - **Hệ số thời gian:** Quy đổi thời gian đọc sang điểm, cụ thể:
-    - Dưới 30 giây = 0.5 điểm
-    - Từ 30 giây - Dưới 1 phút = 1 điểm
-    - Từ 1 phút trở lên = 2 điểm
-  
-  **Lưu ý:** Hệ số thời gian có thể thay đổi theo từng tình huống.
-  Chú ý về các thay đổi trong hệ số.
   `;
   
     // Replace newlines with <br /> tags
     const contentWithBreaks = markdownContent.replace(/\n/g, '  \n'); // Add two spaces before the newline for markdown to recognize the break
 
     const markdownContent_2 = `
-1. **Thông tin về MerapLion:** + 2 điểm/Video  
-2. **Thông tin sản phẩm:**
-   - Tờ giới thiệu sản phẩm: +2 điểm/SKU nhấn mạnh & 1 điểm/SKU còn lại (SKU nhấn mạnh thay đổi theo tháng)
-   - Clip giới thiệu sản phẩm: +2 điểm/video
-   - Hướng dẫn sử dụng sản phẩm: +2 điểm/video  
-3. **Thông tin bệnh học:** +1 điểm/video  
-4. **Sổ tay người thầy thuốc:** +1 điểm/chuyên đề  
-5. **Tư vấn cùng chuyên gia:** +1 điểm/video
+### Công thức tính điểm trên 1 lượt truy cập:
+
+**Điểm** = Tỷ lệ thời gian * Hệ số chủ đề
+
+**Tỷ lệ thời gian**:
+Thời gian tra cứu thư viện được quy đổi theo tỷ lệ sau:
+- **Dưới 30 giây** = 50%
+- **Từ 30 giây - Dưới 1 phút** = 100%
+- **Từ 1 phút trở lên** = 150%
+
+**Hệ số chủ đề**:
+Mỗi chủ đề có một hệ số riêng (có thể thay đổi theo thông báo từng quý)
+
+**Điểm số 5 chủ đề quý 2/2025** (từ 01/04/2025 – 30/06/2025) như sau:
+1. **Thông tin về MerapLion**: + 2 điểm/Video
+2. **Thông tin sản phẩm**:
+   - Tờ giới thiệu sản phẩm: +2 điểm/SKU
+   - Clip giới thiệu sản phẩm: +2 điểm/Video
+   - Hướng dẫn sử dụng sản phẩm: +2 điểm/Video
+3. **Thông tin bệnh học**: +2 điểm/Video
+4. **Sổ tay người thầy thuốc**: +2 điểm/Chuyên đề
+5. **Tư vấn cùng chuyên gia**: +2 điểm/Video
     `;
       // Replace newlines with <br /> tags
       const contentWithBreaks_2 = markdownContent_2.replace(/\n/g, '  \n'); // Add two spaces before the newline for markdown to recognize the break
@@ -92,45 +188,77 @@ const Nvbc_introduction = () => {
           </div>
 
           {/* Greeting */}
+          
+          {!showContent && (
+          
           <div className="greeting-box text-center mt-4">
             <h5>Xin chào, {userName}!</h5>
             <p>
-              Tham gia và Hoạt động thường xuyên để tăng điểm và nhận được những phần quà giá trị mỗi quý từ MerapLion.
+              Cảm ơn Quý Dược sĩ đã tham gia chương trình M.Ambassador. Hãy tích cực tra cứu & hoạt động duy trì để gia tăng điểm số và nhận về thật nhiều phần thưởng hấp dẫn hằng Tháng, hằng Quý nhé !
             </p>
           </div>
+          )
+          }
 
           {/* Info Section */}
-          <div className="info-section mt-4">
-            <div className="vertical-line" />
 
-            <div className="info-box">
-              {/* <div className="icon-text d-flex mb-3"> */}
-                {/* <img src={iconInfo} alt="Info Icon" className="me-3" /> */}
-                  <div style={{ fontSize: '14px' }}>
-                    <ReactMarkdown>
-                    {contentWithBreaks}
-                    </ReactMarkdown>
-                  {/* </div> */}
-                </div>
-              {/* <div className="icon-text d-flex"> */}
-                {/* <img src={iconLightning} alt="Lightning Icon" className="me-3" /> */}
-                <div style={{ fontSize: '14px' }}>
-                    <ReactMarkdown>
-                    {contentWithBreaks_2}
-                    </ReactMarkdown>
-                  {/* </div> */}
-              </div>
-            </div>
+    <div className="info-section mt-4">
+      {/* Show contentWithBreaks if showContent is false */}
+      {!showContent && (
+        <div style={{ fontSize: '20px', fontWeight: 'bold', textAlign: 'justify' }}>
+          <ReactMarkdown>{contentWithBreaks}</ReactMarkdown>
+
+          <div className="mt-4">
+          <h5 className="text-info">🎁 Thưởng tháng</h5>
+          <p>Top 100 NVBC có điểm tích lũy cao nhất của tháng xét thưởng.</p>
+          {renderCards(filterBy("Tháng", "Top 100 NVBC có điểm tích lũy cao nhất của tháng xét thưởng."))}
+        </div>
+
+        <div className="mt-5">
+          <h5 className="text-info">🎁 Thưởng Quý</h5>
+          <p>Top 50 NVBC có điểm tích lũy cao nhất của quý xét thưởng.</p>
+          {renderCards(filterBy("Quý", "Top 50 NVBC có điểm tích lũy cao nhất của quý xét thưởng"))}
+        </div>
+
+        <div className="mt-5">
+          <h5 className="text-info">🎁 Thưởng Quý</h5>
+          <p>Top 50 NVBC có thời gian tra cứu thư viện 30 phút/ ngày (ít nhất 30 ngày/ quý).</p>
+          {renderCards(filterBy("Quý", "Top 50 NVBC có thời gian tra cứu thư viện 30 phút/ ngày (ít nhất 30 ngày/ quý)"))}
+        </div>
+        </div>
+      )}
+
+      {/* Show contentWithBreaks_2 and "BẮT ĐẦU" button when showContent is true */}
+      {showContent && (
+        <div>
+          <div style={{ fontSize: '14px', fontWeight: 'bold', textAlign: 'justify' }}>
+            <ReactMarkdown>{contentWithBreaks_2}</ReactMarkdown>
           </div>
 
-          {/* Start Button */}
           <Container className="text-center mt-4">
-          <Link to="/formcontrol/nvbc_mainpage">
-            <Button className="start-button" variant="info">
-              BẮT ĐẦU
-            </Button>
-          </Link>
+            <Link to="/formcontrol/nvbc_mainpage">
+              <Button className="start-button text-white" variant="info">
+                BẮT ĐẦU
+              </Button>
+            </Link>
           </Container>
+        </div>
+      )}
+
+      {/* Show "TIẾP TỤC" button only when showContent is false */}
+      {!showContent && (
+        <Container className="text-center mt-4">
+          <Button
+            className="start-button text-white"
+            variant="info"
+            onClick={() => setShowContent(true)} // Inline handler
+          >
+            TIẾP TỤC
+          </Button>
+        </Container>
+      )}
+    </div>
+          
         </div>
       </Col>
     </Row>
@@ -138,3 +266,38 @@ const Nvbc_introduction = () => {
 };
 
 export default Nvbc_introduction;
+
+
+{/* <div className="info-section mt-4">
+            <div className="vertical-line" />
+
+            <div className="info-box">
+              
+                <div style={{ fontSize: '20px', fontWeight: 'bold', textAlign: 'justify' }} >
+                    <ReactMarkdown>
+                    {contentWithBreaks}
+                    </ReactMarkdown>
+                </div>
+
+                <div style={{ fontSize: '14px' }}>
+                  <ReactMarkdown>
+                  {contentWithBreaks_2}
+                  </ReactMarkdown>
+                </div>
+
+            </div>
+          </div>
+
+          <Container className="text-center mt-4">
+              <Button className="start-button text-white" variant="info">
+                TIẾP TỤC
+              </Button>
+          </Container>
+
+          <Container className="text-center mt-4">
+            <Link to="/formcontrol/nvbc_mainpage">
+              <Button className="start-button text-white" variant="info">
+                BẮT ĐẦU
+              </Button>
+            </Link>
+          </Container> */}

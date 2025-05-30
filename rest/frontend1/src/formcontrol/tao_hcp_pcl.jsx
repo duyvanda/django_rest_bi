@@ -188,8 +188,8 @@ function Tao_hcp_pcl({history, location}) {
         set_chon_co_code(false);
         set_chon_hco_pcl("");
         set_chon_chuc_vu_pcl("");
-        set_so_tiem_nang(0);
-        set_so_luot_kham(0);
+        set_so_tiem_nang("");
+        set_so_luot_kham("");
         set_uuid_old("");
         set_inserted_at("");
         set_ma_hcp_1("");
@@ -329,7 +329,7 @@ function Tao_hcp_pcl({history, location}) {
             "thang_sinh": chon_thang_sinh,
             "nam_sinh": chon_nam_sinh,
             "gioi_tinh": chon_gioi_tinh,
-            "kenh_lam_viec": "PCL", // if PCL then PCL
+            "kenh_lam_viec": chon_kenh_lam_viec,
             "phan_loai_hcp": chon_phan_loai_hcp,
             "chuc_danh": chon_chuc_danh,
             "chuc_vu": chon_chuc_vu,
@@ -370,9 +370,9 @@ function Tao_hcp_pcl({history, location}) {
                         {/* START FORM BODY */}
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
                             <Button style={{fontWeight: "bold"}}  key={1} onClick={ () => {navigate.push("/formcontrol/tao_hcp_bv"); SET_EDITMODE(false); clear_data() } } className="bg-warning text-dark border-0" >Tạo Mới HCP BV</Button>
-                            {/* <Button style={{width: "60px"}} key={2} onClick={ () => {navigate.push("/formcontrol/tao_hcp_bv?edit=1"); SET_EDITMODE(true); clear_data() } } className="ml-1 bg-warning text-dark border-0" >Sửa BV</Button> */}
-                            <Button style={{fontWeight: "bold"}} key={3} onClick={ () => { navigate.push("/formcontrol/tao_hcp_pcl"); SET_EDITMODE(false); clear_data() } } className="ml-1 bg-primary border-0" >Tạo Mới HCP PCL</Button>
-                            {/* <Button style={{width: "60px"}} key={4} onClick={ () => { navigate.push("/formcontrol/tao_hcp_pcl?edit=1") ; SET_EDITMODE(true); clear_data() } } className="ml-1 bg-primary border-0" >Sửa PCL</Button> */}
+                            <Button style={{width: "60px"}} key={2} onClick={ () => {navigate.push("/formcontrol/tao_hcp_bv?edit=1"); SET_EDITMODE(true); clear_data() } } className="ml-1 bg-warning text-dark border-0" >Sửa BV</Button>
+                            <Button style={{fontWeight: "bold"}} key={3} onClick={ () => { navigate.push("/formcontrol/tao_hcp_pcl"); SET_EDITMODE(false); clear_data() } } className="ml-1 bg-primary border-0" >Tạo Mới HCP PCL/ED/GO</Button>
+                            <Button style={{width: "60px"}} key={4} onClick={ () => { navigate.push("/formcontrol/tao_hcp_pcl?edit=1") ; SET_EDITMODE(true); clear_data() } } className="ml-1 bg-primary border-0" >Sửa PCL</Button>
                             <Button style={{width: "30px"}} key={5} onClick={ () => navigate.push("/formcontrol/tao_hcp_bc") } className="ml-1 bg-secondary border-0" >BC</Button>
                         </ButtonGroup>
 
@@ -475,14 +475,14 @@ function Tao_hcp_pcl({history, location}) {
                         </Form.Select>
                         
                         {/* if PCL then comment vì PCL chỉ có 1 kênh */}
-                        {/* <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_kenh_lam_viec(e.target.value) }>
+                        <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_kenh_lam_viec(e.target.value) }>
                             <option value= {chon_kenh_lam_viec}> {chon_kenh_lam_viec ==="" ? "Kênh": chon_kenh_lam_viec} </option>
                             {lst_kenh_lam_viec
                             .map( (el, index) => 
                             <option key={index} value={el.chon_chinh}> {el.chon_chinh} </option>
                             )
                             }
-                        </Form.Select> */}
+                        </Form.Select>
 
                         </Stack>
 
@@ -498,13 +498,14 @@ function Tao_hcp_pcl({history, location}) {
                         <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_chuc_vu(e.target.value) }>
                             <option value= {chon_chuc_vu} > {chon_chuc_vu ==="" ? "Chức Vụ": chon_chuc_vu} </option>
                             {lst_chuc_vu
+                            .filter (el => el.kenh === chon_kenh_lam_viec)
                             .map( (el, index) => 
                             <option key={index} value={el.chon_chinh}> {el.chon_chinh} </option>
                             )
                             }
                         </Form.Select>
 
-                        <Form.Select hidden={true} disabled={chon_chuc_vu===""} required className="mt-2" style={{height:"60px" , fontSize:"15px"}}  onChange={ (e) => set_chon_phan_loai_hcp(e.target.value) }>
+                        <Form.Select disabled={chon_chuc_vu===""} required className="mt-2" style={{height:"60px" , fontSize:"15px"}}  onChange={ (e) => set_chon_phan_loai_hcp(e.target.value) }>
                             {/* <option value = {chon_phan_loai_hcp} >  {chon_phan_loai_hcp ==="" ? "Phân Loại HCP": chon_phan_loai_hcp} </option> */}
                             {lst_phan_loai_hcp
                             .filter (el => el.chon_chinh === chon_chuc_vu)
@@ -514,12 +515,12 @@ function Tao_hcp_pcl({history, location}) {
                             }
                         </Form.Select>
                         {/* IF PCL then comment */}
-                        <Stack hidden={true} direction="horizontal" gap={1} className="border-1">
-                            <FloatingLabel style={{width: "50%"}} label="Số lượt khám" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_luot_kham(e.target.value.toLocaleUpperCase()) } value = {so_luot_kham}/> </FloatingLabel>
-                            <FloatingLabel style={{width: "50%"}} label="Tiềm năng" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_tiem_nang(e.target.value.toLocaleUpperCase()) } value = {so_tiem_nang}/> </FloatingLabel>
+                        <Stack direction="horizontal" gap={1} className="border-1">
+                            <FloatingLabel style={{width: "50%"}}  label="Số lượt khám" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_luot_kham(e.target.value.toLocaleUpperCase()) } value = {so_luot_kham}/> </FloatingLabel>
+                            <FloatingLabel style={{width: "50%"}}  label="Tiềm năng" className="border rounded mt-2" > <Form.Control disabled={true} type="number" className="" placeholder="xxx" onChange={ (e) => set_so_tiem_nang(e.target.value.toLocaleUpperCase()) } value = {so_tiem_nang}/> </FloatingLabel>
                         </Stack>
                         
-                        <Form.Select hidden={true} required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh(e.target.value) }>
+                        <Form.Select hidden={true} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh(e.target.value) }>
                             <option value= {chon_nganh} > {chon_nganh ==="" ? "Ngành": chon_nganh} </option>
                             {lst_nganh
                             .map( (el, index) => 
@@ -528,8 +529,8 @@ function Tao_hcp_pcl({history, location}) {
                             }
                         </Form.Select>
 
-                        <Form.Select required disabled={chon_chuc_vu===""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_chuyen_khoa(e.target.value) }>
-                            <option value= {chon_nganh_chuyen_khoa} >  {chon_nganh_chuyen_khoa ==="" ? "KHOA PHÒNG HCP LÀM VIỆC": chon_nganh_chuyen_khoa} </option>
+                        <Form.Select hidden={chon_kenh_lam_viec==="ED"} required disabled={chon_chuc_vu===""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_chuyen_khoa(e.target.value) }>
+                            <option value= {chon_nganh_chuyen_khoa} >  {chon_nganh_chuyen_khoa ==="" ? "CHUYÊN KHOA PK / PHÒNG LÀM VIỆC GO": chon_nganh_chuyen_khoa} </option>
                             {lst_nganh_chuyen_khoa
                             .filter (el => el.chon_chinh === chon_chuc_vu)
                             .map( (el, index) => 
@@ -538,19 +539,20 @@ function Tao_hcp_pcl({history, location}) {
                             }
                         </Form.Select>
 
-                        {/* Show text input if "KHÁC" is selected */}
+                        {/* Show text input if "KHÁC" is selected, comment if PCL */}
                         {chon_nganh_chuyen_khoa === 'KHÁC' && (
-                            <Form.Control 
+                            <Form.Control
+                            required
                             type="text" 
                             placeholder="Vui lòng ghi cụ thể" 
                             className="mt-2"
-                            value={chon_nganh_chuyen_khoa_khac} // Controlled input with the state
-                            onChange={(e) => set_chon_nganh_chuyen_khoa_khac(e.target.value)} // Update state inline on input change
+                            value={chon_nganh_chuyen_khoa_khac}
+                            onChange={(e) => set_chon_nganh_chuyen_khoa_khac(e.target.value)}
                             />
                         )}
 
                         {/* if PCL then comment */}
-                        <Form.Select required disabled={chon_chuc_vu===""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_khoa_phong(e.target.value) }>
+                        <Form.Select hidden={true} disabled={chon_chuc_vu===""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_khoa_phong(e.target.value) }>
                             <option value= {chon_nganh_khoa_phong} > {chon_nganh_khoa_phong ==="" ? "CHUYÊN KHOA HCP HỌC": chon_nganh_khoa_phong} </option>
                             {lst_nganh_khoa_phong
                             .filter (el => el.chon_chinh === chon_chuc_vu)
@@ -562,8 +564,9 @@ function Tao_hcp_pcl({history, location}) {
 
                         {/* Show text input if "KHÁC" is selected */}
                         {chon_nganh_khoa_phong === 'KHÁC' && (
-                            <Form.Control 
-                            type="text" 
+                            <Form.Control
+                            required
+                            type="text"
                             placeholder="Vui lòng ghi cụ thể" 
                             className="mt-2"
                             value={chon_nganh_khoa_phong_khac} // Controlled input with the state

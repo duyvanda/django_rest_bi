@@ -194,25 +194,26 @@ function Form_claim_chi_phi({ history }) {
         const baseData = {
             id: rawId,
             status:"new",
-            // manv: manv,
             manv: "MR0673",
             tencvbh: manv_info?.tencvbh,
             phongdeptsummary: manv_info?.phongdeptsummary,
             chon_kh_chung: chon_kh_chung?.hco_bv,
             pubcustname: chon_kh_chung?.pubcustname,
-            chon_hcp: chon_hcp?.ma_hcp_2,
-            ten_hcp: chon_hcp?.ten_hcp,
+            chon_hcp: chon_hcp,
+            ten_hcp: null,
             qua_tang,
             kenh: kenh,
             noi_dung: noi_dung,
             ghi_chu,
-            so_ke_hoach: Number(so_ke_hoach.replace(/,/g, "")),
+            so_ke_hoach: Number(so_ke_hoach.replace(/,/g, "")  ),
             so_hoa_don: null,
             ngay_hoa_don: null,
             so_tien_hoa_don:null,
             inserted_at: insert     
         };
         const plan = Number(so_ke_hoach.replace(/,/g, ""));
+
+        console.log("baseData", baseData)
 
         let dataEntries = [];  // Initialize an array to hold the data entries
         const [clcRatio, insRatio] = ty_le.value.split(':').map(Number);
@@ -268,8 +269,14 @@ function Form_claim_chi_phi({ history }) {
                             getOptionValue={(el) => el.hco_bv}
                             getOptionLabel={(el) => `${el.hco_bv} - ${el.pubcustname}`}
                             value={chon_kh_chung}
-                            onChange={set_chon_kh_chung}
-                            // onChange={(selectedOption) => set_chon_kh_chung(selectedOption?.hco_bv)}
+                            onChange={
+                            (selectedOptions) => {
+                            set_chon_kh_chung(selectedOptions);  // Update state
+                            set_chon_hcp(null)
+                            console.log(selectedOptions);  // Log the selected options
+
+                            }
+                            }
                             isSearchable
                             placeholder="Chọn khách hàng tổng"
                             styles={{ placeholder: (base) => ({ ...base, color: "#212529" }) }}
@@ -277,12 +284,18 @@ function Form_claim_chi_phi({ history }) {
                             
                             {/* chon_hcp Select with Search */}
                             <Select
+                            isMulti
                             className="mt-2"
                             options={data_hcp.filter((el) => el.hco_bv === chon_kh_chung?.hco_bv)}
                             getOptionValue={(el) => el.ma_hcp_2}
                             getOptionLabel={(el) => `${el.ma_hcp_2} - ${el.ten_hcp}`}
                             value={chon_hcp}
-                            onChange={set_chon_hcp}
+                            onChange={
+                                (selectedOptions) => {
+                                set_chon_hcp(selectedOptions);  // Update state
+                                console.log(selectedOptions);  // Log the selected options
+                                }
+                            }
                             // onChange={ (selectedOption) => set_chon_hcp(selectedOption?.ma_hcp_2) }
                             isSearchable
                             isDisabled={isKenhDisabled}
@@ -363,12 +376,17 @@ function Form_claim_chi_phi({ history }) {
 
                             
                             {/* ghi_chu Input */}
-                            <Form.Control className='mt-2 dark-placeholder' required type="text" placeholder="Ghi chú" onChange={(e) => set_ghi_chu(e.target.value)} value={ghi_chu} style={{ '::placeholder': { color: '#333' } }}/>
+                            <Form.Control className='mt-2 dark-placeholder' type="text" placeholder="Ghi chú" onChange={(e) => set_ghi_chu(e.target.value)} value={ghi_chu} style={{ '::placeholder': { color: '#333' } }}/>
                             
                             {/* Planning Number Input */}
                             <Form.Control className='mt-2 dark-placeholder' required type="text" placeholder="Số kế hoạch" onChange={(e) => set_so_ke_hoach( formatNumber(e.target.value.replace(/\D/g, "")) )} value={so_ke_hoach} style={{ '::placeholder': { color: '#333' } }}/>
                             
-                            <Button className='mt-2' variant="warning" type="submit" style={{ width: "100%", fontWeight: "bold" }}>GỬI QL DUYỆT</Button>
+                            <Button className='mt-2' variant="warning" type="submit" 
+                            style={{ width: "100%", fontWeight: "bold" }}
+                            disabled={
+                            (qua_tang === "Quà tặng" && Number(so_ke_hoach.replace(/,/g, "")) >= 2000000)
+                            }
+                            >GỬI QL DUYỆT</Button>
 
                         </Form>
                     </Col>
@@ -385,13 +403,13 @@ function Form_claim_chi_phi({ history }) {
 
         );
     } else {
-        return (
-            <div>
-                <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
-                <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-                </Spinner>
-            </div>
-        );
+        // return (
+        //     <div>
+        //         <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
+        //         <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
+        //         </Spinner>
+        //     </div>
+        // );
     }
 }
 

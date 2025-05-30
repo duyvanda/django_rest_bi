@@ -16,7 +16,7 @@ import {
     Table,
     ListGroup
 } from "react-bootstrap";
-const DbFileTable = () => {
+const Duckdb = () => {
 
   const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
 
@@ -89,7 +89,8 @@ const DbFileTable = () => {
   const [tableName, setTableName] = useState("");
   const [schemaColumns, setSchemaColumns] = useState([{ columnName: "", dataType: "VARCHAR", isPrimaryKey: false }]);  // Default type is TEXT
   const [excelFile, setExcelFile] = useState(null); // State to store the uploaded Excel file
-
+  const [bq_table, set_bq_table] = useState(null);
+  const [db_table, set_db_table] = useState(null);
   // Handle SQL query input change
   const handleSqlChange = (e) => {
     setSqlQuery(e.target.value);
@@ -159,7 +160,9 @@ const DbFileTable = () => {
         body: JSON.stringify({
           id: get_id(),
           query: sqlQuery,
-          file_path: currentFile.name
+          file_path: currentFile.name,
+          bq_table: bq_table,
+          db_table: db_table
         })
       });
 
@@ -447,9 +450,31 @@ const DbFileTable = () => {
                   placeholder="Enter your SQL query here"
                 />
               </Form.Group>
-              <Button variant="success" onClick={handleRunQuery} className="mt-3" disabled={loading}>
+            <div className="d-flex align-items-center mt-3">
+              <Button variant="success" onClick={handleRunQuery} disabled={loading}>
                 Run Query
               </Button>
+              <Form.Control
+                type="text"
+                style={{ width: '100px', margin: '0 10px' }} // 100px ~ 3cm
+                placeholder="BQ Table"
+                value={bq_table}
+                onChange={(e) => set_bq_table(e.target.value) }
+              />
+              <Button variant="primary" onClick={handleRunQuery} disabled={loading}>
+                Move to BQ
+              </Button>
+              <Form.Control
+                type="text"
+                style={{ width: '100px', margin: '0 10px' }} // 100px ~ 3cm
+                placeholder="DB Table"
+                value={bq_table}
+                onChange={(e) => set_db_table(e.target.value) }
+              />
+              <Button variant="danger" onClick={handleRunQuery} disabled={loading}>
+                Move to DB
+              </Button>
+            </div>
             </Form>
 
             {/* Display the Excel URL if available */}
@@ -576,7 +601,7 @@ const DbFileTable = () => {
   );
 };
 
-export default DbFileTable;
+export default Duckdb;
 
 
 

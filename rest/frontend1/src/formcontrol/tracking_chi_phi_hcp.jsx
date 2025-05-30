@@ -36,6 +36,8 @@ function Tracking_chi_phi_hcp({history}) {
             set_arr_hcp(data['lst_hcp']);
             set_tong_hcp_da_dau_tu(data['tong_hcp_da_dau_tu']);
             set_tong_tien_ke_hoach_da_dau_tu(data['tong_tien_ke_hoach_da_dau_tu']);
+
+            set_lst_placeholder_cau_hoi(data['lst_placeholder_cau_hoi']);
             set_lst_chon_qua_tang_cam_xuc(data['lst_chon_qua_tang_cam_xuc']);
             set_lst_chon_qua_1_5(data['lst_chon_qua_1_5']);
             set_lst_chon_qua_sinh_nhat(data['lst_chon_qua_sinh_nhat']);
@@ -69,7 +71,7 @@ function Tracking_chi_phi_hcp({history}) {
     
     const f = new Intl.NumberFormat();
     const [manv, set_manv] = useState("");
-    // const current_date = formatDate(Date());
+    const [lst_placeholder_cau_hoi, set_lst_placeholder_cau_hoi] = useState([]);
     const [lst_chon_qua_tang_cam_xuc, set_lst_chon_qua_tang_cam_xuc] = useState([]);
     const [lst_chon_gimmick, set_lst_chon_gimmick] = useState([]);
     const [lst_chon_qua_1_5, set_lst_chon_qua_1_5] = useState([]);
@@ -269,7 +271,7 @@ function Tracking_chi_phi_hcp({history}) {
 
                         <Form.Select disabled={chon_qua_tang_cam_xuc_2!==""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_cam_xuc(e.target.value)  }>                                 
                             <option value=''>
-                                Chọn Quà Tặng Cảm Xúc
+                                {lst_placeholder_cau_hoi[0]?.loai}
                             </option>
 
                             {lst_chon_qua_tang_cam_xuc
@@ -280,10 +282,10 @@ function Tracking_chi_phi_hcp({history}) {
                         
                         </Form.Select>
 
-                        <Form.Select disabled={chon_qua_tang_cam_xuc!==""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_cam_xuc_2(e.target.value)  }>                                 
+                        {/* <Form.Select disabled={chon_qua_tang_cam_xuc!==""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_cam_xuc_2(e.target.value)  }>                                 
                             <option value=''>
 
-                            Chọn Quà Tặng Cảm Xúc 2024 Đợt 2 (20/11 & 24/12)
+                            {lst_placeholder_cau_hoi[1]?.loai}
                             </option>
 
                             {lst_chon_qua_tang_cam_xuc_2024_dot2
@@ -292,10 +294,12 @@ function Tracking_chi_phi_hcp({history}) {
                             )
                             }
                         
-                        </Form.Select>
+                        </Form.Select> */}
                         
                         <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang(e.target.value)  }>                                 
-                            <option value=''>Chọn Gimmick</option>
+                            <option value=''>
+                                {lst_placeholder_cau_hoi[2]?.loai}
+                            </option>
 
                             {lst_chon_gimmick
                             .map( (el, index) => 
@@ -305,18 +309,22 @@ function Tracking_chi_phi_hcp({history}) {
                         
                         </Form.Select>
 
-                        <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_2(e.target.value)  }>                                 
-                            <option value=''>Chọn Quà 1/5</option>
+                        {/* <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_2(e.target.value)  }>                                 
+                            <option value=''>
+                                {lst_placeholder_cau_hoi[3]?.loai}
+                            </option>
                             {lst_chon_qua_1_5
                             .map( (el, index) => 
                             <option value={el.chon_chinh}> {el.chon_chinh} </option>
                             )
                             }
                     
-                        </Form.Select>
+                        </Form.Select> */}
 
-                        <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_sn(e.target.value)  }>                                 
-                            <option value=''>Chọn Quà Sinh Nhật</option>
+                        {/* <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_sn(e.target.value)  }>                                 
+                            <option value=''>
+                                {lst_placeholder_cau_hoi[4]?.loai}
+                            </option>
                             {lst_chon_qua_sinh_nhat
                             .map( (el, index) => 
                             <option value={el.chon_chinh}> {el.chon_chinh} </option>
@@ -324,16 +332,18 @@ function Tracking_chi_phi_hcp({history}) {
                             }
 
                         
-                        </Form.Select>
+                        </Form.Select> */}
 
-                        <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_hoi_nghi(e.target.value)  }>                                 
-                            <option value=''>Chọn Hội Nghị</option>
+                        {/* <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_hoi_nghi(e.target.value)  }>                                 
+                            <option value=''>
+                                {lst_placeholder_cau_hoi[5]?.loai}
+                            </option>
                             {lst_chon_hoi_nghi
                             .map( (el, index) => 
                             <option value={el.chon_chinh}> {el.chon_chinh} </option>
                             )
                             }
-                        </Form.Select>
+                        </Form.Select> */}
                         
                         { chon_hoi_nghi &&
 

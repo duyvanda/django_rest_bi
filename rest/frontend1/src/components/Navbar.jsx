@@ -21,9 +21,10 @@ function Navbar1() {
         <div className="d-flex align-items-center">
           {rpScreen ? (
             <>
-              <Link to="/" className="btn btn-warning btn-sm fw-bold">⬅ BACK</Link>
+              <Link to="/" className="btn btn-warning btn-sm fw-bold">⬅ BACK  </Link>
+              <></>
               {FilterReports && (
-                <span className="text-white ms-2 fw-bold">{FilterReports.tenreport}</span>
+                <span className="text-white ms-2 fw-bold">{FilterReports.tenreport} ({userInfo.manv}) </span>
               )}
             </>
           ) : (

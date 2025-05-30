@@ -123,10 +123,10 @@ const Dang_ky_nghi_phep_pkh = ({ history } ) => {
     e.preventDefault();
 
     const data = {
-    manv: manv?.value,
-    tencvbh: manv?.label,
+    manv: manv,  
+    tencvbh: null,
     supid:supid,
-    tenquanlytt: manv?.tenquanlytt,
+    tenquanlytt: null,
     fromDate: fromDate,
     toDate: toDate,
     days: days,
@@ -164,6 +164,7 @@ const Dang_ky_nghi_phep_pkh = ({ history } ) => {
         <Col sm={12}>
           <Select
             options={employees}
+            isMulti
             // value={employees.find((emp) => emp.value === manv)}
             value={manv}
             onChange={setManv}
@@ -194,7 +195,7 @@ const Dang_ky_nghi_phep_pkh = ({ history } ) => {
       </Form.Group>
 
       {/* To Date */}
-      <Form.Group as={Row} className="mt-2">
+      {/* <Form.Group as={Row} className="mt-2">
         <Col sm={12}>
           <Form.Label>To Date</Form.Label>
           <Form.Control
@@ -205,7 +206,7 @@ const Dang_ky_nghi_phep_pkh = ({ history } ) => {
             style={{ height: "60px" }}
           />
         </Col>
-      </Form.Group>
+      </Form.Group> */}
 
       {/* Number of Days */}
       <Form.Group as={Row} className="mt-2">

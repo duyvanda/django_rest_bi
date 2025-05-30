@@ -160,7 +160,7 @@ function handleEditRow(index) {
       let row = Object.assign({}, formData.schema[i]);
       newSchema.push(row);
     }
-    newSchema.push({ column: "", dataType: "STRING" });
+    newSchema.push({ column: "", dataType: "FLOAT" });
     let updatedFormData = Object.assign({}, formData);
     updatedFormData.schema = newSchema;
   
@@ -303,13 +303,13 @@ function handleEditRow(index) {
 
 
 <InputGroup className="mt-2">
-  <InputGroup.Text style={inputLabelStyle}>Google Link</InputGroup.Text>
+  <InputGroup.Text style={inputLabelStyle}>Link</InputGroup.Text>
   <Form.Control
     type="text"
     name="googleLink"
     value={formData.googleLink}
     onChange={handleChange}
-    placeholder="Google Link"
+    placeholder="Link"
   />
 </InputGroup>
 
@@ -339,6 +339,7 @@ function handleEditRow(index) {
 <InputGroup className="mt-2">
   <InputGroup.Text style={inputLabelStyle}>Data Range</InputGroup.Text>
   <Form.Control
+    disabled={formData.googleLink.startsWith("https://eoffice")}
     type="text"
     name="dataRange"
     value={formData.dataRange}
@@ -350,6 +351,7 @@ function handleEditRow(index) {
 <InputGroup className="mt-2">
   <InputGroup.Text style={inputLabelStyle}>Data Columns</InputGroup.Text>
   <Form.Control
+    disabled={formData.googleLink.startsWith("https://eoffice")}
     type="text"
     name="dataColumns"
     value={formData.dataColumns}
@@ -361,6 +363,7 @@ function handleEditRow(index) {
 <InputGroup className="mt-2">
   <InputGroup.Text style={inputLabelStyle}>Drop If Na</InputGroup.Text>
   <Form.Control
+    disabled={formData.googleLink.startsWith("https://eoffice")}
     type="text"
     name="dropIfNa"
     value={formData.dropIfNa}
@@ -395,9 +398,10 @@ function handleEditRow(index) {
                   onChange={(e) => handleSchemaChange(index, "dataType", e.target.value)}
                   className="mt-2"
                 >
-                  <option value="STRING">STRING</option>
                   <option value="FLOAT">FLOAT</option>
                   <option value="TIMESTAMP">TIMESTAMP</option>
+                  <option value="INTERGER">INTERGER</option>
+                  <option value="STRING">STRING</option>
                 </Form.Select>
               </td>
               <td className="d-flex justify-content-center">

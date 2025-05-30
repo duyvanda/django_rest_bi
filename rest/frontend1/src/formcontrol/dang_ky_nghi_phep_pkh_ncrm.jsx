@@ -165,7 +165,7 @@ const Dang_ky_nghi_phep_pkh_ncrm = ({ history } ) => {
               <th style={{ width: '100px' }}>Tên QL</th>
               <th style={{ width: '150px' }}>Lý do</th>
               <th style={{ width: '100px' }}>Từ ngày</th>
-              <th style={{ width: '100px' }}>Đến ngày</th>
+              {/* <th style={{ width: '100px' }}>Đến ngày</th> */}
               <th style={{ width: '50px' }}>Số ngày</th>
 
               {/* <th className="switch-col">Switch</th>
@@ -195,7 +195,7 @@ const Dang_ky_nghi_phep_pkh_ncrm = ({ history } ) => {
                 <td>{item.tenquanlytt}</td>
                 <td>{item.reason}</td>
                 <td>{formatDate(item.fromDate)}</td>
-                <td>{formatDate(item.toDate)}</td>
+                {/* <td>{formatDate(item.toDate)}</td> */}
                 <td>{item.days}</td>
               </tr>
             ))}

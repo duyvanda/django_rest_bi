@@ -72,7 +72,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
   const [showModal, setShowModal] = useState(false);
   const [fromDate, setFromDate] = useState(dayjs().startOf("month").format("YYYY-MM-DD"));
   const [toDate, setToDate] = useState(dayjs().format("YYYY-MM-DD"));
-  const [downloadUrl, setDownloadUrl] = useState("https://bi.meraplion.com/DMS/data_mds_tra_thuong_cmm_2025/0_008828.jpeg");
+  const [downloadUrl, setDownloadUrl] = useState("");
   const [spinning, setSpinning] = useState(false);  // Replaced `loading` with `spinning`
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
   const [disable, setdisable] = useState(false); // State to track if submit button should be disabled
@@ -174,11 +174,12 @@ const Form_claim_chi_phi_final = ( {history} ) => {
 
   const handleConfirm = async () => {
     setSpinning(true);
+    setDownloadUrl("")
     setErrorMessage(""); // Reset error message before new request
-    const requestData = { fromDate, toDate, manv };
+    const requestData = { fromDate, toDate, manv, id:get_id() };
     console.log(requestData)
     try {
-      const response = await fetch("/api/data-download/", {
+      const response = await fetch("https://bi.meraplion.com/local/get_form_claim_chi_phi_excel/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -192,8 +193,8 @@ const Form_claim_chi_phi_final = ( {history} ) => {
 
       const result = await response.json();
 
-      if (result.url) {
-        setDownloadUrl(result.url);
+      if (result.excel_url) {
+        setDownloadUrl(result.excel_url);
       } else {
         throw new Error('No download URL found in response');
       }
@@ -276,14 +277,14 @@ const Form_claim_chi_phi_final = ( {history} ) => {
       <Table striped bordered hover style={{ tableLayout: 'fixed', backgroundColor: '#f0f8ff' }}>
         <thead>
           <tr style={{ padding: '5px', fontSize: '12px' }}>
-            <th style={{ width: '150px' }}>ID</th>
+            <th style={{ width: '80px' }}>ID</th>
             <th style={{ width: '150px' }}>Số tiền cần TT</th>
             <th style={{ width: '300px' }}>Hóa đơn</th>
             <th style={{ width: '100px' }}>Số hóa đơn</th>
             <th style={{ width: '100px' }}>Ngày hóa đơn</th>
             <th style={{ width: '100px' }}>Tiền hóa đơn</th>
             <th style={{ width: '70px' }}>Status</th>
-            <th style={{ width: '70px' }}>Mã NV</th>
+            {/* <th style={{ width: '70px' }}>Mã NV</th> */}
             <th style={{ width: '150px' }}>Tên CVBH</th>
             <th style={{ width: '150px' }}>Tên KHC</th>
             <th style={{ width: '150px' }}>Tên HCP</th>
@@ -299,7 +300,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
               padding: '5px', 
               fontSize: '14px', 
               backgroundColor: (record.overbudget === 1 && record.so_hoa_don) ? 'red' : 'transparent' } }>
-              <td>{record.id}</td>
+              <td>{record.id.substring(0, 8)}</td>
               <td>
                 <Form.Control
                   type="text"
@@ -332,7 +333,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
               <td>{ f.format(record.so_tien_hoa_don) }</td>
 
               <td>{record.status}</td>
-              <td>{record.manv}</td>
+              {/* <td>{record.manv}</td> */}
               <td>{record.tencvbh}</td>
               <td>{record.pubcustname}</td>
               <td>{record.ten_hcp}</td>

@@ -77,6 +77,7 @@ import Dang_ky_nghi_phep_pkh from  "./formcontrol/dang_ky_nghi_phep_pkh";
 import Dang_ky_nghi_phep_pkh_ncrm from  "./formcontrol/dang_ky_nghi_phep_pkh_ncrm";
 
 import Test from  "./formcontrol/test";
+import Duckdb from  "./formcontrol/duckdb";
 
 import Nvbc_login from  "./formcontrol/nvbc_login";
 import Nvbc_introduction from  "./formcontrol/nvbc_introduction";
@@ -171,6 +172,7 @@ function AppContent() {
                 <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} />
                 <Route path="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh" component={Dang_ky_nghi_phep_pkh} />
                 <Route path="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh_ncrm" component={Dang_ky_nghi_phep_pkh_ncrm} />
+                <Route path="/formcontrol/duckdb" component={Duckdb} />
 
                 <Route exact path="/formcontrol/nvbc_login" component={Nvbc_login} />
                 <Route exact path="/formcontrol/nvbc_introduction" component={Nvbc_introduction} />
