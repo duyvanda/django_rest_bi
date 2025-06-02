@@ -303,7 +303,7 @@ function Tao_hcp_pcl({history, location}) {
         const selectedItem = lst_phan_loai_hcp.find(item => item.chon_chinh === selectedChucVu);
         
         if (selectedItem) {
-          set_chon_phan_loai_hcp(selectedItem.phan_loai_hcp);
+          set_chon_phan_loai_hcp(selectedItem.chon_phu);
         }
       };
 
@@ -366,6 +366,17 @@ function Tao_hcp_pcl({history, location}) {
 
                     <div>
                         {/* ALERT COMPONENT */}
+                        <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
+                            <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
+
+                        {alert &&
+                        <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
+                            <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                            </button>
+                            <span><strong>Cảnh Báo:  </strong>{alertText}</span>
+                        </div>
+                        }
+                        </Modal>
                         <Form onSubmit={handle_submit}>
                         {/* START FORM BODY */}
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
@@ -633,13 +644,13 @@ function Tao_hcp_pcl({history, location}) {
 
                         </div>
 
-                        {alert &&
+                        {/* {alert &&
                         <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
                             <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
                             </button>
                             <span><strong>Cảnh Báo:  </strong>{alertText}</span>
                         </div>
-                        }
+                        } */}
                         
                         <Button disabled={
                         check_trung_sdt === true |

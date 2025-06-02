@@ -68,7 +68,7 @@ const Nvbc_view_video = () => {
             console.error("Tracking error:", error);
           });
       }
-    }, 10000); // 10 seconds delay
+    }, 30000); // 10 seconds delay
     return () => clearTimeout(timer); // cleanup
   }, [location, history]);
 

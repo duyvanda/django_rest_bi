@@ -164,7 +164,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     const updatedRecords = data_submit.map((record) => {
       if (record.id === id) {
         let updatedRecord = Object.assign({}, record); // Clone the object
-        updatedRecord.so_ke_hoach = newValue; // Update the value
+        updatedRecord.ghi_chu = newValue; // Update the value
         return updatedRecord;
       }
       return record;

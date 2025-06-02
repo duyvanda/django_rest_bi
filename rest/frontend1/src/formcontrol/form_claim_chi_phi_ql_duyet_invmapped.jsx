@@ -189,14 +189,14 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
       <Table striped bordered hover style={{ tableLayout: 'fixed', backgroundColor: '#f0f8ff' }}>
         <thead>
           <tr style={{ padding: '5px', fontSize: '12px' }}>
-          <th style={{ width: '150px' }}>ID</th>
+          <th style={{ width: '80px' }}>ID</th>
           <th style={{ width: '70px', textAlign: "center" }}>Chuyển</th>
           <th style={{ width: '100px' }}>Status</th>
           <th style={{ width: '150px' }}>Số duyệt</th>
           <th style={{ width: '100px' }}>Số hóa đơn</th>
           <th style={{ width: '100px' }}>Ngày hóa đơn</th>
           <th style={{ width: '100px' }}>Tổng tiền</th>
-          <th style={{ width: '70px' }}>Mã NV</th>
+          {/* <th style={{ width: '70px' }}>Mã NV</th> */}
           <th style={{ width: '150px' }}>Tên CVBH</th>
           <th style={{ width: '150px' }}>Tên KHC</th>
           <th style={{ width: '150px' }}>Tên HCP</th>
@@ -209,7 +209,7 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
         <tbody>
           {data_submit.map((record) => (
             <tr key={record.id} style={{ padding: '5px', fontSize: '14px' }}>
-              <td>{record.id}</td>
+              <td>{record.id.substring(0, 8)}</td>
               <td>
                 <Form.Check
                   type="switch"
@@ -230,7 +230,7 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
               <td>{record.so_hoa_don}</td>
               <td>{new Date(record.ngay_hoa_don).toLocaleDateString("vi-VN")}</td>
               <td>{ f.format(record.so_tien_hoa_don) }</td>
-              <td>{record.manv}</td>
+              {/* <td>{record.manv}</td> */}
               <td>{record.tencvbh}</td>
               <td>{record.pubcustname}</td>
               <td>{record.ten_hcp}</td>

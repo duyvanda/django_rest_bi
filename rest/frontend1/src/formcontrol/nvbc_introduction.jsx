@@ -43,53 +43,53 @@ const Nvbc_introduction = () => {
 
 
   const [rewardData, setRewardData] = useState([
+  // {
+  //   time: "Tháng",
+  //   condition: "Top 100 Thành viên có điểm tích lũy cao nhất của tháng được chọn 1 món quà sau:",
+  //   name: "Ô dù gấp gọn kèm hộp đựng chống sốc",
+  //   link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20200k%20-%20%C3%94%20c%E1%BA%A7m%20tay.jpg"
+  // },
   {
     time: "Tháng",
-    condition: "Top 100 NVBC có điểm tích lũy cao nhất của tháng xét thưởng.",
-    name: "Ô dù gấp gọn kèm hộp đựng chống sốc",
-    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20200k%20-%20%C3%94%20c%E1%BA%A7m%20tay.jpg"
-  },
-  {
-    time: "Tháng",
-    condition: "Top 100 NVBC có điểm tích lũy cao nhất của tháng xét thưởng.",
+    condition: "Top 100 Thành viên có điểm tích lũy cao nhất của tháng được chọn 1 món quà sau:",
     name: "Túi đựng mỹ phẩm, đồ du lịch da PU thoáng khí",
     link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20200k%20-%20T%C3%BAi%20%C4%91%E1%BB%B1ng%20m%E1%BB%B9%20ph%E1%BA%A9m%20du%20l%E1%BB%8Bch.jpg"
   },
   {
     time: "Tháng",
-    condition: "Top 100 NVBC có điểm tích lũy cao nhất của tháng xét thưởng.",
+    condition: "Top 100 Thành viên có điểm tích lũy cao nhất của tháng được chọn 1 món quà sau:",
     name: "Máy sấy tóc Philips HP8108 1000W",
     link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20200k%20-%20M%C3%A1y%20s%E1%BA%A5y%20t%C3%B3c%20Philips.jpg"
   },
   {
     time: "Quý",
-    condition: "Top 50 NVBC có điểm tích lũy cao nhất của quý xét thưởng",
-    name: "Bộ quà tặng máy xông tinh dầu và tinh dầu",
-    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20500k%20-%20M%C3%A1y%20x%C3%B4ng%20tinh%20d%E1%BA%A7u.jpg"
+    condition: "Top 50 Thành viên có điểm tích lũy cao nhất của quý được chọn 1 món quà sau:",
+    name: "Quạt cầm tay",
+    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20-%20Quat_cam_tay.jpg"
   },
   {
     time: "Quý",
-    condition: "Top 50 NVBC có điểm tích lũy cao nhất của quý xét thưởng",
+    condition: "Top 50 Thành viên có điểm tích lũy cao nhất của quý được chọn 1 món quà sau:",
     name: "Máy xay sinh tố cầm tay Bear",
     link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20500k%20-%20M%C3%A1y%20xay%20sinh%20t%E1%BB%91%20c%E1%BA%A7m%20tay%20Bear.jpg"
   },
   {
     time: "Quý",
-    condition: "Top 50 NVBC có thời gian tra cứu thư viện 30 phút/ ngày (ít nhất 30 ngày/ quý)",
+    condition: "Top 50 thành viên có số ngày tham gia tra cứu thư viện chuyên cần nhất được chọn 1 món quà sau:",
     name: "Đồng hồ tích hợp đèn ngủ có điều khiển từ xa và điều chỉnh độ sáng vô cấp",
     link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20300k%20-%20%C4%90%E1%BB%93ng%20h%E1%BB%93%20ki%C3%AAm%20%C4%91%C3%A8n%20ng%E1%BB%A7.jpg"
   },
   {
     time: "Quý",
-    condition: "Top 50 NVBC có thời gian tra cứu thư viện 30 phút/ ngày (ít nhất 30 ngày/ quý)",
+    condition: "Top 50 thành viên có số ngày tham gia tra cứu thư viện chuyên cần nhất được chọn 1 món quà sau:",
     name: "Túi cói kèm charm đáng yêu",
     link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20300k%20-%20T%C3%BAi%20c%C3%B3i%20k%C3%A8m%20charm.jpg"
   }
 ]);
 
 
-  const filterBy = (type, description) =>
-    rewardData.filter((item) => item.time === type && item.condition === description);
+const filterBy = (type, description) =>
+  rewardData.filter((item) => item.time === type && item.condition === description);
 
 const renderCards = (items) => (
   <Row className="mt-3">
@@ -107,7 +107,7 @@ const renderCards = (items) => (
             src={item.link}
             style={{
               width: "100%",
-              height: "200px",        // ⬅️ Make image taller for mobile
+              height: "250px",        // ⬅️ Make image taller for mobile
               objectFit: "cover",     // Fills area nicely (can use 'contain' if needed)
             }}
           />
@@ -146,22 +146,23 @@ const renderCards = (items) => (
 
 **Tỷ lệ thời gian**:
 Thời gian tra cứu thư viện được quy đổi theo tỷ lệ sau:
-- **Dưới 30 giây** = 50%
-- **Từ 30 giây - Dưới 1 phút** = 100%
-- **Từ 1 phút trở lên** = 150%
+- **Dưới 30 giây** = 0%
+- **Từ 30 giây trở lên** = 100%
 
 **Hệ số chủ đề**:
 Mỗi chủ đề có một hệ số riêng (có thể thay đổi theo thông báo từng quý)
 
-**Điểm số 5 chủ đề quý 2/2025** (từ 01/04/2025 – 30/06/2025) như sau:
+**Điểm số 5 chủ đề từ ngày 01/06/2025 đến 30/09/2025 như sau:**
 1. **Thông tin về MerapLion**: + 2 điểm/Video
 2. **Thông tin sản phẩm**:
-   - Tờ giới thiệu sản phẩm: +2 điểm/SKU
-   - Clip giới thiệu sản phẩm: +2 điểm/Video
-   - Hướng dẫn sử dụng sản phẩm: +2 điểm/Video
+  - Tờ giới thiệu sản phẩm: +2 điểm/SKU
+  - Clip giới thiệu sản phẩm: +2 điểm/Video
+  - Hướng dẫn sử dụng sản phẩm: +2 điểm/Video
 3. **Thông tin bệnh học**: +2 điểm/Video
 4. **Sổ tay người thầy thuốc**: +2 điểm/Chuyên đề
 5. **Tư vấn cùng chuyên gia**: +2 điểm/Video
+
+Lưu ý: Thời gian xét thưởng quý tại ngày 30/09/2025
     `;
       // Replace newlines with <br /> tags
       const contentWithBreaks_2 = markdownContent_2.replace(/\n/g, '  \n'); // Add two spaces before the newline for markdown to recognize the break
@@ -171,6 +172,25 @@ Mỗi chủ đề có một hệ số riêng (có thể thay đổi theo thông 
       <Col md={4}>
         <div className="intro-wrapper">
           {/* Top Banner */}
+          {!showContent && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              maxHeight: "300px",
+              overflow: "hidden",
+            }}
+          >
+            <img
+              src="https://storage.googleapis.com/django_media_biteam/nvbc/icon-MAmbassador-29052025-Final-convert.png"
+              alt="Top Banner"
+              style={{ width: "100%", height: "auto", objectFit: "contain" }}
+              className="img-fluid"
+            />
+          </div>
+          )}
+
+          {showContent && (
           <div
             style={{
               display: "flex",
@@ -186,6 +206,7 @@ Mỗi chủ đề có một hệ số riêng (có thể thay đổi theo thông 
               className="img-fluid"
             />
           </div>
+          )}
 
           {/* Greeting */}
           
@@ -194,7 +215,7 @@ Mỗi chủ đề có một hệ số riêng (có thể thay đổi theo thông 
           <div className="greeting-box text-center mt-4">
             <h5>Xin chào, {userName}!</h5>
             <p>
-              Cảm ơn Quý Dược sĩ đã tham gia chương trình M.Ambassador. Hãy tích cực tra cứu & hoạt động duy trì để gia tăng điểm số và nhận về thật nhiều phần thưởng hấp dẫn hằng Tháng, hằng Quý nhé !
+              Cảm ơn Quý Dược sĩ đã tham gia chương trình <b>M.Ambassador</b>. Hãy tích cực tra cứu & hoạt động duy trì để gia tăng điểm số và nhận về thật nhiều phần thưởng hấp dẫn hằng Tháng, hằng Quý nhé !
             </p>
           </div>
           )
@@ -209,21 +230,21 @@ Mỗi chủ đề có một hệ số riêng (có thể thay đổi theo thông 
           <ReactMarkdown>{contentWithBreaks}</ReactMarkdown>
 
           <div className="mt-4">
-          <h5 className="text-info">🎁 Thưởng tháng</h5>
-          <p>Top 100 NVBC có điểm tích lũy cao nhất của tháng xét thưởng.</p>
-          {renderCards(filterBy("Tháng", "Top 100 NVBC có điểm tích lũy cao nhất của tháng xét thưởng."))}
+          <h5 className="text-info">🎁 Thưởng tháng: Thành viên tích cực nhất tháng</h5>
+          <p>Top 100 Thành viên có điểm tích lũy cao nhất của tháng được chọn 1 món quà sau:</p>
+          {renderCards(filterBy("Tháng", "Top 100 Thành viên có điểm tích lũy cao nhất của tháng được chọn 1 món quà sau:"))}
         </div>
 
         <div className="mt-5">
-          <h5 className="text-info">🎁 Thưởng Quý</h5>
-          <p>Top 50 NVBC có điểm tích lũy cao nhất của quý xét thưởng.</p>
-          {renderCards(filterBy("Quý", "Top 50 NVBC có điểm tích lũy cao nhất của quý xét thưởng"))}
+          <h5 className="text-info">🎁 Thưởng Quý: Chuyên gia sản phẩm ( xét thưởng ngày 30/09/2025)</h5>
+          <p>Top 50 Thành viên có điểm tích lũy cao nhất của quý được chọn 1 món quà sau:</p>
+          {renderCards(filterBy("Quý", "Top 50 Thành viên có điểm tích lũy cao nhất của quý được chọn 1 món quà sau:"))}
         </div>
 
         <div className="mt-5">
-          <h5 className="text-info">🎁 Thưởng Quý</h5>
-          <p>Top 50 NVBC có thời gian tra cứu thư viện 30 phút/ ngày (ít nhất 30 ngày/ quý).</p>
-          {renderCards(filterBy("Quý", "Top 50 NVBC có thời gian tra cứu thư viện 30 phút/ ngày (ít nhất 30 ngày/ quý)"))}
+          <h5 className="text-info">🎁 Thưởng Quý: Đọc giả chăm chỉ ( xét thưởng ngày 30/09/2025)</h5>
+          <p>Top 50 thành viên có số ngày tham gia tra cứu thư viện chuyên cần nhất được chọn 1 món quà sau:</p>
+          {renderCards(filterBy("Quý", "Top 50 thành viên có số ngày tham gia tra cứu thư viện chuyên cần nhất được chọn 1 món quà sau:"))}
         </div>
         </div>
       )}

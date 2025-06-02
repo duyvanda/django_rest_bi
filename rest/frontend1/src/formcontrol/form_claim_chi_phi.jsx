@@ -23,7 +23,8 @@ function Form_claim_chi_phi({ history }) {
     
     const fetch_initial_data = async (manv) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=${queryParams.get('manv')}`)
+        // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=${queryParams.get('manv')}`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=${manv}`)
         if (!response.ok) {
             SetLoading(false)
         }
@@ -194,7 +195,7 @@ function Form_claim_chi_phi({ history }) {
         const baseData = {
             id: rawId,
             status:"new",
-            manv: "MR0673",
+            manv: manv,
             tencvbh: manv_info?.tencvbh,
             phongdeptsummary: manv_info?.phongdeptsummary,
             chon_kh_chung: chon_kh_chung?.hco_bv,
