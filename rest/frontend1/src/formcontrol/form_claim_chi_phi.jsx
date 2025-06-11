@@ -58,7 +58,7 @@ function Form_claim_chi_phi({ history }) {
     const [chon_hcp, set_chon_hcp] = useState(null);
     const [qua_tang, set_qua_tang] = useState("");
     const [kenh, set_kenh] = useState("");
-    const [ty_le, set_ty_le] = useState({ value: '5:5', label: '5:5' });
+    const [ty_le, set_ty_le] = useState( { value: '5:5', label: '5:5' } );
     const [current_noi_dung, set_current_noi_dung] = useState([]);
     const [noi_dung, set_noi_dung] = useState("");
     const [ghi_chu, set_ghi_chu] = useState("");
@@ -150,6 +150,7 @@ function Form_claim_chi_phi({ history }) {
         set_noi_dung("");
         set_ghi_chu("");
         set_so_ke_hoach("");
+        set_ty_le( { value: '5:5', label: '5:5' } )
     };
 
     const formatNumber = (value) => {
@@ -158,7 +159,7 @@ function Form_claim_chi_phi({ history }) {
 
     const post_form_data = async (data) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/insert_form_claim_chi_phi/`, {
+        const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_gift_expenses/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -210,32 +211,50 @@ function Form_claim_chi_phi({ history }) {
             so_hoa_don: null,
             ngay_hoa_don: null,
             so_tien_hoa_don:null,
-            inserted_at: insert     
+            inserted_at: insert,
+            ty_le: ty_le?.value
         };
         const plan = Number(so_ke_hoach.replace(/,/g, ""));
 
         console.log("baseData", baseData)
 
-        let dataEntries = [];  // Initialize an array to hold the data entries
-        const [clcRatio, insRatio] = ty_le.value.split(':').map(Number);
-        const total = clcRatio + insRatio;
-        const clcValue = Math.round(plan * (clcRatio / total));
-        // const insValue = plan - clcValue;
-        let data_tyle = {
-            id:rawId,
-            kenh: kenh,
-            ty_le: ty_le,
-            clc_ratio: clcRatio,
-            ins_ratio: insRatio,
-            inserted_at: insert
+        const explodedData = [];
+
+        // Check if chon_hcp is null or an empty array
+        if (!baseData.chon_hcp || baseData.chon_hcp.length === 0) {
+            explodedData.push(baseData);
+        } else {
+            // If chon_hcp exists and is an array, explode it
+            let index = 0;
+            for (const hcp_detail of baseData.chon_hcp) {
+                index++; // Increment index for suffix (starts from 1)
+                const newItem = {
+                    id: `${baseData.id}_${index}`, // Add suffix to the ID
+                    status: baseData.status,
+                    manv: baseData.manv,
+                    tencvbh: baseData.tencvbh,
+                    phongdeptsummary: baseData.phongdeptsummary,
+                    chon_kh_chung: baseData.chon_kh_chung,
+                    pubcustname: baseData.pubcustname,
+                    chon_hcp: hcp_detail.ma_hcp_2,
+                    ten_hcp: hcp_detail.ten_hcp,
+                    qua_tang: baseData.qua_tang,
+                    kenh: baseData.kenh,
+                    noi_dung: baseData.noi_dung,
+                    ghi_chu: baseData.ghi_chu,
+                    so_ke_hoach: baseData.so_ke_hoach,
+                    so_hoa_don: baseData.so_hoa_don,
+                    ngay_hoa_don: baseData.ngay_hoa_don,
+                    so_tien_hoa_don: baseData.so_tien_hoa_don,
+                    inserted_at: baseData.inserted_at,
+                    ty_le: baseData.ty_le
+                };
+                explodedData.push(newItem);
+            }
         }
-        dataEntries.push(baseData);
-        dataEntries.push(data_tyle);
-        post_form_data(dataEntries);
 
-        // console.log(data);
-
-        // clear_data();
+        console.log("explodedData", explodedData)
+        post_form_data(explodedData);
     };
 
     if (true) {

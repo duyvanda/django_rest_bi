@@ -194,8 +194,8 @@ function Tracking_chi_phi_hcp_crm({history}) {
                         {/* START FORM BODY */}
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hco_crm") } className="bg-warning text-dark border-0" >HCO</Button>
-                            <Button onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_crm") } >HCP</Button>
+                            <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp" ? "primary" : "outline-primary"} key={2} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp") } >ĐỀ XUẤT</Button>
+                            <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_crm" ? "primary" : "outline-primary"} key={1} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_crm") } >QL DUYỆT</Button>
                             <Link style={{textDecoration:  "none"}} target="_blank" key={3} className="border-1 text-dark mx-2" to="/realtime/271?local_url=sp_f_data_tracking_chi_phi_hcp" >View Báo Cáo</Link>
                         </ButtonGroup>
 
@@ -203,11 +203,11 @@ function Tracking_chi_phi_hcp_crm({history}) {
                             <Card.Body>
                             <Card.Title>HCP: TRACKING CHI PHÍ ĐẦU TƯ</Card.Title>
                                 <Card.Text>
-                                Tổng số HCP đã đầu tư: {tong_hcp_da_dau_tu} HCP
+                                {/* Tổng số HCP đã đầu tư: {tong_hcp_da_dau_tu} HCP
                                 <br></br>
                                 Tổng số tiền đã đầu tư: {f.format(tong_tien_ke_hoach_da_dau_tu)} VNĐ
                                 <br></br>
-                                Tổng số tiền thực tế đã đầu tư: 0 VNĐ
+                                Tổng số tiền thực tế đã đầu tư: 0 VNĐ */}
                                 </Card.Text>
                                 {/* <Button size="sm" variant="primary">Go somewhere</Button> */}
                             </Card.Body>
@@ -234,8 +234,8 @@ function Tracking_chi_phi_hcp_crm({history}) {
                             .map( (el, index) =>
                             <ListGroup.Item style={{maxHeight:"125px"}} className="border border-secondary mx-0 px-0" >
                                 <Form.Check key={index} className="text-nowrap" type="switch" checked={el.check} onChange={ handeClick } id={el.uuid} label={ el.ten_hcp + ' - ' +  el.ten_kh_chung + ' - ' +  el.ma_kh_chung + ' - '+ el.phan_loai_hcp}/>
-                            <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{el.ma_hcp_1 + ' - Quà Cảm Xúc: '+ el.chon_qua_tang_cam_xuc  + ' - ' + 'Quà 1/5: '+ el.chon_qua_tang_2 + ' - Quà Tặng: '+ el.chon_qua_tang + ' - Quà SN: '+ el.chon_qua_sn + ' - Hội Nghị: '+ el.chon_hoi_nghi + ' - '+  el.chon_qua_tang_hoi_nghi + '(' +  el.ma_crs  + ')'}  </p>
-                            <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{'Tổng Tiền: '+ f.format (Number(el.tong_tien_kh)) }  </p>
+                            <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{el.ma_hcp_1 + ' - Quà Cảm Xúc: '+ el.chon_qua_tang_cam_xuc + '(' +  el.ma_crs  + ')'}  </p>
+                            {/* <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{'Tổng Tiền: '+ f.format (Number(el.tong_tien_kh)) }  </p> */}
                             </ListGroup.Item>
                             )
                         }

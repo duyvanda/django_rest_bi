@@ -168,9 +168,8 @@ export const FeedbackProvider = ({ children }) => {
 
   function Inserted_at() {
     let datetime = new Date();
-    // datetime = datetime.toLocaleString("en-US", {timeZone: "Asia/Bangkok"});
-    const inserted_at = (datetime.toISOString().replace("Z",""));
-    // const inserted_at = datetime.replace("Z","");
+    datetime.setHours(datetime.getHours() + 7); // Add 7 hours
+    const inserted_at = datetime.toISOString().replace("Z", "");
     return inserted_at;
   }
 

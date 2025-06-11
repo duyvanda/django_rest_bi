@@ -80,6 +80,8 @@ const Get_new_upload_files = () => {
     dropIfNa: "",
     schema: [],
   });
+
+  
     const [manv, set_manv] = useState("");
     const [showTable, setShowTable] = useState(false); // State to control table visibility
 
@@ -245,132 +247,132 @@ function handleEditRow(index) {
     
     <Form onSubmit={handleSubmit} className="p-3">
 
-      {/* ALERT COMPONENT */}
-      <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
-          <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
+          {/* ALERT COMPONENT */}
+          <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
+              <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
 
-      {alert &&
-      <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
-          <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
-          </button>
-          <span><strong>Cảnh Báo:  </strong>{alertText}</span>
-      </div>
-      }
-      </Modal>
-      {/* Button to toggle table visibility */}
+          {alert &&
+          <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
+              <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
+              </button>
+              <span><strong>Cảnh Báo:  </strong>{alertText}</span>
+          </div>
+          }
+          </Modal>
+          {/* Button to toggle table visibility */}
 
-    <Button
-    onClick={toggleTable}
-    variant="info"
-    className="mt-2 d-inline-block"
-    >
-    Show Tables
-    </Button>
+        <Button
+        onClick={toggleTable}
+        variant="info"
+        className="mt-2 d-inline-block"
+        >
+        Show Tables
+        </Button>
 
-      {/* Conditionally render table */}
-      {showTable && (
-        <Table bordered hover className="mt-2">
-        <thead>
-          <tr>
-            <th>Table Name</th>
-            <th>Google Link</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tableData.map((row, index) => (
-            <tr key={index}>
-              <td>{row.tableName}</td>
-              <td>{row.googleLink}</td>
-              <td className="d-flex justify-content-center">
-                {/* Edit Button */}
-                <Button
-                  variant="primary"
-                  onClick={() => handleEditRow(index)}
-                  className="mt-2"
-                  aria-label={`Edit row ${index + 1}`}
-                >
-                  Edit
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-      )}
+          {/* Conditionally render table */}
+          {showTable && (
+            <Table bordered hover className="mt-2">
+            <thead>
+              <tr>
+                <th>Table Name</th>
+                <th>Google Link</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tableData.map((row, index) => (
+                <tr key={index}>
+                  <td>{row.tableName}</td>
+                  <td>{row.googleLink}</td>
+                  <td className="d-flex justify-content-center">
+                    {/* Edit Button */}
+                    <Button
+                      variant="primary"
+                      onClick={() => handleEditRow(index)}
+                      className="mt-2"
+                      aria-label={`Edit row ${index + 1}`}
+                    >
+                      Edit
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          )}
 
-      <h2>Create more table: </h2>
-
-
-<InputGroup className="mt-2">
-  <InputGroup.Text style={inputLabelStyle}>Link</InputGroup.Text>
-  <Form.Control
-    type="text"
-    name="googleLink"
-    value={formData.googleLink}
-    onChange={handleChange}
-    placeholder="Link"
-  />
-</InputGroup>
-
-<InputGroup className="mt-2">
-  <InputGroup.Text style={inputLabelStyle}>Sheet ID</InputGroup.Text>
-  <Form.Control
-    type="text"
-    name="sheetId"
-    value={formData.sheetId}
-    onChange={handleChange}
-    placeholder="Sheet ID"
-  />
-</InputGroup>
-
-<InputGroup className="mt-2">
-  <InputGroup.Text style={inputLabelStyle}>Table Name</InputGroup.Text>
-  <Form.Control
-    type="text"
-    name="tableName"
-    value={formData.tableName}
-    onChange={handleChange}
-    placeholder="Table Name"
-  />
-</InputGroup>
+          <h2>Create more table: </h2>
 
 
-<InputGroup className="mt-2">
-  <InputGroup.Text style={inputLabelStyle}>Data Range</InputGroup.Text>
-  <Form.Control
-    disabled={formData.googleLink.startsWith("https://eoffice")}
-    type="text"
-    name="dataRange"
-    value={formData.dataRange}
-    onChange={handleChange}
-    placeholder="Data Range"
-  />
-</InputGroup>
+      <InputGroup className="mt-2">
+        <InputGroup.Text style={inputLabelStyle}>Link</InputGroup.Text>
+        <Form.Control
+          type="text"
+          name="googleLink"
+          value={formData.googleLink}
+          onChange={handleChange}
+          placeholder="Link"
+        />
+      </InputGroup>
 
-<InputGroup className="mt-2">
-  <InputGroup.Text style={inputLabelStyle}>Data Columns</InputGroup.Text>
-  <Form.Control
-    disabled={formData.googleLink.startsWith("https://eoffice")}
-    type="text"
-    name="dataColumns"
-    value={formData.dataColumns}
-    onChange={handleChange}
-    placeholder="Data Columns"
-  />
-</InputGroup>
+      <InputGroup className="mt-2">
+        <InputGroup.Text style={inputLabelStyle}>Sheet ID</InputGroup.Text>
+        <Form.Control
+          type="text"
+          name="sheetId"
+          value={formData.sheetId}
+          onChange={handleChange}
+          placeholder="Sheet ID"
+        />
+      </InputGroup>
 
-<InputGroup className="mt-2">
-  <InputGroup.Text style={inputLabelStyle}>Drop If Na</InputGroup.Text>
-  <Form.Control
-    disabled={formData.googleLink.startsWith("https://eoffice")}
-    type="text"
-    name="dropIfNa"
-    value={formData.dropIfNa}
-    onChange={handleChange}
-    placeholder="Drop If Na"
-  />
-</InputGroup>
+      <InputGroup className="mt-2">
+        <InputGroup.Text style={inputLabelStyle}>Table Name</InputGroup.Text>
+        <Form.Control
+          type="text"
+          name="tableName"
+          value={formData.tableName}
+          onChange={handleChange}
+          placeholder="Table Name"
+        />
+      </InputGroup>
+
+
+      <InputGroup className="mt-2">
+        <InputGroup.Text style={inputLabelStyle}>Data Range</InputGroup.Text>
+        <Form.Control
+          disabled={formData.googleLink.startsWith("https://eoffice")}
+          type="text"
+          name="dataRange"
+          value={formData.dataRange}
+          onChange={handleChange}
+          placeholder="Data Range"
+        />
+      </InputGroup>
+
+      <InputGroup className="mt-2">
+        <InputGroup.Text style={inputLabelStyle}>Data Columns</InputGroup.Text>
+        <Form.Control
+          disabled={formData.googleLink.startsWith("https://eoffice")}
+          type="text"
+          name="dataColumns"
+          value={formData.dataColumns}
+          onChange={handleChange}
+          placeholder="Data Columns"
+        />
+      </InputGroup>
+
+      <InputGroup className="mt-2">
+        <InputGroup.Text style={inputLabelStyle}>Drop If Na</InputGroup.Text>
+        <Form.Control
+          disabled={formData.googleLink.startsWith("https://eoffice")}
+          type="text"
+          name="dropIfNa"
+          value={formData.dropIfNa}
+          onChange={handleChange}
+          placeholder="Drop If Na"
+        />
+      </InputGroup>
 
       <Table bordered hover className="mt-2">
         <thead>

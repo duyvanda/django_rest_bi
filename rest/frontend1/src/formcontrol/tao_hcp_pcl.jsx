@@ -321,7 +321,7 @@ function Tao_hcp_pcl({history, location}) {
 
         const data = {
             "manv":manv,
-            "current_date":current_date,
+            "created_date":current_date,
             "sdt":sdt,
             "ten_hcp":ten_hcp,
             "hco_bv": chon_hco_bv.split("-")[0],

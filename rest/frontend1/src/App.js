@@ -78,6 +78,7 @@ import Dang_ky_nghi_phep_pkh_ncrm from  "./formcontrol/dang_ky_nghi_phep_pkh_ncr
 
 import Test from  "./formcontrol/test";
 import Duckdb from  "./formcontrol/duckdb";
+import Postgres from  "./formcontrol/postgres";
 
 import Nvbc_login from  "./formcontrol/nvbc_login";
 import Nvbc_introduction from  "./formcontrol/nvbc_introduction";
@@ -90,6 +91,8 @@ import Nvbc_view_video from  "./formcontrol/nvbc_view_video";
 // import Kt_de_xuat_chi_phi from  "./formcontrol/kt_de_xuat_chi_phi";
 
 import Chat from "./biagent/chat";
+import Qr_scan_quan_ly_tai_san from "./formcontrol/qr_scan_quan_ly_tai_san";
+import Qr_scan_quan_ly_tai_san_v2 from "./formcontrol/qr_scan_quan_ly_tai_san_v2";
 
 // BOOTSTRAP
 // import Spacing from "./bootstrap/spacing";
@@ -173,6 +176,10 @@ function AppContent() {
                 <Route path="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh" component={Dang_ky_nghi_phep_pkh} />
                 <Route path="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh_ncrm" component={Dang_ky_nghi_phep_pkh_ncrm} />
                 <Route path="/formcontrol/duckdb" component={Duckdb} />
+                <Route path="/formcontrol/postgres" component={Postgres} />
+
+                <Route path="/formcontrol/qr_scan_quan_ly_tai_san" component={Qr_scan_quan_ly_tai_san} />
+                <Route path="/formcontrol/qr_scan_quan_ly_tai_san_v2" component={Qr_scan_quan_ly_tai_san_v2} />                
 
                 <Route exact path="/formcontrol/nvbc_login" component={Nvbc_login} />
                 <Route exact path="/formcontrol/nvbc_introduction" component={Nvbc_introduction} />

@@ -26,16 +26,14 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
-      // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_final/?manv=${manv}`)
-      const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_final/?manv=MR0673`)
-
-      
+      const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_final/?manv=${manv}`)
       if (!response.ok) {
           SetLoading(false)
       }
       else {
       const data = await response.json()
       set_data_submit(data['data_submit'])
+      set_invoices(data['data_hoa_don'])
       // set_data_hcp(data['data_hcp'])
       // set_manv_info(data['manv_info'][0])
       console.log(data);
@@ -61,7 +59,10 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     const [data_submit, set_data_submit] = useState([])
     // const [hoa_don, set_hoa_don] = useState([])
 
-    const [invoices,set_invoices] = useState ([
+    const [invoices,  set_invoices] = useState ([
+      { nguoi_mua_hang: "MR0673", ky_hieu: "K25TDL", so_hoa_don: "63182", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 681855},
+      { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19298", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 3592906},
+      { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19299", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 4163723},
       { nguoi_mua_hang: "MR0673", ky_hieu: "K25TDL", so_hoa_don: "63182", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 681855},
       { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19298", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 3592906},
       { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19299", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 4163723}
@@ -273,7 +274,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
         </Button>
       </div>
 
-      <div style={{ overflowX: 'auto' }}>
+      <div className="mb-5" style={{ overflowX: 'auto' }}>
       <Table striped bordered hover style={{ tableLayout: 'fixed', backgroundColor: '#f0f8ff' }}>
         <thead>
           <tr style={{ padding: '5px', fontSize: '12px' }}>

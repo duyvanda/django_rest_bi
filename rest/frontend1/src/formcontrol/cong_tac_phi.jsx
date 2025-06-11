@@ -59,17 +59,17 @@ function Cong_tac_phi({history}) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Form_log_checkin_nhan_hang', isMB, dv_width);
+        userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Cong_tac_phi', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
 
         } else {
-            history.push('/login?redirect=/formcontrol/form_ghi_nhan_hang_log');
+            history.push('/login?redirect=/formcontrol/Cong_tac_phi');
         };
     }, []);
     const [manv, set_manv] = useState("");
     // const [selectedFile, setSelectedFile] = useState([]);
-    const [text_1, set_text_1] = useState('A1- Ăn uống');
-    const [text_2, set_text_2] = useState('Phạm Thị Quỳnh');
+    // const [text_1, set_text_1] = useState('A1- Ăn uống');
+    // const [text_2, set_text_2] = useState('Phạm Thị Quỳnh');
     const [text_3, set_text_3] = useState('');
 
     // AUDIO
@@ -83,15 +83,44 @@ function Cong_tac_phi({history}) {
     const audioChunksRef = useRef([]);
     const countdownRef = useRef(null);
 
-    const [extracted_data, set_extracted_data] = useState({});
+    const [extracted_data, set_extracted_data] = useState({
+    thang: '',
+    tu_ngay: '',
+    den_ngay: '',
+    tinh: '',
+    ve_xe: '',
+    chi_phi_khach_san: '',
+    phu_cap_di_lai: '',
+    });
+
+    // const [selectedItem, setSelectedItem] = useState({
+    // thang: '',
+    // tu_ngay: '',
+    // den_ngay: '',
+    // tinh: '',
+    // ve_xe: '',
+    // chi_phi_khach_san: '',
+    // phu_cap_di_lai: '',
+    // });
 
 
     const clear_data = () => {
-        // set_text_1("");
-        // set_text_2("");
+    set_extracted_data ({
+    thang: '',
+    tu_ngay: '',
+    den_ngay: '',
+    tinh: '',
+    ve_xe: '',
+    chi_phi_khach_san: '',
+    phu_cap_di_lai: '',
+    inserted_at: '',
+    }
+    )
     }
 
     const startRecording = async () => {
+        setAudioBlob(null);
+        set_text_3("");
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           mediaRecorderRef.current = new MediaRecorder(stream);
@@ -141,7 +170,7 @@ function Cong_tac_phi({history}) {
         if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
           mediaRecorderRef.current.stop();
           setRecording(false);
-          setShowModal(false);
+          // setShowModal(false);
           clearInterval(countdownRef.current);
         }
       };
@@ -156,17 +185,16 @@ function Cong_tac_phi({history}) {
 
       const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setSelectedItem((prevItem) => ({
+        set_extracted_data((prevItem) => ({
           ...prevItem,
           [name]: value,
         }));
       };
 
-    const post_form_data = async (data) => {
+    const post_audio_data = async () => {
         SetLoading(true);
         const wavBlob = await convertWebMToWav(audioBlob);
         const formData = new FormData();
-        formData.append('data', JSON.stringify(data));
         formData.append("audio", wavBlob, "recording.wav");
         const response = await fetch(`https://bi.meraplion.com/local/file_upload_cong_tac_phi/`, {
             method: "POST",
@@ -200,18 +228,50 @@ function Cong_tac_phi({history}) {
         }
     }
 
+    const post_form_data = async () => {
+        SetLoading(true);
+        console.log(extracted_data);
+        const response = await fetch(`https://bi.meraplion.com/local/insert_data_cong_tac_phi/`, {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify(extracted_data),
+        });
+
+    if (!response.ok) {
+        SetLoading(false);
+        const data = await response.json();
+        console.log(data);
+        SetALert(true);
+        SetALertType("alert-danger");
+        SetALertText("CHƯA TẠO ĐƯỢC");
+        setTimeout(() => SetALert(false), 3000);
+    } else {
+        SetLoading(false);
+        const data = await response.json();
+        console.log(data);
+        SetALert(true);
+        SetALertType("alert-success");
+        SetALertText("ĐÃ TẠO THÀNH CÔNG");
+        setTimeout(() => SetALert(false), 3000);
+        clear_data();
+        // setCount(count+1);
+    }
+    }
+
     const handle_submit = (e) => {
         e.preventDefault();
         const current_date = formatDate(Date());
 
-        const data = {
-            "manv":manv,
-            "uuid":uuid(),
-            "text_1":(text_1),
-            "text_2":(text_2)
-        }
-        console.log(data);
-        post_form_data(data);
+        // const data = {
+        //     "manv":manv,
+        //     "uuid":uuid(),
+        //     "text_1":(text_1),
+        //     "text_2":(text_2)
+        // }
+        console.log();
+        post_form_data();
     }
 
     // if (data_table.length >= 1) {
@@ -252,16 +312,6 @@ function Cong_tac_phi({history}) {
                                 Xóa File
                             </Button> */}
 
-                            {audioBlob && (
-                                <div className="mt-3">
-                                    <p><strong>File Audio:</strong></p>
-                                    <audio controls>
-                                    <source src={URL.createObjectURL(audioBlob)} type="audio/webm" />
-                                    Your browser does not support the audio element.
-                                    </audio>
-                                </div>
-                                )}
-
                                 {/* <Button 
                                 onClick={stopRecording} 
                                 variant="danger" 
@@ -272,9 +322,10 @@ function Cong_tac_phi({history}) {
                                 
                                 <FloatingLabel label="Tháng" className="border rounded mt-2">
                                 <Form.Control
+                                required
                                 className=""
                                 placeholder=""
-                                type="text"
+                                type="date"
                                 name="thang"
                                 value={extracted_data?.thang || ''}
                                 onChange={handleInputChange}
@@ -283,9 +334,10 @@ function Cong_tac_phi({history}) {
 
                                 <FloatingLabel label="Từ ngày (dd-mm-yyyy)" className="border rounded mt-2">
                                 <Form.Control
+                                required
                                 className=""
                                 placeholder=""
-                                type="text"
+                                type="date"
                                 name="tu_ngay"
                                 value={extracted_data?.tu_ngay || ''}
                                 onChange={handleInputChange}
@@ -294,9 +346,10 @@ function Cong_tac_phi({history}) {
 
                                 <FloatingLabel label="Đến ngày (dd-mm-yyyy)" className="border rounded mt-2">
                                 <Form.Control
+                                required
                                 className=""
                                 placeholder=""
-                                type="text"
+                                type="date"
                                 name="den_ngay"
                                 value={extracted_data?.den_ngay || ''}
                                 onChange={handleInputChange}
@@ -305,6 +358,7 @@ function Cong_tac_phi({history}) {
 
                                 <FloatingLabel label="Tỉnh" className="border rounded mt-2">
                                 <Form.Control
+                                required
                                 className=""
                                 placeholder=""
                                 type="text"
@@ -316,9 +370,10 @@ function Cong_tac_phi({history}) {
 
                                 <FloatingLabel label="Vé xe" className="border rounded mt-2">
                                 <Form.Control
+                                required
                                 className=""
                                 placeholder=""
-                                type="text"
+                                type="number"
                                 name="ve_xe"
                                 value={extracted_data?.ve_xe || ''}
                                 onChange={handleInputChange}
@@ -327,9 +382,10 @@ function Cong_tac_phi({history}) {
 
                                 <FloatingLabel label="Chi phí khách sạn" className="border rounded mt-2">
                                 <Form.Control
+                                required
                                 className=""
                                 placeholder=""
-                                type="text"
+                                type="number"
                                 name="chi_phi_khach_san"
                                 value={extracted_data?.chi_phi_khach_san || ''}
                                 onChange={handleInputChange}
@@ -338,58 +394,25 @@ function Cong_tac_phi({history}) {
 
                                 <FloatingLabel label="Phụ cấp đi lại" className="border rounded mt-2">
                                 <Form.Control
+                                required
                                 className=""
                                 placeholder=""
-                                type="text"
+                                type="number"
                                 name="phu_cap_di_lai"
                                 value={extracted_data?.phu_cap_di_lai || ''}
                                 onChange={handleInputChange}
                                 ></Form.Control>
                                 </FloatingLabel>
 
-                                {/* <FloatingLabel>Từ ngày (dd-mm-yyyy)</FloatingLabel>
-                                <Form.Control
-                                type="text"
-                                name="tu_ngay"
-                                value={extracted_data?.tu_ngay || ''}
-                                onChange={handleInputChange}
-                                ></Form.Control>
-
-
-                                <FloatingLabel>Đến ngày (dd-mm-yyyy)</FloatingLabel>
-                                <Form.Control
-                                type="text"
-                                name="den_ngay"
-                                value={extracted_data?.den_ngay || ''}
-                                onChange={handleInputChange}
-                                ></Form.Control>
-
-                                <FloatingLabel>Tỉnh</FloatingLabel>
-                                <Form.Control
-                                as="text"
-                                name="tinh"
-                                value={extracted_data?.tinh || ''}
-                                onChange={handleInputChange}
-                                ></Form.Control>
-
-                                <FloatingLabel>Vé xe</FloatingLabel>
-                                <Form.Control
-                                as="text"
-                                name="ve_xe"
-                                value={extracted_data?.ve_xe || ''}
-                                onChange={handleInputChange}
-                                />
-                                </Form.Group> */}
-
                             {/* Modal for Recording Status */}
 
-                            <Modal show={recording}>
+                            <Modal show={showModal}>
                             <Modal.Header>
                                 <Modal.Title>{recording ? "Đang Ghi Âm..." : "Bản Ghi Âm"}</Modal.Title>
                             </Modal.Header>
 
                             <Modal.Body>
-                            {recording && mediaRecorderRef.current?.state === "recording" && (
+                            {/* {recording && mediaRecorderRef.current?.state === "recording" && ( */}
                             <div className="mt-3">
                               <p><strong>Hãy nói:</strong></p>
                               <p className="text-primary">
@@ -403,30 +426,50 @@ function Cong_tac_phi({history}) {
                               </p>
                               <p>Thời gian còn lại: {countdown}s</p>
                             </div>
-                          )}
 
+                            <p>{text_3}</p>
 
+                              {audioBlob && (
+                              <div className="mt-3">
+                                <p><strong>File Audio:</strong></p>
+
+                                <div className="mb-2">
+                                  <audio controls className="w-100">
+                                    <source src={URL.createObjectURL(audioBlob)} type="audio/webm" />
+                                    Your browser does not support the audio element.
+                                  </audio>
+                                </div>
+
+                                <button onClick={post_audio_data} className="btn btn-success">
+                                  GỬI FILE GHI ÂM
+                                </button>
+                              </div>
+
+                              
+
+                            
+                            )}                             
                             </Modal.Body>
 
                             <Modal.Footer>
                                 <button onClick={stopRecording} className="btn btn-warning">
                                     Dừng Ghi Âm
                                 </button>
+                                <button onClick={() => { stopRecording(); setShowModal(false); }} className="btn btn-danger">
+                                  Đóng
+                                </button>
+                            
                             </Modal.Footer>
                             </Modal>
-
-
-
-
-
                             </div>
 
-                        <FloatingLabel label="Khoản mục" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text_1(e.target.value) } value = {text_1}/> </FloatingLabel>
-                        <FloatingLabel label="Người nhận tiền" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text_2(e.target.value) } value = {text_2}/> </FloatingLabel>
-                        <p>{text_3}</p>
+                        {/* <FloatingLabel label="Khoản mục" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text_1(e.target.value) } value = {text_1}/> </FloatingLabel> */}
+                        {/* <FloatingLabel label="Người nhận tiền" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text_2(e.target.value) } value = {text_2}/> </FloatingLabel> */}
+                        
 
                         <Button disabled={
-                            audioBlob===null
+                            false
+                            // audioBlob===null
                             } className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
                         <p>version 1.2(07/03/2025)
                         </p>
