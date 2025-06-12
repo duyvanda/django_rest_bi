@@ -23,7 +23,7 @@ import {
     // FloatingLabel,
 } from "react-bootstrap";
 
-function Tracking_chi_phi_hcp({history}) {
+function Tracking_chi_phi_hcp( {history} ) {
 
     const { Inserted_at, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const navigate = useHistory();
