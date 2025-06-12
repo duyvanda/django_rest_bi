@@ -27,14 +27,14 @@ const Dang_ky_nghi_phep_pkh_ncrm = ({ history } ) => {
   
     const fetch_initial_data = async (manv) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/get_dang_ky_nghi_phep_pkh_ql_duyet/?manv=${manv}`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_dang_ky_nghi_phep_pkh/?manv=${manv}`)
         // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=MR0673`)
         if (!response.ok) {
             SetLoading(false)
         }
         else {
         const data = await response.json()
-        set_data_submit(data['data_submit'])
+        set_data_submit(data['data'])
         console.log(data);
         SetLoading(false);
 
@@ -74,7 +74,7 @@ const Dang_ky_nghi_phep_pkh_ncrm = ({ history } ) => {
 
       const post_form_data = async (data) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/insert_dang_ky_nghi_phep_pkh_ql_duyet/`, {
+        const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_dang_ky_nghi_phep_pkh/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -111,12 +111,14 @@ const Dang_ky_nghi_phep_pkh_ncrm = ({ history } ) => {
           if (record.checked) {
             let updatedRecord = Object.assign({}, record); // Clone the object
             updatedRecord.status = ql_duyet; // Update status
+            updatedRecord.inserted_at = Inserted_at();
             return updatedRecord;
           }
           return record;
         });
       
         // Update state with the modified records list
+        console.log("updatedRecords", updatedRecords)
         set_data_submit(updatedRecords);
         post_form_data(updatedRecords);
     
@@ -194,7 +196,7 @@ const Dang_ky_nghi_phep_pkh_ncrm = ({ history } ) => {
                 <td>{item.tencvbh}</td>
                 <td>{item.tenquanlytt}</td>
                 <td>{item.reason}</td>
-                <td>{formatDate(item.fromDate)}</td>
+                <td>{formatDate(item.fromdate)}</td>
                 {/* <td>{formatDate(item.toDate)}</td> */}
                 <td>{item.days}</td>
               </tr>

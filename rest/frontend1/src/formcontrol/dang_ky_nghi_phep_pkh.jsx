@@ -88,7 +88,7 @@ const Dang_ky_nghi_phep_pkh = ({ history } ) => {
 
   const post_form_data = async (data) => {
     SetLoading(true)
-    const response = await fetch(`https://bi.meraplion.com/local/insert_dang_ky_nghi_phep_pkh/`, {
+    const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_dang_ky_nghi_phep_pkh/`, {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -97,21 +97,25 @@ const Dang_ky_nghi_phep_pkh = ({ history } ) => {
     });
 
     if (!response.ok) {
-        SetLoading(false);
         const data = await response.json();
         console.log(data);
         SetALert(true);
         SetALertType("alert-danger");
-        SetALertText("CHƯA TẠO ĐƯỢC");
-        setTimeout(() => SetALert(false), 3000);
-    } else {
+        SetALertText(data.error_message);
+        setTimeout(() => {
+        SetALert(false);
         SetLoading(false);
+        }, 2000);
+    } else {
         const data = await response.json();
         console.log(data);
         SetALert(true);
         SetALertType("alert-success");
-        SetALertText("ĐÃ TẠO THÀNH CÔNG");
-        setTimeout(() => SetALert(false), 3000);
+        SetALertText( data.success_message );
+        setTimeout(() => {
+        SetALert(false);
+        SetLoading(false);
+        }, 2000);
         clear_data();
         setCount(count+1);
 
@@ -137,7 +141,7 @@ const Dang_ky_nghi_phep_pkh = ({ history } ) => {
     };
 
     console.log(data);
-    post_form_data(data);
+    post_form_data([data]);
     // clear_data();
   };
 

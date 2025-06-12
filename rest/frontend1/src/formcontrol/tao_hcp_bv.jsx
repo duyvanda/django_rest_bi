@@ -205,21 +205,26 @@ function Tao_hcp_bv({history, location}) {
         });
 
         if (!response.ok) {
-            SetLoading(false);
             const data = await response.json();
             console.log(data);
             SetALert(true);
             SetALertType("alert-danger");
-            SetALertText("CHƯA TẠO ĐƯỢC");
-            setTimeout(() => SetALert(false), 3000);
+            SetALertText(data.error_message);
+            setTimeout(() => {
+            SetALert(false);
+            SetLoading(false);
+            }, 2000);
         } else {
             SetLoading(false);
             const data = await response.json();
             console.log(data);
             SetALert(true);
             SetALertType("alert-success");
-            SetALertText("ĐÃ TẠO THÀNH CÔNG");
-            setTimeout(() => SetALert(false), 3000);
+            SetALertText( data.success_message );
+            setTimeout(() => {
+            SetALert(false);
+            SetLoading(false);
+            }, 2000);
             clear_data();
             setCount(count+1);
 
@@ -495,7 +500,7 @@ function Tao_hcp_bv({history, location}) {
 
                         </Stack>
 
-                        <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_chuc_danh(e.target.value) }>
+                        <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_chuc_danh(e.target.value) }>
                             <option value= {chon_chuc_danh}> {chon_chuc_danh ==="" ? "Chức Danh": chon_chuc_danh} </option>
                             {lst_chuc_danh
                             .map( (el, index) => 

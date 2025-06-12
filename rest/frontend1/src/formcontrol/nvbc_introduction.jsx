@@ -51,39 +51,45 @@ const Nvbc_introduction = () => {
   // },
   {
     time: "Tháng",
-    condition: "Top 100 Thành viên có điểm tích lũy cao nhất của tháng được chọn 1 món quà sau:",
+    condition: "t1",
     name: "Túi đựng mỹ phẩm, đồ du lịch da PU thoáng khí",
     link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20200k%20-%20T%C3%BAi%20%C4%91%E1%BB%B1ng%20m%E1%BB%B9%20ph%E1%BA%A9m%20du%20l%E1%BB%8Bch.jpg"
   },
   {
     time: "Tháng",
-    condition: "Top 100 Thành viên có điểm tích lũy cao nhất của tháng được chọn 1 món quà sau:",
+    condition: "t1",
+    name: "Túi cói kèm charm đáng yêu",
+    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20300k%20-%20T%C3%BAi%20c%C3%B3i%20k%C3%A8m%20charm.jpg"
+  },
+  {
+    time: "Quý",
+    condition: "t2",
+    name: "Ba lô thời trang Sakos Dahlia (SBV169CR)",
+    link: "https://bi.meraplion.com/DMS/thuong_nvcb/BaloSakos-demo.jpg"
+  },
+  {
+    time: "Quý",
+    condition: "t2",
+    name: "Máy xây sinh tố cầm tay Bear SB –MX04X",
+    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20500k%20-%20M%C3%A1y%20xay%20sinh%20t%E1%BB%91%20c%E1%BA%A7m%20tay%20Bear.jpg"
+  },
+  // {
+  //   time: "Quý",
+  //   condition: "t3",
+  //   name: "Đồng hồ tích hợp đèn ngủ có điều khiển từ xa và điều chỉnh độ sáng vô cấp",
+  //   link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20300k%20-%20%C4%90%E1%BB%93ng%20h%E1%BB%93%20ki%C3%AAm%20%C4%91%C3%A8n%20ng%E1%BB%A7.jpg"
+  // },
+  {
+    time: "Quý",
+    condition: "t3",
     name: "Máy sấy tóc Philips HP8108 1000W",
     link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20200k%20-%20M%C3%A1y%20s%E1%BA%A5y%20t%C3%B3c%20Philips.jpg"
   },
   {
     time: "Quý",
-    condition: "Top 50 Thành viên có điểm tích lũy cao nhất của quý được chọn 1 món quà sau:",
-    name: "Quạt cầm tay",
+    condition: "t3",
+    name: "Quạt cầm tay tốc độ cao Shimono SM-HF18(W)",
     link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20-%20Quat_cam_tay.jpg"
-  },
-  {
-    time: "Quý",
-    condition: "Top 50 Thành viên có điểm tích lũy cao nhất của quý được chọn 1 món quà sau:",
-    name: "Máy xay sinh tố cầm tay Bear",
-    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20500k%20-%20M%C3%A1y%20xay%20sinh%20t%E1%BB%91%20c%E1%BA%A7m%20tay%20Bear.jpg"
-  },
-  {
-    time: "Quý",
-    condition: "Top 50 thành viên có số ngày tham gia tra cứu thư viện chuyên cần nhất được chọn 1 món quà sau:",
-    name: "Đồng hồ tích hợp đèn ngủ có điều khiển từ xa và điều chỉnh độ sáng vô cấp",
-    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20300k%20-%20%C4%90%E1%BB%93ng%20h%E1%BB%93%20ki%C3%AAm%20%C4%91%C3%A8n%20ng%E1%BB%A7.jpg"
-  },
-  {
-    time: "Quý",
-    condition: "Top 50 thành viên có số ngày tham gia tra cứu thư viện chuyên cần nhất được chọn 1 món quà sau:",
-    name: "Túi cói kèm charm đáng yêu",
-    link: "https://bi.meraplion.com/DMS/thuong_nvcb/Qu%C3%A0%20t%E1%BA%B7ng%20300k%20-%20T%C3%BAi%20c%C3%B3i%20k%C3%A8m%20charm.jpg"
   }
 ]);
 
@@ -167,6 +173,17 @@ Lưu ý: Thời gian xét thưởng quý tại ngày 30/09/2025
       // Replace newlines with <br /> tags
       const contentWithBreaks_2 = markdownContent_2.replace(/\n/g, '  \n'); // Add two spaces before the newline for markdown to recognize the break
 
+const markdownContent_xin_chao = `
+Cám ơn bạn đã tham gia chương trình **M.Ambassador** của MerapLion  
+Với mong muốn xây dựng mối quan hệ bền vững và đồng hành lâu dài cùng Quý Dược sĩ trên hành trình chăm sóc sức khỏe gia đình Việt, MerapLion thấu hiểu rằng kiến thức chuyên môn chính là hành trang quan trọng giúp Quý Dược sĩ tư vấn hiệu quả và mang lại giá trị thiết thực cho bệnh nhân.  
+Chính vì vậy, chúng tôi không ngừng nỗ lực chia sẻ, hỗ trợ và lan tỏa kiến thức thông qua các hoạt động thực tiễn. Trên hành trình đó, MerapLion luôn gìn giữ và theo đuổi những giá trị cốt lõi **“Tận tâm – Trách nhiệm – Đồng hành”**, như lời cam kết bền chặt dành cho cộng đồng Dược sĩ Việt Nam.  
+Chương trình **M.Ambassador** không chỉ là nơi cung cấp những thông tin chuyên môn hữu ích, mà còn mang đến nhiều trải nghiệm giá trị.  
+Quý Dược sĩ hãy tích cực tra cứu, cập nhật kiến thức và tham gia tương tác để nâng cao chuyên môn, tận hưởng trải nghiệm ý nghĩa và nhận nhiều phần quà hấp dẫn bên dưới nhé.
+    `;
+// Replace newlines with <br /> tags
+const markdownContent_xin_chao_br = markdownContent_xin_chao.replace(/\n/g, '  \n'); // Add two spaces before the newline for markdown to recognize the break
+
+
   return (
     <Row className="justify-content-center py-4">
       <Col md={4}>
@@ -200,7 +217,7 @@ Lưu ý: Thời gian xét thưởng quý tại ngày 30/09/2025
             }}
           >
             <img
-              src="https://storage.googleapis.com/django_media_biteam/nvbc/Gio%CC%9B%CC%81i%20thie%CC%A3%CC%82u-2x.png"
+              src="https://bi.meraplion.com/DMS/thuong_nvcb/introduction_top_banner.jpg"
               alt="Top Banner"
               style={{ width: "100%", height: "auto", objectFit: "contain" }}
               className="img-fluid"
@@ -213,10 +230,8 @@ Lưu ý: Thời gian xét thưởng quý tại ngày 30/09/2025
           {!showContent && (
           
           <div className="greeting-box text-center mt-4">
-            <h5>Xin chào, {userName}!</h5>
-            <p>
-              Cảm ơn Quý Dược sĩ đã tham gia chương trình <b>M.Ambassador</b>. Hãy tích cực tra cứu & hoạt động duy trì để gia tăng điểm số và nhận về thật nhiều phần thưởng hấp dẫn hằng Tháng, hằng Quý nhé !
-            </p>
+            <h5>Xin chào Quý Dược sĩ {userName}!</h5>
+            <ReactMarkdown>{markdownContent_xin_chao_br}</ReactMarkdown>
           </div>
           )
           }
@@ -230,21 +245,21 @@ Lưu ý: Thời gian xét thưởng quý tại ngày 30/09/2025
           <ReactMarkdown>{contentWithBreaks}</ReactMarkdown>
 
           <div className="mt-4">
-          <h5 className="text-info">🎁 Thưởng tháng: Thành viên tích cực nhất tháng</h5>
-          <p>Top 100 Thành viên có điểm tích lũy cao nhất của tháng được chọn 1 món quà sau:</p>
-          {renderCards(filterBy("Tháng", "Top 100 Thành viên có điểm tích lũy cao nhất của tháng được chọn 1 món quà sau:"))}
+          <h5 className="text-info">🎁 Thành viên tích cực nhất tháng:</h5>
+          <p>Tiêu chí hàng tháng: Top 100 Thành viên có điểm tích lũy cao nhất của tháng được chọn 1 món quà sau :</p>
+          {renderCards(filterBy("Tháng", "t1"))}
         </div>
 
         <div className="mt-5">
-          <h5 className="text-info">🎁 Thưởng Quý: Chuyên gia sản phẩm ( xét thưởng ngày 30/09/2025)</h5>
-          <p>Top 50 Thành viên có điểm tích lũy cao nhất của quý được chọn 1 món quà sau:</p>
-          {renderCards(filterBy("Quý", "Top 50 Thành viên có điểm tích lũy cao nhất của quý được chọn 1 món quà sau:"))}
+          <h5 className="text-info">🎁 Chuyên gia sản phẩm:</h5>
+          <p>Tiêu chí hàng quý (xét thưởng ngày 30/09/2025 & ngày 31/12/2025 ): Top 50 Thành viên có điểm tích lũy cao nhất của quý được chọn 1 món quà sau:</p>
+          {renderCards(filterBy("Quý", "t2"))}
         </div>
 
         <div className="mt-5">
-          <h5 className="text-info">🎁 Thưởng Quý: Đọc giả chăm chỉ ( xét thưởng ngày 30/09/2025)</h5>
-          <p>Top 50 thành viên có số ngày tham gia tra cứu thư viện chuyên cần nhất được chọn 1 món quà sau:</p>
-          {renderCards(filterBy("Quý", "Top 50 thành viên có số ngày tham gia tra cứu thư viện chuyên cần nhất được chọn 1 món quà sau:"))}
+          <h5 className="text-info">🎁 Đọc giả chăm chỉ:</h5>
+          <p>Tiêu chí hàng quý (xét thưởng ngày 30/09/2025 & ngày 31/12/2025): Top 50 thành viên có số ngày tham gia tra cứu thư viện chuyên cần nhất được chọn 1 món quà sau:</p>
+          {renderCards(filterBy("Quý", "t3"))}
         </div>
         </div>
       )}

@@ -497,7 +497,7 @@ function Tao_hcp_pcl({history, location}) {
 
                         </Stack>
 
-                        <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_chuc_danh(e.target.value) }>
+                        <Form.Select className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_chuc_danh(e.target.value) }>
                             <option value= {chon_chuc_danh}> {chon_chuc_danh ==="" ? "Chức Danh": chon_chuc_danh} </option>
                             {lst_chuc_danh
                             .map( (el, index) => 

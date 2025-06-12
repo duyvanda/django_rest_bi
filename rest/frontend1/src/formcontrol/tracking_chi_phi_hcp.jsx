@@ -35,15 +35,15 @@ function Tracking_chi_phi_hcp({history}) {
         if (response.ok) {
             const data = await response.json()
             set_arr_hcp(data['lst_hcp']);
-            set_tong_hcp_da_dau_tu(data['tong_hcp_da_dau_tu']);
-            set_tong_tien_ke_hoach_da_dau_tu(data['tong_tien_ke_hoach_da_dau_tu']);
+            // set_tong_hcp_da_dau_tu(data['tong_hcp_da_dau_tu']);
+            // set_tong_tien_ke_hoach_da_dau_tu(data['tong_tien_ke_hoach_da_dau_tu']);
 
             set_lst_placeholder_cau_hoi(data['lst_placeholder_cau_hoi']);
             set_lst_chon_qua_tang_cam_xuc(data['lst_chon_qua_tang_cam_xuc']);
-            set_lst_chon_qua_1_5(data['lst_chon_qua_1_5']);
-            set_lst_chon_qua_sinh_nhat(data['lst_chon_qua_sinh_nhat']);
-            set_lst_chon_hoi_nghi(data['lst_chon_hoi_nghi']);
-            set_lst_chon_hinh_thuc_hoi_nghi(data['lst_chon_hinh_thuc_hoi_nghi']);
+            // set_lst_chon_qua_1_5(data['lst_chon_qua_1_5']);
+            // set_lst_chon_qua_sinh_nhat(data['lst_chon_qua_sinh_nhat']);
+            // set_lst_chon_hoi_nghi(data['lst_chon_hoi_nghi']);
+            // set_lst_chon_hinh_thuc_hoi_nghi(data['lst_chon_hinh_thuc_hoi_nghi']);
             set_lst_chon_qua_tang_cam_xuc_2024_dot2(data['lst_chon_qua_tang_cam_xuc_2024_dot2']);
             set_lst_chon_gimmick(data['lst_chon_gimmick']);
             SetLoading(false)
@@ -74,12 +74,13 @@ function Tracking_chi_phi_hcp({history}) {
     const [manv, set_manv] = useState("");
     const [lst_placeholder_cau_hoi, set_lst_placeholder_cau_hoi] = useState([]);
     const [lst_chon_qua_tang_cam_xuc, set_lst_chon_qua_tang_cam_xuc] = useState([]);
-    const [lst_chon_gimmick, set_lst_chon_gimmick] = useState([]);
-    const [lst_chon_qua_1_5, set_lst_chon_qua_1_5] = useState([]);
-    const [lst_chon_hoi_nghi, set_lst_chon_hoi_nghi] = useState([]);
-    const [lst_chon_qua_sinh_nhat, set_lst_chon_qua_sinh_nhat] = useState([]);
-    const [lst_chon_hinh_thuc_hoi_nghi, set_lst_chon_hinh_thuc_hoi_nghi] = useState([]);
     const [lst_chon_qua_tang_cam_xuc_2024_dot2, set_lst_chon_qua_tang_cam_xuc_2024_dot2] = useState([]);
+    const [lst_chon_gimmick, set_lst_chon_gimmick] = useState([]);
+    // const [lst_chon_qua_1_5, set_lst_chon_qua_1_5] = useState([]);
+    // const [lst_chon_hoi_nghi, set_lst_chon_hoi_nghi] = useState([]);
+    // const [lst_chon_qua_sinh_nhat, set_lst_chon_qua_sinh_nhat] = useState([]);
+    // const [lst_chon_hinh_thuc_hoi_nghi, set_lst_chon_hinh_thuc_hoi_nghi] = useState([]);
+
 
 
     const [chon_qua_tang, set_chon_qua_tang] = useState("");
@@ -95,8 +96,8 @@ function Tracking_chi_phi_hcp({history}) {
 
     const [arr_hcp, set_arr_hcp] = useState([]);
     const [hcp, set_hcp] = useState("");
-    const [tong_hcp_da_dau_tu, set_tong_hcp_da_dau_tu] = useState("");
-    const [tong_tien_ke_hoach_da_dau_tu, set_tong_tien_ke_hoach_da_dau_tu] = useState("");
+    // const [tong_hcp_da_dau_tu, set_tong_hcp_da_dau_tu] = useState("");
+    // const [tong_tien_ke_hoach_da_dau_tu, set_tong_tien_ke_hoach_da_dau_tu] = useState("");
     // const [arr_gift, set_arr_gift] = useState(['Quà Tặng 1','Quà Tặng 2','Quà Tặng 3']);
     // const [hcp, set_hcp]= useState("");
     const [search, set_search] = useState('');
@@ -128,7 +129,7 @@ function Tracking_chi_phi_hcp({history}) {
     
     function addSchemaRow() {
     let newSchema = schema.map(row => ({ ...row }));
-    newSchema.push( { so_luong: "", qua_gm: "" } );
+    newSchema.push( { so_luong: "", qua_gm: "", price: ""  } );
     set_schema(newSchema);
     }
 
@@ -150,6 +151,16 @@ function Tracking_chi_phi_hcp({history}) {
             updatedSchema.push(row);
         }
         updatedSchema[index][field] = value;
+
+        if (field === 'qua_gm') {
+            const matchedItem = lst_chon_gimmick.find(item => item.ten_vat_tu_gim_qt === value);
+            if (matchedItem) {
+                updatedSchema[index]['price'] = matchedItem.gia_tien;
+            } else {
+                updatedSchema[index]['price'] = 0;
+            }
+        }        
+
         set_schema(updatedSchema);
     }
 
@@ -174,7 +185,7 @@ function Tracking_chi_phi_hcp({history}) {
 
     const post_form_data = async (data) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/insert_data_tracking_chi_phi_hcp/`, {
+        const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_planning_collect_hcp_gm/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -183,23 +194,32 @@ function Tracking_chi_phi_hcp({history}) {
         });
 
         if (!response.ok) {
-            SetLoading(false);
             const data = await response.json();
             console.log(data);
-        } else {
+            SetALert(true);
+            SetALertType("alert-danger");
+            SetALertText(data.error_message);
+            setTimeout(() => {
+            SetALert(false);
             SetLoading(false);
+            }, 2000);
+
+        } else {
             const data = await response.json();
             console.log(data);
             SetALert(true);
             SetALertType("alert-success");
-            SetALertText("ĐÃ TẠO THÀNH CÔNG");
-            setTimeout(() => SetALert(false), 3000);
-            set_chon_qua_tang("");
-            set_chon_qua_sn("");
-            set_chon_hoi_nghi("");
-            set_chon_qua_tang_hoi_nghi("");
-            set_chon_hinh_thuc_hoi_nghi("");
-            set_chon_qua_tang_2("");
+            SetALertText( data.success_message );
+            setTimeout(() => {
+            SetALert(false);
+            SetLoading(false);
+            }, 2000);
+            // set_chon_qua_tang("");
+            // set_chon_qua_sn("");
+            // set_chon_hoi_nghi("");
+            // set_chon_qua_tang_hoi_nghi("");
+            // set_chon_hinh_thuc_hoi_nghi("");
+            // set_chon_qua_tang_2("");
             set_chon_qua_tang_cam_xuc("");
             set_chon_qua_tang_cam_xuc_2("");
             set_hcp("");
@@ -223,7 +243,7 @@ function Tracking_chi_phi_hcp({history}) {
         let chon_qua_tang_cam_xuc_final = (chon_qua_tang_cam_xuc !== "") ? chon_qua_tang_cam_xuc : chon_qua_tang_cam_xuc_2
 
         const data = {
-            "ma_hcp_2":ma_hcp[0],
+            "ma_hcp_2":ma_hcp[0] ,
             "manv":manv,
             "current_date":current_date,
             "chon_qua_tang":chon_qua_tang,
@@ -251,13 +271,14 @@ function Tracking_chi_phi_hcp({history}) {
             inserted: Inserted_at(),
             uuid: data.uuid,
             qua_gm: item.qua_gm,
-            so_luong: item.so_luong
+            so_luong: item.so_luong,
+            price: item.price,
             });
         }
         } else {
         result = [data]; // Keep original data as a one-item array
         }
-
+        console.log("data", data);
         console.log(result);
 
         post_form_data(result);
@@ -327,7 +348,7 @@ function Tracking_chi_phi_hcp({history}) {
 
                         </ListGroup>
 
-                        <Form.Select disabled={chon_qua_tang_cam_xuc_2!==""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_cam_xuc(e.target.value)  }>                                 
+                        {/* <Form.Select disabled={chon_qua_tang_cam_xuc_2!==""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_cam_xuc(e.target.value)  }>                                 
                             <option value=''>
                                 {lst_placeholder_cau_hoi[0]?.loai}
                             </option>
@@ -338,7 +359,7 @@ function Tracking_chi_phi_hcp({history}) {
                             )
                             }
                         
-                        </Form.Select>
+                        </Form.Select> */}
 
                         {/* <Form.Select disabled={chon_qua_tang_cam_xuc!==""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_qua_tang_cam_xuc_2(e.target.value)  }>                                 
                             <option value=''>
@@ -502,15 +523,15 @@ function Tracking_chi_phi_hcp({history}) {
         )
     }
     else {
-        return (
+        // return (
     
-            <div>
-                <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
-                <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-                </Spinner>
-            </div>
+        //     <div>
+        //         <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
+        //         <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
+        //         </Spinner>
+        //     </div>
             
-        )
+        // )
     }
 }
 

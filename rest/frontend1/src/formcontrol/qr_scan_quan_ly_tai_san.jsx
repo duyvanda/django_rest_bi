@@ -91,7 +91,7 @@ const startScanner = async () => {
 
   const sendToBackend = async (data) => {
   try {
-    const response = await fetch(`https://bi.meraplion.com/local/get_data/get_qr_scan_quan_ly_tai_san/?ma_tai_san=${data}`, {
+    const response = await fetch(`https://bi.meraplion.com/local/get_data/get_d_dm_tai_san/?ma_qlts=${data}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -100,7 +100,7 @@ const startScanner = async () => {
     });
     if (response.ok) {
     const result = await response.json();
-    set_device_info(result);
+    set_device_info(result.data[0]);
     console.log("✅ Data sent to backend:", result);
     }
 
@@ -124,7 +124,7 @@ return (
 
       {!scanning && (
         <button onClick={startScanner} className="btn btn-primary mb-3">
-          📷 Start Scan (Back Camera v2)
+          📷 Start Scan (Back Camera v 1.0)
         </button>
       )}
 
@@ -139,15 +139,15 @@ return (
         <Form className="mt-4">
           <Form.Group className="mb-3">
             <Form.Label>📛 Name</Form.Label>
-            <Form.Control type="text" value={device_info.name || ""} readOnly />
+            <Form.Control type="text" value={device_info.ten_ts_qlts || ""} readOnly />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>📍 Location</Form.Label>
-            <Form.Control type="text" value={device_info.location || ""} readOnly />
+            <Form.Control type="text" value={device_info.phong_vitri || ""} readOnly />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>👤 Owner</Form.Label>
-            <Form.Control type="text" value={device_info.owner || ""} readOnly />
+            <Form.Control type="text" value={device_info.ten_phu_trach || ""} readOnly />
           </Form.Group>
         </Form>
       )}

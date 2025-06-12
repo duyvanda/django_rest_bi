@@ -23,8 +23,8 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
     
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
-      // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_invmapped/?manv=${manv}`)
-      const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_invmapped/?manv=MR0673`)
+      const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_invmapped/?manv=${manv}`)
+      // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_invmapped/?manv=MR0673`)
       if (!response.ok) {
           SetLoading(false)
       }
