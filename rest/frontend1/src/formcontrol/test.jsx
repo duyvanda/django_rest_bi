@@ -1,589 +1,227 @@
-/* eslint-disable */
-import { useContext, useEffect, useState } from "react";
-import Select from "react-select";
-import './myvnp.css';
-import { Link, useLocation  } from "react-router-dom";
-import FeedbackContext from '../context/FeedbackContext';
-import {
-    // ButtonGroup,
-    Modal,
-    Button,
-    Col,
-    Row,
-    Container,
-    Form,
-    Spinner,
-    Table,
-    ListGroup
-} from "react-bootstrap";
-const DbFileTable = () => {
+import React, { useState, useEffect, useCallback } from 'react';
+import initSqlJs from 'sql.js';
 
-  const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
+function InvoiceClaimsProcessor() {
+  const [db, setDb] = useState(null);
+  const [rawData, setRawData] = useState([]); // State for raw data from API
+  const [adjustedData, setAdjustedData] = useState([]); // State for processed data
+  const [loadingDb, setLoadingDb] = useState(true);
+  const [loadingApi, setLoadingApi] = useState(false);
+  const [processingData, setProcessingData] = useState(false);
+  const [error, setError] = useState(null);
 
-  const fetch_initial_data = async (manv) => {
-    SetLoading(true)
-    const response = await fetch(`https://bi.meraplion.com/local/get_all_duckdb_files/`)
-    if (!response.ok) {
-        SetLoading(false)
+  // 1. Initialize SQLite DB once on component mount
+  useEffect(() => {
+    async function initDatabase() {
+      try {
+        const SQL = await initSqlJs({
+          locateFile: file => `/${file}`
+        });
+        const newDb = new SQL.Database();
+        setDb(newDb);
+        setLoadingDb(false);
+      } catch (err) {
+        console.error("Failed to load SQL.js:", err);
+        setError("Failed to load database. Check console for details.");
+        setLoadingDb(false);
+      }
     }
-    else {
-    const data = await response.json()
-    setDbFiles(data['db_files'])
-    console.log(data);
-    SetLoading(false);
+    initDatabase();
 
+    return () => {
+      if (db) {
+        db.close();
+        console.log("SQLite database closed.");
+      }
+    };
+  }, []); // Empty dependency array means this runs only once
+
+  // 2. Simulate API Call to get rawData
+  useEffect(() => {
+    async function fetchData() {
+      setLoadingApi(true);
+      setError(null);
+      try {
+        // Simulate an API call delay
+        await new Promise(resolve => setTimeout(resolve, 0));
+
+        const apiData = [
+          {"recordid":1,"claim_money":300000,"invoice_number":2,"invoice_number_original_budget":1000000},
+          {"recordid":2,"claim_money":300000,"invoice_number":2,"invoice_number_original_budget":1000000},
+          {"recordid":3,"claim_money":500000,"invoice_number":2,"invoice_number_original_budget":1000000},
+          {"recordid":4,"claim_money":500000,"invoice_number":3,"invoice_number_original_budget":600000},
+          {"recordid":5,"claim_money":500000,"invoice_number":"","invoice_number_original_budget":""}
+        ];
+        setRawData(apiData);
+      } catch (err) {
+        console.error("API call failed:", err);
+        setError("Failed to fetch data from API.");
+      } finally {
+        setLoadingApi(false);
+      }
     }
+
+    if (!loadingDb && db) { // Fetch data once DB is ready
+      fetchData();
+    }
+  }, [loadingDb, db]); // Refetch if db loading state changes or db instance becomes available
+
+  // 3. Function to process data when button is clicked
+  const processClaims = async () => {
+    if (!db || rawData.length === 0) {
+      console.warn("Database not ready or no raw data to process.");
+      return;
+    }
+
+    setProcessingData(true);
+    setError(null);
+
+    try {
+      // **Important**: Re-initialize the table and insert data
+      // This is crucial because `db.run()` operations are persistent on the *current* DB instance.
+      // If you don't drop/recreate, subsequent clicks would add duplicate data or sum it up incorrectly.
+      db.run(`DROP TABLE IF EXISTS claims;`);
+      db.run(`
+        CREATE TABLE claims (
+          recordid INTEGER PRIMARY KEY,
+          claim_money REAL,
+          invoice_number INTEGER,
+          invoice_number_original_budget REAL
+        );
+      `);
+
+      // Prepare values for insertion, converting to numbers and handling empty strings
+      const insertStmt = db.prepare(`
+        INSERT INTO claims (recordid, claim_money, invoice_number, invoice_number_original_budget)
+        VALUES (?, ?, ?, ?);
+      `);
+
+      rawData.forEach(row => {
+        insertStmt.run([
+          row.recordid,
+          parseFloat(row.claim_money),
+          row.invoice_number,
+          row.invoice_number_original_budget === ""
+            ? null
+            : parseFloat(row.invoice_number_original_budget)
+        ]);
+      });
+      insertStmt.free(); // Release the prepared statement
+
+      // SQL Query with Window Function
+      const query = `
+        SELECT
+          c.recordid,
+          c.claim_money,
+          c.invoice_number,
+          c.invoice_number_original_budget,
+          SUM(c.claim_money) OVER (PARTITION BY c.invoice_number) AS total_claim_money,
+          CASE
+            WHEN c.invoice_number_original_budget IS NOT NULL AND
+                 SUM(c.claim_money) OVER (PARTITION BY c.invoice_number) > c.invoice_number_original_budget
+            THEN 1
+            ELSE 0
+          END AS overbudget
+        FROM claims AS c
+        ORDER BY c.recordid;
+      `;
+
+      const res = db.exec(query);
+
+      if (res.length > 0) {
+        const columns = res[0].columns;
+        const values = res[0].values;
+        const formattedResults = values.map(row => {
+          const rowObject = {};
+          columns.forEach((col, i) => {
+            rowObject[col] = row[i]
+          }
+          //   rowObject[col] = (col === 'claim_money' && typeof row[i] === 'number')
+          //                     ? String(row[i])
+          //                     : row[i];
+
+          //   if (col === 'invoice_number_original_budget' && rowObject.recordid === 5) {
+          //     rowObject[col] = '';
+          //   } else if (col === 'invoice_number_original_budget' && row[i] === null) {
+          //       rowObject[col] = ''; 
+          //   }
+          // }
+        )
+        ;
+          return rowObject;
+        });
+        console.log(formattedResults)
+        setAdjustedData(formattedResults);
+      } else {
+        setAdjustedData([]);
+      }
+    } catch (processErr) {
+      console.error("Error processing data:", processErr);
+      setError("Failed to process data. Check console for details.");
+    } finally {
+      setProcessingData(false);
+    }
+  } // Dependencies: db instance and rawData
+
+  const handleProcessButtonClick = () => {
+    processClaims();
+  };
+
+  // --- Render Logic ---
+  if (loadingDb || loadingApi) {
+    return <div>{loadingDb ? "Loading database..." : "Fetching raw data..."}</div>;
   }
 
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-      if (localStorage.getItem("userInfo")) {
-      const media = window.matchMedia('(max-width: 960px)');
-      const isMB = (media.matches);
-      const dv_width = window.innerWidth;
-      // userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, location.pathname, isMB, dv_width);
-      // set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
-      fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
-      } else {
-          history.push(`/login?redirect=${location.pathname}`);
-      };
-  }, []);
-  const [dbFiles, setDbFiles] = useState([
-    { name: "/app/thumuc/crm_hcp.db", last_modified: "2025-04-18 20:56:27" },
-    { name: "/app/thumuc/update_thu_hoi.db", last_modified: "2025-04-18 20:35:08" },
-    { name: "/app/thumuc/chi_phi_mkt_tp.db", last_modified: "2025-04-18 17:30:20" }
-  ]);
-
-  // Example table data (replace this with actual fetched data)
-  const [dataTable, setDataTable] = useState([
-    {
-      'table_name': 'sales',
-      'schema': {
-        'col1': 'TEXT',
-        'col2': 'FLOAT',
-        'col3': 'TIMESTAMP'
-      }
-    },
-    {
-      'table_name': 'customer',
-      'schema': {
-        'id': 'FLOAT',
-        'name': 'TEXT',
-        'created_at': 'TIMESTAMP'
-      }
-    }
-  ]);
-
-  // States for managing selected file, selected table, query, and result
-  const [currentFile, setCurrentFile] = useState(null);
-  const [selectedTable, setSelectedTable] = useState(null);
-  const [sqlQuery, setSqlQuery] = useState("");
-  const [excelUrl, setExcelUrl] = useState("");
-  const [newDbFile, setNewDbFile] = useState({ name: "" });
-  const [showDbFiles, setShowDbFiles] = useState(false);  // Toggle for .db files
-
-  // States for modals
-  const [showExcelModal, setShowExcelModal] = useState(false);
-  const [showSchemaModal, setShowSchemaModal] = useState(false);
-  const [excelFileName, setExcelFileName] = useState("");
-  const [tableName, setTableName] = useState("");
-  const [schemaColumns, setSchemaColumns] = useState([{ columnName: "", dataType: "VARCHAR", isPrimaryKey: false }]);  // Default type is TEXT
-  const [excelFile, setExcelFile] = useState(null); // State to store the uploaded Excel file
-
-  // Handle SQL query input change
-  const handleSqlChange = (e) => {
-    setSqlQuery(e.target.value);
-  };
-
-  // Handle editing a file (set current file to edit)
-  const handleEdit = async (file) => {
-    setCurrentFile(file);
-    setSqlQuery(""); // Reset SQL query input
-    setSelectedTable(null); // Reset the selected table
-    setExcelUrl(""); // Reset the excel URL
-
-    try {
-      // Send POST request with file_path:filename to get tables and schema
-      const response = await fetch("https://bi.meraplion.com/local/get_duckdb_tables_and_schemas/", { 
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          file_path: file.name
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Fetched Data:", data);
-        setDataTable(data.tabledata);
-        // setDataTable(data.tabledata);
-      } else {
-        console.error("Error fetching tables and schema.");
-        alert("Failed to fetch tables and schema.");
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      alert("An error occurred while fetching the file details.");
-    }
-
-        // Focus on the Tables section when a file is selected using the id
-        const tablesHeading = document.getElementById("tables-heading");
-        if (tablesHeading) {
-          tablesHeading.scrollIntoView({ behavior: 'smooth' });
-        }
-  };
-
-  // Handle selecting a table
-  const handleTableSelect = (table) => {
-    setSelectedTable(table);
-  };
-
-  // Handle running the SQL query
-  const handleRunQuery = async () => {
-    if (!sqlQuery || !currentFile) {
-      window.alert("Please enter an SQL query.");
-      return;
-    }
-    setExcelUrl("")
-    SetLoading(true); // Set loading to true before sending the request
-
-    // Send the SQL query to the backend (this is just an example)
-    try {
-      const response = await fetch("https://bi.meraplion.com/local/get_query_result/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          id: get_id(),
-          query: sqlQuery,
-          file_path: currentFile.name
-        })
-      });
-
-      const data = await response.json();
-
-      if (data && data.excel_url) {
-        setExcelUrl(data.excel_url);
-      } else {
-        window.alert("No result found or error from the backend.");
-      }
-    } catch (error) {
-      console.error("Error running query:", error);
-      window.alert(error);
-    }
-
-    finally {
-      SetLoading(false); // Ensure loading is turned off regardless of success or failure
-    }
-
-    // SetLoading(false);
-  };
-
-  // Handle adding a new .db file
-  const handleAddDbFile = () => {
-    if (!newDbFile.name) {
-      window.alert("Please provide a valid .db file name.");
-      return;
-    }
-
-    // Add new .db file to the list
-    const newFile = { name: newDbFile.name, last_modified: new Date().toISOString() };
-    setDbFiles([...dbFiles, newFile]);
-    setNewDbFile({ name: "" }); // Reset the input field
-  };
-
-  // Toggle visibility of the .db files table
-  const toggleDbFilesVisibility = () => {
-    setShowDbFiles(!showDbFiles);
-  };
-
-  // Modal for adding Excel file and table name
-  const handleExcelModalClose = () => setShowExcelModal(false);
-  const handleExcelModalShow = () => setShowExcelModal(true);
-
-  // Handle Excel file change (when file is selected)
-  const handleExcelFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
-      setExcelFile(file);
-    } else {
-      window.alert("Please upload a valid Excel file.");
-    }
-  };
-
-  // Handle submitting Excel file, table name, and db file path
-  const handleExcelSubmit = async () => {
-    if (!excelFile || !tableName || !currentFile) {
-      alert("Please fill in all fields.");
-      return;
-    }
-
-    // Prepare the data to send to the backend
-    const formData = new FormData();
-    formData.append("excelFile", excelFile);
-    formData.append("tableName", tableName);
-    formData.append("dbFilePath", currentFile.name);
-
-    try {
-      const response = await fetch("YOUR_BACKEND_URL_HERE", {
-        method: "POST",
-        body: formData
-      });
-
-      const data = await response.json();
-      if (data && data.success) {
-        window.alert("Excel file and table name successfully submitted.");
-      } else {
-        window.alert("Error submitting data.");
-      }
-    } catch (error) {
-      console.error("Error uploading Excel file:", error);
-      window.alert("Error occurred while uploading the Excel file.");
-    }
-
-    handleExcelModalClose(); // Close the modal after submission
-  };
-
-  // Modal for adding schema manually
-  const handleSchemaModalClose = () => setShowSchemaModal(false);
-  const handleSchemaModalShow = () => setShowSchemaModal(true);
-
-  const handleAddSchema = async () => {
-    console.log("Schema Columns:", schemaColumns);
-  
-    // Prepare data to send to backend
-    const schemaData = {
-      file_path: currentFile.name,
-      table_name: tableName,  // Add the table name to the data
-      columns: schemaColumns.map((col) => ({
-        column_name: col.columnName,
-        data_type: col.dataType,
-        is_primary_key: col.isPrimaryKey
-      }))
-    };
-  
-    try {
-      // Send POST request to backend to create table
-      const response = await fetch("https://bi.meraplion.com/local/create_table_manually/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(schemaData),
-      });
-  
-      // Check if the response status is OK
-      if (!response.ok) {
-        // If response is not ok, throw an error (this will be caught in the catch block)
-        throw new Error(`Backend returned status: ${response.status}`);
-      }
-  
-      // Parse the JSON response
-      const data = await response.json();
-      
-      // Check if the backend response indicates success
-      if (data.success) {
-        console.log("Table created successfully:", data);
-        // alert("Table created successfully.");
-      } else {
-        console.error("Error in backend response:", data.message);
-        // alert(`Error: ${data.message}`);
-      }
-  
-    } catch (error) {
-      // This block will only be triggered if there is an issue with the network or response
-      console.error("Error sending data to backend:", error);
-      // alert("An error occurred while sending data to the backend.");
-    }
-  
-    // Close the schema modal after submitting
-    setShowSchemaModal(false); // Hide modal
-  };
-  
-
-  const handleSchemaChange = (index, field, value) => {
-    const newColumns = [...schemaColumns];
-    newColumns[index][field] = value;
-    setSchemaColumns(newColumns);
-  };
-
-  const handleAddColumn = () => {
-    setSchemaColumns([...schemaColumns, { columnName: "", dataType: "VARCHAR", isPrimaryKey: false }]);
-  };
-
-  const handleRemoveColumn = (index) => {
-    const newColumns = schemaColumns.filter((_, i) => i !== index);
-    setSchemaColumns(newColumns);
-  };
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div>
-      {/* Button to toggle visibility of the .db files table */}
-      <Button variant="primary" onClick={toggleDbFilesVisibility} className="mt-3">
-        {showDbFiles ? "Hide .db Files" : "Show .db Files"}
-      </Button>
+      <h1>Invoice Claims Processor</h1>
 
- {/* Row with two columns: Left for .db Files Table, Right for Add .db File Form */}
- <Row className="mt-4">
-        <Col md={6}>
-          {/* .db Files Table */}
-          {showDbFiles && (
-            <>
-              <h4>Available .db Files</h4>
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Last Modified</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {dbFiles.map((dbFile, index) => (
-                    <tr key={index}>
-                      <td>{dbFile.name}</td>
-                      <td>{dbFile.last_modified}</td>
-                      <td>
-                      <Button variant="info" onClick={() => handleEdit(dbFile)}>
-                          Edit
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </>
-          )}
-        </Col>
+      <button onClick={handleProcessButtonClick} disabled={processingData || rawData.length === 0}>
+        {processingData ? "Processing..." : "Process Claims"}
+      </button>
 
-        <Col md={6}>
-          {/* Enter New .db File Path Part */}
-          <h4>Enter New .db File Path</h4>
-          <Form>
-            <Form.Group controlId="formDbName">
-              <Form.Control
-                type="text"
-                name="name"
-                value={newDbFile.name}
-                onChange={(e) => setNewDbFile({ name: e.target.value })}
-                placeholder="Enter .db file path"
-              />
-            </Form.Group>
-            <Button variant="primary" onClick={handleAddDbFile}>
-              Add .db File
-            </Button>
-          </Form>
-        </Col>
-      </Row>
-
-      {/* Left Section: Tables and Schema Modals */}
-      {currentFile && (
-        <Row className="mt-4">
-          <Col md={6}>
-            <h4 id="tables-heading" >Tables in {currentFile.name}</h4>
-            <ListGroup>
-              {dataTable.map((table, index) => (
-                <ListGroup.Item
-                  key={index}
-                  onClick={() => handleTableSelect(table)}
-                  style={{
-                    cursor: "pointer",
-                    backgroundColor: selectedTable === table ? "#e0f7fa" : "white"
-                  }}
-                >
-                  {table.table_name}
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-
-            {/* Show Schema when a table is selected */}
-            {selectedTable && (
-              <>
-                <h5>Schema for {selectedTable.table_name}</h5>
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>Column Name</th>
-                      <th>Data Type</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(selectedTable.schema).map(([colName, colType], index) => (
-                      <tr key={index}>
-                        <td>{colName}</td>
-                        <td>{colType}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </>
-            )}
-
-            {/* Add Excel File and Table Name Modal Trigger */}
-            <Button variant="outline-secondary" size="sm" onClick={handleExcelModalShow} className="mt-2">
-            + Add Excel File and Table
-            </Button>
-
-            {/* Add Schema Manually Modal Trigger */}
-            <Button variant="outline-secondary" size="sm" onClick={handleSchemaModalShow} className="mt-2">
-              + Add Schema Manually
-            </Button>
-          </Col>
-
-          <Col md={6}>
-            {/* SQL Query Input Section */}
-            <h4>SQL Query for {currentFile.name}</h4>
-            <Form>
-              <Form.Group controlId="formSqlQuery">
-                <Form.Control
-                  style={{ height: '300px' }}
-                  as="textarea"
-                  rows={5}
-                  value={sqlQuery}
-                  onChange={handleSqlChange}
-                  placeholder="Enter your SQL query here"
-                />
-              </Form.Group>
-              <Button variant="success" onClick={handleRunQuery} className="mt-3" disabled={loading}>
-                Run Query
-              </Button>
-            </Form>
-
-            {/* Display the Excel URL if available */}
-            {excelUrl && (
-              <div className="mt-3">
-                <h5>Excel File Available:</h5>
-                <a href={excelUrl} target="_blank" rel="noopener noreferrer">
-                  {excelUrl}
-                </a>
-              </div>
-            )}
-          </Col>
-        </Row>
+      <h2>Raw Data (from API)</h2>
+      {rawData.length > 0 ? (
+        <pre>{JSON.stringify(rawData, null, 2)}</pre>
+      ) : (
+        <p>No raw data fetched yet.</p>
       )}
 
-      {/* Modals */}
-      {/* Excel File and Table Name Modal */}
-      <Modal show={showExcelModal} onHide={handleExcelModalClose} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Add Excel File and Table Name</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group controlId="formExcelFile">
-              <Form.Label>Upload Excel File</Form.Label>
-              <Form.Control
-                type="file"
-                accept=".xlsx, .xls"
-                onChange={handleExcelFileChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="formTableName">
-              <Form.Label>Table Name</Form.Label>
-              <Form.Control
-                type="text"
-                value={tableName}
-                onChange={(e) => setTableName(e.target.value)}
-                placeholder="Enter table name"
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleExcelModalClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleExcelSubmit}>
-            Upload
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-        {/* Schema Manual Modal */}
-        <Modal show={showSchemaModal} onHide={handleSchemaModalClose} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Add Schema Manually</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            {/* Table Name Input */}
-            <Form.Group controlId="formTableName" className="mb-2">
-              <Form.Label>Table Name</Form.Label>
-              <Form.Control
-                type="text"
-                value={tableName}
-                onChange={(e) => setTableName(e.target.value)}
-                placeholder="Enter table name"
-              />
-            </Form.Group>
-
-            {/* Schema Columns */}
-            {schemaColumns.map((column, index) => (
-              <Row key={index} className="mb-2">
-                <Col>
-                  <Form.Control
-                    type="text"
-                    value={column.columnName}
-                    onChange={(e) => handleSchemaChange(index, "columnName", e.target.value)}
-                    placeholder="Column Name"
-                  />
-                </Col>
-                <Col>
-                  <Form.Control
-                    as="select"
-                    value={column.dataType}
-                    onChange={(e) => handleSchemaChange(index, "dataType", e.target.value)}
-                  >
-                    <option value="TEXT">VARCHAR</option>
-                    <option value="INTEGER">INTEGER</option>
-                    <option value="FLOAT">DOUBLE</option>
-                    <option value="TIMESTAMP">TIMESTAMP</option>
-                  </Form.Control>
-                </Col>
-                <Col md="auto">
-                  <Form.Check
-                    type="checkbox"
-                    label="Primary Key"
-                    checked={column.isPrimaryKey || false}
-                    onChange={(e) => handleSchemaChange(index, "isPrimaryKey", e.target.checked)}
-                  />
-                </Col>
-                <Col md="auto">
-                  <Button variant="danger" onClick={() => handleRemoveColumn(index)}>
-                    Remove
-                  </Button>
-                </Col>
-              </Row>
+      <h2>Adjusted Data (Processed)</h2>
+      {adjustedData.length > 0 ? (
+        <table>
+          <thead>
+            <tr>
+              <th>Record ID</th>
+              <th>Claim Money</th>
+              <th>Invoice Number</th>
+              <th>Original Budget</th>
+              <th>Total Claim Money</th>
+              <th>Overbudget</th>
+            </tr>
+          </thead>
+          <tbody>
+            {adjustedData.map((row) => (
+              <tr key={row.recordid}>
+                <td>{row.recordid}</td>
+                <td>{row.claim_money}</td>
+                <td>{row.invoice_number}</td>
+                <td>{row.invoice_number_original_budget !== null ? row.invoice_number_original_budget : ''}</td>
+                <td>{row.total_claim_money}</td>
+                <td>{row.overbudget}</td>
+              </tr>
             ))}
-            <Button variant="link" onClick={handleAddColumn}>
-              + Add Column
-            </Button>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleSchemaModalClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleAddSchema}>
-            Save Schema
-          </Button>
-        </Modal.Footer>
-      </Modal>
+          </tbody>
+        </table>
+      ) : (
+        <p>Click "Process Claims" to see adjusted data.</p>
+      )}
     </div>
   );
-};
+}
 
-export default DbFileTable;
-
-
-
-
-
-
-
-
-
-// const response = await fetch("https://bi.meraplion.com/local/create_duckdb_file/", {
+export default InvoiceClaimsProcessor;

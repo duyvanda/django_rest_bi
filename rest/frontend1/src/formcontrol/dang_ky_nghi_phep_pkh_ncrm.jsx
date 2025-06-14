@@ -27,7 +27,7 @@ const Dang_ky_nghi_phep_pkh_ncrm = ({ history } ) => {
   
     const fetch_initial_data = async (manv) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_dang_ky_nghi_phep_pkh/?manv=${manv}`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_dang_ky_nghi_phep_pkh/?manv=${manv}&page=ncrm`)
         // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=MR0673`)
         if (!response.ok) {
             SetLoading(false)
@@ -136,6 +136,29 @@ const Dang_ky_nghi_phep_pkh_ncrm = ({ history } ) => {
         </div>
         }
         </Modal>
+
+        <Row className="justify-content-center mb-1 mt-1">
+        <Col xs={3}>
+          <Link to="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh">
+            <Button
+              variant={location.pathname === "/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh" ? "primary" : "outline-primary"}
+              className="w-100"
+            >
+              ĐỀ XUẤT
+            </Button>
+          </Link>
+        </Col>
+        <Col xs={3}>
+          <Link to="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh_ncrm">
+            <Button
+              variant={location.pathname === "/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh_ncrm" ? "secondary" : "outline-secondary"}
+              className="w-100"
+            >
+              QL DUYỆT
+            </Button>
+          </Link>
+        </Col>
+      </Row>
 
           {/* Buttons for approving or denying */}
           <div className="mt-2" style={{ marginBottom: "20px", display: "flex", gap: "10px", justifyContent: "flex-start" }}>

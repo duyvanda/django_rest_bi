@@ -16,7 +16,8 @@ import {
     FloatingLabel,
     Table,
     Card,
-    Modal
+    Modal,
+    Alert
 } from "react-bootstrap";
 // import { v4 as uuid } from "uuid";
 
@@ -27,7 +28,7 @@ const Dang_ky_nghi_phep_pkh = ({ history } ) => {
   
     const fetch_initial_data = async (supid) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/get_dang_ky_nghi_phep_pkh/?supid=${supid}`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_dang_ky_nghi_phep_pkh/?supid=${supid}&page=crm`)
         // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=MR0673`)
         if (!response.ok) {
             SetLoading(false)
@@ -144,120 +145,147 @@ const Dang_ky_nghi_phep_pkh = ({ history } ) => {
     post_form_data([data]);
     // clear_data();
   };
-
+  const companyColor = '#00A79D'; // Define your company color
   return (
-    <Form onSubmit={handle_submit}>
-    <Row className="justify-content-center">
-    <Col md={4} >
+    <Form onSubmit={handle_submit} className="p-4 border rounded shadow-sm bg-white">
+      {/* Loading Modal */}
+      <Modal show={loading} centered size="sm" backdrop="static" keyboard={false}>
+        <Modal.Body className="text-center d-flex flex-column align-items-center justify-content-center py-4">
+          <Spinner animation="border" role="status" className="mb-3" style={{ color: '#00A79D' }} />
+          <p className="mb-0">Đang tải...</p>
+        </Modal.Body>
 
-    <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
-    <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
+        {alert &&
+        <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
+            <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
+            </button>
+            <span><strong>Cảnh Báo:  </strong>{alertText}</span>
+        </div>
+        }
 
-    {alert &&
-    <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
-    <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
-    </button>
-    <span><strong>Cảnh Báo:  </strong>{alertText}</span>
-    </div>
-    }
-    </Modal>
+      </Modal>
 
-      {/* Select employee */}
-       {/* Select employee */}
-       <Form.Group as={Row} className="mt-2">
-        <Col sm={12}>
-          <Select
-            options={employees}
-            isMulti
-            // value={employees.find((emp) => emp.value === manv)}
-            value={manv}
-            onChange={setManv}
-            placeholder="Chọn nv"
-            styles={{
-              control: (base) => ({
-                ...base,
-                height: "60px",
-                borderColor: "lightgray",
-              }),
+      <Row className="justify-content-center">
+
+        {/* TAB COMPONENTS */}
+        <Row className="justify-content-center mb-1 mt-1">
+              <Col xs={3}>
+                <Link to="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh">
+                  <Button
+                    variant={location.pathname === "/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh" ? "primary" : "outline-primary"}
+                    className="w-100"
+                  >
+                    ĐỀ XUẤT
+                  </Button>
+                </Link>
+              </Col>
+              <Col xs={3}>
+                <Link to="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh_ncrm">
+                  <Button
+                    variant={location.pathname === "/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh_ncrm" ? "secondary" : "outline-secondary"}
+                    className="w-100"
+                  >
+                    QL DUYỆT
+                  </Button>
+                </Link>
+              </Col>
+            </Row>
+
+
+        <Col md={6}>
+
+          {/* Select employee */}
+          <Form.Group className="mb-3">
+            <Form.Label className="fw-bold">Chọn nhân viên</Form.Label>
+            <Select
+              options={employees}
+              isMulti
+              value={manv}
+              onChange={setManv}
+              placeholder="Tìm kiếm hoặc chọn nhân viên..."
+              noOptionsMessage={() => "Không tìm thấy nhân viên"}
+              classNamePrefix="react-select"
+              styles={{
+                control: (base, state) => ({
+                  ...base,
+                  minHeight: "50px",
+                  borderColor: state.isFocused ? companyColor : "#ced4da", // Highlight border on focus
+                  boxShadow: state.isFocused ? `0 0 0 0.25rem ${companyColor}40` : "none", // Subtle shadow on focus
+                  '&:hover': {
+                    borderColor: state.isFocused ? companyColor : "#80bdff", // Keep company color on hover when focused
+                  },
+                }),
+                multiValue: (base) => ({
+                  ...base,
+                  backgroundColor: `${companyColor}1A`, // A lighter tint of the company color for tags
+                  color: companyColor,
+                }),
+                multiValueLabel: (base) => ({
+                  ...base,
+                  color: companyColor,
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isSelected ? companyColor : state.isFocused ? `${companyColor}10` : null, // Selected and hover background
+                  color: state.isSelected ? 'white' : 'black', // Text color for selected
+                  '&:active': {
+                    backgroundColor: companyColor,
+                  },
+                }),
+              }}
+            />
+          </Form.Group>
+
+          {/* From Date */}
+          <Form.Group className="mb-3">
+            <Form.Label className="fw-bold">Từ ngày</Form.Label>
+            <Form.Control
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+              style={{ height: "50px" }}
+            />
+          </Form.Group>
+
+          {/* Number of Days */}
+          <Form.Group className="mb-3">
+            <Form.Label className="fw-bold">Số ngày nghỉ</Form.Label>
+            <Form.Control
+              type="number"
+              value={days}
+              onChange={(e) => setDays(e.target.value)}
+              placeholder="Nhập số ngày nghỉ"
+              min="0"
+              style={{ height: "50px" }}
+            />
+          </Form.Group>
+
+          {/* Reason for Leave */}
+          <Form.Group className="mb-4">
+            <Form.Label className="fw-bold">Lý do nghỉ phép</Form.Label>
+            <Form.Control
+              as="textarea"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Mô tả lý do nghỉ phép của bạn..."
+              rows={4}
+            />
+          </Form.Group>
+
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            className="w-100 py-3 fw-bold"
+            style={{
+              backgroundColor: companyColor,
+              borderColor: companyColor,
+              color: 'white', // Ensure text is readable against the custom background
             }}
-          />
-        </Col>
-      </Form.Group>
-
-      {/* From Date */}
-      <Form.Group as={Row} className="mt-2">
-        <Col sm={12}>
-          <Form.Label>From Date</Form.Label>
-          <Form.Control
-            type="date"
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
-            placeholder="Từ ngày"
-            style={{ height: "60px" }}
-          />
-        </Col>
-      </Form.Group>
-
-      {/* To Date */}
-      {/* <Form.Group as={Row} className="mt-2">
-        <Col sm={12}>
-          <Form.Label>To Date</Form.Label>
-          <Form.Control
-            type="date"
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-            placeholder="Đến ngày"
-            style={{ height: "60px" }}
-          />
-        </Col>
-      </Form.Group> */}
-
-      {/* Number of Days */}
-      <Form.Group as={Row} className="mt-2">
-        <Col sm={12}>
-          <Form.Control
-            type="number"
-            value={days}
-            onChange={(e) => setDays(e.target.value)}
-            placeholder="Số ngày"
-            style={{ height: "60px" }}
-          />
-        </Col>
-      </Form.Group>
-
-      {/* Reason for Leave */}
-      <Form.Group as={Row} className="mt-2">
-        <Col sm={12}>
-          <Form.Control
-            as="textarea"
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            placeholder="Lý do"
-            style={{ height: "60px" }}
-          />
-        </Col>
-      </Form.Group>
-
-      {/* Submit Button */}
-      <Form.Group as={Row} className="mt-2">
-        <Col sm={12}>
-          <Button variant="primary" type="submit" block>
+          >
             Gửi NCRM duyệt
           </Button>
+
         </Col>
-
-        <Col sm={12}>
-        <Link to="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh_ncrm">
-          <Button
-          variant="outline-secondary"
-          className="mt-2">ĐI ĐẾN NCRM
-          </Button>
-        </Link>
-        </Col>
-
-      </Form.Group>
-
-      </Col>
       </Row>
     </Form>
   );

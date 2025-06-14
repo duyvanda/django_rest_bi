@@ -31,7 +31,7 @@ function Tao_hcp_bv({history, location}) {
         SetLoading(true);
         // if PCL
         // const response = await fetch(`https://bi.meraplion.com/local/tao_hcp_bv_get_data_hcp/?manv=MR3047&form_layout=PCL&lam_them=BV`)
-        const response = await fetch(`https://bi.meraplion.com/local/tao_hcp_bv_get_data_hcp/?manv=${manv}&form_layout=BV&lam_them=PCL`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_data_tao_hcp_bv/?manv=${manv}&form_layout=BV&lam_them=PCL`)
         
         if (response.ok) {
             const data = await response.json()
@@ -41,7 +41,7 @@ function Tao_hcp_bv({history, location}) {
             set_lst_gioi_tinh(data['lst_gioi_tinh']);
             set_lst_phan_loai_hcp(data['lst_phan_loai_hcp']);
             set_lst_kenh_lam_viec(data['lst_kenh_lam_viec']);
-            set_lst_hcp_bv(data['lst_hcp_bv']);
+            set_lst_khc_chon_chinh(data['lst_khc_chon_chinh']);
             set_lst_hcp2_bv(data['lst_hcp2_bv']);
             set_lst_chuc_danh(data['lst_chuc_danh']);
             set_lst_chuc_vu(data['lst_chuc_vu']);
@@ -49,7 +49,7 @@ function Tao_hcp_bv({history, location}) {
             set_lst_nganh_chuyen_khoa(data['lst_nganh_chuyen_khoa']);
             set_lst_nganh_khoa_phong(data['lst_nganh_khoa_phong']);
 
-            set_lst_hcp_pcl(data['lst_hcp_pcl']);
+            set_lst_khc_chon_phu(data['lst_khc_chon_phu']);
             set_lst_chuc_vu_pcl(data['lst_chuc_vu_pcl']);
 
             SetLoading(false);
@@ -107,7 +107,7 @@ function Tao_hcp_bv({history, location}) {
     const [chon_kenh_lam_viec, set_chon_kenh_lam_viec] = useState("");
     const [lst_phan_loai_hcp, set_lst_phan_loai_hcp] = useState([]);
     const [chon_phan_loai_hcp, set_chon_phan_loai_hcp] = useState("");
-    const [lst_hcp_bv, set_lst_hcp_bv] = useState([]);
+    const [lst_khc_chon_chinh, set_lst_khc_chon_chinh] = useState([]);
     const [search_hco_bv, set_search_hco_bv] = useState("");
     const [chon_hco_bv, set_chon_hco_bv] = useState("");
 
@@ -116,7 +116,7 @@ function Tao_hcp_bv({history, location}) {
     const [chon_mahcp2_bv, set_chon_mahcp2_bv] = useState("");
 
 
-    const [lst_hcp_pcl, set_lst_hcp_pcl] = useState([]);
+    const [lst_khc_chon_phu, set_lst_khc_chon_phu] = useState([]);
     const [search_hco_pcl, set_search_hco_pcl] = useState("");
     const [chon_hco_pcl, set_chon_hco_pcl] = useState("");
     const [lst_chuc_danh, set_lst_chuc_danh] = useState([]);
@@ -196,7 +196,7 @@ function Tao_hcp_bv({history, location}) {
 
     const post_form_data = async (data) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/insert_data_tao_hcp_bv/`, {
+        const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_crm_hcp/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -339,7 +339,7 @@ function Tao_hcp_bv({history, location}) {
             "nganh": chon_nganh,
             "nganh_chuyen_khoa": chon_nganh_chuyen_khoa_khac ? chon_nganh_chuyen_khoa + "--" + chon_nganh_chuyen_khoa_khac : chon_nganh_chuyen_khoa,
             "nganh_khoa_phong": chon_nganh_khoa_phong_khac ? chon_nganh_khoa_phong + "--" + chon_nganh_khoa_phong_khac : chon_nganh_khoa_phong,
-            "co_lam_them": chon_co_code,
+            "co_lam_them": Number(chon_co_code),
             "hco_lam_them": chon_hco_pcl.split("-")[0],
             "chuc_vu_lam_them": chon_chuc_vu_pcl,
             "hco_chung_bv":"",
@@ -353,8 +353,8 @@ function Tao_hcp_bv({history, location}) {
             "lupd_at":iso_time,
             
         }
-        console.log(data);
-        post_form_data(data);
+        console.log([data]);
+        post_form_data([data]);
 
     }
 
@@ -437,7 +437,7 @@ function Tao_hcp_bv({history, location}) {
                                 
                                 <Dropdown.Divider style={{height: 1, backgroundColor: 'steelblue'}}></Dropdown.Divider>
                                     {
-                                    lst_hcp_bv
+                                    lst_khc_chon_chinh
                                     .filter( el => el.clean_ma_ten_kh.includes(search_hco_bv) )
                                     .map( (el, idx) =>
                                         <Dropdown.Item key={idx} eventKey={el.custid +'-'+ el.custname}> {el.custid +'-'+ el.custname}  </Dropdown.Item>
@@ -615,7 +615,7 @@ function Tao_hcp_bv({history, location}) {
                                 
                                 <Dropdown.Divider style={{height: 1, backgroundColor: 'steelblue'}}></Dropdown.Divider>
                                     {
-                                    lst_hcp_pcl
+                                    lst_khc_chon_phu
                                     .filter( el => el.clean_ma_ten_kh.includes(search_hco_pcl) )
                                     .map( (el, index) =>
                                         <Dropdown.Item key={index} eventKey={el.custid +'-'+ el.custname}> {el.custid +'-'+ el.custname} </Dropdown.Item>
