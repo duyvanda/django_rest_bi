@@ -3,9 +3,9 @@ import initSqlJs from 'sql.js';
 
 function InvoiceClaimsProcessor() {
   const [db, setDb] = useState(null);
+  const [loadingDb, setLoadingDb] = useState(true);
   const [rawData, setRawData] = useState([]); // State for raw data from API
   const [adjustedData, setAdjustedData] = useState([]); // State for processed data
-  const [loadingDb, setLoadingDb] = useState(true);
   const [loadingApi, setLoadingApi] = useState(false);
   const [processingData, setProcessingData] = useState(false);
   const [error, setError] = useState(null);
@@ -27,11 +27,10 @@ function InvoiceClaimsProcessor() {
       }
     }
     initDatabase();
-
     return () => {
       if (db) {
         db.close();
-        console.log("SQLite database closed.");
+        console.log("SQLite database closed when unmounts. Because you navigated to a different page. If you didn't close it, the connection could remain open and consuming memory");
       }
     };
   }, []); // Empty dependency array means this runs only once
@@ -61,10 +60,17 @@ function InvoiceClaimsProcessor() {
       }
     }
 
-    if (!loadingDb && db) { // Fetch data once DB is ready
+    if (loadingDb===false && db) { // Fetch data once DB is ready
       fetchData();
     }
-  }, [loadingDb, db]); // Refetch if db loading state changes or db instance becomes available
+  //If you used [] (empty array):
+  //The API useEffect would run only once, immediately after the initial component mount.
+  //At that time, loadingDb WOULD STILL be true, and db would be null/undefined.
+  //The condition if (loadingDb === false && db) would be false.
+  //fetchData() would NEVER be called
+  // Refetch if db loading state changes or db instance becomes available
+  }, [loadingDb, db] ); 
+
 
   // 3. Function to process data when button is clicked
   const processClaims = async () => {

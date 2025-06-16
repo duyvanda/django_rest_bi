@@ -150,17 +150,26 @@ function Tracking_chi_phi_hcp( {history} ) {
             let row = Object.assign({}, schema[i]); // Clone each row
             updatedSchema.push(row);
         }
-        updatedSchema[index][field] = value;
 
         if (field === 'qua_gm') {
-            const matchedItem = lst_chon_gimmick.find(item => item.ten_vat_tu_gim_qt === value);
-            if (matchedItem) {
-                updatedSchema[index]['price'] = matchedItem.gia_tien;
-            } else {
-                updatedSchema[index]['price'] = 0;
-            }
-        }        
+        updatedSchema[index][field] = value.split('--')[0];
+        updatedSchema[index]['price'] = value.split('--')[1];
+        }
 
+        else {
+        updatedSchema[index][field] = value;
+        }
+
+
+        // if (field === 'qua_gm') {
+        //     const matchedItem = lst_chon_gimmick.find(item => item.ten_vat_tu_gim_qt === value);
+        //     if (matchedItem) {
+        //         updatedSchema[index]['price'] = matchedItem.gia_tien;
+        //     } else {
+        //         updatedSchema[index]['price'] = 0;
+        //     }
+        // }        
+        console.log(updatedSchema);
         set_schema(updatedSchema);
     }
 
@@ -317,27 +326,27 @@ function Tracking_chi_phi_hcp( {history} ) {
                             <Link style={{textDecoration:  "none"}} target="_blank" key={3} className="border-1 text-dark mx-2" to="/realtime/271?local_url=sp_f_data_tracking_chi_phi_hcp" >View Báo Cáo</Link>
                         </ButtonGroup>
 
-                        <Card className="mt-2">
+                        {/* <Card className="mt-2">
                             <Card.Body>
                             <Card.Title>HCP: TRACKING CHI PHÍ ĐẦU TƯ 09/06</Card.Title>
                                 <Card.Text>
-                                {/* Tổng số HCP đã đầu tư: {tong_hcp_da_dau_tu} HCP */}
-                                {/* <br></br>
+                                Tổng số HCP đã đầu tư: {tong_hcp_da_dau_tu} HCP
+                                <br></br>
                                 Tổng số tiền đã đầu tư: {f.format(tong_tien_ke_hoach_da_dau_tu)} VNĐ
                                 <br></br>
-                                Tổng số tiền thực tế đã đầu tư: 0 VNĐ */}
+                                Tổng số tiền thực tế đã đầu tư: 0 VNĐ
                                 </Card.Text>
                             </Card.Body>
-                        </Card>
+                        </Card> */}
 
-                        <ListGroup className="mt-2" style={{maxHeight: "420px", overflowY: "auto"}}>
+                        <ListGroup className="mt-2" style={{maxHeight: "240px", overflowY: "auto"}}>
 
                             <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="Tìm Mã Hoặc Tên (KHONG DAU) " value={search} />
 
                             {arr_hcp
                                 .filter( el => el.clean_ten_hcp.toLowerCase().includes( search.toLowerCase() ) )
                                 .map( (el, index) =>
-                                <ListGroup.Item className="border border-secondary mx-0 px-0" >
+                                <ListGroup.Item className="mx-0 px-0 my-0 py-0" >
                                     <Form.Check key={index} className="text-nowrap" type="switch" checked={el.check} onChange={ handeClick } id={el.ma_hcp_2} label={ el.ten_hcp + ' - ' +  el.ten_kh_chung + ' - ' +  el.ma_kh_chung + ' - '+ el.phan_loai_hcp}/>
                                 </ListGroup.Item>
                                 )
@@ -455,13 +464,22 @@ function Tracking_chi_phi_hcp( {history} ) {
                                 <td>
                                     <Form.Select
                                     value={row.dataType}
-                                    onChange={(e) => handleSchemaChange(index, "qua_gm", e.target.value)}
+                                    onChange={(e) =>
+                                        {
+                                        // const [qua_gm_value, price_value] = e.target.value.split('--');
+                                        // console.log(qua_gm_value)
+                                        // console.log(price_value)
+                                        handleSchemaChange(index, "qua_gm", e.target.value);
+                                        // handleSchemaChange(index, "price", price_value);
+                                        }
+
+                                    }
                                     className="mt-2"
                                     >
                                     <option value="">Click chọn</option>
                                     {lst_chon_gimmick.map((el) => (
-                                        <option key={el.stt} value={el.ten_vat_tu_gim_qt}>
-                                        {el.ten_vat_tu_gim_qt}
+                                        <option key={el.stt} value={ el.ten_vat_tu_gim_qt + '--' + el.gia_tien }>
+                                        { el.ten_vat_tu_gim_qt + '--' + el.gia_tien + 'đ' }
                                         </option>
                                     ))}
                                     </Form.Select>

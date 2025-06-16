@@ -24,7 +24,36 @@ import initSqlJs from 'sql.js';
 const Form_claim_chi_phi_final = ( {history} ) => {
     const location = useLocation();
     const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
-      
+    
+      // 1. Initialize SQLite DB once on component mount
+      const [db, setDb] = useState(null);
+      const [loadingDb, setLoadingDb] = useState(true);
+      useEffect(() => {
+        async function initDatabase() {
+          try {
+            const SQL = await initSqlJs({
+              locateFile: file => `/${file}`
+            });
+            const newDb = new SQL.Database();
+            setDb(newDb);
+            setLoadingDb(false);
+            console.log( "Success to load SQL.js");
+          } catch (err) {
+            console.error("Failed to load SQL.js:", err);
+            setError("Failed to load database. Check console for details.");
+            setLoadingDb(false);
+          }
+        }
+        initDatabase();
+        return () => {
+          if (db) {
+            db.close();
+            console.log("SQLite database closed when unmounts. Because you navigated to a different page. If you didn't close it, the connection could remain open and consuming memory");
+          }
+        };
+      }, []);
+    
+    
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
       const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_final/?manv=${manv}`)
@@ -49,12 +78,15 @@ const Form_claim_chi_phi_final = ( {history} ) => {
         const dv_width = window.innerWidth;
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, location.pathname, isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
-        fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
+        
+          if (loadingDb===false && db) { // Fetch data once DB is ready
+          fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
+          }
         }
           else {
             history.push(`/login?redirect=${location.pathname}`);
         };
-    }, [count]);
+    }, [count, loadingDb, db]);
 
     const [data_submit, set_data_submit] = useState([]);
     const [debouncedDataSubmit, setDebouncedDataSubmit] = useState([]);
@@ -66,7 +98,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
       const handler = setTimeout(() => {
         setDebouncedDataSubmit(data_submit);
         setIsDebouncing(false); // Kết thúc debounce: kích hoạt lại nút
-      }, 1500); // 1500ms debounce delay
+      }, 2000); // 500ms debounce delay
 
       // Cleanup function: clear timeout if data_submit changes before the delay
       return () => {
@@ -74,7 +106,14 @@ const Form_claim_chi_phi_final = ( {history} ) => {
       };
     }, [data_submit]); // Chạy lại hiệu ứng này bất cứ khi nào data_submit thay đổi
 
-    const [invoices,  set_invoices] = useState ([]);
+    const [invoices,  set_invoices] = useState ([
+      // { nguoi_mua_hang: "MR0673", ky_hieu: "K25TDL", so_hoa_don: "63182", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 681855},
+      // { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19298", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 3592906},
+      // { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19299", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 4163723},
+      // { nguoi_mua_hang: "MR0673", ky_hieu: "K25TDL", so_hoa_don: "63182", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 681855},
+      // { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19298", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 3592906},
+      // { nguoi_mua_hang: "MR0673", ky_hieu: "C25THC", so_hoa_don: "19299", ngay_hoa_don: "28/02/2025", so_tien_hoa_don: 4163723}
+    ]);
     
   const f = new Intl.NumberFormat()
   const [manv, set_manv] = useState("");
@@ -218,6 +257,91 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     }
   }
 
+  // 3. Function to process data when button is clicked
+  const processClaims = () => {
+    try {
+      db.run(`DROP TABLE IF EXISTS claims;`);
+      db.run(`
+      CREATE TABLE claims (
+        id TEXT PRIMARY KEY,
+        so_hoa_don TEXT,
+        so_ke_hoach INTEGER,
+        so_tien_hoa_don INTEGER
+      );
+      `);
+      const insertStmt = db.prepare(`
+      INSERT INTO claims (
+        id, 
+        so_hoa_don,
+        so_ke_hoach,
+        so_tien_hoa_don
+      )
+      VALUES (
+        ?, ?, ?, ?
+      );
+      `);
+
+      debouncedDataSubmit.forEach(row => {
+        insertStmt.run([
+          row.id,
+          row.so_hoa_don,
+          row.so_ke_hoach,
+          row.so_tien_hoa_don
+        ]);
+      });
+      insertStmt.free();
+
+      const query = `
+      with data as
+      (
+        SELECT
+          c.id,
+          c.so_hoa_don,
+          SUM(c.so_ke_hoach) OVER (PARTITION BY c.so_hoa_don) AS total_claim_money,
+          so_tien_hoa_don
+        FROM claims AS c
+        )
+        select id from data
+        WHERE total_claim_money > so_tien_hoa_don
+        `;
+
+      const res = db.exec(query);
+
+      if (res.length > 0) {
+        const columns = res[0].columns;
+        const values = res[0].values;
+
+        const formattedResults = values.map(row => {
+          const rowObject = {};
+          columns.forEach((col, i) => {
+            rowObject[col] = row[i]
+          }
+        )
+        ;
+          return rowObject;
+        });
+        console.log("formattedResults", formattedResults)
+        
+        const overbudgetIds = res[0].values.map(row => row[0]);
+
+        return {
+        processedData: formattedResults,
+        overbudgetIds: overbudgetIds
+        };
+
+      } else {
+        return {
+        processedData: [],
+        overbudgetIds: []
+        };
+      }
+    } catch (processErr) {
+      console.error("Error processing data:", processErr);
+    } finally {
+      void(0);
+    }
+  }
+
   const check_claim = async () => {
     setIsDebouncing(true);
     try {
@@ -245,12 +369,29 @@ const Form_claim_chi_phi_final = ( {history} ) => {
       setIsDebouncing(false);
     }
   }
-// useEffect để gọi check_claim khi data_submit thay đổi
+
+
+  // 4. useEffect để gọi processClaims khi processTrigger HOẶC data_submit thay đổi
+// useEffect(() => {
+//   async function executeProcessing() {
+//     if ( db ) {
+//       const {processedData, overbudgetIds} = processClaims();
+//       setOverbudgetIds(overbudgetIds);
+//       console.log("Dữ liệu đã xử lý (từ useEffect):", overbudgetIds);
+//     }
+//   }
+//   executeProcessing();
+// }, [debouncedDataSubmit]);
+
+
+  // 4. useEffect để gọi processClaims khi processTrigger HOẶC data_submit thay đổi
 useEffect(() => {
   async function executeProcessing() {
+    if ( db ) {
       const {processedData, overbudgetIds} = await check_claim();
       setOverbudgetIds(overbudgetIds);
       console.log("Dữ liệu đã xử lý (từ useEffect):", overbudgetIds);
+    }
   }
   executeProcessing();
 }, [debouncedDataSubmit]); // Thêm data_submit vào dependencies

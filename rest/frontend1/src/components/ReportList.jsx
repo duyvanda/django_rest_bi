@@ -95,7 +95,11 @@ function ReportList({ history }) {
                       alignItems: "center",
                       fontWeight: "bold"
                     }}
-                    to={el.type === 3 ? `${el.link_report}` : `/reportscreen/${el.stt}`}
+                    to={
+                      el.link_report?.startsWith('/realtime') ? `/realtime/${el.stt}` 
+                    : el.link_report?.startsWith('https://') ? `/reportscreen/${el.stt}` 
+                    : el.report_link
+                      }
                   >
                     <FaChartPie style={{ color: "#00A79D", fontSize: 25, marginRight: 10 }} />
                     <span className="text-truncate">{el.tenreport}</span>

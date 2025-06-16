@@ -217,11 +217,11 @@ function App() {
   return (
     <FeedbackProvider>
       <MapProvider>
-          <MYVNPProvider>
+          {/* <MYVNPProvider> */}
             <Router>
               <AppContent />
             </Router>
-          </MYVNPProvider>
+          {/* </MYVNPProvider> */}
       </MapProvider>
     </FeedbackProvider>
   );

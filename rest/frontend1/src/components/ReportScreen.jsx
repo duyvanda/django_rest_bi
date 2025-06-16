@@ -6,31 +6,29 @@ import { useContext, useEffect, useState } from 'react'
 
 
 function ReportScreen({match, history, location}) {
-    const { Reports, fetchFilerReports, shared, vw, ReportId, userLogger, ReportParam, SetRpScreen } = useContext(FeedbackContext)
+    const { userInfo, loading, Reports, fetchFilerReports, shared, vw, ReportId, userLogger, ReportParam, SetRpScreen } = useContext(FeedbackContext)
     
 
     useEffect(() => {
-		if (localStorage.getItem("userInfo")) {
+		if (localStorage.getItem("userInfo") ) {
       const media = window.matchMedia('(max-width: 960px)');
       const isMB = (media.matches);
       const dv_width = window.innerWidth;
-      // setIsDS(isMB)
       SetRpScreen(true)
-      console.log(Reports)
-      // console.log(typeof(Reports))
-      // console.log(Reports)
-      // console.log(Reports.length)
       let id = match.params.id
-      console.log("stt", id)
-      console.log("type of stt", typeof(id))
-      fetchFilerReports(id, isMB)
-			userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, id, isMB, dv_width);
+        if (loading===false){
+            console.log("Reports", Reports)
+            console.log("stt", id)
+            console.log("type of stt", typeof(id))
+            fetchFilerReports(id, isMB);
+            userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, id, isMB, dv_width);
+        }
       let location_search = new URLSearchParams(location.search)
 
       if (location_search.get("params")) {
         let url_param = `?params=${location_search.get("params")}`
         set_search(url_param)
-        console.log("search ",url_param)
+        // console.log("search ",url_param)
       }
       else{ void(0) }
       
@@ -38,7 +36,7 @@ function ReportScreen({match, history, location}) {
             history.push('/login');
         };
   // eslint-disable-next-line
-	}, []);
+	}, [userInfo]);
     const [search, set_search] = useState("")
 
     // console.log("reportid", ReportId)

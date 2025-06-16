@@ -34,13 +34,8 @@ export const FeedbackProvider = ({ children }) => {
   const LOCALURL = "https://bi.meraplion.com/local"
 
   useEffect(() => {
+    console.log("getUserInfo() from context");
     getUserInfo();
-    // console.log("URL", URL);
-    // console.log(
-    //   "window.location.host ",
-    //   window.location.host,
-    //   window.location.host === "localhost:3000"
-    // );
   // eslint-disable-next-line
   }, []);
 
@@ -81,27 +76,26 @@ export const FeedbackProvider = ({ children }) => {
     const manv_el = manv.substring(0, 2);
 
     // public reports
-    if (manv_el === "EL") {
-      setReports(lstreports);
-      localStorage.setItem("userLstReports", JSON.stringify(lstreports));
-    } else {
-      let plreports = PLReports;
-      plreports[0].manv = manv;
-      lstreports.push(plreports[0]);
-      plreports[1].manv = manv;
-      lstreports.push(plreports[1]);
+    // if (manv_el === "EL") {
+    //   setReports(lstreports);
+    //   localStorage.setItem("userLstReports", JSON.stringify(lstreports));
+    // } else {
+    let plreports = PLReports;
+    plreports[0].manv = manv;
+    lstreports.push(plreports[0]);
+    plreports[1].manv = manv;
+    lstreports.push(plreports[1]);
 
-      setReports(lstreports);
-
-      // console.log(lstreports)
-      localStorage.setItem("userLstReports", JSON.stringify(lstreports));
-      console.log("lstreports", lstreports)
-    }
+    setReports(lstreports);
+    console.log(lstreports)
+    localStorage.setItem("userLstReports", JSON.stringify(lstreports));
+      // console.log("lstreports", lstreports)
+    // }
     // end
   };
   
 
-  const fetchFilerReports = async (stt, isMB) => {
+  const fetchFilerReports = (stt, isMB) => {
     let data = JSON.parse(localStorage.getItem("userLstReports"));
     let manv = JSON.parse(localStorage.getItem("userInfo")).manv;
     let lstreports = data.filter((el) => el.manv === manv);
@@ -205,6 +199,7 @@ export const FeedbackProvider = ({ children }) => {
   const fetch_real_time_report = async (data_user, local_url, rppr) => {
     console.log("fetch_real_time_report", data_user, local_url, rppr)
     try {
+      setShared(false)
       SetLoading(true)
       const response = await fetch(`${LOCALURL}/${local_url}/`, {
         method: "POST",
@@ -215,26 +210,29 @@ export const FeedbackProvider = ({ children }) => {
       });
   
       if (!response.ok) {
-        SetLoading(false);
         const data = await response.json();
         console.log("reponse not ok", data);
+        SetLoading(false);
+        setShared(false);
       } else {
         const data = await response.json();
         setReportParam(rppr.replaceAll("xxxxxx", data_user.manv).replaceAll("vvvvvv", data_user.version))
         console.log(rppr.replaceAll("xxxxxx", data_user.manv).replaceAll("vvvvvv", data_user.version))
         console.log("reponse ok", data);
         SetLoading(false);
+        setShared(true);
       }
     } catch (error) {
       SetLoading(false);
+      setShared(false);
       console.log(error);
     }
 
   }
 
-  const fetchFilerReportsRT = async (stt, isMB, phancap, local_url, filter_data) => {
+  const fetchFilerReportsRT = async (stt, isMB, filter_data) => {
     console.log("start funtion fetchFilerReportsRT")
-    console.log(stt, isMB, phancap, local_url, filter_data)
+    console.log(stt, isMB, filter_data)
     const data = JSON.parse(localStorage.getItem("userLstReports"));
     const manv = JSON.parse(localStorage.getItem("userInfo")).manv;
     const lstreports = data.filter((el) => el.manv === manv);
@@ -256,36 +254,33 @@ export const FeedbackProvider = ({ children }) => {
     // end
 
     let report_obj = lstreports.filter((el) => el.stt === stt)[0];
+
+    console.log("report_obj context", report_obj)
+
     setFilterReports(report_obj);
 
     if (report_obj) {
-      setShared(true);
       const rpvw = isMB ? "95vw" : report_obj.vw;
       setVw(rpvw);
       const rpid = isMB ? report_obj.id_mb : report_obj.id;
       setReportId(rpid);
 
-      // const phancap = report_obj.param === "type0" ? false : true
-
+      const link_report = report_obj.link_report
+      const new_local_url = link_report.split('=')[1]
+      const new_phancap = String(report_obj.stt)==="0" ? false : true;
       const version = get_version()
 
       const data = {
         "manv":manv,
         "mobile":mobile,
         "version":version,
-        "phancap": phancap
+        "phancap": new_phancap
       }
-
       const new_data = {...data, ...filter_data}
-
       console.log("new_data", new_data)
       const rppr = isMB ? report_obj.param_mb : report_obj.param;
 
-      fetch_real_time_report(new_data, local_url, rppr)
-
-      // setReportParam(rppr.replace("xxxxxx", manv).replace("vvvvvv", version))
-      // console.log(rppr.replace("xxxxxx", manv).replace("vvvvvv", version))
-      // fetch_real_time_report(data)
+      await fetch_real_time_report(new_data, new_local_url, rppr);
 
     } else {
       setShared(false);
@@ -340,14 +335,23 @@ export const FeedbackProvider = ({ children }) => {
 
 
 
-  const getUserInfo = () => {
+  const getUserInfo = async () => {
+    SetLoading(true);
     if (JSON.parse(localStorage.getItem("userInfo"))) {
       const data = JSON.parse(localStorage.getItem("userInfo"));
       console.log("getUserInfo manv", data)
       setUserInfo(data);
-      fetchReports(data.manv);
-      fetchUserStatus(data.manv, data.token);
-    } else setUserInfo("");
+      await fetchReports(data.manv);
+      await fetchUserStatus(data.manv, data.token);
+    SetLoading(false);
+    } 
+    
+    else {
+      setUserInfo("");
+      SetLoading(false);
+    }
+    
+    
   };
 
   const logoutUser = () => {

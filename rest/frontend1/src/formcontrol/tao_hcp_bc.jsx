@@ -18,11 +18,7 @@ import {
     Modal,
     FloatingLabel,
     Stack,
-    Dropdown,
-    // Badge
-    // InputGroup,
-    
-    
+    Dropdown    
 } from "react-bootstrap";
 
 function Tao_hcp_bc({history, location}) {
@@ -39,7 +35,6 @@ function Tao_hcp_bc({history, location}) {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
 
         fetchFilerReportsRT("192", true, true, "sp_f_tao_hcp_bv", {});
-        // SetLoading(true)
         } else {
             history.push('/login?redirect=/formcontrol/tao_hcp_bc');
         };
@@ -79,8 +74,15 @@ function Tao_hcp_bc({history, location}) {
                         <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
                         </Modal>
                             {!loading &&
-                            <div align="center" className="border-1" >
-                            <iframe title="myFrame" frameBorder="0"  src={`https://lookerstudio.google.com/embed/reporting/${ReportId}${ReportParam}`} style={{ border: 1, height: "85vh", frameBorder:"1", width: vw, maxWidth:"600px"  }} ></iframe>
+                            <div align="center" className="pr-1" >
+                            <iframe 
+                            title="myFrame" 
+                            frameBorder="0"  
+                            src={`https://lookerstudio.google.com/embed/reporting/${ReportId}${ReportParam}`} 
+                            style={{ height: "85vh", width: "100%", maxWidth: "100%" , borderRadius: "0.75rem"  }} 
+                            >
+                            
+                            </iframe>
                             </div>
                             }
                         </div>
