@@ -49,6 +49,7 @@ import Tracking_chi_phi_hco from "./formcontrol/tracking_chi_phi_hco";
 // import Tracking_chi_phi_hco_crm from "./formcontrol/tracking_chi_phi_hco_crm";
 import Tracking_chi_phi_hcp from "./formcontrol/tracking_chi_phi_hcp";
 import Tracking_chi_phi_hcp_crm from "./formcontrol/tracking_chi_phi_hcp_crm";
+import Tracking_chi_phi_hcp_bc from "./formcontrol/tracking_chi_phi_hcp_bc";
 // import Tracking_chi_phi_pcl from "./formcontrol/tracking_chi_phi_pcl";
 // import MdsXuanThinhVuong from "./formcontrol/mds_xuan_thinh_vuong";
 import Wps_dang_ky_vpp from "./formcontrol/wps_dang_ky_vpp";
@@ -131,8 +132,8 @@ function AppContent() {
                 <Route exact path="/myvnpost/createcn" component={VnpCreateCN} />
                 <Route exact path="/myvnpost/createorder" component={VnpCreateOrder} /> */}
                 {/* Tồn Kho Và Tốc Độ Bán */}
-                <Route exact path="/realtime/ton_kho_va_toc_do_ban/:id" component={Ton_Kho_Va_Toc_Do_Ban} />
-                <Route exact path="/realtime/ton_phan_bo_hang_hoa/:id" component={Ton_phan_bo_hang_hoa} />
+                <Route exact path="/ctrlscreen/ton_kho_va_toc_do_ban/:id" component={Ton_Kho_Va_Toc_Do_Ban} />
+                <Route exact path="/ctrlscreen/ton_phan_bo_hang_hoa/:id" component={Ton_phan_bo_hang_hoa} />
                 <Route exact path="/realtime/:id" component={Realtime} />
                 {/* Form Control */}
                 <Route exact path="/formcontrol/theo_doi_bb_giao_nhan_hang_hoa" component={Theo_doi_bb_giao_nhan_hang_hoa} />
@@ -151,6 +152,7 @@ function AppContent() {
                 {/* <Route path="/formcontrol/tracking_chi_phi_hco_crm" component={Tracking_chi_phi_hco_crm} /> */}
                 <Route exact path="/formcontrol/tracking_chi_phi_hcp" component={Tracking_chi_phi_hcp} />
                 <Route exact path="/formcontrol/tracking_chi_phi_hcp_crm" component={Tracking_chi_phi_hcp_crm} />
+                <Route exact path="/formcontrol/tracking_chi_phi_hcp_bc" component={Tracking_chi_phi_hcp_bc} />
                 {/* <Route exact path="/formcontrol/tracking_chi_phi_pcl" component={Tracking_chi_phi_pcl} /> */}
                 <Route exact path="/formcontrol/tao_hcp_bv" component={Tao_hcp_bv} />
                 <Route exact path="/formcontrol/tao_hcp_pcl" component={Tao_hcp_pcl} />

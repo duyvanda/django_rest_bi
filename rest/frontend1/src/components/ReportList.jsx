@@ -72,7 +72,21 @@ function ReportList({ history }) {
         {Reports
           .filter(el => el.manv === userInfo.manv)
           .filter(el => removeAccents(el.tenreport.toLowerCase()).includes(SearchReport))
-          .map(el => (
+          .map(el => { // Added curly brace here to start a block of code
+            // You can put any JavaScript logic here, e.g., variable declarations, console.logs, etc.
+            // For example, calculating 'toValue' as we discussed:
+            let toValue;
+            if (el.link_report?.startsWith('/realtime')) {
+              toValue = `/realtime/${el.stt}`;
+            } else if (el.link_report?.startsWith('https://')) {
+              toValue = `/reportscreen/${el.stt}`;
+            } else {
+              toValue = `${el.link_report}`;
+            }
+
+            console.log('Calculated toValue for', el.tenreport, ':', toValue); // Add this line
+
+            return ( // Explicit return statement for the JSX
             <li
               key={el.stt}
               className="list-group-item mt-2 p-3 border-0 shadow-sm"
@@ -95,11 +109,13 @@ function ReportList({ history }) {
                       alignItems: "center",
                       fontWeight: "bold"
                     }}
-                    to={
-                      el.link_report?.startsWith('/realtime') ? `/realtime/${el.stt}` 
-                    : el.link_report?.startsWith('https://') ? `/reportscreen/${el.stt}` 
-                    : el.report_link
-                      }
+                    to={toValue}
+
+// to={
+// el.link_report?.startsWith('/realtime') ? `/realtime/${el.stt}`
+// : el.link_report?.startsWith('https://') ? `/reportscreen/${el.stt}`
+// : el.link_report
+// }
                   >
                     <FaChartPie style={{ color: "#00A79D", fontSize: 25, marginRight: 10 }} />
                     <span className="text-truncate">{el.tenreport}</span>
@@ -107,10 +123,11 @@ function ReportList({ history }) {
                 </div>
               </div>
             </li>
-          ))}
+          )}
+        )}
       </ul>
     </div>
-  );
+    );
 }
 
 export default ReportList;

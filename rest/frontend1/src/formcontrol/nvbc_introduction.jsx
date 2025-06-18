@@ -158,7 +158,7 @@ Thời gian tra cứu thư viện được quy đổi theo tỷ lệ sau:
 **Hệ số chủ đề**:
 Mỗi chủ đề có một hệ số riêng (có thể thay đổi theo thông báo từng quý)
 
-**Điểm số 5 chủ đề từ ngày 01/06/2025 đến 30/09/2025 như sau:**
+**Điểm số 5 chủ đề từ ngày 01/07/2025 đến 30/09/2025 như sau:**
 1. **Thông tin về MerapLion**: + 2 điểm/Video
 2. **Thông tin sản phẩm**:
   - Tờ giới thiệu sản phẩm: +2 điểm/SKU
@@ -167,14 +167,12 @@ Mỗi chủ đề có một hệ số riêng (có thể thay đổi theo thông 
 3. **Thông tin bệnh học**: +2 điểm/Video
 4. **Sổ tay người thầy thuốc**: +2 điểm/Chuyên đề
 5. **Tư vấn cùng chuyên gia**: +2 điểm/Video
-
-Lưu ý: Thời gian xét thưởng quý tại ngày 30/09/2025
     `;
       // Replace newlines with <br /> tags
       const contentWithBreaks_2 = markdownContent_2.replace(/\n/g, '  \n'); // Add two spaces before the newline for markdown to recognize the break
 
 const markdownContent_xin_chao = `
-Cám ơn bạn đã tham gia chương trình **M.Ambassador** của MerapLion  
+Cám ơn Quý Dược Sĩ đã tham gia chương trình **M.Ambassador** của **MerapLion**.
 Với mong muốn xây dựng mối quan hệ bền vững và đồng hành lâu dài cùng Quý Dược sĩ trên hành trình chăm sóc sức khỏe gia đình Việt, MerapLion thấu hiểu rằng kiến thức chuyên môn chính là hành trang quan trọng giúp Quý Dược sĩ tư vấn hiệu quả và mang lại giá trị thiết thực cho bệnh nhân.  
 Chính vì vậy, chúng tôi không ngừng nỗ lực chia sẻ, hỗ trợ và lan tỏa kiến thức thông qua các hoạt động thực tiễn. Trên hành trình đó, MerapLion luôn gìn giữ và theo đuổi những giá trị cốt lõi **“Tận tâm – Trách nhiệm – Đồng hành”**, như lời cam kết bền chặt dành cho cộng đồng Dược sĩ Việt Nam.  
 Chương trình **M.Ambassador** không chỉ là nơi cung cấp những thông tin chuyên môn hữu ích, mà còn mang đến nhiều trải nghiệm giá trị.  
@@ -182,8 +180,6 @@ Quý Dược sĩ hãy tích cực tra cứu, cập nhật kiến thức và tham
     `;
 // Replace newlines with <br /> tags
 const markdownContent_xin_chao_br = markdownContent_xin_chao.replace(/\n/g, '  \n'); // Add two spaces before the newline for markdown to recognize the break
-
-
   return (
     <Row className="justify-content-center py-4">
       <Col md={4}>
@@ -229,7 +225,7 @@ const markdownContent_xin_chao_br = markdownContent_xin_chao.replace(/\n/g, '  \
           
           {!showContent && (
           
-          <div className="greeting-box text-center mt-4">
+          <div className="greeting-box text-justify mt-4">
             <h5>Xin chào Quý Dược sĩ {userName}!</h5>
             <ReactMarkdown>{markdownContent_xin_chao_br}</ReactMarkdown>
           </div>
@@ -252,13 +248,13 @@ const markdownContent_xin_chao_br = markdownContent_xin_chao.replace(/\n/g, '  \
 
         <div className="mt-5">
           <h5 className="text-info">🎁 Chuyên gia sản phẩm:</h5>
-          <p>Tiêu chí hàng quý (xét thưởng ngày 30/09/2025 & ngày 31/12/2025 ): Top 50 Thành viên có điểm tích lũy cao nhất của quý được chọn 1 món quà sau:</p>
+          <p>Tiêu chí hàng quý: Top 50 Thành viên có điểm tích lũy cao nhất của quý được chọn 1 món quà sau:</p>
           {renderCards(filterBy("Quý", "t2"))}
         </div>
 
         <div className="mt-5">
           <h5 className="text-info">🎁 Đọc giả chăm chỉ:</h5>
-          <p>Tiêu chí hàng quý (xét thưởng ngày 30/09/2025 & ngày 31/12/2025): Top 50 thành viên có số ngày tham gia tra cứu thư viện chuyên cần nhất được chọn 1 món quà sau:</p>
+          <p>Tiêu chí hàng quý: Top 50 thành viên có số ngày tham gia tra cứu thư viện chuyên cần nhất được chọn 1 món quà sau:</p>
           {renderCards(filterBy("Quý", "t3"))}
         </div>
         </div>

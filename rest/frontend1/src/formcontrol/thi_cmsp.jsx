@@ -231,7 +231,7 @@ function Thi_cmsp({history}) {
                                 <Button disabled={arr_indx.length<=5} className='mt-5' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> NỘP BÀI VÀ XEM KẾT QUẢ </Button>
                             </>
                             :
-                            <h4><Link style={{textDecoration:  ""}} target="_blank" key={3} className="mt-2 border-1 text-primary mx-2" to="/realtime/401?local_url=sp_f_data_cmsp_quy_tp" >XEM LẠI KẾT QUẢ</Link></h4>
+                            <h4><Link style={{textDecoration:  ""}} target="_blank" key={3} className="mt-2 border-1 text-primary mx-2" to="/realtime/40?local_url=sp_f_data_cmsp_quy_tp" >XEM LẠI KẾT QUẢ</Link></h4>
                         }
                         </Form>
                         {/* END FORM BODY */}

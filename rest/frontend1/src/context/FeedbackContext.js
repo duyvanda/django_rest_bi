@@ -135,7 +135,7 @@ export const FeedbackProvider = ({ children }) => {
     : (date.getMilliseconds() < 100 ) ? '0'+ date.getMilliseconds().toString()
     : date.getMilliseconds().toString();
     // var milliseconds = date.getMilliseconds().toString();
-    return hour+minutes+seconds+milliseconds
+    return 'T'+hour+minutes+seconds+milliseconds
   }
 
   function formatDate(date) {
@@ -192,7 +192,7 @@ export const FeedbackProvider = ({ children }) => {
   }
 
   function get_id() {
-    const timestampId = new Date(Date.now() + 7 * 3600000).toISOString().replace(/[-:.TZ]/g, '');
+    let timestampId = new Date(Date.now() + 7 * 3600000).toISOString().replace(/[-:.TZ]/g, '');
     return timestampId
   }
 
@@ -267,7 +267,8 @@ export const FeedbackProvider = ({ children }) => {
 
       const link_report = report_obj.link_report
       const new_local_url = link_report.split('=')[1]
-      const new_phancap = String(report_obj.stt)==="0" ? false : true;
+      const new_phancap = String(report_obj.type)==="0" ? false : true;
+      console.log("new_phancap", new_phancap);
       const version = get_version()
 
       const data = {

@@ -192,52 +192,48 @@ function Tracking_chi_phi_hcp( {history} ) {
     //     }
     // }
 
-    const post_form_data = async (data) => {
-        SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_planning_collect_hcp_gm/`, {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        });
+        const post_form_data = async (data) => {
+            SetLoading(true);
+            try {
+                const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_planning_collect_hcp_gm/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                });
 
-        if (!response.ok) {
-            const data = await response.json();
-            console.log(data);
-            SetALert(true);
-            SetALertType("alert-danger");
-            SetALertText(data.error_message);
-            setTimeout(() => {
-            SetALert(false);
-            SetLoading(false);
-            }, 2000);
+                if (!response.ok) {
+                    const errorData = await response.json(); // Renamed 'data' to 'errorData' to avoid conflict
+                    console.log(errorData);
+                    SetALert(true);
+                    SetALertType("alert-danger");
+                    SetALertText(errorData.error_message);
+                    setTimeout(() => {
+                        SetALert(false);
+                        SetLoading(false);
+                    }, 2000);
 
-        } else {
-            const data = await response.json();
-            console.log(data);
-            SetALert(true);
-            SetALertType("alert-success");
-            SetALertText( data.success_message );
-            setTimeout(() => {
-            SetALert(false);
-            SetLoading(false);
-            }, 2000);
-            // set_chon_qua_tang("");
-            // set_chon_qua_sn("");
-            // set_chon_hoi_nghi("");
-            // set_chon_qua_tang_hoi_nghi("");
-            // set_chon_hinh_thuc_hoi_nghi("");
-            // set_chon_qua_tang_2("");
-            set_chon_qua_tang_cam_xuc("");
-            set_chon_qua_tang_cam_xuc_2("");
-            set_hcp("");
-            set_schema([]);
-            // setCount(count+1)
-            // window.location.reload();
+                } else {
+                    const successData = await response.json(); // Renamed 'data' to 'successData' to avoid conflict
+                    console.log(successData);
+                    SetALert(true);
+                    SetALertType("alert-success");
+                    SetALertText(successData.success_message);
+                    setTimeout(() => {
+                        SetALert(false);
+                        SetLoading(false);
+                    }, 2000);
+                    set_chon_qua_tang_cam_xuc("");
+                    set_chon_qua_tang_cam_xuc_2("");
+                    set_schema([]);
+                }
+            } catch (error) {
+                console.error("Fetch error:", error);
+                }
+        };
 
-        }
-    }
+
     const handle_submit = (e) => {
         e.preventDefault();
         const current_date = formatDate(Date());
@@ -323,7 +319,8 @@ function Tracking_chi_phi_hcp( {history} ) {
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
                             <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp" ? "primary" : "outline-primary"} key={2} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp") } >ĐỀ XUẤT</Button>
                             <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_crm" ? "primary" : "outline-primary"} key={1} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_crm") } >QL DUYỆT</Button>
-                            <Link style={{textDecoration:  "none"}} target="_blank" key={3} className="border-1 text-dark mx-2" to="/realtime/271?local_url=sp_f_data_tracking_chi_phi_hcp" >View Báo Cáo</Link>
+                            <Button variant="outline-primary" key={3} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_bc") } >BC</Button>
+                            {/* <Link style={{textDecoration:  "none"}} target="_blank" key={3} className="border-1 text-dark mx-2" to="/realtime/271?local_url=sp_f_data_tracking_chi_phi_hcp" >View Báo Cáo</Link> */}
                         </ButtonGroup>
 
                         {/* <Card className="mt-2">
@@ -339,7 +336,7 @@ function Tracking_chi_phi_hcp( {history} ) {
                             </Card.Body>
                         </Card> */}
 
-                        <ListGroup className="mt-2" style={{maxHeight: "240px", overflowY: "auto"}}>
+                        <ListGroup className="mt-2" style={{maxHeight: "250px", overflowY: "auto"}}>
 
                             <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="Tìm Mã Hoặc Tên (KHONG DAU) " value={search} />
 

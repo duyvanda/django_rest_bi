@@ -35,6 +35,7 @@ function Tao_hcp_bv({history, location}) {
         
         if (response.ok) {
             const data = await response.json()
+            set_arr_tinh(data['lst_tinh'])
             set_arr_ngay_sinh(data['lst_ngay_sinh'])
             set_arr_thang_sinh(data['lst_thang_sinh'])
             set_arr_nam_sinh(data['lst_nam_sinh'])
@@ -91,6 +92,13 @@ function Tao_hcp_bv({history, location}) {
     const [manv, set_manv] = useState("");
     const [ten_hcp, set_ten_hcp]= useState("");
     const [sdt, set_sdt]= useState("");
+    const [arr_tinh, set_arr_tinh] = useState([]);
+    const [chon_tinh, set_chon_tinh] = useState("");
+    const [arr_quan_huyen, set_arr_quan_huyen] = useState([]);
+    const [chon_quan_huyen, set_chon_quan_huyen] = useState("");
+    const [arr_phuong_xa, set_arr_phuong_xa] = useState([]);
+    const [chon_phuong_xa, set_chon_phuong_xa] = useState("");
+    const [dia_chi, set_dia_chi] = useState("");
     const [arr_ngay_sinh, set_arr_ngay_sinh] = useState([]);
     const [chon_ngay_sinh, set_chon_ngay_sinh] = useState("");
     const [arr_thang_sinh, set_arr_thang_sinh] = useState([]);
@@ -98,7 +106,6 @@ function Tao_hcp_bv({history, location}) {
     const [arr_nam_sinh, set_arr_nam_sinh] = useState( Array.from({ length: 101 }, (_, i) => new Date().getFullYear() - i) );
     const [chon_nam_sinh, set_chon_nam_sinh] = useState("");
     const [arr_co_lam_phong_mach, set_arr_co_lam_phong_mach] = useState(data_chon_co_pm);
-
     const [chon_co_code, set_chon_co_code] = useState(false);
     const [check_trung_sdt, set_check_trung_sdt] = useState(false);
     const [lst_gioi_tinh, set_lst_gioi_tinh] = useState([]);
@@ -110,12 +117,9 @@ function Tao_hcp_bv({history, location}) {
     const [lst_khc_chon_chinh, set_lst_khc_chon_chinh] = useState([]);
     const [search_hco_bv, set_search_hco_bv] = useState("");
     const [chon_hco_bv, set_chon_hco_bv] = useState("");
-
     const [lst_hcp2_bv, set_lst_hcp2_bv] = useState([]);
     const [search_mahcp2_bv, set_search_mahcp2_bv] = useState("");
     const [chon_mahcp2_bv, set_chon_mahcp2_bv] = useState("");
-
-
     const [lst_khc_chon_phu, set_lst_khc_chon_phu] = useState([]);
     const [search_hco_pcl, set_search_hco_pcl] = useState("");
     const [chon_hco_pcl, set_chon_hco_pcl] = useState("");
@@ -128,11 +132,9 @@ function Tao_hcp_bv({history, location}) {
     const [lst_nganh_chuyen_khoa, set_lst_nganh_chuyen_khoa] = useState([]);
     const [chon_nganh_chuyen_khoa, set_chon_nganh_chuyen_khoa] = useState("");
     const [chon_nganh_chuyen_khoa_khac, set_chon_nganh_chuyen_khoa_khac] = useState('');
-
     const [lst_nganh_khoa_phong, set_lst_nganh_khoa_phong] = useState([]);
     const [chon_nganh_khoa_phong, set_chon_nganh_khoa_phong] = useState("");
     const [chon_nganh_khoa_phong_khac, set_chon_nganh_khoa_phong_khac] = useState("");
-
     const [so_tiem_nang, set_so_tiem_nang] = useState("");
     const [so_luot_kham, set_so_luot_kham] = useState("");
     const [lst_chuc_vu_pcl, set_lst_chuc_vu_pcl] = useState([]);
@@ -141,6 +143,51 @@ function Tao_hcp_bv({history, location}) {
     const [inserted_at, set_inserted_at] = useState("");
     const [ma_hcp_1, set_ma_hcp_1] = useState("");
     const [ma_hcp_2, set_ma_hcp_2] = useState("");
+
+
+    const handle_chon_tinh = async (e) => {
+        let selected = e.target.value
+        set_chon_tinh(selected);
+
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_dms_district/?state=${selected}`, {
+            method: "GET",
+            headers: {
+            "Content-Type": "application/json",
+            }
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            console.log(data);
+        } else {
+            const data = await response.json();
+            console.log(data);
+            set_arr_quan_huyen(data['lst_quan_huyen'])
+        }
+
+    };
+
+    const handle_chon_quan_huyen = async (e) => {
+        let selected = e.target.value
+        set_chon_quan_huyen(selected);
+
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_dms_ward/?district=${selected}`, {
+            method: "GET",
+            headers: {
+            "Content-Type": "application/json",
+            }
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            console.log(data);
+        } else {
+            const data = await response.json();
+            console.log(data);
+            set_arr_phuong_xa(data['lst_phuong_xa'])
+        }
+
+    };
     
 
     const handeClick = (e) => {
@@ -196,6 +243,7 @@ function Tao_hcp_bv({history, location}) {
 
     const post_form_data = async (data) => {
         SetLoading(true)
+
         const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_crm_hcp/`, {
             method: "POST",
             headers: {
@@ -236,7 +284,7 @@ function Tao_hcp_bv({history, location}) {
         SetLoading(true);
         // if PCL
         // const response = await fetch(`https://bi.meraplion.com/local/check_sdt_tao_hcp_bv/?sdt=${sdt}&form_layout=PCL`)
-        const response = await fetch(`https://bi.meraplion.com/local/check_sdt_tao_hcp_bv/?sdt=${sdt}&form_layout=BV`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/check_sdt_hco_bv/?sdt=${sdt}&hco_bv=${chon_hco_bv.split("-")[0]}`)
         if (response.ok) {
             const data = await response.json();
             SetLoading(false);
@@ -264,6 +312,13 @@ function Tao_hcp_bv({history, location}) {
 
         set_sdt( arr_hcpp['sdt'] )
         set_ten_hcp( arr_hcpp['ten_hcp'] )
+
+        set_chon_tinh(arr_hcpp['tinh'])
+        set_chon_quan_huyen(arr_hcpp['quan_huyen'])
+        set_chon_phuong_xa(arr_hcpp['phuong_xa'])
+        set_dia_chi(arr_hcpp['dia_chi'])
+        // set_chon_trang_thai(arr_hcpp['trang_thai'])      
+
         set_chon_hco_bv(arr_hcpp['hco_bv'])
         set_chon_ngay_sinh(arr_hcpp['ngay_sinh'])
         set_chon_thang_sinh(arr_hcpp['thang_sinh'])
@@ -302,8 +357,6 @@ function Tao_hcp_bv({history, location}) {
     
         // Find the corresponding 'PHÂN LOẠI HCP' based on the selected value
         const selectedItem = lst_phan_loai_hcp.find(item => item.chon_chinh === selectedChucVu);
-
-        console.log("selectedItem", selectedItem)
         
         if (selectedItem) {
           set_chon_phan_loai_hcp(selectedItem.chon_phu);
@@ -351,11 +404,14 @@ function Tao_hcp_bv({history, location}) {
             "so_luot_kham":so_luot_kham,
             "so_tiem_nang":so_tiem_nang, // if PCL then 0
             "lupd_at":iso_time,
-            
+            "tinh":chon_tinh,
+            "quan_huyen":chon_quan_huyen,
+            "phuong_xa":chon_phuong_xa,
+            "dia_chi":dia_chi,
+            "trang_thai":"active"
         }
         console.log([data]);
         post_form_data([data]);
-
     }
 
     if (true) {
@@ -394,7 +450,7 @@ function Tao_hcp_bv({history, location}) {
 
                         <Dropdown className="mt-2" autoClose="true" block="true" onSelect = { (e) => handle_on_click_dropdown(e)}>
                                 
-                                <Dropdown.Toggle className="border-0 flex-grow-1 w-100 text-center text-dark fw-bold"  style={{height:"40px", backgroundColor:"#FFFFE0" }}>
+                                <Dropdown.Toggle className="border-0 flex-grow-1 w-100 text-center text-dark fw-bold"  style={{height:"40px", backgroundColor:"#FFF8DC" }}>
                                  {/*if PCL then PCL  */}
                                 {chon_mahcp2_bv ==="" ? "Chọn Mã HCP Bệnh Viện Để Sửa": chon_mahcp2_bv}
                                 </Dropdown.Toggle>
@@ -419,13 +475,6 @@ function Tao_hcp_bv({history, location}) {
                         {/* {EDITMODE &&
                         
                         } */}
-                        <FloatingLabel id="focus_1" label="Số điện thoại" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_sdt(e.target.value) } onBlur={ e => handle_on_blur(e.target.value) } value = {sdt}/> </FloatingLabel>
-                        {check_trung_sdt &&
-                            <p className="ml-1 fw-bold text-danger">SĐT ĐÃ BỊ TRÙNG VUI LÒNG NHẬP SĐT KHÁC</p>
-                        }
-                        <FloatingLabel label="Tên HCP (IN HOA có dấu), ví dụ: NGUYỄN HÙNG ANH" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="xxx" onChange={ (e) => set_ten_hcp(e.target.value.toLocaleUpperCase()) } value = {ten_hcp}/> </FloatingLabel>
-
-
                         <Dropdown className="mt-2" autoClose="true" block="true" onSelect = { (e) => set_chon_hco_bv(e) }>
                                 
                                 <Dropdown.Toggle className="bg-white border-0 text-dark text-left flex-grow-1 w-100"  style={{height:"60px"}}> 
@@ -445,6 +494,48 @@ function Tao_hcp_bv({history, location}) {
                                     }
                                 </Dropdown.Menu>
                         </Dropdown>
+
+                        <FloatingLabel label="Tên HCP (IN HOA có dấu), ví dụ: NGUYỄN HÙNG ANH" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="xxx" onChange={ (e) => set_ten_hcp(e.target.value.toLocaleUpperCase()) } value = {ten_hcp}/> </FloatingLabel>
+
+                        <FloatingLabel id="focus_1" label="Số điện thoại" className="border rounded mt-2" > <Form.Control disabled={chon_hco_bv ===""} required type="number" className="" placeholder="xxx" onChange={ (e) => set_sdt(e.target.value) } onBlur={ e => handle_on_blur(e.target.value) } value = {sdt}/> </FloatingLabel>
+                        {check_trung_sdt &&
+                            <p className="ml-1 fw-bold text-danger">SĐT ĐÃ BỊ TRÙNG VUI LÒNG NHẬP SĐT KHÁC</p>
+                        }
+
+                    <Stack direction="horizontal" gap={2} className="border-1">
+
+                        <Form.Select required className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => handle_chon_tinh(e)  }>
+                        <option style={{fontSize:"15px"}} value= {chon_tinh} > {chon_tinh ==="" ? "Tỉnh": chon_tinh} </option>
+                            {arr_tinh
+                            .map( (el, index) => 
+                            <option key={index} style={{fontSize:"15px"}} value={el}> {el} </option>
+                            )
+                            }    
+                        </Form.Select>
+
+                        <Form.Select required className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => handle_chon_quan_huyen(e)  }>
+                        <option style={{fontSize:"15px"}} value= {chon_quan_huyen} > {chon_quan_huyen ==="" ? "Quận Huyện": chon_quan_huyen} </option>
+                            {arr_quan_huyen
+                            .map( (el, index) => 
+                            <option key={index} style={{fontSize:"15px"}} value={el}> {el} </option>
+                            )
+                            }    
+                        </Form.Select>
+
+                        <Form.Select required className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => set_chon_phuong_xa(e.target.value)  }>
+                        <option style={{fontSize:"15px"}} value= {chon_phuong_xa}>  {chon_phuong_xa ==="" ? "Phường Xã": chon_phuong_xa}  </option>
+                            {arr_phuong_xa
+                            .map( (el, index) => 
+                            <option key={index} style={{fontSize:"15px"}} value={el}> {el} </option>
+                            )
+                            }
+                        </Form.Select>
+
+                    </Stack>
+
+                        <Form.Group controlId="formSpecificAddress" className="mt-2">
+                        <Form.Control required onChange={(e) => set_dia_chi(e.target.value)} value={dia_chi} as="textarea" rows={3} placeholder="Địa chỉ cụ thể. Ví dụ: Số nhà, Tên đường, Tòa nhà,..." />
+                        </Form.Group>
 
                         <Stack direction="horizontal" gap={2} className="border-1">
 
@@ -653,12 +744,21 @@ function Tao_hcp_bv({history, location}) {
                             <span><strong>Cảnh Báo:  </strong>{alertText}</span>
                         </div>
                         } */}
-                        
+
                         <Button disabled={
                         check_trung_sdt === true |
-                        chon_hco_bv === ""
-                        } className='mt-2' variant="primary" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN 
+                        chon_hco_bv === "" |
+                        (chon_phan_loai_hcp === "KP" && Number(so_luot_kham) < 120 )
+                        } className='' variant="primary" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN 
                         </Button>
+
+                        {
+                        chon_phan_loai_hcp === "KP" && Number(so_luot_kham) < 120 && (
+                            <p style={{ color: '#D32F2F', fontWeight: 'bold', fontSize: '1.1em' }}>
+                            LỖI: Phân loại KP yêu cầu số lượt khám tối thiểu 120. Vui lòng điều chỉnh.
+                            </p>
+                        )
+                        }
                         
                         </Form>
                         {/* END FORM BODY */}

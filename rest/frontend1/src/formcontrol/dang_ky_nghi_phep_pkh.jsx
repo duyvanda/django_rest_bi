@@ -28,7 +28,7 @@ const Dang_ky_nghi_phep_pkh = ({ history } ) => {
   
     const fetch_initial_data = async (supid) => {
         SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/get_dang_ky_nghi_phep_pkh/?supid=${supid}&page=crm`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_dang_ky_nghi_phep_pkh/?supid=${supid}&page=crm`)
         // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=MR0673`)
         if (!response.ok) {
             SetLoading(false)

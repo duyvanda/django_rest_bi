@@ -18,11 +18,7 @@ import {
     Modal,
     FloatingLabel,
     Stack,
-    Dropdown,
-    // Badge
-    // InputGroup,
-    
-    
+    Dropdown
 } from "react-bootstrap";
 
 function Tao_hcp_pcl({history, location}) {
@@ -90,11 +86,19 @@ function Tao_hcp_pcl({history, location}) {
     }, [count]);
 
     
+
     const f = new Intl.NumberFormat();
     const [EDITMODE, SET_EDITMODE] = useState(false);
     const [manv, set_manv] = useState("");
     const [ten_hcp, set_ten_hcp]= useState("");
     const [sdt, set_sdt]= useState("");
+    const [arr_tinh, set_arr_tinh] = useState([]);
+    const [chon_tinh, set_chon_tinh] = useState("");
+    const [arr_quan_huyen, set_arr_quan_huyen] = useState([]);
+    const [chon_quan_huyen, set_chon_quan_huyen] = useState("");
+    const [arr_phuong_xa, set_arr_phuong_xa] = useState([]);
+    const [chon_phuong_xa, set_chon_phuong_xa] = useState("");
+    const [dia_chi, set_dia_chi] = useState("");
     const [arr_ngay_sinh, set_arr_ngay_sinh] = useState([]);
     const [chon_ngay_sinh, set_chon_ngay_sinh] = useState("");
     const [arr_thang_sinh, set_arr_thang_sinh] = useState([]);
@@ -102,7 +106,6 @@ function Tao_hcp_pcl({history, location}) {
     const [arr_nam_sinh, set_arr_nam_sinh] = useState( Array.from({ length: 101 }, (_, i) => new Date().getFullYear() - i) );
     const [chon_nam_sinh, set_chon_nam_sinh] = useState("");
     const [arr_co_lam_phong_mach, set_arr_co_lam_phong_mach] = useState(data_chon_co_pm);
-
     const [chon_co_code, set_chon_co_code] = useState(false);
     const [check_trung_sdt, set_check_trung_sdt] = useState(false);
     const [lst_gioi_tinh, set_lst_gioi_tinh] = useState([]);
@@ -114,7 +117,6 @@ function Tao_hcp_pcl({history, location}) {
     const [lst_khc_chon_chinh, set_lst_khc_chon_chinh] = useState([]);
     const [search_hco_bv, set_search_hco_bv] = useState("");
     const [chon_hco_bv, set_chon_hco_bv] = useState("");
-
     const [lst_hcp2_bv, set_lst_hcp2_bv] = useState([]);
     const [search_mahcp2_bv, set_search_mahcp2_bv] = useState("");
     const [chon_mahcp2_bv, set_chon_mahcp2_bv] = useState("");
@@ -130,11 +132,9 @@ function Tao_hcp_pcl({history, location}) {
     const [lst_nganh_chuyen_khoa, set_lst_nganh_chuyen_khoa] = useState([]);
     const [chon_nganh_chuyen_khoa, set_chon_nganh_chuyen_khoa] = useState("");
     const [chon_nganh_chuyen_khoa_khac, set_chon_nganh_chuyen_khoa_khac] = useState('');   
-
     const [lst_nganh_khoa_phong, set_lst_nganh_khoa_phong] = useState([]);
     const [chon_nganh_khoa_phong, set_chon_nganh_khoa_phong] = useState("");
     const [chon_nganh_khoa_phong_khac, set_chon_nganh_khoa_phong_khac] = useState("");
-
     const [so_tiem_nang, set_so_tiem_nang] = useState("");
     const [so_luot_kham, set_so_luot_kham] = useState("");
     const [lst_chuc_vu_pcl, set_lst_chuc_vu_pcl] = useState([]);
@@ -145,6 +145,51 @@ function Tao_hcp_pcl({history, location}) {
     const [ma_hcp_2, set_ma_hcp_2] = useState("");
     
 
+    const handle_chon_tinh = async (e) => {
+        let selected = e.target.value
+        set_chon_tinh(selected);
+
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_dms_district/?state=${selected}`, {
+            method: "GET",
+            headers: {
+            "Content-Type": "application/json",
+            }
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            console.log(data);
+        } else {
+            const data = await response.json();
+            console.log(data);
+            set_arr_quan_huyen(data['lst_quan_huyen'])
+        }
+
+    };
+
+    const handle_chon_quan_huyen = async (e) => {
+        let selected = e.target.value
+        set_chon_quan_huyen(selected);
+
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_dms_ward/?district=${selected}`, {
+            method: "GET",
+            headers: {
+            "Content-Type": "application/json",
+            }
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            console.log(data);
+        } else {
+            const data = await response.json();
+            console.log(data);
+            set_arr_phuong_xa(data['lst_phuong_xa'])
+        }
+
+    };
+
+    
     const handeClick = (e) => {
         let lst = [];
         for (let element of arr_co_lam_phong_mach) {
@@ -198,6 +243,7 @@ function Tao_hcp_pcl({history, location}) {
 
     const post_form_data = async (data) => {
         SetLoading(true)
+
         const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_crm_hcp/`, {
             method: "POST",
             headers: {
@@ -207,21 +253,26 @@ function Tao_hcp_pcl({history, location}) {
         });
 
         if (!response.ok) {
-            SetLoading(false);
             const data = await response.json();
             console.log(data);
             SetALert(true);
             SetALertType("alert-danger");
-            SetALertText("CHƯA TẠO ĐƯỢC");
-            setTimeout(() => SetALert(false), 3000);
+            SetALertText(data.error_message);
+            setTimeout(() => {
+            SetALert(false);
+            SetLoading(false);
+            }, 2000);
         } else {
             SetLoading(false);
             const data = await response.json();
             console.log(data);
             SetALert(true);
             SetALertType("alert-success");
-            SetALertText("ĐÃ TẠO THÀNH CÔNG");
-            setTimeout(() => SetALert(false), 3000);
+            SetALertText( data.success_message );
+            setTimeout(() => {
+            SetALert(false);
+            SetLoading(false);
+            }, 2000);
             clear_data();
             setCount(count+1);
 
@@ -252,45 +303,52 @@ function Tao_hcp_pcl({history, location}) {
 
     const handle_on_click_dropdown = async (e) => {
     
-    let ten = e.split("@@")[0];
-    let id = e.split("@@")[1];
+        let ten = e.split("@@")[0];
+        let id = e.split("@@")[1];
 
-    let arr_hcpp = lst_hcp2_bv.filter( (el) => el.uuid ===  id )
-    arr_hcpp = arr_hcpp[0]
-    console.log(arr_hcpp)
+        let arr_hcpp = lst_hcp2_bv.filter( (el) => el.uuid ===  id )
+        arr_hcpp = arr_hcpp[0]
+        console.log(arr_hcpp)
 
-    set_sdt( arr_hcpp['sdt'] )
-    set_ten_hcp( arr_hcpp['ten_hcp'] )
-    set_chon_hco_bv(arr_hcpp['hco_bv'])
-    set_chon_ngay_sinh(arr_hcpp['ngay_sinh'])
-    set_chon_thang_sinh(arr_hcpp['thang_sinh'])
-    set_chon_nam_sinh(arr_hcpp['nam_sinh'])
-    set_chon_gioi_tinh(arr_hcpp['gioi_tinh'])
-    set_chon_kenh_lam_viec(arr_hcpp['kenh_lam_viec'])
-    set_chon_phan_loai_hcp(arr_hcpp['phan_loai_hcp'])
-    set_chon_chuc_danh(arr_hcpp['chuc_danh'])
-    set_chon_chuc_vu(arr_hcpp['chuc_vu'])
-    set_chon_nganh(arr_hcpp['nganh'])
-    set_chon_nganh_chuyen_khoa(arr_hcpp['nganh_chuyen_khoa'])
-    set_chon_nganh_khoa_phong(arr_hcpp['nganh_khoa_phong'])
-    set_so_luot_kham(arr_hcpp['so_luot_kham'])
-    set_so_tiem_nang(arr_hcpp['so_tiem_nang'])
+        set_sdt( arr_hcpp['sdt'] )
+        set_ten_hcp( arr_hcpp['ten_hcp'] )
 
-    let data_lam_them =[{"cacluachon": "Có code","check": true}]
+        set_chon_tinh(arr_hcpp['tinh'])
+        set_chon_quan_huyen(arr_hcpp['quan_huyen'])
+        set_chon_phuong_xa(arr_hcpp['phuong_xa'])
+        set_dia_chi(arr_hcpp['dia_chi'])
+        // set_chon_trang_thai(arr_hcpp['trang_thai'])      
 
-    if (arr_hcpp['co_lam_them']===1) {
-        set_arr_co_lam_phong_mach(data_lam_them);
-        set_chon_co_code(true);
-    } else {void(0)}
+        set_chon_hco_bv(arr_hcpp['hco_bv'])
+        set_chon_ngay_sinh(arr_hcpp['ngay_sinh'])
+        set_chon_thang_sinh(arr_hcpp['thang_sinh'])
+        set_chon_nam_sinh(arr_hcpp['nam_sinh'])
+        set_chon_gioi_tinh(arr_hcpp['gioi_tinh'])
+        set_chon_kenh_lam_viec(arr_hcpp['kenh_lam_viec'])
+        set_chon_phan_loai_hcp(arr_hcpp['phan_loai_hcp'])
+        set_chon_chuc_danh(arr_hcpp['chuc_danh'])
+        set_chon_chuc_vu(arr_hcpp['chuc_vu'])
+        set_chon_nganh(arr_hcpp['nganh'])
+        set_chon_nganh_chuyen_khoa(arr_hcpp['nganh_chuyen_khoa'])
+        set_chon_nganh_khoa_phong(arr_hcpp['nganh_khoa_phong'])
+        set_so_luot_kham(arr_hcpp['so_luot_kham'])
+        set_so_tiem_nang(arr_hcpp['so_tiem_nang'])
 
-    set_chon_hco_pcl(arr_hcpp['hco_lam_them']);
-    set_chon_chuc_vu_pcl(arr_hcpp['chuc_vu_lam_them']);
-    set_uuid_old(arr_hcpp['uuid']);
-    set_inserted_at(arr_hcpp['inserted_at']);
-    set_ma_hcp_1(arr_hcpp['ma_hcp_1']);
-    set_ma_hcp_2(arr_hcpp['ma_hcp_2']);
+        let data_lam_them =[{"cacluachon": "Có code","check": true}]
 
-    set_chon_mahcp2_bv( ten )
+        if (arr_hcpp['co_lam_them']===1) {
+            set_arr_co_lam_phong_mach(data_lam_them);
+            set_chon_co_code(true);
+        } else {void(0)}
+
+        set_chon_hco_pcl(arr_hcpp['hco_lam_them']);
+        set_chon_chuc_vu_pcl(arr_hcpp['chuc_vu_lam_them']);
+        set_uuid_old(arr_hcpp['uuid']);
+        set_inserted_at(arr_hcpp['inserted_at']);
+        set_ma_hcp_1(arr_hcpp['ma_hcp_1']);
+        set_ma_hcp_2(arr_hcpp['ma_hcp_2']);
+
+        set_chon_mahcp2_bv( ten )
     }
 
     const handle_chon_chuc_vu = (e) => {
@@ -346,11 +404,14 @@ function Tao_hcp_pcl({history, location}) {
             "so_luot_kham":so_luot_kham,
             "so_tiem_nang":0, // if PCL then 0
             "lupd_at":iso_time,
-            
+            "tinh":chon_tinh,
+            "quan_huyen":chon_quan_huyen,
+            "phuong_xa":chon_phuong_xa,
+            "dia_chi":dia_chi,
+            "trang_thai":"active"
         }
         console.log(data);
         post_form_data(data);
-
     }
 
     if (true) {
@@ -413,13 +474,6 @@ function Tao_hcp_pcl({history, location}) {
                         {/* {EDITMODE &&
                         
                         } */}
-                        <FloatingLabel id="focus_1" label="Số điện thoại" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_sdt(e.target.value) } onBlur={ e => handle_on_blur(e.target.value) } value = {sdt}/> </FloatingLabel>
-                        {check_trung_sdt &&
-                            <p className="ml-1 fw-bold text-danger">SĐT ĐÃ BỊ TRÙNG VUI LÒNG NHẬP SĐT KHÁC</p>
-                        }
-                        <FloatingLabel label="Tên HCP (IN HOA có dấu), ví dụ: NGUYỄN HÙNG ANH" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="xxx" onChange={ (e) => set_ten_hcp(e.target.value.toLocaleUpperCase()) } value = {ten_hcp}/> </FloatingLabel>
-
-
                         <Dropdown className="mt-2" autoClose="true" block="true" onSelect = { (e) => set_chon_hco_bv(e) }>
                                 
                                 <Dropdown.Toggle className="bg-white border-0 text-dark text-left flex-grow-1 w-100"  style={{height:"60px"}}> 
@@ -441,6 +495,48 @@ function Tao_hcp_pcl({history, location}) {
                                 </Dropdown.Menu>
                         </Dropdown>
 
+                        <FloatingLabel label="Tên HCP (IN HOA có dấu), ví dụ: NGUYỄN HÙNG ANH" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="xxx" onChange={ (e) => set_ten_hcp(e.target.value.toLocaleUpperCase()) } value = {ten_hcp}/> </FloatingLabel>
+
+                        <FloatingLabel id="focus_1" label="Số điện thoại" className="border rounded mt-2" > <Form.Control disabled={chon_hco_bv ===""} required type="number" className="" placeholder="xxx" onChange={ (e) => set_sdt(e.target.value) } onBlur={ e => handle_on_blur(e.target.value) } value = {sdt}/> </FloatingLabel>
+                        {check_trung_sdt &&
+                            <p className="ml-1 fw-bold text-danger">SĐT ĐÃ BỊ TRÙNG VUI LÒNG NHẬP SĐT KHÁC</p>
+                        }
+
+                    <Stack direction="horizontal" gap={2} className="border-1">
+
+                        <Form.Select required className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => handle_chon_tinh(e)  }>
+                        <option style={{fontSize:"15px"}} value= {chon_tinh} > {chon_tinh ==="" ? "Tỉnh": chon_tinh} </option>
+                            {arr_tinh
+                            .map( (el, index) => 
+                            <option key={index} style={{fontSize:"15px"}} value={el}> {el} </option>
+                            )
+                            }    
+                        </Form.Select>
+
+                        <Form.Select required className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => handle_chon_quan_huyen(e)  }>
+                        <option style={{fontSize:"15px"}} value= {chon_quan_huyen} > {chon_quan_huyen ==="" ? "Quận Huyện": chon_quan_huyen} </option>
+                            {arr_quan_huyen
+                            .map( (el, index) => 
+                            <option key={index} style={{fontSize:"15px"}} value={el}> {el} </option>
+                            )
+                            }    
+                        </Form.Select>
+
+                        <Form.Select required className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => set_chon_phuong_xa(e.target.value)  }>
+                        <option style={{fontSize:"15px"}} value= {chon_phuong_xa}>  {chon_phuong_xa ==="" ? "Phường Xã": chon_phuong_xa}  </option>
+                            {arr_phuong_xa
+                            .map( (el, index) => 
+                            <option key={index} style={{fontSize:"15px"}} value={el}> {el} </option>
+                            )
+                            }
+                        </Form.Select>
+
+                    </Stack>
+
+                        <Form.Group controlId="formSpecificAddress" className="mt-2">
+                        <Form.Control required onChange={(e) => set_dia_chi(e.target.value)} value={dia_chi} as="textarea" rows={3} placeholder="Địa chỉ cụ thể. Ví dụ: Số nhà, Tên đường, Tòa nhà,..." />
+                        </Form.Group>                        
+                        
                         <Stack direction="horizontal" gap={2} className="border-1">
 
                         <Form.Select className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => set_chon_ngay_sinh(e.target.value)  }>
