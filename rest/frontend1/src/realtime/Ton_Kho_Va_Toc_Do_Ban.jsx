@@ -7,7 +7,8 @@ import {
     Button,
     Dropdown,
     Form,
-    Stack
+    Stack,
+    Modal
 } from "react-bootstrap";
 
 function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
@@ -54,7 +55,7 @@ function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
             {cn: "MR0016" ,checked: true}       
         ]
     )
-    const [show_report, set_show_report] = useState(false)
+    // const [show_report, set_show_report] = useState(false)
 
     const current_date = formatDate(Date())
     const [from_date, set_from_date] = useState(current_date);
@@ -106,65 +107,68 @@ function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
             "to_date":to_date
         }
 
-        fetchFilerReportsRT(rpid, isMB, phancap, local_url, filter_data);
-        set_show_report(true);
+        fetchFilerReportsRT(stt, isMB, phancap, local_url, filter_data);
+        // set_show_report(true);
 
     }
 
 
-    if (!shared) {
-        return (
-            <div className="container">
-                <h1>Bạn chưa được cấp quyền truy cập</h1>
-                <Link to="/reports">Đi Đến Danh Sách Reports</Link>
-            </div>
-        )
-    }
+    // if (!shared) {
+    //     return (
+    //         <div className="container">
+    //             <h1>Bạn chưa được cấp quyền truy cập</h1>
+    //             <Link to="/reports">Đi Đến Danh Sách Reports</Link>
+    //         </div>
+    //     )
+    // }
     
-    else if (!loading) {
+    // if (!loading) {
         return (
             <div>
                 <Form className='mt-2' onSubmit={ handle_submit }>
-                <Stack direction="horizontal" gap={2} className="col-md-2 border-1">
-                    <Dropdown>
-                        <Dropdown.Toggle id="dropdown-basic" className="text-dark bg-warning border border-warning">
-                        Chọn CN
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu style={{maxHeight: "410px", overflowY: "auto"}}>
-                        <Button variant="warning" size="sm" style={{width:"200px"}} onClick={handleClear}>Clear All</Button>
-                            {lst_cn_check
-                            .map( el => <Form.Check key={el.cn} className="text-nowrap" type="switch" checked={el.checked} onChange={handle_click_chi_nhanh} id={el.cn} label={el.cn}/>)
-                            }
-                        </Dropdown.Menu>
-                    </Dropdown>
-                    <Form.Control className="text-dark bg-info border border-0" type="date" value={from_date} htmlSize={8} onChange={(e) => set_from_date(e.target.value)} placeholder="DateRange"></Form.Control>
-                    <Form.Control className="text-dark bg-warning border border-0" type="date" value={to_date} htmlSize={8} onChange={(e) => set_to_date(e.target.value)} placeholder="DateRange"></Form.Control>             
-                    <Button className="ml-2 border-0"  type="submit" variant="warning">Submit</Button>
-        
-                </Stack>
+                    <Stack direction="horizontal" gap={2} className="col-md-2 border-1">
+                        <Dropdown>
+                            <Dropdown.Toggle id="dropdown-basic" className="text-dark bg-warning border border-warning">
+                            Chọn CN
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu style={{maxHeight: "410px", overflowY: "auto"}}>
+                            <Button variant="warning" size="sm" style={{width:"200px"}} onClick={handleClear}>Clear All</Button>
+                                {lst_cn_check
+                                .map( el => <Form.Check key={el.cn} className="text-nowrap" type="switch" checked={el.checked} onChange={handle_click_chi_nhanh} id={el.cn} label={el.cn}/>)
+                                }
+                            </Dropdown.Menu>
+                        </Dropdown>
+                        <Form.Control className="text-dark bg-info border border-0" type="date" value={from_date} htmlSize={8} onChange={(e) => set_from_date(e.target.value)} placeholder="DateRange"></Form.Control>
+                        <Form.Control className="text-dark bg-warning border border-0" type="date" value={to_date} htmlSize={8} onChange={(e) => set_to_date(e.target.value)} placeholder="DateRange"></Form.Control>             
+                        <Button className="ml-2 border-0"  type="submit" variant="warning">Submit</Button>
+            
+                    </Stack>
                 </Form>
-
-
-                { show_report &&
-                <div align="center" className="border-1 bg-dark mt-2" >
-                    <iframe title="myFrame" frameBorder="0"  src={`https://datastudio.google.com/embed/reporting/${ReportId}${ReportParam}`} style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }} ></iframe>
-                </div>
-                }
+                    <div>
+                    <Modal show={loading===true | shared === false} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
+                    <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
+                    </Modal>
+                    { (loading===false && shared ===true ) &&
+                    <div align="center" className="border-1 bg-dark" >
+                    <iframe title="myFrame" frameBorder="0"  src={`https://lookerstudio.google.com/embed/reporting/${ReportId}${ReportParam}`} style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }} ></iframe>
+                    </div>
+                    }
+                    </div>
             </div>
         );
     
-        }
-    else {
-        return (
+    //     }
+    // else {
+    //     return (
     
-            <div>
-                <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
-                <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-                </Spinner>
-            </div>
+    //         <div>
+    //             <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
+    //             <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
+    //             </Spinner>
+    //         </div>
             
-        )
-        }
+    //     )
+    //     }
 }
 
 export default Ton_Kho_Va_Toc_Do_Ban

@@ -17,7 +17,8 @@ import {
     Stack,
     FloatingLabel,
     Card,
-    Image
+    Image,
+    Modal
 } from "react-bootstrap";
 
 function Thi_cmsp_fmcg( {history} ) {
@@ -128,11 +129,7 @@ function Thi_cmsp_fmcg( {history} ) {
         let loc_cau_hoi = lst.filter(a => a.check === true);
         let lst_cau_hoi = loc_cau_hoi.map(a => a.cauhoi);
         set_arr_indx([...new Set(lst_cau_hoi)]); 
-
-
-        
     }
-
 
     const post_form_data = async (data) => {
         SetLoading(true)
@@ -145,22 +142,30 @@ function Thi_cmsp_fmcg( {history} ) {
         });
 
         if (!response.ok) {
+        const errorData = await response.json();
+        console.log(errorData);
+        SetALert(true);
+        SetALertType("alert-danger");
+        SetALertText(errorData.error_message);
+        setTimeout(() => {
+            SetALert(false);
             SetLoading(false);
-            const data = await response.json();
-            console.log(data);
+        }, 2000);
         } else {
+        const successData = await response.json();
+        console.log(successData);
+        SetALert(true);
+        SetALertType("alert-success");
+        SetALertText(successData.success_message);
+        setTimeout(() => {
+            SetALert(false);
             SetLoading(false);
-            const data = await response.json();
-            console.log(data);
-            history.push('/realtime/401?local_url=sp_f_data_cmsp_quy_tp');
-            // SetALert(true);
-            // SetALertType("alert-success");
-            // SetALertText("ĐÃ TẠO THÀNH CÔNG");
-            // setTimeout(() => SetALert(false), 3000);
-            // setCount(count+1);
-            // set_seconds(3600);
-
+            history.push('/realtime/40?local_url=sp_f_data_cmsp_quy_tp');
+            setCount(count+1);
+            set_seconds(3600);
+        }, 2000);
         }
+
     }
 
     const handle_submit = (e) => {
@@ -179,7 +184,7 @@ function Thi_cmsp_fmcg( {history} ) {
         post_form_data(data);
     }
 
-    if (!loading) {
+    if (true) {
         return (
         <Container className="bg-teal-100 h-100" fluid>
             <Row className="justify-content-center">
@@ -187,13 +192,17 @@ function Thi_cmsp_fmcg( {history} ) {
 
                     <div>
                         {/* ALERT COMPONENT */}
+                        <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
+                            <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
+
                         {alert &&
-                        <div  className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
+                        <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
                             <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
                             </button>
                             <span><strong>Cảnh Báo:  </strong>{alertText}</span>
                         </div>
                         }
+                        </Modal>
                         <></>
                         <Image className="mt-2" src="https://storage.googleapis.com/django_media_biteam/images/cmsp_fmcg.jpg" fluid  />
                         <h6 className="text-center mt-2" id="focus1">FMCG - THI CMSP QUÝ - {seconds} s - ({Math.round(seconds/60) } p)</h6>
@@ -231,7 +240,7 @@ function Thi_cmsp_fmcg( {history} ) {
                                 <Button disabled={arr_indx.length<=5} className='mt-5' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> NỘP BÀI VÀ XEM KẾT QUẢ </Button>
                             </>
                             :
-                            <h4><Link style={{textDecoration:  ""}} target="_blank" key={3} className="mt-2 border-1 text-primary mx-2" to="/realtime/401?local_url=sp_f_data_cmsp_quy_tp" >XEM LẠI KẾT QUẢ</Link></h4>
+                            <h4><Link style={{textDecoration:  ""}} target="_blank" key={3} className="mt-2 border-1 text-primary mx-2" to="/realtime/40?local_url=sp_f_data_cmsp_quy_tp" >XEM LẠI KẾT QUẢ</Link></h4>
                         }
                         </Form>
                         {/* END FORM BODY */}
@@ -244,15 +253,15 @@ function Thi_cmsp_fmcg( {history} ) {
         )
     }
     else {
-        return (
+        // return (
     
-            <div>
-                <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
-                <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-                </Spinner>
-            </div>
+        //     <div>
+        //         <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
+        //         <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
+        //         </Spinner>
+        //     </div>
             
-        )
+        // )
     }
 
 }

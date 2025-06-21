@@ -19,7 +19,7 @@ import {
 import dayjs from "dayjs";
 import { FaDownload } from "react-icons/fa";
 import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
-import initSqlJs from 'sql.js';
+// import initSqlJs from 'sql.js';
 
 const Form_claim_chi_phi_final = ( {history} ) => {
     const location = useLocation();
@@ -37,7 +37,6 @@ const Form_claim_chi_phi_final = ( {history} ) => {
       set_invoices(data['data_hoa_don'])
       console.log(data);
       SetLoading(false);
-
       }
   }
     
@@ -74,18 +73,18 @@ const Form_claim_chi_phi_final = ( {history} ) => {
       };
     }, [data_submit]); // Chạy lại hiệu ứng này bất cứ khi nào data_submit thay đổi
 
-    const [invoices,  set_invoices] = useState ([]);
-    
-  const f = new Intl.NumberFormat()
+  const [invoices,  set_invoices] = useState ([]);
+  // const [selected_invoices, set_selected_invoices] = useState([]);
+  const f = new Intl.NumberFormat();
   const [manv, set_manv] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [fromDate, setFromDate] = useState(dayjs().startOf("month").format("YYYY-MM-DD"));
   const [toDate, setToDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [downloadUrl, setDownloadUrl] = useState("");
-  const [spinning, setSpinning] = useState(false);  // Replaced `loading` with `spinning`
-  const [errorMessage, setErrorMessage] = useState(""); // State for error message
+  const [spinning, setSpinning] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   // const [disable, setdisable] = useState(false);
-  const [OverbudgetIds, setOverbudgetIds] = useState([]); // Trạng thái cho dữ liệu đã xử lý
+  const [OverbudgetIds, setOverbudgetIds] = useState([]);
 
 
 
@@ -121,24 +120,27 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     }
 }
 
-  const handleApproval = async () => {
-    // const ql_duyet = isApproved ? "approved" : "rejected"
-    // Create a new list of records with updated status
-    const updatedRecords = data_submit.map((record) => {
-      if (record.so_hoa_don) {
-        let updatedRecord = Object.assign({}, record); // Clone the object
-        updatedRecord.status = "invmapped"; // Update status
-        return updatedRecord;
-      }
-      return record;
-    });
-  
-    // Update state with the modified records list
-    set_data_submit(updatedRecords);
-    console.log(updatedRecords)
-    post_form_data(updatedRecords);
+const handleApproval = async (idToApprove) => {
+  let record_to_post = null; // Initialize a variable to hold the selected record
 
-  };
+  const updatedRecords = data_submit.map((record) => {
+    if (record.id === idToApprove) {
+      let updatedRecord = Object.assign({}, record);
+      updatedRecord.status = "invmapped";
+      record_to_post = updatedRecord; // Assign the updated record to the variable
+      return updatedRecord;
+    }
+    return record;
+  });
+
+  if (record_to_post && record_to_post.so_hoa_don && record_to_post.so_hoa_don.length >= 1)
+  {
+      post_form_data([record_to_post]);
+      console.log("Posting selected record:", record_to_post);
+  } else {
+    console.warn("No record found with ID to post:", idToApprove);
+  }
+};
   
 
   const handlePlanningNumberChange = (id, newValue) => {
@@ -156,20 +158,52 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     set_data_submit(updatedRecords);
   };
   
-  const handleInvoiceChange = (id, selectedInvoice) => {
-    const updatedRecords = data_submit.map((record) => {
-      if (record.id === id) {
-        let updatedRecord = Object.assign({}, record); // Clone the object
-        updatedRecord.so_ke_hoach = selectedInvoice.so_tien_hoa_don;
-        updatedRecord.so_hoa_don = selectedInvoice.so_hoa_don;
-        updatedRecord.so_tien_hoa_don = selectedInvoice.so_tien_hoa_don;
-        updatedRecord.ngay_hoa_don = selectedInvoice.ngay_hoa_don;
-        return updatedRecord;
-      }
-      return record;
-    });
-    set_data_submit(updatedRecords);
-  };
+  // const handleInvoiceChange = (id, selectedInvoice) => {
+  //   const updatedRecords = data_submit.map((record) => {
+  //     if (record.id === id) {
+  //       let updatedRecord = Object.assign({}, record);
+  //       updatedRecord.so_ke_hoach = selectedInvoice.so_tien_hoa_don;
+  //       updatedRecord.so_hoa_don = selectedInvoice.so_hoa_don;
+  //       updatedRecord.so_tien_hoa_don = selectedInvoice.so_tien_hoa_don;
+  //       updatedRecord.ngay_hoa_don = selectedInvoice.ngay_hoa_don;
+  //       return updatedRecord;
+  //     }
+  //     return record;
+  //   });
+  //   set_data_submit(updatedRecords);
+  // };
+
+const handleInvoiceChange = (id, selectedInvoices) => {
+  const updatedRecords = data_submit.map((record) => {
+    if (record.id === id) {
+      // Map over the array of selected invoices to get the required data for each
+      const newInvoiceDetails = selectedInvoices ? selectedInvoices.map( (invoice, index) => ({
+        so_hoa_don: invoice.so_hoa_don,
+        so_tien_hoa_don: invoice.so_tien_hoa_don,
+        ngay_hoa_don: invoice.ngay_hoa_don,
+        index: index + 1
+      })) : [];
+
+      // Calculate the total sum of so_tien_hoa_don from selected invoices
+      // This can be used for so_ke_hoach and/or so_tien_hoa_don if you choose to sum them.
+      const totalSoTienHoaDon = newInvoiceDetails.reduce((sum, invoice) => sum + (invoice.so_tien_hoa_don || 0), 0);
+
+        return {
+          ...record,
+          // Store an array of objects, each containing the invoice number and amount
+          so_hoa_don: newInvoiceDetails,
+          // Update so_ke_hoach to reflect the total of selected invoices
+          so_ke_hoach: totalSoTienHoaDon,
+          // Keep so_tien_hoa_don as the sum of selected invoices
+          so_tien_hoa_don: totalSoTienHoaDon,
+          // Explicitly keep ngay_hoa_don as null
+          ngay_hoa_don: null,
+        };
+    }
+    return record;
+  });
+  set_data_submit(updatedRecords);
+};
 
   const handleNoteChange = (id, newValue) => {
     // Create a new list of records
@@ -274,12 +308,6 @@ useEffect(() => {
       </Modal>
 
       <div className="d-flex gap-2 mb-3">
-        <Button disabled={
-          OverbudgetIds.length >= 1 |
-          isDebouncing === true
-          } variant="success" onClick={() => handleApproval()}>
-          Gửi đề nghị
-        </Button>
         <Button variant="outline-success" onClick={() => setShowModal(true)}>
           Tải dữ liệu đã được duyệt
         </Button>
@@ -291,11 +319,9 @@ useEffect(() => {
           <tr style={{ padding: '5px', fontSize: '12px' }}>
             <th style={{ width: '80px' }}>KH-ID</th>
             <th style={{ width: '150px' }}>Số tiền cần TT</th>
-            <th style={{ width: '300px' }}>Hóa đơn</th>
-            <th style={{ width: '100px' }}>Số hóa đơn</th>
-            <th style={{ width: '100px' }}>Ngày hóa đơn</th>
+            <th style={{ width: '550px' }}>Hóa đơn</th>
             <th style={{ width: '100px' }}>Tiền hóa đơn</th>
-            <th style={{ width: '70px' }}>Status</th>
+            <th style={{ width: '70px' }}>Gửi ĐN</th>
             <th style={{ width: '150px' }}>Tên CVBH</th>
             <th style={{ width: '150px' }}>Tên KHC</th>
             <th style={{ width: '150px' }}>Tên HCP</th>
@@ -307,10 +333,11 @@ useEffect(() => {
         </thead>
         <tbody>
           {data_submit.map((record) => (
-            <tr key={record.id} style={{ 
+            <tr key={record.id} style={{
               padding: '5px', 
               fontSize: '14px', 
-              backgroundColor: OverbudgetIds.includes(record.id) ? 'rgb(254 202 202)' : 'transparent'
+              backgroundColor: OverbudgetIds.includes(record.id) ? 'rgb(254 202 202)' : 'transparent',
+              height: '150px'
               }}
               >
               <td>{record.id.slice(-6)}</td>
@@ -323,13 +350,23 @@ useEffect(() => {
               </td>
               
               <td>
-                <Select
+              <Select // SELEC INVOICE
                   options={invoices}
                   getOptionValue={(el) => el.so_hoa_don}
                   getOptionLabel={(el) => `${el.so_hoa_don} - ${f.format(el.so_tien_hoa_don)} - ${el.ngay_hoa_don}`}
-                  value={invoices.find((inv) => inv.so_hoa_don === record.so_hoa_don) || null}
-                  onChange={(selectedInvoice) => handleInvoiceChange(record.id, selectedInvoice)}
+                  // *** MODIFICATION HERE ***
+                  // Use record.so_hoa_don directly as the value for the multi-select
+                  // It's already in the format that react-select's isMulti expects (array of objects)
+                  value={record.so_hoa_don}
+                  // *** END MODIFICATION ***
+                  onChange={(selectedInvoices) => {
+                    // Call handleInvoiceChange for the specific record
+                    handleInvoiceChange(record.id, selectedInvoices);
+                    console.log("selectedInvoices", selectedInvoices);
+                  }}
+                  isClearable
                   isSearchable
+                  isMulti // <--- This prop is crucial for multi-selection
                   placeholder="Chọn hóa đơn"
                   styles={{
                     control: (base) => ({
@@ -341,11 +378,19 @@ useEffect(() => {
                 />
               </td>
 
-              <td>{record.so_hoa_don}</td>
-              <td>{record.ngay_hoa_don}</td>
-              <td>{ f.format(record.so_tien_hoa_don) }</td>
+              <td> { f.format(record.so_tien_hoa_don) }</td>
+              <td>
+                <Button 
+                size="sm"
+                disabled={
+                OverbudgetIds.length >= 1 ||
+                isDebouncing === true ||
+                (!record.so_hoa_don || record.so_hoa_don.length === 0)
+                } variant="success" onClick={() => handleApproval(record.id)}>
+                Gửi
+                </Button>
+              </td>
 
-              <td>{record.status}</td>
               <td>{record.tencvbh}</td>
               <td>{record.pubcustname}</td>
               <td>{record.ten_hcp}</td>

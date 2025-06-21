@@ -215,7 +215,7 @@ function Tracking_chi_phi_hcp( {history} ) {
                     }, 2000);
 
                 } else {
-                    const successData = await response.json(); // Renamed 'data' to 'successData' to avoid conflict
+                    const successData = await response.json();
                     console.log(successData);
                     SetALert(true);
                     SetALertType("alert-success");
@@ -224,6 +224,7 @@ function Tracking_chi_phi_hcp( {history} ) {
                         SetALert(false);
                         SetLoading(false);
                     }, 2000);
+                    
                     set_chon_qua_tang_cam_xuc("");
                     set_chon_qua_tang_cam_xuc_2("");
                     set_schema([]);

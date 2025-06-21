@@ -26,7 +26,7 @@ import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as
 
 function Cong_tac_phi({history}) {
     
-    const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
+    const { formatNumber, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
     const fetch_initial_data = async (manv) => {
         SetLoading(true)
@@ -84,39 +84,40 @@ function Cong_tac_phi({history}) {
     const countdownRef = useRef(null);
 
     const [extracted_data, set_extracted_data] = useState({
-    thang: '',
-    tu_ngay: '',
-    den_ngay: '',
-    tinh: '',
-    ve_xe: '',
-    chi_phi_khach_san: '',
-    phu_cap_di_lai: '',
+          thang: '',
+          tu_ngay: '',
+          den_ngay: '',
+          tinh: '',
+          ve_xe: '',
+          ky_hieu_ve_xe: '',
+          so_hoa_don_ve_xe: '',
+          ngay_hoa_don_ve_xe: '',
+          chi_phi_khach_san: '',
+          ky_hieu_khach_san: '',
+          so_hoa_don_khach_san: '',
+          ngay_hoa_don_khach_san: '',
+          phu_cap_di_lai: '',
+          inserted_at: Inserted_at(),
     });
 
-    // const [selectedItem, setSelectedItem] = useState({
-    // thang: '',
-    // tu_ngay: '',
-    // den_ngay: '',
-    // tinh: '',
-    // ve_xe: '',
-    // chi_phi_khach_san: '',
-    // phu_cap_di_lai: '',
-    // });
-
-
     const clear_data = () => {
-    set_extracted_data ({
-    thang: '',
-    tu_ngay: '',
-    den_ngay: '',
-    tinh: '',
-    ve_xe: '',
-    chi_phi_khach_san: '',
-    phu_cap_di_lai: '',
-    inserted_at: '',
-    }
-    )
-    }
+            set_extracted_data({ // Assuming set_extracted_data was renamed to setExtractedData as per typical React naming
+                thang: '',
+                tu_ngay: '',
+                den_ngay: '',
+                tinh: '',
+                ve_xe: '',
+                ky_hieu_ve_xe: '',
+                so_hoa_don_ve_xe: '',
+                ngay_hoa_don_ve_xe: '',
+                chi_phi_khach_san: '',
+                ky_hieu_khach_san: '',
+                so_hoa_don_khach_san: '',
+                ngay_hoa_don_khach_san: '',
+                phu_cap_di_lai: '',
+                inserted_at: '',
+            });
+        };
 
     const startRecording = async () => {
         setAudioBlob(null);
@@ -270,230 +271,296 @@ function Cong_tac_phi({history}) {
         //     "text_1":(text_1),
         //     "text_2":(text_2)
         // }
-        console.log();
-        post_form_data();
+        console.log(extracted_data);
+        // post_form_data();
     }
 
     // if (data_table.length >= 1) {
     if (true) {
-        return (
+    return (
         <Container className="bg-teal-100 h-100" fluid>
-        {/* Responsive Full-Width Buttons */}
-        <ClaimNavTabs />
+            <ClaimNavTabs />
             <Row className="justify-content-center">
                 <Col md={5} >
-
                     <div>
-        
-
-                        {/* ALERT COMPONENT */}
                         <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
-                            <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
-
-                        {alert &&
-                        <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
-                            <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                            </button>
-                            <span><strong>Cảnh Báo:  </strong>{alertText}</span>
-                        </div>
-                        }
+                            <Button variant="secondary" disabled> <Spinner animation="grow" size="sm" /> Đang tải...</Button>
                         </Modal>
 
+                        {alert &&
+                            <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
+                                <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={() => setAlert(false)}>
+                                </button>
+                                <span><strong>Cảnh Báo: </strong>{alertText}</span>
+                            </div>
+                        }
+
                         <Form onSubmit={handle_submit}>
-                        {/* START FORM BODY */}
-                        
-                        {/* <h3>FORM GHI NHẬN HÀNG CHI PHÍ PKH</h3> */}
-
                             <div className="text-center">
-                            <Button onClick={startRecording} disabled={recording} variant="primary">
-                                Ghi Âm
-                            </Button>
-                            {/* <Button onClick={removeAudio} variant="secondary">
-                                Xóa File
-                            </Button> */}
+                                <Button hidden={true} onClick={startRecording} disabled={recording} variant="primary">
+                                    Ghi Âm
+                                </Button>
 
-                                {/* <Button 
-                                onClick={stopRecording} 
-                                variant="danger" 
-                                disabled={!recording} // Only enable when recording
-                                >
-                                Dừng Ghi Âm
-                                </Button> */}
-                                
                                 <FloatingLabel label="Tháng" className="border rounded mt-2">
-                                <Form.Control
-                                required
-                                className=""
-                                placeholder=""
-                                type="date"
-                                name="thang"
-                                value={extracted_data?.thang || ''}
-                                onChange={handleInputChange}
-                                ></Form.Control>
+                                    <Form.Control
+                                        required
+                                        className=""
+                                        placeholder=""
+                                        type="date"
+                                        name="thang"
+                                        value={extracted_data?.thang || ''}
+                                        onChange={handleInputChange}
+                                    ></Form.Control>
                                 </FloatingLabel>
 
                                 <FloatingLabel label="Từ ngày (dd-mm-yyyy)" className="border rounded mt-2">
-                                <Form.Control
-                                required
-                                className=""
-                                placeholder=""
-                                type="date"
-                                name="tu_ngay"
-                                value={extracted_data?.tu_ngay || ''}
-                                onChange={handleInputChange}
-                                ></Form.Control>
+                                    <Form.Control
+                                        required
+                                        className=""
+                                        placeholder=""
+                                        type="date"
+                                        name="tu_ngay"
+                                        value={extracted_data?.tu_ngay || ''}
+                                        onChange={handleInputChange}
+                                    ></Form.Control>
                                 </FloatingLabel>
 
                                 <FloatingLabel label="Đến ngày (dd-mm-yyyy)" className="border rounded mt-2">
-                                <Form.Control
-                                required
-                                className=""
-                                placeholder=""
-                                type="date"
-                                name="den_ngay"
-                                value={extracted_data?.den_ngay || ''}
-                                onChange={handleInputChange}
-                                ></Form.Control>
+                                    <Form.Control
+                                        required
+                                        className=""
+                                        placeholder=""
+                                        type="date"
+                                        name="den_ngay"
+                                        value={extracted_data?.den_ngay || ''}
+                                        onChange={handleInputChange}
+                                    ></Form.Control>
                                 </FloatingLabel>
 
                                 <FloatingLabel label="Tỉnh" className="border rounded mt-2">
-                                <Form.Control
-                                required
-                                className=""
-                                placeholder=""
-                                type="text"
-                                name="tinh"
-                                value={extracted_data?.tinh || ''}
-                                onChange={handleInputChange}
-                                ></Form.Control>
+                                    <Form.Control
+                                        required
+                                        className=""
+                                        placeholder=""
+                                        type="text"
+                                        name="tinh"
+                                        value={extracted_data?.tinh || ''}
+                                        onChange={handleInputChange}
+                                    ></Form.Control>
                                 </FloatingLabel>
 
-                                <FloatingLabel label="Vé xe" className="border rounded mt-2">
-                                <Form.Control
-                                required
-                                className=""
-                                placeholder=""
-                                type="number"
-                                name="ve_xe"
-                                value={extracted_data?.ve_xe || ''}
-                                onChange={handleInputChange}
-                                ></Form.Control>
-                                </FloatingLabel>
+                                {/* Vé xe section with border */}
+                                <div className="border border-secondary rounded p-3 mt-3"> {/* Added border, rounded corners, and padding */}
+                                    <h5 className="mb-3">Thông tin Vé xe</h5> {/* Increased bottom margin for heading */}
+                                    <FloatingLabel label="Vé xe" className="border rounded mt-2">
+                                        <Form.Control
+                                            required
+                                            className=""
+                                            placeholder=""
+                                            type="text"
+                                            name="ve_xe"
+                                            value={ formatNumber(extracted_data?.ve_xe || '') }
+                                            onChange={(e) => {
+                                            const inputValue = e.target.value;
+                                            const cleanedValue = inputValue.replace(/\D/g, '');
+                                            set_extracted_data(prevData => ({
+                                            ...prevData,
+                                            ve_xe: cleanedValue
+                                            }));
+                                            }}
 
-                                <FloatingLabel label="Chi phí khách sạn" className="border rounded mt-2">
-                                <Form.Control
-                                required
-                                className=""
-                                placeholder=""
-                                type="number"
-                                name="chi_phi_khach_san"
-                                value={extracted_data?.chi_phi_khach_san || ''}
-                                onChange={handleInputChange}
-                                ></Form.Control>
-                                </FloatingLabel>
+                                        ></Form.Control>
+                                    </FloatingLabel>
+
+                                    <Row className="mt-2">
+                                        <Col xs={4}>
+                                            <FloatingLabel label="Ký hiệu" className="border rounded">
+                                                <Form.Control
+                                                    className=""
+                                                    placeholder=""
+                                                    type="text"
+                                                    name="ky_hieu_ve_xe"
+                                                    value={extracted_data?.ky_hieu_ve_xe || ''}
+                                                    onChange={handleInputChange}
+                                                ></Form.Control>
+                                            </FloatingLabel>
+                                        </Col>
+                                        <Col xs={4}>
+                                            <FloatingLabel label="Số hóa đơn" className="border rounded">
+                                                <Form.Control
+                                                    className=""
+                                                    placeholder=""
+                                                    type="text"
+                                                    name="so_hoa_don_ve_xe"
+                                                    value={extracted_data?.so_hoa_don_ve_xe || ''}
+                                                    onChange={handleInputChange}
+                                                ></Form.Control>
+                                            </FloatingLabel>
+                                        </Col>
+                                        <Col xs={4}>
+                                            <FloatingLabel label="Ngày hóa đơn" className="border rounded">
+                                                <Form.Control
+                                                    className=""
+                                                    placeholder=""
+                                                    type="date"
+                                                    name="ngay_hoa_don_ve_xe"
+                                                    value={extracted_data?.ngay_hoa_don_ve_xe || ''}
+                                                    onChange={handleInputChange}
+                                                ></Form.Control>
+                                            </FloatingLabel>
+                                        </Col>
+                                    </Row>
+                                </div> {/* End of Vé xe section with border */}
+
+
+                                {/* Chi phí khách sạn section with border */}
+                                <div className="border border-secondary rounded p-3 mt-3"> {/* Added border, rounded corners, and padding */}
+                                    <h5 className="mb-3">Thông tin Chi phí khách sạn</h5> {/* Increased bottom margin for heading */}
+                                    <FloatingLabel label="Chi phí khách sạn" className="border rounded mt-2">
+                                        <Form.Control
+                                            required
+                                            className=""
+                                            placeholder=""
+                                            type="text"
+                                            name="chi_phi_khach_san"
+                                            value={ formatNumber(extracted_data?.chi_phi_khach_san || '') }
+                                            onChange={(e) => {
+                                            const inputValue = e.target.value;
+                                            const cleanedValue = inputValue.replace(/\D/g, '');
+                                            set_extracted_data(prevData => ({
+                                            ...prevData,
+                                            chi_phi_khach_san: cleanedValue
+                                            }));
+                                            }}
+                                        ></Form.Control>
+                                    </FloatingLabel>
+
+                                    <Row className="mt-2">
+                                        <Col xs={4}>
+                                            <FloatingLabel label="Ký hiệu" className="border rounded">
+                                                <Form.Control
+                                                    className=""
+                                                    placeholder=""
+                                                    type="text"
+                                                    name="ky_hieu_khach_san"
+                                                    value={extracted_data?.ky_hieu_khach_san || ''}
+                                                    onChange={handleInputChange}
+                                                ></Form.Control>
+                                            </FloatingLabel>
+                                        </Col>
+                                        <Col xs={4}>
+                                            <FloatingLabel label="Số hóa đơn" className="border rounded">
+                                                <Form.Control
+                                                    className=""
+                                                    placeholder=""
+                                                    type="text"
+                                                    name="so_hoa_don_khach_san"
+                                                    value={extracted_data?.so_hoa_don_khach_san || ''}
+                                                    onChange={handleInputChange}
+                                                ></Form.Control>
+                                            </FloatingLabel>
+                                        </Col>
+                                        <Col xs={4}>
+                                            <FloatingLabel label="Ngày hóa đơn" className="border rounded">
+                                                <Form.Control
+                                                    className=""
+                                                    placeholder=""
+                                                    type="date"
+                                                    name="ngay_hoa_don_khach_san"
+                                                    value={extracted_data?.ngay_hoa_don_khach_san || ''}
+                                                    onChange={handleInputChange}
+                                                ></Form.Control>
+                                            </FloatingLabel>
+                                        </Col>
+                                    </Row>
+                                </div> {/* End of Chi phí khách sạn section with border */}
 
                                 <FloatingLabel label="Phụ cấp đi lại" className="border rounded mt-2">
-                                <Form.Control
-                                required
-                                className=""
-                                placeholder=""
-                                type="number"
-                                name="phu_cap_di_lai"
-                                value={extracted_data?.phu_cap_di_lai || ''}
-                                onChange={handleInputChange}
-                                ></Form.Control>
+                                    <Form.Control
+                                        required
+                                        className=""
+                                        placeholder=""
+                                        type="text"
+                                        name="phu_cap_di_lai"
+                                        value={formatNumber(extracted_data?.phu_cap_di_lai || '')}
+                                        onChange={(e) => {
+                                        const inputValue = e.target.value;
+                                        const cleanedValue = inputValue.replace(/\D/g, '');
+                                        set_extracted_data(prevData => ({
+                                        ...prevData,
+                                        phu_cap_di_lai: cleanedValue
+                                        }));
+                                        }}
+                                    ></Form.Control>
                                 </FloatingLabel>
 
-                            {/* Modal for Recording Status */}
+                                {/* Modal for Recording Status */}
+                                <Modal show={showModal} onHide={() => setShowModal(false)}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>{recording ? "Đang Ghi Âm..." : "Bản Ghi Âm"}</Modal.Title>
+                                    </Modal.Header>
 
-                            <Modal show={showModal}>
-                            <Modal.Header>
-                                <Modal.Title>{recording ? "Đang Ghi Âm..." : "Bản Ghi Âm"}</Modal.Title>
-                            </Modal.Header>
+                                    <Modal.Body>
+                                        <div className="mt-3">
+                                            <p><strong>Hãy nói:</strong></p>
+                                            <p className="text-primary">
+                                                Thanh toán công tác phí tháng <strong>...</strong> <br />
+                                                Từ ngày <strong>...</strong> <br />
+                                                Đến ngày <strong>...</strong> <br />
+                                                Ở tỉnh <strong>...</strong> <br />
+                                                Vé xe: <strong>...</strong> nghìn, Ký hiệu <strong>...</strong>, số hóa đơn <strong>...</strong>, ngày hóa đơn <strong>...</strong> <br />
+                                                Chi phí khách sạn: <strong>...</strong> nghìn, Ký hiệu <strong>...</strong>, số hóa đơn <strong>...</strong>, ngày hóa đơn <strong>...</strong> <br />
+                                                Phụ cấp đi lại: <strong>...</strong> nghìn <br />
+                                            </p>
+                                            <p>Thời gian còn lại: {countdown}s</p>
+                                        </div>
 
-                            <Modal.Body>
-                            {/* {recording && mediaRecorderRef.current?.state === "recording" && ( */}
-                            <div className="mt-3">
-                              <p><strong>Hãy nói:</strong></p>
-                              <p className="text-primary">
-                                Thanh toán công tác phí tháng <strong>...</strong> <br />
-                                Từ ngày <strong>...</strong> <br />
-                                Đến ngày <strong>...</strong> <br />
-                                Ở tỉnh <strong>...</strong> <br />
-                                Vé xe: <strong>...</strong> nghìn <br />
-                                Chi phí khách sạn: <strong>...</strong> nghìn <br />
-                                Phụ cấp đi lại: <strong>...</strong> nghìn <br />
-                              </p>
-                              <p>Thời gian còn lại: {countdown}s</p>
+                                        {audioBlob && (
+                                            <div className="mt-3">
+                                                <p><strong>File Audio:</strong></p>
+                                                <div className="mb-2">
+                                                    <audio controls className="w-100">
+                                                        <source src={URL.createObjectURL(audioBlob)} type="audio/webm" />
+                                                        Your browser does not support the audio element.
+                                                    </audio>
+                                                </div>
+                                                <button onClick={post_audio_data} className="btn btn-success">
+                                                    GỬI FILE GHI ÂM
+                                                </button>
+                                            </div>
+                                        )}
+                                    </Modal.Body>
+
+                                    <Modal.Footer>
+                                        <button onClick={stopRecording} className="btn btn-warning" disabled={!recording}>
+                                            Dừng Ghi Âm
+                                        </button>
+                                        <button onClick={() => { stopRecording(); setShowModal(false); }} className="btn btn-danger">
+                                            Đóng
+                                        </button>
+                                    </Modal.Footer>
+                                </Modal>
                             </div>
 
-                            <p>{text_3}</p>
-
-                              {audioBlob && (
-                              <div className="mt-3">
-                                <p><strong>File Audio:</strong></p>
-
-                                <div className="mb-2">
-                                  <audio controls className="w-100">
-                                    <source src={URL.createObjectURL(audioBlob)} type="audio/webm" />
-                                    Your browser does not support the audio element.
-                                  </audio>
-                                </div>
-
-                                <button onClick={post_audio_data} className="btn btn-success">
-                                  GỬI FILE GHI ÂM
-                                </button>
-                              </div>
-
-                              
-
-                            
-                            )}                             
-                            </Modal.Body>
-
-                            <Modal.Footer>
-                                <button onClick={stopRecording} className="btn btn-warning">
-                                    Dừng Ghi Âm
-                                </button>
-                                <button onClick={() => { stopRecording(); setShowModal(false); }} className="btn btn-danger">
-                                  Đóng
-                                </button>
-                            
-                            </Modal.Footer>
-                            </Modal>
-                            </div>
-
-                        {/* <FloatingLabel label="Khoản mục" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text_1(e.target.value) } value = {text_1}/> </FloatingLabel> */}
-                        {/* <FloatingLabel label="Người nhận tiền" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text_2(e.target.value) } value = {text_2}/> </FloatingLabel> */}
-                        
-
-                        <Button disabled={
-                            false
-                            // audioBlob===null
-                            } className='mt-2' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
-                        <p>version 1.2(07/03/2025)
-                        </p>
-                        
+                            <Button
+                                disabled={loading}
+                                className='mt-2'
+                                variant="warning"
+                                type="submit"
+                                style={{ width: "100%", fontWeight: "bold" }}
+                            >
+                                LƯU THÔNG TIN
+                            </Button>
+                            <p>version 1.3(18/06/2025)</p>
                         </Form>
-                        {/* END FORM BODY */}
-
                     </div>
                 </Col>
             </Row>
         </Container>
-        )
+    );
+
     }
-    else {
-        // return (
-    
-        //     <div>
-        //         <h1 className="text-danger text-center">Anh / Chị không có mã chứng từ nào để xác nhận</h1>
-        //         {/* <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-        //         </Spinner> */}
-        //     </div>
-            
-        // )
-    }
+    else {}
 
 }
 

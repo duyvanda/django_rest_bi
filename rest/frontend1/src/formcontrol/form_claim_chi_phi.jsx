@@ -19,7 +19,7 @@ import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as
 function Form_claim_chi_phi({ history }) {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
+    const { formatNumber, get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
     
     const fetch_initial_data = async (manv) => {
         SetLoading(true)
@@ -153,9 +153,9 @@ function Form_claim_chi_phi({ history }) {
         set_ty_le( { value: '5:5', label: '5:5' } )
     };
 
-    const formatNumber = (value) => {
-        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    };
+    // const formatNumber = (value) => {
+    //     return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    // };
 
     const post_form_data = async (data) => {
         SetLoading(true)
@@ -229,7 +229,8 @@ function Form_claim_chi_phi({ history }) {
             for (const hcp_detail of baseData.chon_hcp) {
                 index++; // Increment index for suffix (starts from 1)
                 const newItem = {
-                    id: `${baseData.id}_${index}`, // Add suffix to the ID
+                    // id: `${baseData.id}_${index}`, 
+                    id: baseData.id,
                     status: baseData.status,
                     manv: baseData.manv,
                     tencvbh: baseData.tencvbh,
@@ -404,7 +405,8 @@ function Form_claim_chi_phi({ history }) {
                             <Button className='mt-2' variant="warning" type="submit" 
                             style={{ width: "100%", fontWeight: "bold" }}
                             disabled={
-                            (qua_tang === "Quà tặng" && Number(so_ke_hoach.replace(/,/g, "")) >= 2000000)
+                            (qua_tang === "Quà tặng" && 
+                                (Number(so_ke_hoach.replace(/,/g, ""))  / Number(chon_hcp?.length)) >= 2000000)
                             }
                             >GỬI QL DUYỆT</Button>
 

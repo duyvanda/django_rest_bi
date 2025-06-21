@@ -196,6 +196,10 @@ export const FeedbackProvider = ({ children }) => {
     return timestampId
   }
 
+    const formatNumber = (value) => {
+      return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+
   const fetch_real_time_report = async (data_user, local_url, rppr) => {
     console.log("fetch_real_time_report", data_user, local_url, rppr)
     try {
@@ -283,8 +287,10 @@ export const FeedbackProvider = ({ children }) => {
 
       await fetch_real_time_report(new_data, new_local_url, rppr);
 
-    } else {
-      setShared(false);
+    }
+    else {
+      // setShared(false);
+      void(0);
     }
   };
 
@@ -372,6 +378,7 @@ export const FeedbackProvider = ({ children }) => {
         Inserted_at,
         removeAccents,
         get_id,
+        formatNumber,
         loading,
         SetLoading,
         alert,
