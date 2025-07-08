@@ -172,9 +172,9 @@ Mỗi chủ đề có một hệ số riêng (có thể thay đổi theo thông 
       const contentWithBreaks_2 = markdownContent_2.replace(/\n/g, '  \n'); // Add two spaces before the newline for markdown to recognize the break
 
 const markdownContent_xin_chao = `
-Cám ơn Quý Dược Sĩ đã tham gia chương trình **M.Ambassador** của **MerapLion**.
-Với mong muốn xây dựng mối quan hệ bền vững và đồng hành lâu dài cùng Quý Dược sĩ trên hành trình chăm sóc sức khỏe gia đình Việt, MerapLion thấu hiểu rằng kiến thức chuyên môn chính là hành trang quan trọng giúp Quý Dược sĩ tư vấn hiệu quả và mang lại giá trị thiết thực cho bệnh nhân.  
-Chính vì vậy, chúng tôi không ngừng nỗ lực chia sẻ, hỗ trợ và lan tỏa kiến thức thông qua các hoạt động thực tiễn. Trên hành trình đó, MerapLion luôn gìn giữ và theo đuổi những giá trị cốt lõi **“Tận tâm – Trách nhiệm – Đồng hành”**, như lời cam kết bền chặt dành cho cộng đồng Dược sĩ Việt Nam.  
+Cám ơn Quý Dược sĩ đã tham gia chương trình **M.Ambassador** của **MerapLion**.
+Với mong muốn xây dựng mối quan hệ bền vững và đồng hành lâu dài cùng Quý Dược sĩ trên hành trình chăm sóc sức khỏe gia đình Việt, **MerapLion** thấu hiểu rằng kiến thức chuyên môn chính là hành trang quan trọng giúp Quý Dược sĩ tư vấn hiệu quả và mang lại giá trị thiết thực cho bệnh nhân.  
+Chính vì vậy, chúng tôi không ngừng nỗ lực chia sẻ, hỗ trợ và lan tỏa kiến thức thông qua các hoạt động thực tiễn. Trên hành trình đó, **MerapLion** luôn gìn giữ và theo đuổi những giá trị cốt lõi **“Tận tâm – Trách nhiệm – Đồng hành”**, như lời cam kết bền chặt dành cho cộng đồng Dược sĩ Việt Nam.  
 Chương trình **M.Ambassador** không chỉ là nơi cung cấp những thông tin chuyên môn hữu ích, mà còn mang đến nhiều trải nghiệm giá trị.  
 Quý Dược sĩ hãy tích cực tra cứu, cập nhật kiến thức và tham gia tương tác để nâng cao chuyên môn, tận hưởng trải nghiệm ý nghĩa và nhận nhiều phần quà hấp dẫn bên dưới nhé.
     `;

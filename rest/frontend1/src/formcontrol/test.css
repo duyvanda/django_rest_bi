@@ -1,0 +1,253 @@
+/* src/App.css */
+
+/* 1. Global / Reset Styles */
+/* body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #202123;
+  color: #ECECF1;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  min-height: 100vh; 
+  padding: 0; 
+  box-sizing: border-box; 
+  overflow: hidden;
+} */
+
+/* Đảm bảo các phần tử gốc của React chiếm hết không gian */
+/* html, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+} */
+
+/* code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+} */
+
+/* 2. Main Application Container (.chat-app-container bao bọc toàn bộ khung chat) */
+.chat-app-container {
+  display: flex;
+  overflow-y: auto;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  height: 95vh; /* Chiều cao tối thiểu, giúp căn giữa dọc khi nội dung ít */
+}
+
+/* 3. Chat Card / Window (.chat-card là khung chứa chính của UI chat) */
+.chat-card {
+  background-color: #343541; /* Màu nền khung chat */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Đổ bóng */
+  display: flex;
+  flex-direction: column; /* Quan trọng: để header, body, footer xếp chồng */
+  width: 100%; /* Chiếm toàn bộ chiều rộng của .chat-app-container */
+  height: 100%; /* <-- THAY ĐỔI: Chiếm toàn bộ chiều cao của .chat-app-container */
+  /* Loại bỏ min-height và max-height ở đây, height: 100% là đủ */
+  overflow: hidden; /* Đảm bảo nội dung tổng thể không tràn ra ngoài border-radius */
+  border: none; /* Bỏ border mặc định của React Bootstrap Card */
+}
+
+/* 4. Chat Header */
+.chat-header {
+  background-color: #202123; /* Nền của header */
+  color: #FFFFFF !important; /* Đảm bảo màu chữ là TRẮNG TINH */
+  padding: 15px;
+  border-bottom: 1px solid #444654; /* Đường kẻ phân cách */
+  text-align: center;
+  font-weight: bold;
+  text-shadow: none !important; /* Đảm bảo không có hiệu ứng bóng chữ nào làm mờ */
+  flex-shrink: 0; /* Ngăn header co lại */
+}
+
+/* 5. Chat Body / Messages Container (Khu vực hiển thị tin nhắn) */
+.chat-body {
+  flex-grow: 1; /* <-- Quan trọng: Cho phép body mở rộng để chiếm không gian trống và cuộn */
+  padding: 20px;
+  overflow-y: auto; /* <-- Quan trọng: Cho phép CUỘN khi nội dung dài */
+  background-color: #343541; /* Nền của khu vực chat */
+  display: flex;
+  flex-direction: column; /* Tin nhắn xếp chồng lên nhau */
+  gap: 15px; /* Khoảng cách giữa các bong bóng tin nhắn */
+}
+
+/* 6. Scrollbar Styles (cho chat-body) */
+.chat-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-body::-webkit-scrollbar-track {
+  background: #343541;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+  background-color: #4f505a;
+  border-radius: 4px;
+}
+
+.chat-body::-webkit-scrollbar-thumb:hover {
+  background-color: #6a6c75;
+}
+
+/* 7. Message Bubbles (.message-bubble là container căn trái/phải) */
+.message-bubble {
+  display: flex;
+  margin-bottom: 0; /* Khoảng cách đã được xử lý bằng gap trong .chat-body */
+  max-width: 100%;
+}
+
+.message-bubble.user {
+  justify-content: flex-end; /* Tin nhắn người dùng căn phải */
+}
+
+.message-bubble.ai {
+  justify-content: flex-start; /* Tin nhắn AI căn trái */
+}
+
+/* .message-content là bong bóng chat thực sự, chứa cả text và audio */
+.message-content {
+  display: flex; /* Dùng flexbox để sắp xếp text và audio theo cột */
+  flex-direction: column; /* Sắp xếp text trên audio */
+  max-width: 80%; /* Giới hạn chiều rộng của bong bóng */
+  padding: 10px 15px; /* Padding cho toàn bộ bong bóng */
+  border-radius: 8px;
+  line-height: 1.5;
+  word-wrap: break-word; /* Ngắt từ dài nếu cần */
+}
+
+/* Nền và màu chữ cho bong bóng user */
+.message-bubble.user .message-content {
+  background-color: #444654; /* Nền cho tin nhắn người dùng */
+  color: #ECECF1; /* Chữ sáng */
+}
+
+/* Nền và màu chữ cho bong bóng AI */
+.message-bubble.ai .message-content {
+  background-color: #19C37D; /* Nền cho tin nhắn AI (màu xanh lá tương tự ChatGPT) */
+  color: #202123; /* Chữ màu tối */
+}
+
+/* 8. Message Text (chỉ phần văn bản bên trong bong bóng) */
+.message-text {
+  white-space: pre-wrap; /* Giữ định dạng xuống dòng và khoảng trắng */
+  text-shadow: none !important; /* Đảm bảo không có hiệu ứng bóng chữ nào làm mờ */
+  opacity: 1 !important; /* Đảm bảo độ mờ */
+  padding-bottom: 8px; /* Padding dưới văn bản để tách text khỏi audio player */
+}
+
+
+/* 9. Audio Player Styling (Hình ảnh audio player cố định như ảnh mẫu) */
+.audio-player-fixed-size {
+  width: 300px; /* <-- CHIỀU RỘNG CỐ ĐỊNH */
+  height: 50px; /* <-- CHIỀU CAO CỐ ĐỊNH */
+  background-color: #F0F0F0; /* Nền màu trắng/xám nhạt cho player, giống hình */
+  border-radius: 8px; /* Bo góc cho player */
+  overflow: hidden; 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Thêm bóng nhẹ */
+  display: flex; /* Dùng flex để căn giữa player native */
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px; /* Khoảng cách trên từ text, nếu cần thêm */
+}
+
+/* Tinh chỉnh cho player native bên trong container cố định */
+.audio-player-native {
+  width: 95%; /* Chiếm gần hết chiều rộng của container cố định */
+  height: 40px; /* Chiều cao thực tế của player native, nhỏ hơn container để có padding */
+  background-color: transparent; /* Nền trong suốt để thấy nền của .audio-player-fixed-size */
+  border: none; /* Bỏ border mặc định */
+}
+
+/* Tùy chỉnh màu sắc controls của audio player (cho WebKit browsers) */
+.audio-player-native::-webkit-media-controls-panel {
+    background-color: #F0F0F0; /* Đảm bảo nền control trùng với nền container */
+    border-radius: 5px;
+    height: 40px; /* Đảm bảo chiều cao controls khớp */
+}
+.audio-player-native::-webkit-media-controls-play-button,
+.audio-player-native::-webkit-media-controls-current-time-display,
+.audio-player-native::-webkit-media-controls-time-remaining-display,
+.audio-player-native::-webkit-media-controls-timeline,
+.audio-player-native::-webkit-media-controls-volume-slider {
+    color: #333; /* Màu các biểu tượng và text trên nền sáng của player */
+}
+
+
+/* 9. Chat Footer (Khu vực nút bấm dưới cùng) */
+.chat-footer {
+  background-color: #202123;
+  padding: 15px;
+  border-top: 1px solid #444654; /* Đường kẻ phân cách */
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  flex-shrink: 0; /* Ngăn footer co lại */
+}
+
+/* Custom styles for InputGroup for full width button */
+.input-group > .btn {
+    flex-grow: 1;
+}
+
+/* 11. Button Styles */
+.btn-primary, .btn-danger, .btn-success {
+  background-color: #10a37f; /* Màu xanh lá tương tự ChatGPT cho primary/default */
+  border-color: #10a37f;
+  color: #ECECF1; /* Chữ trắng */
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.btn-primary:hover, .btn-success:hover {
+  background-color: #0d8a6e;
+  border-color: #0d8a6e;
+}
+
+.btn-danger {
+  background-color: #dc3545; /* Màu đỏ cho dừng ghi */
+  border-color: #dc3545;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* 12. Loading / Error Indicators */
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+}
+
+.spinner-border.text-light {
+  color: #ECECF1 !important; /* Đảm bảo màu spinner là trắng */
+}
+
+.error-message {
+  margin-top: 15px;
+  text-align: center;
+  background-color: #ffc107; /* Màu vàng cam cho lỗi, dễ nhìn */
+  color: #343541; /* Chữ tối */
+  border-color: #ffc107;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+/* 13. Other Utility Classes */
+/* Text hướng dẫn ban đầu "Nhấn Trò chuyện để bắt đầu!" */
+.chat-body .text-center.text-secondary {
+    color: #BBBBBB !important; /* Làm màu xám sáng hơn để dễ đọc trên nền tối */
+    font-weight: normal;
+}

@@ -10,15 +10,15 @@ import {
     Col,
     Row,
     Container,
-    Dropdown,
     Form,
     Spinner,
-    InputGroup,
-    Stack,
-    FloatingLabel,
     Card,
     Image,
     Modal
+    // Dropdown,
+    // InputGroup,
+    // Stack,
+    // FloatingLabel,
 } from "react-bootstrap";
 
 function Thi_cmsp_fmcg( {history} ) {

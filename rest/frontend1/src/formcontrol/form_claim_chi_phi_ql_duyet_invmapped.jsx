@@ -23,8 +23,7 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
     
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
-      const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_invmapped/?manv=${manv}`)
-      // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_invmapped/?manv=MR0673`)
+      const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_v2/?manv=${manv}&page=approved_invmapped`)
       if (!response.ok) {
           SetLoading(false)
       }
@@ -57,7 +56,7 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
 
   const post_form_data = async (data) => {
     SetLoading(true)
-    const response = await fetch(`https://bi.meraplion.com/local/insert_form_claim_chi_phi_invmapped/`, {
+    const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_gift_expenses/`, {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -94,6 +93,7 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
       if (record.checked) {
         let updatedRecord = Object.assign({}, record); // Clone the object
         updatedRecord.status = ql_duyet; // Update status
+        updatedRecord.inserted_at = Inserted_at();
         return updatedRecord;
       }
       return record;
@@ -222,6 +222,7 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
 
               <td>
                 <Form.Control
+                readOnly
                   type="text"
                   value={ f.format(record.so_ke_hoach) }
                   onChange={(e) => handlePlanningNumberChange(record.id, e.target.value.replace(/\D/g, "") )}

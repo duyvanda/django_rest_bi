@@ -92,6 +92,7 @@ import Nvbc_view_video from  "./formcontrol/nvbc_view_video";
 // import Kt_de_xuat_chi_phi from  "./formcontrol/kt_de_xuat_chi_phi";
 
 import Chat from "./biagent/chat";
+import Elevenlabs from "./biagent/elevenlabs";
 import Qr_scan_quan_ly_tai_san from "./formcontrol/qr_scan_quan_ly_tai_san";
 import Qr_scan_quan_ly_tai_san_v2 from "./formcontrol/qr_scan_quan_ly_tai_san_v2";
 
@@ -107,7 +108,7 @@ function AppContent() {
   const path = location.pathname;
 
   const isLogin = path === '/loginabc';
-  const noNavbarPaths = ['/formcontrol/nvbc_introduction', '/formcontrol/nvbc_login', '/formcontrol/nvbc_view_video', '/formcontrol/nvbc_mainpage','/formcontrol/nvbc_view_pdf'];
+  const noNavbarPaths = ['/formcontrol/nvbc_introduction', '/formcontrol/nvbc_login', '/formcontrol/nvbc_view_video', '/formcontrol/nvbc_mainpage','/formcontrol/nvbc_view_pdf', '/biagent'];
 
   // Explanation:
   // noNavbarPaths is a list of paths that should show no nav at all.
@@ -204,6 +205,7 @@ function AppContent() {
                 {/* <Route exact path="/maps/mapbox" component={MapBox} /> */}
                 
                 <Route exact path="/biagent" component={Chat} />
+                <Route exact path="/elevenlabs" component={Elevenlabs} />
 
                 {/* BOOTSTRAP */}
                 {/* <Route exact path="/bootstrap/spacing" component={Spacing} /> */}

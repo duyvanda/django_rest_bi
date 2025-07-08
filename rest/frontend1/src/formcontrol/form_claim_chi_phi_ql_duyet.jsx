@@ -23,7 +23,7 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
     
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
-      const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_ql_duyet/?manv=${manv}`)
+      const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_v2/?manv=${manv}&page=approved`)
       // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_ql_duyet/?manv=MR0673`)
       if (!response.ok) {
           SetLoading(false)
@@ -57,7 +57,7 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
 
   const post_form_data = async (data) => {
     SetLoading(true)
-    const response = await fetch(`https://bi.meraplion.com/local/insert_form_claim_chi_phi_ql_duyet/`, {
+    const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_gift_expenses/`, {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -101,8 +101,20 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
   
     // Update state with the modified records list
     set_data_submit(updatedRecords);
-    post_form_data(updatedRecords);
+    console.log("submit", updatedRecords)
 
+    const recordsToPost = data_submit
+      .filter((record) => record.checked) // Only include checked records
+      .map((record) => {
+        // Clone the object using Object.assign({}, record)
+        let updatedRecord = Object.assign({}, record);
+        updatedRecord.status = ql_duyet; // Update status
+        updatedRecord.inserted_at = Inserted_at(); // Update status
+        return updatedRecord;
+      });
+
+    console.log("Records to post:", recordsToPost);
+    post_form_data(recordsToPost);
   };
   
 

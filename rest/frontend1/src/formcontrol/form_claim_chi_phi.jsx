@@ -24,7 +24,7 @@ function Form_claim_chi_phi({ history }) {
     const fetch_initial_data = async (manv) => {
         SetLoading(true)
         // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=${queryParams.get('manv')}`)
-        const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi/?manv=${manv}`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi/?manv=${manv}`)
         if (!response.ok) {
             SetLoading(false)
         }
@@ -65,9 +65,7 @@ function Form_claim_chi_phi({ history }) {
     const [so_ke_hoach, set_so_ke_hoach] = useState("");
     const [data_kh_chung, set_data_kh_chung] = useState([]
     )
-    const [data_hcp, set_data_hcp] = useState([]
-
-);  
+    const [data_hcp, set_data_hcp] = useState([]);  
     
     const kenhs = ["CLC & INS","CLC", "INS", "PCL"];
     // const noi_dungs = ["noi_dung1", "noi_dung2", "noi_dung3"];
@@ -191,6 +189,14 @@ function Form_claim_chi_phi({ history }) {
 
     const handle_submit = (e) => {
         e.preventDefault();
+        let max_ke_hoach
+
+        if (manv_info?.phongdeptsummary === 'HCP' & qua_tang === 'Quà tặng' ) 
+        {
+            max_ke_hoach = Number(chon_hcp?.length)*2000000
+        }
+        else {max_ke_hoach = 99999999}
+        
         const rawId = get_id();
         const insert = Inserted_at();
         const baseData = {
@@ -212,7 +218,8 @@ function Form_claim_chi_phi({ history }) {
             ngay_hoa_don: null,
             so_tien_hoa_don:null,
             inserted_at: insert,
-            ty_le: ty_le?.value
+            ty_le: ty_le?.value,
+            max_ke_hoach
         };
         const plan = Number(so_ke_hoach.replace(/,/g, ""));
 
@@ -248,13 +255,14 @@ function Form_claim_chi_phi({ history }) {
                     ngay_hoa_don: baseData.ngay_hoa_don,
                     so_tien_hoa_don: baseData.so_tien_hoa_don,
                     inserted_at: baseData.inserted_at,
-                    ty_le: baseData.ty_le
+                    ty_le: baseData.ty_le,
+                    max_ke_hoach
                 };
                 explodedData.push(newItem);
             }
         }
 
-        console.log("explodedData", explodedData)
+        console.log("explodedData", explodedData);
         post_form_data(explodedData);
     };
 
@@ -405,7 +413,7 @@ function Form_claim_chi_phi({ history }) {
                             <Button className='mt-2' variant="warning" type="submit" 
                             style={{ width: "100%", fontWeight: "bold" }}
                             disabled={
-                            (qua_tang === "Quà tặng" && 
+                            (qua_tang === "Quà tặng" && manv_info?.phongdeptsummary === 'HCP' &&
                                 (Number(so_ke_hoach.replace(/,/g, ""))  / Number(chon_hcp?.length)) >= 2000000)
                             }
                             >GỬI QL DUYỆT</Button>

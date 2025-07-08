@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'corsheaders',
+    'background_task',  # Corrected line
 ]
 
 MIDDLEWARE = [
@@ -99,7 +100,7 @@ REST_FRAMEWORK = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': '/app/thumuc/db.sqlite3', # <-- CHANGE THIS LINE
     }
 }
 

@@ -1,6 +1,7 @@
 /* eslint-disable */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
+import FeedbackContext from '../context/FeedbackContext'
 // import {  } from 'react-router-dom';
 
 import {
@@ -20,6 +21,7 @@ import {
 } from "react-bootstrap";
 
 const Nvbc_view_pdf = () => {
+    const { Inserted_at } = useContext(FeedbackContext)
     const history = useHistory();
     const [pdfUrl, setPdfUrl] = useState(null);
     const location = useLocation();
@@ -37,6 +39,7 @@ const Nvbc_view_pdf = () => {
     }
     const user = JSON.parse(storedUser);
     const phone = user?.phone;
+    const ma_kh_dms = user?.ma_kh_dms;
     // Extract the 'pdf' query parameter from the URL
     const queryParams = new URLSearchParams(location.search);
     const pdf = queryParams.get('pdf');
@@ -47,18 +50,20 @@ const Nvbc_view_pdf = () => {
 
     const timer = setTimeout(() => {
       const data = {
+        ma_kh_dms:ma_kh_dms,
         phone: phone,
-        document_id: documentId
+        document_id: documentId,
+        inserted_at: Inserted_at()
       }
       console.log(data)
       if (phone && documentId) {
         // console.log()
-        fetch("https://bi.meraplion.com/local/nvbc_track_view/", {
+        fetch("https://bi.meraplion.com/local/post_data/insert_nvbc_track_view/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify([data]),
         })
           .then((res) => {
             if (!res.ok) throw new Error("Failed to track view");

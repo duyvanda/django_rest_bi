@@ -28,34 +28,63 @@ function Cong_tac_phi({history}) {
     
     const { formatNumber, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
-    const fetch_initial_data = async (manv) => {
-        SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/form_data_log/?manv=${manv}&dropper=0`)
-        // const response = await fetch(`https://bi.meraplion.com/local/form_data_log/?manv=MR3055`)
-        
-        if (!response.ok) {
-            SetLoading(false)
-        }
-        else {
-        const data = await response.json()
-        // set_data_table(data['danhsach']);
-        // set_data_table_short(data['data_table_short']);
-        // set_so_kien_hang(data['so_kien_hang']);
-        // console.log(data);
-        SetLoading(false);
+    // const fetch_initial_data = async (manv) => {
+    //     SetLoading(true)
+    //     const response = await fetch(`https://bi.meraplion.com/local/form_data_log/?manv=${manv}&dropper=0`)
+    //     if (!response.ok) {
+    //         SetLoading(false)
+    //     }
+    //     else {
+    //     const data = await response.json()
+    //     SetLoading(false);
+    //     }
+    // }
 
-        }
-    }
+        const utteranceRef = useRef(null); // Ref for SpeechSynthesisUtterance
+        const [availableVoices, setAvailableVoices] = useState([]); // New state to store available voices
+        const [isSpeaking, setIsSpeaking] = useState(false); // Flag for AI speaking state
 
+    // Effect for handling browser's SpeechSynthesis and cleaning up
+    useEffect(() => {
+        const handleSpeakEnd = () => setIsSpeaking(false);
+        // Handler for when voices are loaded/changed
+        const handleVoicesChanged = () => {
+            setAvailableVoices(speechSynthesis.getVoices());
+            const voices = speechSynthesis.getVoices();
+            voices.forEach(voice => console.log(`  Name: ${voice.name}, Lang: ${voice.lang}, Default: ${voice.default}`));
+        };
+
+        if (utteranceRef.current) {
+            utteranceRef.current.onend = handleSpeakEnd;
+            utteranceRef.current.onerror = (event) => {
+                console.error('SpeechSynthesisUtterance.onerror', event);
+                setIsSpeaking(false);
+            };
+        }
+        // Load voices initially and listen for changes
+        if (speechSynthesis) {
+            speechSynthesis.addEventListener('voiceschanged', handleVoicesChanged);
+            // Also load immediately if voices are already available (e.g., on page refresh)
+            if (speechSynthesis.getVoices().length > 0) {
+                setAvailableVoices(speechSynthesis.getVoices());
+            }
+        }
+
+        return () => {
+            // Clean up when component unmounts
+            if (utteranceRef.current) {
+                utteranceRef.current.onend = null;
+                utteranceRef.current.onerror = null;
+            }
+            if (speechSynthesis) {
+                speechSynthesis.cancel();
+                speechSynthesis.removeEventListener('voiceschanged', handleVoicesChanged);
+            }
+        };
+    }, []); // Empty dependency array means this runs once on mount and cleanup on unmount
 
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {        
-        // navigator.geolocation.getCurrentPosition(position => {
-        //     const { latitude, longitude } = position.coords;
-        //     setInitialPosition([latitude, longitude]);
-        //     console.log("current loc", [latitude, longitude])
-        // });
-        
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
@@ -67,9 +96,6 @@ function Cong_tac_phi({history}) {
         };
     }, []);
     const [manv, set_manv] = useState("");
-    // const [selectedFile, setSelectedFile] = useState([]);
-    // const [text_1, set_text_1] = useState('A1- Ăn uống');
-    // const [text_2, set_text_2] = useState('Phạm Thị Quỳnh');
     const [text_3, set_text_3] = useState('');
 
     // AUDIO
@@ -82,6 +108,7 @@ function Cong_tac_phi({history}) {
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
     const countdownRef = useRef(null);
+
 
     const [extracted_data, set_extracted_data] = useState({
           thang: '',
@@ -118,6 +145,53 @@ function Cong_tac_phi({history}) {
                 inserted_at: '',
             });
         };
+
+    // Function to synthesize speech using Web Speech API
+    const synthesizeSpeech = async (text) => {
+        if (!('speechSynthesis' in window)) {
+            addMessage('AI', "Your browser does not support speech synthesis.");
+            return;
+        }
+        setIsSpeaking(true);
+        const utterance = new SpeechSynthesisUtterance(text);
+        utteranceRef.current = utterance; // Store utterance in ref
+
+        utterance.lang = 'vi-VN'; // Set language to Vietnamese
+
+        // Attempt to find a Vietnamese female voice
+        const vietnameseVoices = availableVoices.filter(voice => 
+            voice.lang === 'vi-VN' || voice.lang === 'vi_VN' // Check for common Vietnamese language tags
+        );
+        let selectedVoice = null;
+
+        // Prioritize female voices if available and name suggests it
+        selectedVoice = vietnameseVoices.find(voice =>
+            voice.name.toLowerCase().includes('female') ||
+            voice.name.toLowerCase().includes('girl') ||
+            voice.name.toLowerCase().includes('nữ') // 'nữ' means female in Vietnamese
+        );
+
+        // If no specific female voice found, use the first available Vietnamese voice
+        if (!selectedVoice && vietnameseVoices.length > 0) {
+            selectedVoice = vietnameseVoices[0];
+        }
+
+        if (selectedVoice) {
+            utterance.voice = selectedVoice;
+            console.log(`Using voice: ${selectedVoice.name} (${selectedVoice.lang})`);
+        } else {
+            console.warn('No specific Vietnamese voice found, using default browser voice for Vietnamese.');
+        }
+
+        utterance.onend = () => {
+            setIsSpeaking(false);
+        };
+        utterance.onerror = (event) => {
+            console.error('SpeechSynthesisUtterance.onerror', event);
+            setIsSpeaking(false);
+        };
+        speechSynthesis.speak(utterance);
+    };
 
     const startRecording = async () => {
         setAudioBlob(null);
@@ -300,6 +374,8 @@ function Cong_tac_phi({history}) {
                                 <Button hidden={true} onClick={startRecording} disabled={recording} variant="primary">
                                     Ghi Âm
                                 </Button>
+
+                                <Button  onClick={() => synthesizeSpeech("Tôi là Ai")} >Nghe</Button>
 
                                 <FloatingLabel label="Tháng" className="border rounded mt-2">
                                     <Form.Control

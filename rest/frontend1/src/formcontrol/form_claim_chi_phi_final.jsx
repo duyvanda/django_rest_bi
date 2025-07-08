@@ -27,7 +27,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
       
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
-      const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_final/?manv=${manv}`)
+      const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_v2/?manv=${manv}&page=invmapped`)
       if (!response.ok) {
           SetLoading(false)
       }
@@ -59,19 +59,24 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     const [debouncedDataSubmit, setDebouncedDataSubmit] = useState([]);
     const [isDebouncing, setIsDebouncing] = useState(false);
 
-      // NEW useEffect: Debounce data_submit changes
     useEffect(() => {
       setIsDebouncing(true);
       const handler = setTimeout(() => {
-        setDebouncedDataSubmit(data_submit);
-        setIsDebouncing(false); // Kết thúc debounce: kích hoạt lại nút
+        const filteredData = data_submit.filter(item =>
+          item && item.so_hoa_don && item.so_hoa_don.length >= 1
+        );
+
+        if (filteredData.length > 0) {
+          setDebouncedDataSubmit(filteredData);
+        }
+        setIsDebouncing(false); // End debounce: re-enable the button
       }, 1500); // 1500ms debounce delay
 
-      // Cleanup function: clear timeout if data_submit changes before the delay
+      // Cleanup function to clear the timeout
       return () => {
         clearTimeout(handler);
       };
-    }, [data_submit]); // Chạy lại hiệu ứng này bất cứ khi nào data_submit thay đổi
+    }, [data_submit]); // Dependency array: re-run effect when data_submit changes
 
   const [invoices,  set_invoices] = useState ([]);
   // const [selected_invoices, set_selected_invoices] = useState([]);
@@ -90,7 +95,7 @@ const Form_claim_chi_phi_final = ( {history} ) => {
 
   const post_form_data = async (data) => {
     SetLoading(true)
-    const response = await fetch(`https://bi.meraplion.com/local/insert_form_claim_chi_phi_final/`, {
+    const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_gift_expenses/`, {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -124,10 +129,12 @@ const handleApproval = async (idToApprove) => {
   let record_to_post = null; // Initialize a variable to hold the selected record
 
   const updatedRecords = data_submit.map((record) => {
+    console.log("Comparing:", record.id, "with", idToApprove);
     if (record.id === idToApprove) {
       let updatedRecord = Object.assign({}, record);
       updatedRecord.status = "invmapped";
-      record_to_post = updatedRecord; // Assign the updated record to the variable
+      updatedRecord.inserted_at = Inserted_at();
+      record_to_post = updatedRecord;
       return updatedRecord;
     }
     return record;
@@ -136,7 +143,7 @@ const handleApproval = async (idToApprove) => {
   if (record_to_post && record_to_post.so_hoa_don && record_to_post.so_hoa_don.length >= 1)
   {
       post_form_data([record_to_post]);
-      console.log("Posting selected record:", record_to_post);
+      console.log("Posting selected record:", [record_to_post]);
   } else {
     console.warn("No record found with ID to post:", idToApprove);
   }
@@ -176,27 +183,18 @@ const handleApproval = async (idToApprove) => {
 const handleInvoiceChange = (id, selectedInvoices) => {
   const updatedRecords = data_submit.map((record) => {
     if (record.id === id) {
-      // Map over the array of selected invoices to get the required data for each
       const newInvoiceDetails = selectedInvoices ? selectedInvoices.map( (invoice, index) => ({
         so_hoa_don: invoice.so_hoa_don,
         so_tien_hoa_don: invoice.so_tien_hoa_don,
         ngay_hoa_don: invoice.ngay_hoa_don,
         index: index + 1
       })) : [];
-
-      // Calculate the total sum of so_tien_hoa_don from selected invoices
-      // This can be used for so_ke_hoach and/or so_tien_hoa_don if you choose to sum them.
       const totalSoTienHoaDon = newInvoiceDetails.reduce((sum, invoice) => sum + (invoice.so_tien_hoa_don || 0), 0);
-
         return {
           ...record,
-          // Store an array of objects, each containing the invoice number and amount
           so_hoa_don: newInvoiceDetails,
-          // Update so_ke_hoach to reflect the total of selected invoices
           so_ke_hoach: totalSoTienHoaDon,
-          // Keep so_tien_hoa_don as the sum of selected invoices
           so_tien_hoa_don: totalSoTienHoaDon,
-          // Explicitly keep ngay_hoa_don as null
           ngay_hoa_don: null,
         };
     }
@@ -333,11 +331,12 @@ useEffect(() => {
         </thead>
         <tbody>
           {data_submit.map((record) => (
-            <tr key={record.id} style={{
+            <tr key={record.id} 
+              style={{
               padding: '5px', 
               fontSize: '14px', 
               backgroundColor: OverbudgetIds.includes(record.id) ? 'rgb(254 202 202)' : 'transparent',
-              height: '150px'
+              height: '200px'
               }}
               >
               <td>{record.id.slice(-6)}</td>
@@ -354,19 +353,14 @@ useEffect(() => {
                   options={invoices}
                   getOptionValue={(el) => el.so_hoa_don}
                   getOptionLabel={(el) => `${el.so_hoa_don} - ${f.format(el.so_tien_hoa_don)} - ${el.ngay_hoa_don}`}
-                  // *** MODIFICATION HERE ***
-                  // Use record.so_hoa_don directly as the value for the multi-select
-                  // It's already in the format that react-select's isMulti expects (array of objects)
                   value={record.so_hoa_don}
-                  // *** END MODIFICATION ***
                   onChange={(selectedInvoices) => {
-                    // Call handleInvoiceChange for the specific record
                     handleInvoiceChange(record.id, selectedInvoices);
                     console.log("selectedInvoices", selectedInvoices);
                   }}
                   isClearable
                   isSearchable
-                  isMulti // <--- This prop is crucial for multi-selection
+                  isMulti
                   placeholder="Chọn hóa đơn"
                   styles={{
                     control: (base) => ({
@@ -374,6 +368,14 @@ useEffect(() => {
                       backgroundColor: "#f0f8ff",
                     }),
                     placeholder: (base) => ({ ...base, color: "#212529" }),
+
+                          // ADD THIS TO CONTROL THE NUMBER OF ROWS SHOWN
+                    menuList: (base) => ({
+                      ...base,
+                      maxHeight: '400px', // Adjust this value as needed (e.g., '200px', '400px')
+                      // You can also consider setting a fixed height if you want
+                      // height: '300px',
+                    }),
                   }}
                 />
               </td>
@@ -386,7 +388,11 @@ useEffect(() => {
                 OverbudgetIds.length >= 1 ||
                 isDebouncing === true ||
                 (!record.so_hoa_don || record.so_hoa_don.length === 0)
-                } variant="success" onClick={() => handleApproval(record.id)}>
+                } variant="success" onClick={() => {
+                  console.log("Button clicked!", record.id);
+                  handleApproval(record.id);
+
+                }}>
                 Gửi
                 </Button>
               </td>

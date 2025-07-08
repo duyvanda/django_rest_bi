@@ -30,11 +30,12 @@ function Tao_hcp_pcl({history, location}) {
     const fetch_initial_data = async (manv) => {
         SetLoading(true);
         // if PCL
-        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_data_tao_hcp_bv/?manv=${manv}&form_layout=PCL&lam_them=BV`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_data_tao_hcp_pcl/?manv=${manv}&form_layout=PCL&lam_them=BV`)
         // const response = await fetch(`https://bi.meraplion.com/local/tao_hcp_bv_get_data_hcp/?manv=MR3047&form_layout=BV&lam_them=PCL`)
         
         if (response.ok) {
             const data = await response.json()
+            set_arr_tinh(data['lst_tinh'])
             set_arr_ngay_sinh(data['lst_ngay_sinh'])
             set_arr_thang_sinh(data['lst_thang_sinh'])
             set_arr_nam_sinh(data['lst_nam_sinh'])
@@ -48,7 +49,6 @@ function Tao_hcp_pcl({history, location}) {
             set_lst_nganh(data['lst_nganh']);
             set_lst_nganh_chuyen_khoa(data['lst_nganh_chuyen_khoa']);
             set_lst_nganh_khoa_phong(data['lst_nganh_khoa_phong']);
-
             set_lst_khc_chon_phu(data['lst_khc_chon_phu']);
             set_lst_chuc_vu_pcl(data['lst_chuc_vu_pcl']);
 
@@ -410,8 +410,8 @@ function Tao_hcp_pcl({history, location}) {
             "dia_chi":dia_chi,
             "trang_thai":"active"
         }
-        console.log(data);
-        post_form_data(data);
+        console.log([data]);
+        post_form_data([data]);
     }
 
     if (true) {

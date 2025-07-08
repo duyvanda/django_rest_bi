@@ -1,233 +1,310 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import initSqlJs from 'sql.js';
+import React, { useState, useEffect, useRef } from 'react';
+import { Container, Button, Form, Spinner, Alert, Card, InputGroup } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import './test.css'; // Import CSS tùy chỉnh của bạn
+import { BsFillMicFill } from 'react-icons/bs'; // Import icon microphone (Cần cài: npm install react-bootstrap-icons)
 
-function InvoiceClaimsProcessor() {
-  const [db, setDb] = useState(null);
-  const [loadingDb, setLoadingDb] = useState(true);
-  const [rawData, setRawData] = useState([]); // State for raw data from API
-  const [adjustedData, setAdjustedData] = useState([]); // State for processed data
-  const [loadingApi, setLoadingApi] = useState(false);
-  const [processingData, setProcessingData] = useState(false);
+// Utility function to convert base64 string to Blob
+// Được sử dụng để chuyển đổi audio Base64 từ backend thành Blob để trình duyệt phát
+const base64toBlob = (base64, mimeType) => {
+  const byteCharacters = atob(base64); // Giải mã Base64 thành chuỗi nhị phân
+  const byteArrays = [];
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteArrays.push(byteCharacters.charCodeAt(i)); // Chuyển ký tự thành mã ASCII
+  }
+  const byteArray = new Uint8Array(byteArrays); // Tạo Uint8Array từ mã ASCII
+  return new Blob([byteArray], { type: mimeType }); // Tạo Blob từ Uint8Array
+};
+
+function Test() {
+  // State để quản lý trạng thái tải (loading) của ứng dụng
+  const [loading, setLoading] = useState(false);
+  // State để lưu trữ thông báo lỗi
   const [error, setError] = useState(null);
+  // State để lưu trữ lịch sử cuộc trò chuyện
+  // Mỗi tin nhắn là một object {role: 'user'/'ai', text: '...', audioUrl: '...'}
+  const [conversation, setConversation] = useState([]);
+  // State để kiểm tra xem micro có đang ghi âm không
+  const [isRecording, setIsRecording] = useState(false);
 
-  // 1. Initialize SQLite DB once on component mount
+  // Ref để truy cập MediaRecorder instance (API ghi âm của trình duyệt)
+  const mediaRecorderRef = useRef(null);
+  // Ref để lưu trữ các đoạn audio đã ghi được
+  const audioChunksRef = useRef([]);
+  // Ref để ngăn không cho nhiều âm thanh phát cùng lúc
+  const audioPlayingRef = useRef(false); 
+
+  // Ref để cuộn tự động đến cuối khung chat
+  const chatContainerRef = useRef(null); 
+
+    // Effect để tự động cuộn đến cuối khi load vào page
   useEffect(() => {
-    async function initDatabase() {
-      try {
-        const SQL = await initSqlJs({
-          locateFile: file => `/${file}`
-        });
-        const newDb = new SQL.Database();
-        setDb(newDb);
-        setLoadingDb(false);
-      } catch (err) {
-        console.error("Failed to load SQL.js:", err);
-        setError("Failed to load database. Check console for details.");
-        setLoadingDb(false);
-      }
+    document.getElementById("start").focus();
+  }, []);
+
+  // Effect để tự động cuộn đến cuối khung chat khi có tin nhắn mới
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight + 200;
+    //   chatContainerRef.scrollIntoView({ behavior: "smooth" });
     }
-    initDatabase();
+  }, [conversation]); // Chạy lại mỗi khi 'conversation' thay đổi
+
+  // Effect để dọn dẹp các Object URL khi component unmount hoặc conversation thay đổi
+  // Giúp giải phóng bộ nhớ
+  useEffect(() => {
     return () => {
-      if (db) {
-        db.close();
-        console.log("SQLite database closed when unmounts. Because you navigated to a different page. If you didn't close it, the connection could remain open and consuming memory");
-      }
-    };
-  }, []); // Empty dependency array means this runs only once
-
-  // 2. Simulate API Call to get rawData
-  useEffect(() => {
-    async function fetchData() {
-      setLoadingApi(true);
-      setError(null);
-      try {
-        // Simulate an API call delay
-        await new Promise(resolve => setTimeout(resolve, 0));
-
-        const apiData = [
-          {"recordid":1,"claim_money":300000,"invoice_number":2,"invoice_number_original_budget":1000000},
-          {"recordid":2,"claim_money":300000,"invoice_number":2,"invoice_number_original_budget":1000000},
-          {"recordid":3,"claim_money":500000,"invoice_number":2,"invoice_number_original_budget":1000000},
-          {"recordid":4,"claim_money":500000,"invoice_number":3,"invoice_number_original_budget":600000},
-          {"recordid":5,"claim_money":500000,"invoice_number":"","invoice_number_original_budget":""}
-        ];
-        setRawData(apiData);
-      } catch (err) {
-        console.error("API call failed:", err);
-        setError("Failed to fetch data from API.");
-      } finally {
-        setLoadingApi(false);
-      }
-    }
-
-    if (loadingDb===false && db) { // Fetch data once DB is ready
-      fetchData();
-    }
-  //If you used [] (empty array):
-  //The API useEffect would run only once, immediately after the initial component mount.
-  //At that time, loadingDb WOULD STILL be true, and db would be null/undefined.
-  //The condition if (loadingDb === false && db) would be false.
-  //fetchData() would NEVER be called
-  // Refetch if db loading state changes or db instance becomes available
-  }, [loadingDb, db] ); 
-
-
-  // 3. Function to process data when button is clicked
-  const processClaims = async () => {
-    if (!db || rawData.length === 0) {
-      console.warn("Database not ready or no raw data to process.");
-      return;
-    }
-
-    setProcessingData(true);
-    setError(null);
-
-    try {
-      // **Important**: Re-initialize the table and insert data
-      // This is crucial because `db.run()` operations are persistent on the *current* DB instance.
-      // If you don't drop/recreate, subsequent clicks would add duplicate data or sum it up incorrectly.
-      db.run(`DROP TABLE IF EXISTS claims;`);
-      db.run(`
-        CREATE TABLE claims (
-          recordid INTEGER PRIMARY KEY,
-          claim_money REAL,
-          invoice_number INTEGER,
-          invoice_number_original_budget REAL
-        );
-      `);
-
-      // Prepare values for insertion, converting to numbers and handling empty strings
-      const insertStmt = db.prepare(`
-        INSERT INTO claims (recordid, claim_money, invoice_number, invoice_number_original_budget)
-        VALUES (?, ?, ?, ?);
-      `);
-
-      rawData.forEach(row => {
-        insertStmt.run([
-          row.recordid,
-          parseFloat(row.claim_money),
-          row.invoice_number,
-          row.invoice_number_original_budget === ""
-            ? null
-            : parseFloat(row.invoice_number_original_budget)
-        ]);
+      conversation.forEach(msg => {
+        if (msg.audioUrl) {
+          URL.revokeObjectURL(msg.audioUrl); // Giải phóng Object URL
+        }
       });
-      insertStmt.free(); // Release the prepared statement
+    };
+  }, [conversation]); // Chạy mỗi khi 'conversation' thay đổi (hoặc component unmount)
 
-      // SQL Query with Window Function
-      const query = `
-        SELECT
-          c.recordid,
-          c.claim_money,
-          c.invoice_number,
-          c.invoice_number_original_budget,
-          SUM(c.claim_money) OVER (PARTITION BY c.invoice_number) AS total_claim_money,
-          CASE
-            WHEN c.invoice_number_original_budget IS NOT NULL AND
-                 SUM(c.claim_money) OVER (PARTITION BY c.invoice_number) > c.invoice_number_original_budget
-            THEN 1
-            ELSE 0
-          END AS overbudget
-        FROM claims AS c
-        ORDER BY c.recordid;
-      `;
+  // Hàm để phát một đoạn âm thanh
+  const playAudio = async (url) => {
+    if (!url) return; // Không làm gì nếu URL rỗng
+    if (audioPlayingRef.current) return; // Ngăn phát nhiều âm thanh cùng lúc
 
-      const res = db.exec(query);
-
-      if (res.length > 0) {
-        const columns = res[0].columns;
-        const values = res[0].values;
-        const formattedResults = values.map(row => {
-          const rowObject = {};
-          columns.forEach((col, i) => {
-            rowObject[col] = row[i]
-          }
-          //   rowObject[col] = (col === 'claim_money' && typeof row[i] === 'number')
-          //                     ? String(row[i])
-          //                     : row[i];
-
-          //   if (col === 'invoice_number_original_budget' && rowObject.recordid === 5) {
-          //     rowObject[col] = '';
-          //   } else if (col === 'invoice_number_original_budget' && row[i] === null) {
-          //       rowObject[col] = ''; 
-          //   }
-          // }
-        )
-        ;
-          return rowObject;
+    audioPlayingRef.current = true; // Đặt cờ đang phát
+    try {
+      const audio = new Audio(url); // Tạo đối tượng Audio
+      // Trả về một Promise để chờ audio phát xong
+      await new Promise((resolve, reject) => {
+        audio.onended = resolve; // Giải quyết Promise khi audio kết thúc
+        audio.onerror = reject;  // Từ chối Promise nếu có lỗi phát
+        audio.play().catch(e => { // Bắt lỗi nếu play() thất bại (ví dụ: người dùng chưa tương tác)
+          console.error("Error playing audio:", e);
+          reject(e);
         });
-        console.log(formattedResults)
-        setAdjustedData(formattedResults);
-      } else {
-        setAdjustedData([]);
-      }
-    } catch (processErr) {
-      console.error("Error processing data:", processErr);
-      setError("Failed to process data. Check console for details.");
+      });
+    } catch (e) {
+      console.error("Lỗi khi phát âm thanh:", e);
+      setError("Lỗi khi phát âm thanh.");
     } finally {
-      setProcessingData(false);
+      audioPlayingRef.current = false; // Xóa cờ đang phát khi kết thúc hoặc lỗi
     }
-  } // Dependencies: db instance and rawData
-
-  const handleProcessButtonClick = () => {
-    processClaims();
   };
 
-  // --- Render Logic ---
-  if (loadingDb || loadingApi) {
-    return <div>{loadingDb ? "Loading database..." : "Fetching raw data..."}</div>;
-  }
+  // --- Bắt đầu chat (Phát lời chào và chuẩn bị ghi âm) ---
+  const handleStartChat = async () => {
+    setLoading(true); // Bắt đầu loading
+    setError(null);    // Xóa lỗi cũ
+    setConversation([]); // Xóa cuộc trò chuyện trước đó
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+    try {
+      // 1. Gọi backend để lấy lời chào
+      const response = await fetch('https://bi.meraplion.com/local/greet/', { method: 'GET' });
 
-  return (
-    <div>
-      <h1>Invoice Claims Processor</h1>
+      if (!response.ok) {
+        throw new Error(`Lỗi HTTP: ${response.status} - ${await response.text()}`);
+      }
 
-      <button onClick={handleProcessButtonClick} disabled={processingData || rawData.length === 0}>
-        {processingData ? "Processing..." : "Process Claims"}
-      </button>
+      const audioBlob = await response.blob(); // Nhận audio dưới dạng Blob
+      const audioUrl = URL.createObjectURL(audioBlob); // Tạo URL Object cho Blob
+      
+      const greetingMessage = {
+        role: 'ai',
+        text: "Chào bạn, hãy nói về chủ đề của bạn.",
+        audioUrl: audioUrl
+      };
+      setConversation([greetingMessage]); // Thêm lời chào vào cuộc trò chuyện
 
-      <h2>Raw Data (from API)</h2>
-      {rawData.length > 0 ? (
-        <pre>{JSON.stringify(rawData, null, 2)}</pre>
-      ) : (
-        <p>No raw data fetched yet.</p>
-      )}
+      // 2. Phát lời chào, sau đó tự động bắt đầu ghi âm
+      const audio = new Audio(audioUrl);
+      audio.onended = () => {
+        startRecording(); // Bắt đầu ghi âm khi lời chào kết thúc
+      };
+      audio.onerror = (e) => {
+        console.error("Lỗi khi phát lời chào:", e);
+        setError("Lỗi khi phát lời chào.");
+        setLoading(false); // Dừng loading nếu có lỗi phát
+      };
+      audio.play().catch(e => { // Bắt lỗi nếu play() thất bại
+        console.error("Lỗi khi phát lời chào:", e);
+        setError("Lỗi khi phát lời chào.");
+        setLoading(false);
+      });
+      
+    } catch (err) {
+      console.error("Lỗi khi bắt đầu chat:", err);
+      setError(err.message || "Không thể bắt đầu chat.");
+      setLoading(false); // Dừng loading nếu có lỗi
+    }
+  };
 
-      <h2>Adjusted Data (Processed)</h2>
-      {adjustedData.length > 0 ? (
-        <table>
-          <thead>
-            <tr>
-              <th>Record ID</th>
-              <th>Claim Money</th>
-              <th>Invoice Number</th>
-              <th>Original Budget</th>
-              <th>Total Claim Money</th>
-              <th>Overbudget</th>
-            </tr>
-          </thead>
-          <tbody>
-            {adjustedData.map((row) => (
-              <tr key={row.recordid}>
-                <td>{row.recordid}</td>
-                <td>{row.claim_money}</td>
-                <td>{row.invoice_number}</td>
-                <td>{row.invoice_number_original_budget !== null ? row.invoice_number_original_budget : ''}</td>
-                <td>{row.total_claim_money}</td>
-                <td>{row.overbudget}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>Click "Process Claims" to see adjusted data.</p>
-      )}
-    </div>
+  // --- Bắt đầu ghi âm giọng nói người dùng ---
+  const startRecording = async () => {
+    setError(null); // Xóa lỗi cũ
+    audioChunksRef.current = []; // Xóa các đoạn audio đã ghi trước đó
+    // Dừng loading từ lời chào, giờ là trạng thái ghi âm
+
+    try {
+      // Yêu cầu quyền truy cập microphone
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Tạo MediaRecorder để ghi âm. Định dạng WebM Opus thường được khuyến nghị cho Google STT.
+      mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' }); 
+      
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        // Thu thập các đoạn dữ liệu audio khi chúng có sẵn
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorderRef.current.onstop = () => {
+        // Khi ghi âm dừng, tạo một Blob từ các đoạn audio
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm;codecs=opus' });
+        sendAudioToBackend(audioBlob); // Gửi Blob này lên backend
+      };
+
+      mediaRecorderRef.current.start(); // Bắt đầu ghi âm
+      setLoading(false);
+      setIsRecording(true); // Cập nhật trạng thái ghi âm
+      console.log("Bắt đầu ghi âm...");
+    } catch (err) {
+      console.error("Lỗi khi truy cập microphone:", err);
+      setError("Không thể truy cập microphone. Vui lòng cấp quyền.");
+      setLoading(false); // Dừng loading nếu có lỗi
+    }
+  };
+
+  // --- Dừng ghi âm giọng nói người dùng ---
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop(); // Dừng ghi âm
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop()); // Tắt microphone
+      setIsRecording(false); // Cập nhật trạng thái ghi âm
+      setLoading(true); // Bắt đầu loading khi đang gửi và xử lý audio
+      console.log("Dừng ghi âm, đang gửi audio...");
+    }
+  };
+
+  // --- Gửi audio người dùng lên backend và nhận phản hồi AI ---
+  const sendAudioToBackend = async (audioBlob) => {
+    const formData = new FormData(); // Tạo FormData để gửi file
+    formData.append('audio', audioBlob, 'user_audio.webm'); // Khóa là 'audio'
+    try {
+      // Gửi FormData đến API chat của Django
+      const response = await fetch('https://bi.meraplion.com/local/chat/', { 
+        method: 'POST',
+        body: formData, // FormData tự động đặt Content-Type là multipart/form-data
+      });
+
+      if (!response.ok) {
+        // Nếu phản hồi không OK (ví dụ: 4xx, 5xx), đọc lỗi từ body
+        const errorData = await response.json();
+        throw new Error(`Lỗi HTTP: ${response.status} - ${errorData.error || response.statusText}`);
+      }
+
+      const data = await response.json(); // Nhận phản hồi JSON từ backend
+      
+      // Thêm tin nhắn của người dùng vào cuộc trò chuyện
+      const newUserMessage = { role: 'user', text: data.user_text || "Không nhận dạng được giọng nói.", audioUrl: null };
+      setConversation(prev => [...prev, newUserMessage]);
+
+      // Xử lý audio phản hồi của AI (nếu có)
+      let aiAudioObjUrl = null;
+      if (data.ai_audio_base64) {
+        const audioBlob = base64toBlob(data.ai_audio_base64, 'audio/mp3');
+        aiAudioObjUrl = URL.createObjectURL(audioBlob);
+      }
+
+      // Thêm tin nhắn phản hồi của AI vào cuộc trò chuyện
+      const aiMessage = { 
+        role: 'ai', 
+        text: data.ai_text_response || "Xin lỗi, tôi không thể phản hồi lúc này.", 
+        audioUrl: aiAudioObjUrl 
+      };
+      setConversation(prev => [...prev, aiMessage]);
+
+      // Phát audio phản hồi của AI
+      if (aiAudioObjUrl) {
+        playAudio(aiAudioObjUrl);
+      }
+
+    } catch (err) {
+      console.error("Lỗi khi gửi audio hoặc nhận phản hồi:", err);
+      setError(err.message || 'Đã xảy ra lỗi khi xử lý yêu cầu.');
+    } finally {
+      setLoading(false); // Dừng loading
+    }
+  };
+
+    return (
+    <Container className="chat-app-container" fluid>
+      <Card className="chat-card">
+        <Card.Header className="chat-header">
+          <h3 className="card-title mb-0">Chat với AI bằng Giọng nói</h3>
+        </Card.Header>
+        <Card.Body className="chat-body" ref={chatContainerRef}>
+          {conversation.length === 0 && !loading && !error && !isRecording ? (
+            <p className="text-center text-secondary">Nhấn "Trò chuyện" để bắt đầu!</p>
+          ) : (
+            conversation.map((msg, index) => (
+              <div key={index} className={`message-bubble ${msg.role}`}>
+                <div className="message-content">
+                  {msg.text}
+                  {msg.audioUrl && (
+                    <audio controls src={msg.audioUrl} className="audio-player mt-1">
+                      Trình duyệt của bạn không hỗ trợ audio.
+                    </audio>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+          
+          {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+        </Card.Body>
+        <Card.Footer className="chat-footer">
+          <InputGroup>
+            {!isRecording && !loading && conversation.length === 0 && (
+              <Button variant="primary" onClick={handleStartChat} disabled={loading} className="w-100">
+                Trò chuyện
+              </Button>
+            )}
+            
+            {!isRecording && !loading && conversation.length > 0 && (
+              <> {/* React Fragment để nhóm nhiều elements */}
+                <Button 
+                  variant="success" 
+                  onClick={startRecording} 
+                  disabled={loading} 
+                  className="flex-fill fw-bold" // flex-fill để chiếm không gian đều
+                >
+                    <BsFillMicFill size={20} className="me-2" /> Ghi âm 
+                </Button>
+                <Button 
+                  variant="outline-success" // Dùng variant khác để phân biệt
+                  onClick={handleStartChat} // Vẫn gọi handleStartChat để reset cuộc trò chuyện
+                  disabled={loading} 
+                  className="flex-fill fw-bold me-2" // flex-fill để chiếm không gian đều, me-2 tạo margin
+                >
+                  TALK mới
+                </Button>
+              </>
+            )}
+
+            {isRecording && (
+              <Button variant="danger" onClick={stopRecording} disabled={loading} className="w-100">
+                <Spinner animation="grow" size="sm" /> Đang ghi âm... Dừng lại!
+              </Button>
+            )}
+            
+            {loading && (
+              <Button variant="danger" onClick={stopRecording} disabled={loading} className="w-100">
+                <Spinner animation="grow" size="sm" /> Đang xử lý âm thanh!
+              </Button>
+            )}
+          </InputGroup>
+        </Card.Footer>
+        <p className='ml-3' id="start">Gemini 2.5 Pro</p>
+      </Card>
+      
+    </Container>
   );
 }
 
-export default InvoiceClaimsProcessor;
+export default Test;

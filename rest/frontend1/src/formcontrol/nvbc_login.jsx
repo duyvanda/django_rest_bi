@@ -51,7 +51,7 @@ const Nvbc_login = ({history, location}) => {
       });
   
       if (!response.ok) {
-        window.alert("Vui lòng kiểm tra số điện thoại, hệ thống chỉ dành cho nhân viên bán chính. Liên hệ CSKH để được hướng dẫn thêm!");
+        window.alert("Vui lòng kiểm tra số điện thoại, hệ thống chỉ dành cho KH đã kết nối ZaloOA của MerapLion. Vui lòng liên hệ CSKH hoặc hotline Meraplion 0888 333 489 để được hướng dẫn chi tiết!");
         return;  // Exit early if the response is not OK
       }
   
