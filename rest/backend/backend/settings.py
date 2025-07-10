@@ -9,8 +9,9 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
-
+print("BASE_DIR", BASE_DIR)
 print("TEMPLATE_DIR", TEMPLATE_DIR)
+print("admin page: admin/admin")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -100,7 +101,8 @@ REST_FRAMEWORK = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/app/thumuc/db.sqlite3', # <-- CHANGE THIS LINE
+        'NAME': BASE_DIR / 'thumuc/db.sqlite3', # This is the key change
+        # 'NAME': '/app/thumuc/db.sqlite3' <== for bilocalrest
     }
 }
 

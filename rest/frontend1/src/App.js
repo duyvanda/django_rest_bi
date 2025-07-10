@@ -91,8 +91,11 @@ import Nvbc_view_video from  "./formcontrol/nvbc_view_video";
 
 // import Kt_de_xuat_chi_phi from  "./formcontrol/kt_de_xuat_chi_phi";
 
+
+
 import Chat from "./biagent/chat";
 import Elevenlabs from "./biagent/elevenlabs";
+import Diaflow from "./biagent/diaflow";
 import Qr_scan_quan_ly_tai_san from "./formcontrol/qr_scan_quan_ly_tai_san";
 import Qr_scan_quan_ly_tai_san_v2 from "./formcontrol/qr_scan_quan_ly_tai_san_v2";
 
@@ -206,6 +209,7 @@ function AppContent() {
                 
                 <Route exact path="/biagent" component={Chat} />
                 <Route exact path="/elevenlabs" component={Elevenlabs} />
+                <Route exact path="/diaflow" component={Diaflow} />
 
                 {/* BOOTSTRAP */}
                 {/* <Route exact path="/bootstrap/spacing" component={Spacing} /> */}
