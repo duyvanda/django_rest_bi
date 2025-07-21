@@ -264,10 +264,6 @@ def GetOneKHVNP(request,pk):
     db=firebase.get_db()
     res = db.collection('vnp_cust').document(mkh).get()
     dict = res.to_dict()
-    # print(res)
-    # print(dict)
-    # print(len(dict))
-
     n_dict = {
     "diachikh": "Chưa Tạo Mã",
     "tenkhachhang": "Chưa Tạo Mã",

@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 // import { Container, Row, Col, Card } from 'react-bootstrap';
 import { Link, useHistory } from "react-router-dom";
 import { FaPlus, FaMinus } from 'react-icons/fa'; // Import plus and minus icons
+import { BiStar, BiTrophy } from "react-icons/bi";
+import { FaStar, FaFire } from "react-icons/fa";
 import {
   Button,
   Col,
@@ -22,7 +24,13 @@ import {
 
 const Nvbc_mainpage = ({history}) => {
 
-
+    const list_chon = [
+        // { id: 1, value: "6 điểm : Ổn", color: "#d1d1d1", icon: <BiStar /> },
+        // { id: 2, value: "7 điểm : Hay", color: "#a0e6a0", icon: <FaStar /> },
+        // { id: 3, value: "8 điểm : Khá Hay", color: "#6ad06a", icon: <FaStar style={{ color: "gold" }} /> },
+        { id: 4, value: "Túi đựng mỹ phẩm, đồ du lịch da PU thoáng khí", color: "#42c1f5", icon: <FaFire style={{ color: "red" }} /> },
+        { id: 5, value: "Túi cói kèm charm đáng yêu", color: "#ffbf47", icon: <BiTrophy style={{ color: "gold" }} /> }
+    ];
 
   useEffect(() => {
     const storedUser = localStorage.getItem("nvbc_user");
@@ -55,6 +63,9 @@ const Nvbc_mainpage = ({history}) => {
   const [userPoint, setUserPoint] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState([]);
+
+  const [show_chon_qua_thang, set_show_chon_qua_thang] = useState(false);
+  const [selectedValue2, setSelectedValue2] = useState("");
 
   const [contentList, setContentList] = useState([]);
 
@@ -108,6 +119,9 @@ const Nvbc_mainpage = ({history}) => {
       setShowModal(false);
     };
 
+  const handleClose = () => set_show_chon_qua_thang(false);
+  // const handleShow = () => setShow(true);
+
   return (
     <div
       style={{
@@ -121,6 +135,57 @@ const Nvbc_mainpage = ({history}) => {
       <Container>
         <Row className="justify-content-center">
           <Col md={8} lg={6}>
+
+          <Modal show={show_chon_qua_thang} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>
+                Chúc mừng bạn đã là <br></br>
+                Thành viên tích cực nhất tháng 07/202525!!! <br></br>
+                Vui lòng chọn 1 trong 2 món quà bên dưới:
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+            
+          {list_chon.map((item) => (
+          <label 
+          key={item.id} 
+          style={{ 
+              display: "flex", alignItems: "center", gap: "12px",
+              padding: "10px", margin: "5px 0", borderRadius: "8px",
+              backgroundColor: selectedValue2 === item.value ? item.color : "#fff",
+              border: `2px solid ${item.color}`,
+              transition: "0.3s",
+              cursor: "pointer",
+              boxShadow: selectedValue2 === item.value ? "0px 0px 10px rgba(0,0,0,0.2)" : "none"
+          }}
+          >
+          <span style={{ fontSize: "22px", width: "25px", textAlign: "center", display: "flex", alignItems: "center" }}>
+              {item.icon}
+          </span>
+          <Form.Check
+              type="radio"
+              name="diem_chon"
+              id={`option-${item.id}`}
+              label={item.value}
+              value={item.value}
+              checked={selectedValue2 === item.value}
+              onChange={(e) => setSelectedValue2(e.target.value)}
+              style={{ display: "flex", alignItems: "center", flex: 1 }}
+          />
+          </label>
+          ))}
+
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Đóng
+              </Button>
+              <Button variant="primary" onClick={handleClose}>
+                Lưu quà
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
             {/* Header Section */}
             <Row className="align-items-center mb-3 px-2">
               <Col>

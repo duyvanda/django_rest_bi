@@ -1,30 +1,19 @@
 // src/App.js
 import React, { useState, useRef, useEffect } from 'react';
 
-const WS_URL = 'wss://birest-6ey4kecoka-as.a.run.app/ws/voice_echo1/';
+const WS_URL = 'wss://birest-6ey4kecoka-as.a.run.app/ws/voice_echo/';
 // const AUDIO_TYPE = 'audio/webm;codecs=opus';
 const SILENCE_DELAY = 2000; // 1 second
 const SILENCE_THRESHOLD = 0.01; // Adjust sensitivity
-
-const base64toBlob = (base64, mimeType) => {
-  const byteCharacters = atob(base64); // Giải mã Base64 thành chuỗi nhị phân
-  const byteArrays = [];
-  for (let i = 0; i < byteCharacters.length; i++) {
-    byteArrays.push(byteCharacters.charCodeAt(i)); // Chuyển ký tự thành mã ASCII
-  }
-  const byteArray = new Uint8Array(byteArrays); // Tạo Uint8Array từ mã ASCII
-  return new Blob([byteArray], { type: mimeType }); // Tạo Blob từ Uint8Array
-};
 
 function App() {
   const [micLevel, setMicLevel] = useState(0);
   const [waveformData, setWaveformData] = useState([]);
   const [isSilent, setIsSilent] = useState(false);
-  const [messages, setMessages] = useState(["Hi 21 !!!!"]);
+  const [messages, setMessages] = useState(["Hi 19 !!!!"]);
   const [isCalling, setIsCalling] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [status, setStatus] = useState('idle');
-  const [first_blob, set_first_blob] = useState(null);
   const mediaRecorderRef = useRef(null);
   const audioMimeTypeRef = useRef('');
   const socketRef = useRef(null);
@@ -57,26 +46,16 @@ function App() {
       setStatus('idle');   // Update UI status
     };
 
-    try {
-      const audioUrl = URL.createObjectURL(first_blob); // Tạo URL Object cho Blob
-      const audio = new Audio(audioUrl);
-      audio.play().catch(e => { // Bắt lỗi nếu play() thất bại
-      console.error("Lỗi khi phát lời chào:", e);
-      });
+    // Handle WebSocket error event
+    socketRef.current.onerror = (error) => {
+      setMessages(prev => [...prev, `⚠️ WebSocket error: ${error.message || error}`]);
+      setIsCalling(false); // Reset call state
+      setStatus('idle');   // Update UI status
+    };
 
-      audio.onended = async () => {
-      // Request microphone access
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaStreamRef.current = stream;
-      setMessages(prev => [...prev, 'Voice: Microphone access granted.']);
-      };
-
-    }
-    catch (e) {
-      setMessages(prev => [...prev, `Lỗi khi gọi greet: ${e.message || e}`]);
-    }
-
-
+    // Request microphone access
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaStreamRef.current = stream;
 
     // Initialize or resume AudioContext
     if (!audioContextRef.current) {
@@ -90,7 +69,7 @@ function App() {
     }
 
     // Create audio source node from microphone stream
-    const source = audioContextRef.current.createMediaStreamSource(mediaStreamRef.current);
+    const source = audioContextRef.current.createMediaStreamSource(stream);
     sourceNodeRef.current = source;
 
     // Set up analyser node for silence detection
@@ -128,82 +107,13 @@ function App() {
       };
 
       // Send audio blob over WebSocket when recording stops
-      recorder.onstop = async () => {
+      recorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: AUDIO_TYPE || 'audio/webm;codecs=opus' });
         audioChunksRef.current = [];
-        if (socketRef.current?.readyState === WebSocket.OPEN) {
-          // socketRef.current.send(audioBlob);
+        if (socketRef.current.readyState === WebSocket.OPEN) {
+          socketRef.current.send(audioBlob);
           const audioUrl = URL.createObjectURL(audioBlob);
           setMessages(prev => [...prev, `🛰️ Sent audio blob (${audioBlob.size} bytes)`, <audio key={Date.now()} controls src={audioUrl} />]);
-
-          try {
-            // Gửi FormData đến API chat của Django
-            const formData = new FormData(); // Tạo FormData để gửi file
-            formData.append('audio', audioBlob, 'user_audio'); // Khóa là 'audio'
-            const response = await fetch('https://bi.meraplion.com/local/chat/', { 
-              method: 'POST',
-              body: formData, // FormData tự động đặt Content-Type là multipart/form-data
-            });
-
-            const data = await response.json(); // Nhận phản hồi JSON từ backend
-            const base64 = data.ai_audio_base64;
-
-            // Giải mã base64 và phát lại
-            const binary = atob(base64);
-            const bytes = new Uint8Array(binary.length);
-            for (let i = 0; i < binary.length; i++) {
-            bytes[i] = binary.charCodeAt(i);
-            }
-
-            const audioBuffer = await audioContextRef.current.decodeAudioData(bytes.buffer);
-            const source = audioContextRef.current.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(audioContextRef.current.destination);
-            
-            setIsPlaying(true);
-            setStatus('playing');
-
-            try {
-              source.start();
-              const audioBlob = base64toBlob(data.ai_audio_base64, 'audio/mp3');
-              const audioUrl = URL.createObjectURL(audioBlob);
-              setMessages(prev => [
-              ...prev,
-              '🔊 Echo from server:',
-              <audio key={Date.now()} controls src={audioUrl} />,
-            ]);
-            } catch (e) {
-              setMessages(prev => [...prev, `Lỗi khi gọi start(): ${e.message || e}`]);
-            }
-
-            
-            source.onerror = (e) => {
-              console.error("Lỗi khi phát lời chào (onerror):", e);
-              setMessages(prev => [...prev, `Lỗi khi gọi play() onerror: ${e.message || e}`]);
-            };
-
-            source.onended = () => {
-              setIsPlaying(false);
-              setStatus('listening');
-
-              clearTimeout(silenceTimerRef.current);
-              setTimeout(() => {
-                if (mediaRecorderRef.current?.state !== 'recording') {
-                  audioChunksRef.current = [];
-                  mediaRecorderRef.current.start();
-                  setMessages(prev => [...prev, `speak again`]);
-
-                }
-                cancelAnimationFrame(animationRef.current);
-                detectSilenceLoop();
-              }, 100);
-            };
-
-          } catch (e) {
-            console.error('❌ Echo playback failed', e);
-            setMessages(prev => [...prev, `❌ Echo playback failed: ${e.message}`]);
-          }
-
         }
       };
     }
@@ -212,6 +122,88 @@ function App() {
     mediaRecorderRef.current.start();
     setMessages(prev => [...prev, 'Voice: Recording... Speak now.']);
   };
+
+  useEffect(() => {
+      /*
+      Summary:
+      This useEffect sets the WebSocket `onmessage` handler when the call starts.
+      Reasons:
+      - Ensures `socketRef.current.onmessage` is assigned only when the socket is available.
+      - Avoids re-registering the handler every time `startCall()` runs.
+      - Keeps WebSocket side-effects separate from user-initiated actions for clarity.
+      - Handles audio playback and resuming recording after audio ends.
+      Dependency:
+      - `isCalling` is used to trigger this logic after the call is initialized via `startCall()`.
+      Note:
+      - This useEffect is not for setting up the socket connection itself—only for assigning its message handler.
+      - Could put it in Start Call
+    */
+    if (!socketRef.current) return;
+
+    socketRef.current.onmessage = async (event) => {
+      const arrayBuffer = event.data;
+      const arrayBufferCopy = event.data.slice(0);
+      try {
+        /*
+        you do not need to set audioContextRef.current = null before creating a new BufferSource
+        audioContextRef.current is the shared instance of AudioContext — you should reuse it.
+        This allows consistent access to audio-related functionality across your component.
+        createBufferSource() creates a new node each time you call it, independent of previous ones.
+        It's safe and expected to create a fresh one for each playback without resetting the context.
+        */
+        const audioBuffer = await audioContextRef.current.decodeAudioData(event.data);
+        const source = audioContextRef.current.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioContextRef.current.destination);
+
+        setIsPlaying(true);
+        setStatus('playing');
+
+        try {
+          source.start();
+        // ✅ Create audio URL for playback log and 🎧 Create playable blob from array buffer
+        const uint8Array = new Uint8Array(arrayBufferCopy);
+        const audioBlob = new Blob([uint8Array], { type: audioMimeTypeRef.current } );
+        const audioUrl = URL.createObjectURL(audioBlob);
+
+          // 📝 Log message + playable audio element
+          setMessages(prev => [
+            ...prev,
+            '🔊 Received audio:',
+            <audio key={Date.now()} controls src={audioUrl} />
+          ]);
+
+        } catch (e) {
+          setMessages(prev => [...prev, `Lỗi khi gọi start(): ${e.message || e}`]);
+        }
+
+        source.onerror = (e) => {
+          console.error("Lỗi khi phát lời chào (onerror):", e);
+          setMessages(prev => [...prev, `Lỗi khi gọi play() onerror: ${e.message || e}`]);
+        };
+
+        source.onended = () => {
+          setIsPlaying(false);
+          setStatus('listening');
+
+          clearTimeout(silenceTimerRef.current);
+          setTimeout(() => {
+            if (mediaRecorderRef.current?.state !== 'recording') {
+              audioChunksRef.current = [];
+              mediaRecorderRef.current.start();
+              setMessages(prev => [...prev, `speak again`]);
+
+            }
+            cancelAnimationFrame(animationRef.current);
+            detectSilenceLoop();
+          }, 100);
+        };
+      } catch (err) {
+        console.error("decodeAudioData failed:", err);
+        setMessages(prev => [...prev, `decodeAudioData lỗi: ${err.message || err}`]);
+      }
+    };
+  }, [isCalling]);
 
 const detectSilenceLoop = () => {
     const analyser = analyserRef.current;
@@ -322,16 +314,7 @@ const detectSilenceLoop = () => {
     // window.location.href = 'https://example.com/thank-you';
     };
 
-  const get_first_greet = async () => {
-
-    const response = await fetch('https://bi.meraplion.com/local/greet/', { method: 'GET' });
-    const audioBlob = await response.blob(); // Nhận audio dưới dạng Blob
-    set_first_blob(audioBlob)
-
-  }
-
-  useEffect( () => {
-    get_first_greet();
+  useEffect(() => {
     return () => {
       cleanupResources();
     };
