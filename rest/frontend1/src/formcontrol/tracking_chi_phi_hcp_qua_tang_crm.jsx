@@ -14,10 +14,11 @@ import {
     Form,
     Spinner,
     Card,
-    ListGroup
+    ListGroup,
+    Modal
 } from "react-bootstrap";
 
-function Tracking_chi_phi_hcp_crm({history}) {
+function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
 
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const navigate = useHistory();
@@ -174,7 +175,7 @@ function Tracking_chi_phi_hcp_crm({history}) {
         }
     }
 
-    if (!loading) {
+    if (true) {
         return (
         <Container className="bg-teal-100 h-100" fluid>
             <Row className="justify-content-center">
@@ -182,6 +183,9 @@ function Tracking_chi_phi_hcp_crm({history}) {
 
                     <div>
                         {/* ALERT COMPONENT */}
+                        <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
+                            <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
+
                         {alert &&
                         <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
                             <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
@@ -189,27 +193,24 @@ function Tracking_chi_phi_hcp_crm({history}) {
                             <span><strong>Cảnh Báo:  </strong>{alertText}</span>
                         </div>
                         }
+                        </Modal>
+                        {/* END ALERT COMPONENT */}
 
                         <Form onSubmit={handle_submit}>
                         {/* START FORM BODY */}
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp" ? "primary" : "outline-primary"} key={2} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp") } >ĐỀ XUẤT</Button>
-                            <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_crm" ? "primary" : "outline-primary"} key={1} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_crm") } >QL DUYỆT</Button>
-                            <Link style={{textDecoration:  "none"}} target="_blank" key={3} className="border-1 text-dark mx-2" to="/realtime/271?local_url=sp_f_data_tracking_chi_phi_hcp" >View Báo Cáo</Link>
+                            <Button style={{width: "20px"}} variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >HOME</Button>
+                            <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_qua_tang" ? "primary" : "outline-primary"} key={2} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang") } >ĐỀ XUẤT</Button>
+                            <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_qua_tang_crm" ? "primary" : "outline-primary"} key={1} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang_crm") } >QL DUYỆT</Button>
+                            <Button variant="outline-primary" key={3} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang_bc") } >BC</Button>
                         </ButtonGroup>
 
                         <Card className="mt-2">
                             <Card.Body>
                             <Card.Title>HCP: TRACKING CHI PHÍ ĐẦU TƯ</Card.Title>
                                 <Card.Text>
-                                {/* Tổng số HCP đã đầu tư: {tong_hcp_da_dau_tu} HCP
-                                <br></br>
-                                Tổng số tiền đã đầu tư: {f.format(tong_tien_ke_hoach_da_dau_tu)} VNĐ
-                                <br></br>
-                                Tổng số tiền thực tế đã đầu tư: 0 VNĐ */}
                                 </Card.Text>
-                                {/* <Button size="sm" variant="primary">Go somewhere</Button> */}
                             </Card.Body>
                         </Card>
 
@@ -270,17 +271,17 @@ function Tracking_chi_phi_hcp_crm({history}) {
         )
     }
     else {
-        return (
+        // return (
     
-            <div>
-                <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
-                <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-                </Spinner>
-            </div>
+        //     <div>
+        //         <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
+        //         <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
+        //         </Spinner>
+        //     </div>
             
-        )
+        // )
     }
 
 }
 
-export default Tracking_chi_phi_hcp_crm
+export default Tracking_chi_phi_hcp_qua_tang_crm

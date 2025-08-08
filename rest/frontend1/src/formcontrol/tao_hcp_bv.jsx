@@ -393,7 +393,7 @@ function Tao_hcp_bv({history, location}) {
             "nganh_chuyen_khoa": chon_nganh_chuyen_khoa_khac ? chon_nganh_chuyen_khoa + "--" + chon_nganh_chuyen_khoa_khac : chon_nganh_chuyen_khoa,
             "nganh_khoa_phong": chon_nganh_khoa_phong_khac ? chon_nganh_khoa_phong + "--" + chon_nganh_khoa_phong_khac : chon_nganh_khoa_phong,
             "co_lam_them": Number(chon_co_code),
-            "hco_lam_them": chon_hco_pcl.split("-")[0],
+            "hco_lam_them": chon_hco_pcl?.split("-")[0],
             "chuc_vu_lam_them": chon_chuc_vu_pcl,
             "hco_chung_bv":"",
             "ma_hcp_1": ma_hcp_1,
@@ -746,8 +746,8 @@ function Tao_hcp_bv({history, location}) {
                         } */}
 
                         <Button disabled={
-                        check_trung_sdt === true |
-                        chon_hco_bv === "" |
+                        check_trung_sdt === true ||
+                        chon_hco_bv === "" ||
                         (chon_phan_loai_hcp === "KP" && Number(so_luot_kham) < 120 )
                         } className='' variant="primary" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN 
                         </Button>

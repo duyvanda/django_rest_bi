@@ -47,8 +47,14 @@ import Danh_muc_dau_thau from "./formcontrol/danh_muc_dau_thau";
 // import Chuong_trinh_dau_tu_hcp_test from "./formcontrol/chuong_trinh_dau_tu_hcp_test";
 import Tracking_chi_phi_hco from "./formcontrol/tracking_chi_phi_hco";
 // import Tracking_chi_phi_hco_crm from "./formcontrol/tracking_chi_phi_hco_crm";
+
+import Tracking_chi_phi_hcp_qua_tang from "./formcontrol/tracking_chi_phi_hcp_qua_tang";
+
 import Tracking_chi_phi_hcp from "./formcontrol/tracking_chi_phi_hcp";
-import Tracking_chi_phi_hcp_crm from "./formcontrol/tracking_chi_phi_hcp_crm";
+import Tracking_chi_phi_hcp_qua_tang_crm from "./formcontrol/tracking_chi_phi_hcp_qua_tang_crm";
+import Tracking_chi_phi_hcp_qua_tang_bc from "./formcontrol/tracking_chi_phi_hcp_qua_tang_bc";
+
+
 import Tracking_chi_phi_hcp_bc from "./formcontrol/tracking_chi_phi_hcp_bc";
 // import Tracking_chi_phi_pcl from "./formcontrol/tracking_chi_phi_pcl";
 // import MdsXuanThinhVuong from "./formcontrol/mds_xuan_thinh_vuong";
@@ -76,6 +82,7 @@ import Get_new_upload_files from  "./formcontrol/get_new_upload_files";
 import Tinh_diem_van_nghe from  "./formcontrol/tinh_diem_van_nghe";
 import Dang_ky_nghi_phep_pkh from  "./formcontrol/dang_ky_nghi_phep_pkh";
 import Dang_ky_nghi_phep_pkh_ncrm from  "./formcontrol/dang_ky_nghi_phep_pkh_ncrm";
+import CrmHome from  "./formcontrol/crmhome";
 
 import Test from  "./formcontrol/test";
 import Duckdb from  "./formcontrol/duckdb";
@@ -153,9 +160,14 @@ function AppContent() {
                 {/* <Route exact path="/formcontrol/mds_xuan_thinh_vuong" component={MdsXuanThinhVuong} /> */}
                 {/* <Route exact path="/formcontrol/chuong_trinh_dau_tu_hcp_test" component={Chuong_trinh_dau_tu_hcp_test} /> */}
                 <Route path="/formcontrol/tracking_chi_phi_hco" component={Tracking_chi_phi_hco} />
+                <Route path="/crmhome" component={CrmHome} />
+                <Route path="/formcontrol/tracking_chi_phi_hcp_qua_tang" component={Tracking_chi_phi_hcp_qua_tang} />
+                <Route exact path="/formcontrol/tracking_chi_phi_hcp_qua_tang_crm" component={Tracking_chi_phi_hcp_qua_tang_crm} />
+                <Route exact path="/formcontrol/Tracking_chi_phi_hcp_qua_tang_bc" component={Tracking_chi_phi_hcp_qua_tang_bc} />
+                
                 {/* <Route path="/formcontrol/tracking_chi_phi_hco_crm" component={Tracking_chi_phi_hco_crm} /> */}
                 <Route exact path="/formcontrol/tracking_chi_phi_hcp" component={Tracking_chi_phi_hcp} />
-                <Route exact path="/formcontrol/tracking_chi_phi_hcp_crm" component={Tracking_chi_phi_hcp_crm} />
+
                 <Route exact path="/formcontrol/tracking_chi_phi_hcp_bc" component={Tracking_chi_phi_hcp_bc} />
                 {/* <Route exact path="/formcontrol/tracking_chi_phi_pcl" component={Tracking_chi_phi_pcl} /> */}
                 <Route exact path="/formcontrol/tao_hcp_bv" component={Tao_hcp_bv} />

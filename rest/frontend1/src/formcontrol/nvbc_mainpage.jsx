@@ -1,5 +1,6 @@
 /* eslint-disable */
-import React, { useState, useEffect } from 'react';
+import { useContext, useEffect, useState } from "react";
+import FeedbackContext from '../context/FeedbackContext'
 // import { Container, Row, Col, Card } from 'react-bootstrap';
 import { Link, useHistory } from "react-router-dom";
 import { FaPlus, FaMinus } from 'react-icons/fa'; // Import plus and minus icons
@@ -10,13 +11,13 @@ import {
   Col,
   Row,
   Container,
-  Dropdown,
-  Form,
+  // Dropdown,
   Spinner,
-  InputGroup,
-  Stack,
-  FloatingLabel,
-  Table,
+  // InputGroup,
+  // Stack,
+  // FloatingLabel,
+  // Table,
+  Form,
   Card,
   Modal
 } from "react-bootstrap";
@@ -24,11 +25,12 @@ import {
 
 const Nvbc_mainpage = ({history}) => {
 
+    const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const list_chon = [
         // { id: 1, value: "6 điểm : Ổn", color: "#d1d1d1", icon: <BiStar /> },
         // { id: 2, value: "7 điểm : Hay", color: "#a0e6a0", icon: <FaStar /> },
         // { id: 3, value: "8 điểm : Khá Hay", color: "#6ad06a", icon: <FaStar style={{ color: "gold" }} /> },
-        { id: 4, value: "Túi đựng mỹ phẩm, đồ du lịch da PU thoáng khí", color: "#42c1f5", icon: <FaFire style={{ color: "red" }} /> },
+        { id: 4, value: "Túi đựng mỹ phẩm, đồ du lịch da PU thoáng khí", color: "#42c1f5", icon: <BiTrophy style={{ color: "red" }} /> },
         { id: 5, value: "Túi cói kèm charm đáng yêu", color: "#ffbf47", icon: <BiTrophy style={{ color: "gold" }} /> }
     ];
 
@@ -51,7 +53,9 @@ const Nvbc_mainpage = ({history}) => {
       .then((data) => {
         setUserPoint(data.point || 0);
         setContentList(data.contentlist);
-        setModalData(data.lich_su_diem)
+        setModalData(data.lich_su_diem);
+        set_show_chon_qua_thang(data.th_monthly_reward);
+        show_sorry_qua_thang(data.fail_th_monthly_reward);
       })
       .catch((err) => {
         console.error("Error fetching user points:", err);
@@ -66,6 +70,8 @@ const Nvbc_mainpage = ({history}) => {
 
   const [show_chon_qua_thang, set_show_chon_qua_thang] = useState(false);
   const [selectedValue2, setSelectedValue2] = useState("");
+
+  const [show_sorry_qua_thang, set_show_sorry_qua_thang] = useState(false);
 
   const [contentList, setContentList] = useState([]);
 
@@ -122,6 +128,64 @@ const Nvbc_mainpage = ({history}) => {
   const handleClose = () => set_show_chon_qua_thang(false);
   // const handleShow = () => setShow(true);
 
+      const clear_data = () => {
+        setSelectedValue2("");
+    }
+
+  const post_form_data = async (data) => {
+        SetLoading(true);
+
+        const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_nvbc_reward_item/`, {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            console.log(data);
+            SetALert(true);
+            SetALertType("alert-danger");
+            SetALertText(data.error_message);
+
+            setTimeout(() => {
+                SetALert(false);
+                SetLoading(false); // Then hide loading modal after alert is done
+            }, 2000);
+
+        } else {
+            SetLoading(false);
+            const data = await response.json();
+            console.log(data);
+            SetALert(true);
+            SetALertType("alert-success");
+            SetALertText( data.success_message );
+
+            setTimeout(() => {
+                SetALert(false);
+                SetLoading(false); // Then hide loading modal after alert is done
+            }, 2000);
+
+            clear_data();
+            // setCount(count+1);
+
+        }
+    }
+
+  const handle_luu_qua = (e) => {
+    handleClose();
+
+      const data = {
+          "phone":userPhone,
+          "value":selectedValue2,
+          "reward_type":"7th_monthly_reward"
+      }
+      console.log([data]);
+      post_form_data([data]);
+  }
+
   return (
     <div
       style={{
@@ -136,11 +200,34 @@ const Nvbc_mainpage = ({history}) => {
         <Row className="justify-content-center">
           <Col md={8} lg={6}>
 
+           {/* ALERT COMPONENT */}
+          {alert &&
+              <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" 
+              style={{
+              display: 'flex',
+              justifyContent: 'center',    // Centers horizontally
+              alignItems: 'center',      // Centers vertically
+              position: 'fixed',         // Fixed position relative to viewport
+              top: '50%',                // Move top edge to 50%
+              left: '50%',               // Move left edge to 50%
+              transform: 'translate(-50%, -50%)', // Adjust back by half its own width/height
+              zIndex: 1050,              // Ensure it's above other elements (e.g., Bootstrap modals)
+              width: 'auto',             // Allow content to determine width
+              minWidth: '300px',         // Minimum width for better appearance
+              maxWidth: '90%',           // Max width to prevent overflow on small screens
+              }}
+              >
+                  <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                  </button>
+                  <span><strong>Cảnh Báo:  </strong>{alertText}</span>
+              </div>
+          }
+
           <Modal show={show_chon_qua_thang} onHide={handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>
-                Chúc mừng bạn đã là <br></br>
-                Thành viên tích cực nhất tháng 07/202525!!! <br></br>
+                Chúc mừng bạn đã là:<br></br>
+                Thành viên tích cực nhất tháng 07/2025!!! <br></br>
                 Vui lòng chọn 1 trong 2 món quà bên dưới:
               </Modal.Title>
             </Modal.Header>
@@ -180,7 +267,7 @@ const Nvbc_mainpage = ({history}) => {
               <Button variant="secondary" onClick={handleClose}>
                 Đóng
               </Button>
-              <Button variant="primary" onClick={handleClose}>
+              <Button disabled={selectedValue2===""} variant="primary" onClick={handle_luu_qua}>
                 Lưu quà
               </Button>
             </Modal.Footer>
@@ -223,6 +310,19 @@ const Nvbc_mainpage = ({history}) => {
                 </p>
               </Card.Body>
             </Card>
+
+            { show_sorry_qua_thang &&
+            <Card className="text-left mb-4 shadow-sm border-0">
+              <Card.Body>
+                <p className="text-muted mb-0">
+                  Cảm ơn quý Khách Hàng đã tham gia CT M.Ambassador của MerapLion. <br></br>
+                  Rất tiếc bạn không đạt giải thưởng tháng 7/2025. <br></br>
+                  Hãy tra cứu thư viện đọc hay, tích ngay điểm thưởng & nhận nhiều phần quà hấp dẫn tiếp theo nhé. <br></br>
+                  Chân thành cảm ơn.
+                </p>
+              </Card.Body>
+            </Card>
+            }
 
             {/* Content List */}
             <Card className="shadow-sm">

@@ -7,7 +7,7 @@ import {
 } from 'react-icons/fa';
 import { useHistory } from 'react-router-dom';
 
-const NavigationCards = () => {
+const CrmHome = () => {
   const history = useHistory(); // ✅ React Router v5 dùng useHistory
 
   // Danh sách các mục điều hướng có thêm icon
@@ -16,28 +16,28 @@ const NavigationCards = () => {
       stt: 1,
       title: 'Danh sách HCP',
       description: 'Đây là danh sách HCP.',
-      path: '/danh-sach-hcp',
+      path: '/formcontrol/tao_hcp_bc',
       icon: <FaUserMd size={28} color="#007bff" />
     },
     {
       stt: 2,
       title: 'Tạo mới HCP/PCL',
-      description: 'Phân tích dữ liệu theo từng khu vực.',
-      path: '/phan-tich-khu-vuc',
+      description: 'Tạo mới theo phân quyền',
+      path: '/formcontrol/tao_hcp_bv',
       icon: <FaPlusCircle size={28} color="#28a745" />
     },
     {
       stt: 3,
       title: 'Booking chi phí quà tặng HCP',
-      description: 'Xem báo cáo doanh thu theo quý.',
-      path: '/bao-cao-doanh-thu',
+      description: 'Nhập thông tin quà tặng cho HCP',
+      path: '/formcontrol/tracking_chi_phi_hcp_qua_tang',
       icon: <FaGift size={28} color="#ffc107" />
     },
     {
       stt: 4,
       title: 'Booking chi phí Gimmick HCP',
-      description: 'Phân tích dữ liệu theo từng khu vực.',
-      path: '/phan-tich-khu-vuc',
+      description: 'Nhập thông tin Gimmick cho HCP',
+      path: '/formcontrol/tracking_chi_phi_hcp',
       icon: <FaCogs size={28} color="#6c757d" />
     }
   ];
@@ -46,7 +46,7 @@ const NavigationCards = () => {
 
   return (
     <Container fluid className="p-4" style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
-      <h5 className="mb-4 fw-bold">Điều hướng</h5>
+      <h5 className="mb-4 fw-bold">Chọn thao tác</h5>
       <Row xs={1} md={2} lg={2} className="g-4">
         {sortedList.map((item, index) => (
           <Col key={index}>
@@ -68,4 +68,4 @@ const NavigationCards = () => {
   );
 };
 
-export default NavigationCards;
+export default CrmHome;

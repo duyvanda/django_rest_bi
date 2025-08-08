@@ -21,7 +21,7 @@ const ClaimNavTabs = () => {
       <Col xs={3}>
         <Link to="/formcontrol/form_claim_chi_phi_ql_duyet">
           <Button
-            variant={location.pathname === "/formcontrol/form_claim_chi_phi_ql_duyet" ? "secondary" : "outline-secondary"}
+            variant={location.pathname === "/formcontrol/form_claim_chi_phi_ql_duyet" ? "success" : "outline-secondary"}
             className="w-100"
           >
             QL DUYỆT
@@ -34,7 +34,7 @@ const ClaimNavTabs = () => {
             variant={location.pathname === "/formcontrol/form_claim_chi_phi_final" ? "success" : "outline-success"}
             className="w-100"
           >
-            CLAIM CHI PHÍ
+            CLAIM CP
           </Button>
         </Link>
       </Col>
@@ -44,7 +44,7 @@ const ClaimNavTabs = () => {
             variant={location.pathname === "/formcontrol/cong_tac_phi" ? "success" : "outline-success"}
             className="w-100"
           >
-            CÔNG TÁC PHÍ
+            CT PHÍ
           </Button>
         </Link>
       </Col>
