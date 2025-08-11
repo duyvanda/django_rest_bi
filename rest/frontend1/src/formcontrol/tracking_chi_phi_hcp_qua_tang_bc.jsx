@@ -51,14 +51,14 @@ function Tracking_chi_phi_hcp_qua_tang_bc({history, location}) {
 
                     <div>
                         {/* ALERT COMPONENT */}
-                        <Form>
+                    <Form>
                         {/* START FORM BODY */}
 
                         <Row className="justify-content-center">
                         <Col md={4} >
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button style={{width: "20px"}} variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >HOME</Button>
+                            <Button style={{width: "60px"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >CRM</Button>
                         </ButtonGroup>
 
                         </Col>
@@ -82,13 +82,10 @@ function Tracking_chi_phi_hcp_qua_tang_bc({history, location}) {
                             }
                         </div>
                                                 
-                        </Form>
+                    </Form>
                         {/* END FORM BODY */}
 
                         {/* CARDS IF NEEDED */}
-
-
-                        
                     </div>
         </Container>
         )

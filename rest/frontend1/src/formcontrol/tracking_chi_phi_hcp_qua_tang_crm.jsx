@@ -1,9 +1,9 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { v4 as uuid } from 'uuid';
+// import { v4 as uuid } from 'uuid';
 import './myvnp.css';
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,
@@ -20,19 +20,17 @@ import {
 
 function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
 
-    const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
+    const { Inserted_at, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const navigate = useHistory();
 
     const fetch_tracking_chi_phi_get_data_hcp = async (manv) => {
         SetLoading(true);
-        const response = await fetch(`https://bi.meraplion.com/local/tracking_chi_phi_get_data_hcp_crm/?manv=${manv}`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_planning_collect_hcp_qua_tang_crm/?manv=${manv}`)
         
         if (response.ok) {
         SetLoading(false);
         const data = await response.json()
-        set_arr_hcp(data['lst_hcp']);
-        set_tong_hcp_da_dau_tu(data['tong_hcp_da_dau_tu']);
-        set_tong_tien_ke_hoach_da_dau_tu(data['tong_tien_ke_hoach_da_dau_tu']);
+        set_arr_hcp(data['lst_chon_qua_cua_nv']);
         set_list_nv(data['list_nv']);
         }
         else {
@@ -54,7 +52,6 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
         } else {
             history.push('/login');
         };
-    // eslint-disable-next-line
     }, [count]);
 
     
@@ -62,8 +59,8 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
     const [manv, set_manv] = useState("");
     // const current_date = formatDate(Date());
     const [arr_hcp, set_arr_hcp] = useState([]);
-    const [tong_hcp_da_dau_tu, set_tong_hcp_da_dau_tu] = useState("");
-    const [tong_tien_ke_hoach_da_dau_tu, set_tong_tien_ke_hoach_da_dau_tu] = useState("");
+    // const [tong_hcp_da_dau_tu, set_tong_hcp_da_dau_tu] = useState("");
+    // const [tong_tien_ke_hoach_da_dau_tu, set_tong_tien_ke_hoach_da_dau_tu] = useState("");
     const [list_nv, set_list_nv] = useState([]);
     const [select_nv, set_select_nv] = useState("");
     const [search, set_search] = useState('');
@@ -89,26 +86,21 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
     
     const handle_submit = (e) => {
         e.preventDefault();
-        const current_date = formatDate(Date());
-
+        // const current_date = formatDate(Date());
         const ma_uuid = []
         for (let i of arr_hcp) {
             if (i.check === true) {ma_uuid.push(i.uuid)}
         }
-
         const data = {
             "uuid_nv":ma_uuid,
             "manv":manv,
-            "current_date":current_date,
-            "inserted":"inserted",
-            "uuid":uuid(),
-            "status":"C"
+            "status":"C",
+            "inserted": Inserted_at(),
         }
         console.log(data);
-
         // neu khong chon ma cho nao thi ko lam gi
         if (ma_uuid.length >=1 ) {
-            post_form_data(data);
+            post_form_data( [data] );
         }
         else {
             void(0);
@@ -117,27 +109,22 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
 
 
     const handle_reject = (e) => {
-        // e.preventDefault();
-        const current_date = formatDate(Date());
-
+        e.preventDefault();
+        // const current_date = formatDate(Date());
         const ma_uuid = []
         for (let i of arr_hcp) {
             if (i.check === true) {ma_uuid.push(i.uuid)}
         }
-
         const data = {
-            "uuid_nv":ma_uuid,
+            // "uuid_nv":ma_uuid,
             "manv":manv,
-            "current_date":current_date,
-            "inserted":"inserted",
-            "uuid":uuid(),
-            "status":"R"
+            "status":"R",
+            "inserted": Inserted_at(),
         }
         console.log(data);
-
         // neu khong chon ma cho nao thi ko lam gi
         if (ma_uuid.length >=1 ) {
-            post_form_data(data);
+            post_form_data( [data] );
         }
         else {
             void(0);
@@ -147,7 +134,8 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
 
     const post_form_data = async (data) => {
         // SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/insert_data_tracking_chi_phi_hcp_crm/`, {
+        console.log("post_form_data", data)
+        const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_planning_collect_hcp_qua_tang_crm/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -168,7 +156,7 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
             SetALertText("ĐÃ TẠO THÀNH CÔNG");
             setTimeout(() => SetALert(false), 3000);
             setCount(count+1);
-            set_sl_da_chon(0);
+            // set_sl_da_chon(0);
             set_select_nv("");
             // window.location.reload();
 
@@ -200,7 +188,7 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
                         {/* START FORM BODY */}
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button style={{width: "20px"}} variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >HOME</Button>
+                            <Button style={{width: "60px"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >CRM</Button>
                             <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_qua_tang" ? "primary" : "outline-primary"} key={2} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang") } >ĐỀ XUẤT</Button>
                             <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_qua_tang_crm" ? "primary" : "outline-primary"} key={1} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang_crm") } >QL DUYỆT</Button>
                             <Button variant="outline-primary" key={3} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang_bc") } >BC</Button>
@@ -234,8 +222,8 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
                             .filter( el => el.clean_ten_hcp.toLowerCase().includes(search.toLowerCase()))
                             .map( (el, index) =>
                             <ListGroup.Item style={{maxHeight:"125px"}} className="border border-secondary mx-0 px-0" >
-                                <Form.Check key={index} className="text-nowrap" type="switch" checked={el.check} onChange={ handeClick } id={el.uuid} label={ el.ten_hcp + ' - ' +  el.ten_kh_chung + ' - ' +  el.ma_kh_chung + ' - '+ el.phan_loai_hcp}/>
-                            <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{el.ma_hcp_1 + ' - Quà Cảm Xúc: '+ el.chon_qua_tang_cam_xuc + '(' +  el.ma_crs  + ')'}  </p>
+                                <Form.Check key={index} className="text-wrap" type="switch" checked={el.check} onChange={ handeClick } id={el.uuid} label={ el.ten_hien_thi } />
+                            {/* <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{el.ma_hcp_1 + ' - Quà Cảm Xúc: '+ el.chon_qua_tang_cam_xuc + '(' +  el.ma_crs  + ')'}  </p> */}
                             {/* <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{'Tổng Tiền: '+ f.format (Number(el.tong_tien_kh)) }  </p> */}
                             </ListGroup.Item>
                             )

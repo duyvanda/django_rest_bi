@@ -37,7 +37,8 @@ const CrmHome = () => {
       stt: 4,
       title: 'Booking chi phí Gimmick HCP',
       description: 'Nhập thông tin Gimmick cho HCP',
-      path: '/formcontrol/tracking_chi_phi_hcp',
+      path: '/crmhome',
+      // path: '/formcontrol/tracking_chi_phi_hcp',
       icon: <FaCogs size={28} color="#6c757d" />
     }
   ];
