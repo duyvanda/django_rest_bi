@@ -5,9 +5,18 @@ import { Link, useLocation } from 'react-router-dom';
 
 const ClaimNavTabs = () => {
   const location = useLocation();
-
   return (
     <Row className="justify-content-center mb-1 mt-1">
+      <Col xs={2} className="" >
+        <Link to="/crmhome">
+          <Button
+            variant="outline-success"
+            className="w-100 text-center"
+          >
+            CRM
+          </Button>
+        </Link>
+      </Col>
       <Col xs={3}>
         <Link to="/formcontrol/form_claim_chi_phi">
           <Button
@@ -18,13 +27,13 @@ const ClaimNavTabs = () => {
           </Button>
         </Link>
       </Col>
-      <Col xs={3}>
+      <Col xs={2}>
         <Link to="/formcontrol/form_claim_chi_phi_ql_duyet">
           <Button
             variant={location.pathname === "/formcontrol/form_claim_chi_phi_ql_duyet" ? "success" : "outline-secondary"}
             className="w-100"
           >
-            QL DUYỆT
+            QL
           </Button>
         </Link>
       </Col>
@@ -34,17 +43,17 @@ const ClaimNavTabs = () => {
             variant={location.pathname === "/formcontrol/form_claim_chi_phi_final" ? "success" : "outline-success"}
             className="w-100"
           >
-            CLAIM CP
+            CLAIM
           </Button>
         </Link>
       </Col>
-      <Col xs={3}>
+      <Col xs={2}>
         <Link to="/formcontrol/cong_tac_phi">
           <Button
             variant={location.pathname === "/formcontrol/cong_tac_phi" ? "success" : "outline-success"}
             className="w-100"
           >
-            CT PHÍ
+            CTP
           </Button>
         </Link>
       </Col>

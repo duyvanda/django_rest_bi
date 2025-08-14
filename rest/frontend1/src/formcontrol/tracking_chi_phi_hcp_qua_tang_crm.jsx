@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 // import { v4 as uuid } from 'uuid';
 import './myvnp.css';
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,
@@ -83,7 +83,6 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
     }
     
 
-    
     const handle_submit = (e) => {
         e.preventDefault();
         // const current_date = formatDate(Date());
@@ -116,7 +115,7 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
             if (i.check === true) {ma_uuid.push(i.uuid)}
         }
         const data = {
-            // "uuid_nv":ma_uuid,
+            "uuid_nv":ma_uuid,
             "manv":manv,
             "status":"R",
             "inserted": Inserted_at(),
@@ -191,16 +190,16 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
                             <Button style={{width: "60px"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >CRM</Button>
                             <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_qua_tang" ? "primary" : "outline-primary"} key={2} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang") } >ĐỀ XUẤT</Button>
                             <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_qua_tang_crm" ? "primary" : "outline-primary"} key={1} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang_crm") } >QL DUYỆT</Button>
-                            <Button variant="outline-primary" key={3} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang_bc") } >BC</Button>
+                            <Link to="/realtime/99" target="_blank" rel="noopener noreferrer"> <Button variant="outline-info text-dark" key={3}>BC</Button> </Link>
                         </ButtonGroup>
 
-                        <Card className="mt-2">
+                        {/* <Card className="mt-2">
                             <Card.Body>
                             <Card.Title>HCP: TRACKING CHI PHÍ ĐẦU TƯ</Card.Title>
                                 <Card.Text>
                                 </Card.Text>
                             </Card.Body>
-                        </Card>
+                        </Card> */}
 
                         <ListGroup className="mt-2" style={{maxHeight: "650px", overflowY: "auto"}}>
 
@@ -238,7 +237,7 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
                         
                         {/* <Button disabled={false} className='mt-2' variant="primary" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button> */}
                         
-                        <h4 style={{color:"red"}} className="mt-2">Bạn Đã Chọn:{`\xa0`} {sl_da_chon} </h4>
+                        {/* <h4 style={{color:"red"}} className="mt-2">Bạn Đã Chọn:{`\xa0`} {sl_da_chon} </h4> */}
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
                             <Button disabled={false} className='mt-2' variant="success" type="submit" style={{width: "100%", fontWeight: "bold"}}> DUYỆT </Button>

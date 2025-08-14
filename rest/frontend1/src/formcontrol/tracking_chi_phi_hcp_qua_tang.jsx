@@ -36,8 +36,10 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
             const data = await response.json()
             set_arr_hcp(data['lst_hcp']);
             set_lst_chon_gimmick(data['lst_chon_qua_tang']);
-            set_mo_link(data['mo_link'])
-            SetLoading(false)
+            set_mo_link(data['mo_link']);
+            set_ten_chuong_trinh(data['ten_chuong_trinh']);
+            set_quy_tac(data['quy_tac']);
+            SetLoading(false);
         }
         else {
             SetLoading(false)
@@ -63,6 +65,9 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
     
     const f = new Intl.NumberFormat();
     const [mo_link, set_mo_link] = useState("");
+    const [ten_chuong_trinh, set_ten_chuong_trinh] = useState("");
+    const [quy_tac, set_quy_tac] = useState("");
+    const [show_quy_tac, set_show_quy_tac] = useState(false);
     const [manv, set_manv] = useState("");
     // const [lst_placeholder_cau_hoi, set_lst_placeholder_cau_hoi] = useState([]);
     // const [lst_chon_qua_tang_cam_xuc, set_lst_chon_qua_tang_cam_xuc] = useState([]);
@@ -232,7 +237,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                     qua_tang: item.qua_gm,
                     so_luong: item.so_luong,
                     price: item.price,
-                    ten_ct:"Quà tặng theo dịp 20/10",
+                    ten_ct:ten_chuong_trinh,
                     status:"H",
                     inserted_at: Inserted_at(),
                     approved_at:"",
@@ -318,7 +323,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                             <Button style={{width: "60px"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >CRM</Button>
                             <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_qua_tang" ? "primary" : "outline-primary"} key={2} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang") } >ĐỀ XUẤT</Button>
                             <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_qua_tang_crm" ? "primary" : "outline-primary"} key={1} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang_crm") } >QL DUYỆT</Button>
-                            <Button variant="outline-primary" key={3} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang_bc") } >BC</Button>
+                            <Link to="/realtime/99" target="_blank" rel="noopener noreferrer"> <Button variant="outline-info text-dark" key={3}>BC</Button> </Link>
                         </ButtonGroup>
 
                         <ListGroup className="mt-2" style={{maxHeight: "250px", overflowY: "auto"}}>
@@ -329,18 +334,27 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                                 .filter( el => el.clean_ten_hcp.toLowerCase().includes( search.toLowerCase() ) )
                                 .map( (el, index) =>
                                 <ListGroup.Item key={index} className="mx-0 px-0 my-0 py-0" >
-                                    <Form.Check key={index} className="text-nowrap" type="switch" checked={el.check} onChange={ handle_switch } id={el.ma_hcp_2} label={ el.ten_hcp + ' - ' +  el.ten_kh_chung + ' - ' +  el.ma_kh_chung + ' - '+ el.phan_loai_hcp}/>
+                                    <Form.Check key={index} className="text-nowrap" type="switch" checked={el.check} onChange={ handle_switch } id={el.ma_hcp_2} label={ el.id + ')'+ el.ten_hien_thi}/>
                                 </ListGroup.Item>
                                 )
                             }
 
                         </ListGroup>
+                        <Button variant="outline-info" onClick={() => set_show_quy_tac(true)} className="mt-1 text-dark" size="sm">Show quy tắc</Button>
+                        <Modal show={show_quy_tac}>
+                            <Modal.Body>
+                                <div style={{ whiteSpace: 'pre-line' }}>
+                                {quy_tac}
+                                </div>
+                            </Modal.Body>
+                            <Button variant="secondary" onClick={() => set_show_quy_tac(false)} >Close</Button>
+                        </Modal>
                     <div className="bg-white">
                         <Table bordered hover className="mt-2">
                             <thead>
                             <tr>
-                                <th style={{ width: "60%" }}>Quà Tặng</th>
-                                <th style={{ width: "20%" }}>Số lượng</th>
+                                <th style={{ width: "60%" }}>{ten_chuong_trinh}</th>
+                                <th style={{ width: "20%" }}>SL</th>
                                 <th style={{ width: "20%" }}>Action</th>
                             </tr>
                             </thead>
@@ -361,7 +375,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                                     <option value="">Click chọn</option>
                                     {lst_chon_gimmick.map((el) => (
                                         <option key={el.stt} value={ el.ten_qua_tang + '--' + el.gia_tien }>
-                                        { el.ten_qua_tang + '--' + el.gia_tien + 'đ' }
+                                        { el.ten_qua_tang + '--' + f.format(el.gia_tien) + 'đ' }
                                         </option>
                                     ))}
                                     </Form.Select>

@@ -256,6 +256,7 @@ const Dang_ky_nghi_phep_pkh = ({ history } ) => {
               onChange={(e) => setDays(e.target.value)}
               placeholder="Nhập số ngày nghỉ"
               min="0"
+              step="0.1" // Add this line
               style={{ height: "50px" }}
             />
           </Form.Group>

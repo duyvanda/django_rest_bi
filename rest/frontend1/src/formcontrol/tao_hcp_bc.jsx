@@ -26,6 +26,7 @@ function Tao_hcp_bc({history, location}) {
     const navigate = useHistory();
     const location_search = new URLSearchParams(location.search)
 
+    
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {
         const media = window.matchMedia('(max-width: 960px)');
@@ -34,19 +35,26 @@ function Tao_hcp_bc({history, location}) {
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Tao_hcp_bc', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
 
-        fetchFilerReportsRT("192", true, true, "sp_f_tao_hcp_bv", {});
-        } else {
+        if (loading===false){
+            fetchFilerReportsRT("192", isMB, {});
+        }
+		else {
             history.push('/login?redirect=/formcontrol/tao_hcp_bc');
         };
+
+        } 
+        // else {
+        //     history.push('/login?redirect=/formcontrol/tao_hcp_bc');
+        // };
     }, []);
 
-    const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType, SetRpScreen, fetchFilerReportsRT, ReportId, ReportParam, vw } = useContext(FeedbackContext)
+    const {userInfo, userLogger, SetRpScreen, fetchFilerReportsRT, shared, loading, ReportId, ReportParam, vw } = useContext(FeedbackContext)
 
     const [manv, set_manv] = useState("");
-    const f = new Intl.NumberFormat();
-    const [EDITMODE, SET_EDITMODE] = useState(false);
+    // const f = new Intl.NumberFormat();
+    // const [EDITMODE, SET_EDITMODE] = useState(false);
 
-    if (true) {
+    // if (true) {
         return (
         <Container className="bg-teal-100" fluid>
 
@@ -67,19 +75,12 @@ function Tao_hcp_bc({history, location}) {
                         </Row>
                         
                         <div>
-                        <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
-                        <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
-                        </Modal>
-                            {!loading &&
-                            <div align="center" className="pr-1" >
-                            <iframe 
-                            title="myFrame" 
-                            frameBorder="0"  
-                            src={`https://lookerstudio.google.com/embed/reporting/${ReportId}${ReportParam}`} 
-                            style={{ height: "85vh", width: "100%", maxWidth: "100%" , borderRadius: "0.75rem"  }} 
-                            >
-                            
-                            </iframe>
+                            <Modal show={loading===true || shared === false} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
+                            <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
+                            </Modal>
+                            { (loading===false && shared ===true ) &&
+                            <div align="center" className="border-1 bg-dark" >
+                            <iframe title="myFrame" frameBorder="0"  src={`https://lookerstudio.google.com/embed/reporting/${ReportId}${ReportParam}`} style={{ border: 1, height: "85vh", frameBorder:"1", width: vw  }} ></iframe>
                             </div>
                             }
                         </div>
@@ -94,18 +95,6 @@ function Tao_hcp_bc({history, location}) {
                     </div>
         </Container>
         )
-    }
-    else {
-        // return (
-    
-        //     <div>
-        //         <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
-        //         <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-        //         </Spinner>
-        //     </div>
-            
-        // )
-    }
 }
 
 

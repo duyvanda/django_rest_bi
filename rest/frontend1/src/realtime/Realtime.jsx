@@ -31,7 +31,7 @@ function Realtime( {match, history, location} ) {
     
 return (
     <div>
-    <Modal show={loading===true | shared === false} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
+    <Modal show={loading===true || shared === false} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
     <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
     </Modal>
     { (loading===false && shared ===true ) &&
@@ -41,6 +41,7 @@ return (
     }
     </div>
 );
+
 }
 
 export default Realtime

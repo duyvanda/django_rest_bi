@@ -1,9 +1,9 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { v4 as uuid } from 'uuid';
+// import { v4 as uuid } from 'uuid';
 import './myvnp.css';
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,
@@ -43,7 +43,7 @@ function Tracking_chi_phi_hcp_qua_tang_bc({history, location}) {
 
     const [manv, set_manv] = useState("");
     const f = new Intl.NumberFormat();
-    const [EDITMODE, SET_EDITMODE] = useState(false);
+    // const [EDITMODE, SET_EDITMODE] = useState(false);
 
     if (true) {
         return (

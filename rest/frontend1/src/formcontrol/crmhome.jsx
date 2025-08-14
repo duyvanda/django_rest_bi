@@ -3,7 +3,8 @@ import {
   FaUserMd,
   FaPlusCircle,
   FaGift,
-  FaCogs
+  FaCogs,
+  FaFileInvoiceDollar 
 } from 'react-icons/fa';
 import { useHistory } from 'react-router-dom';
 
@@ -40,7 +41,14 @@ const CrmHome = () => {
       path: '/crmhome',
       // path: '/formcontrol/tracking_chi_phi_hcp',
       icon: <FaCogs size={28} color="#6c757d" />
-    }
+    },
+    {
+    stt: 5,
+    title: 'Claim chi phí Sales (Kế Toán)',
+    description: 'Quản lý và xác nhận claim chi phí cho Sales',
+    path: '/formcontrol/form_claim_chi_phi',
+    icon: <FaFileInvoiceDollar size={28} color="#17a2b8" />
+  }
   ];
 
   const sortedList = [...items].sort((a, b) => a.stt - b.stt);
