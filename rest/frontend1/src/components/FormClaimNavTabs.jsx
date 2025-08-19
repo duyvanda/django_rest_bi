@@ -28,9 +28,9 @@ const ClaimNavTabs = () => {
         </Link>
       </Col>
       <Col xs={2}>
-        <Link to="/formcontrol/form_claim_chi_phi_ql_duyet">
+        <Link to="/formcontrol/form_claim_chi_phi_crm">
           <Button
-            variant={location.pathname === "/formcontrol/form_claim_chi_phi_ql_duyet" ? "success" : "outline-secondary"}
+            variant={location.pathname === "/formcontrol/form_claim_chi_phi_crm" ? "success" : "outline-secondary"}
             className="w-100"
           >
             QL

@@ -73,9 +73,9 @@ import Mds_tra_thuong_cmm_q12025 from "./formcontrol/mds_tra_thuong_cmm_q12025";
 import Form_log_checkin_nhan_hang from  "./formcontrol/form_log_checkin_nhan_hang";
 import Cong_tac_phi from "./formcontrol/cong_tac_phi";
 import Form_claim_chi_phi from  "./formcontrol/form_claim_chi_phi";
-import Form_claim_chi_phi_ql_duyet from  "./formcontrol/form_claim_chi_phi_ql_duyet";
+import Form_claim_chi_phi_crm from  "./formcontrol/form_claim_chi_phi_crm";
 import Form_claim_chi_phi_final from  "./formcontrol/form_claim_chi_phi_final";
-import Form_claim_chi_phi_ql_duyet_invmapped from  "./formcontrol/form_claim_chi_phi_ql_duyet_invmapped";
+import Form_claim_chi_phi_crm_claimed from  "./formcontrol/form_claim_chi_phi_crm_claimed";
 
 import Get_new_upload_files from  "./formcontrol/get_new_upload_files";
 
@@ -186,9 +186,9 @@ function AppContent() {
                 <Route path="/formcontrol/form_ghi_nhan_hang_log" component={Form_log_checkin_nhan_hang} />
                 <Route path="/formcontrol/cong_tac_phi" component={Cong_tac_phi} />
                 <Route path="/formcontrol/form_claim_chi_phi" component={Form_claim_chi_phi} />
-                <Route path="/formcontrol/form_claim_chi_phi_ql_duyet" component={Form_claim_chi_phi_ql_duyet} />
+                <Route path="/formcontrol/form_claim_chi_phi_crm" component={Form_claim_chi_phi_crm} />
                 <Route path="/formcontrol/form_claim_chi_phi_final" component={Form_claim_chi_phi_final} />
-                <Route path="/formcontrol/form_claim_chi_phi_ql_duyet_invmapped" component={Form_claim_chi_phi_ql_duyet_invmapped} />
+                <Route path="/formcontrol/form_claim_chi_phi_crm_claimed" component={Form_claim_chi_phi_crm_claimed} />
                 <Route path="/formcontrol/get_new_upload_files" component={Get_new_upload_files} />
                 <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} />
                 <Route path="/formcontrol/dang_ky_nghi_phep_co_ly_do_pkh" component={Dang_ky_nghi_phep_pkh} />

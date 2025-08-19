@@ -17,19 +17,19 @@ import {
 } from "react-bootstrap";
 import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
 
-const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
+const Form_claim_chi_phi_crm_claimed = ( {history} ) => {
     const location = useLocation();
     const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
     
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
-      const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_crm_approved/?manv=${manv}&page=approved_invmapped`)
+      const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_crm_claimed/?manv=${manv}&page=approved_invmapped`)
       if (!response.ok) {
           SetLoading(false)
       }
       else {
       const data = await response.json()
-      set_data_submit(data['data_submit'])
+      set_data_submit(data['lst_duyet_hoa_don'])
       console.log(data);
       SetLoading(false);
 
@@ -56,7 +56,7 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
 
   const post_form_data = async (data) => {
     SetLoading(true)
-    const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_gift_expenses/`, {
+    const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_form_claim_chi_phi_crm_claimed/`, {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -65,30 +65,31 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
     });
 
     if (!response.ok) {
-        SetLoading(false);
         const data = await response.json();
         console.log(data);
         SetALert(true);
         SetALertType("alert-danger");
-        SetALertText("CHƯA TẠO ĐƯỢC");
-        setTimeout(() => SetALert(false), 3000);
-    } else {
+        SetALertText(data.error_message);
+        setTimeout(() => {
+        SetALert(false);
         SetLoading(false);
+        }, 2000);
+    } else {
         const data = await response.json();
         console.log(data);
         SetALert(true);
         SetALertType("alert-success");
-        SetALertText("ĐÃ TẠO THÀNH CÔNG");
-        setTimeout(() => SetALert(false), 3000);
-        // clear_data();
+        SetALertText( data.success_message );
+        setTimeout(() => {
+        SetALert(false);
+        SetLoading(false);
+        }, 2000);
         setCount(count+1);
-
     }
 }
 
   const handleApproval = async (isApproved) => {
-    const ql_duyet = isApproved ? "approved_invmapped" : "rejected_invmapped"
-    // Create a new list of records with updated status
+    const ql_duyet = isApproved ? "D" : "E"
     const updatedRecords = data_submit.map((record) => {
       if (record.checked) {
         let updatedRecord = Object.assign({}, record); // Clone the object
@@ -98,39 +99,21 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
       }
       return record;
     });
-  
-    // Update state with the modified records list
-    set_data_submit(updatedRecords);
-    console.log(updatedRecords)
-    post_form_data(updatedRecords);
 
+    let lst_selected = updatedRecords.filter(el => el.checked);
+    console.log("lst_selected", lst_selected)
+  
+    set_data_submit(lst_selected);
+    console.log(lst_selected)
+    post_form_data(lst_selected);
   };
   
 
-  const handleCheckboxChange = (id) => {
-    // Create a new list of records with updated checked status
+  const handleCheckboxChange = (e) => {
     const updatedRecords = data_submit.map((record) => {
-      if (record.id === id) {
-        let updatedRecord = Object.assign({}, record); // Clone the object
-        updatedRecord.checked = !updatedRecord.checked; // Toggle the checked status
-        return updatedRecord;
-      }
-      return record;
-    });
-  
-    // Update state with the modified records list
-    set_data_submit(updatedRecords);
-
-  };
-  
-  
-
-  const handlePlanningNumberChange = (id, newValue) => {
-    // Create a new list of records
-    const updatedRecords = data_submit.map((record) => {
-      if (record.id === id) {
-        let updatedRecord = Object.assign({}, record); // Clone the object
-        updatedRecord.so_ke_hoach = newValue; // Update the value
+      if (record.id === e.target.id) {
+        let updatedRecord = Object.assign({}, record);
+        updatedRecord.checked = e.target.checked;
         return updatedRecord;
       }
       return record;
@@ -138,12 +121,26 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
       set_data_submit(updatedRecords);
   };
   
+  
+
+  // const handlePlanningNumberChange = (id, newValue) => {
+  //   const updatedRecords = data_submit.map((record) => {
+  //     if (record.id === id) {
+  //       let updatedRecord = Object.assign({}, record); 
+  //       updatedRecord.so_ke_hoach = newValue;
+  //       return updatedRecord;
+  //     }
+  //     return record;
+  //   });
+  //     set_data_submit(updatedRecords);
+  // };
+  
   const handleNoteChange = (id, newValue) => {
     // Create a new list of records
     const updatedRecords = data_submit.map((record) => {
       if (record.id === id) {
         let updatedRecord = Object.assign({}, record); // Clone the object
-        updatedRecord.so_ke_hoach = newValue; // Update the value
+        updatedRecord.ghi_chu = newValue; // Update the value
         return updatedRecord;
       }
       return record;
@@ -177,9 +174,9 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
           DENY
         </Button>
 
-        <Link to="/formcontrol/form_claim_chi_phi_ql_duyet">
+        <Link to="/formcontrol/form_claim_chi_phi_crm">
           <Button
-          variant={location.pathname === "/formcontrol/form_claim_chi_phi_ql_duyet" ? "secondary" : "outline-secondary"} 
+          variant={location.pathname === "/formcontrol/form_claim_chi_phi_crm" ? "secondary" : "outline-secondary"} 
           className="w-100">DUYỆT ĐỀ XUẤT
           </Button>
         </Link>
@@ -192,10 +189,10 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
           <th style={{ width: '80px' }}>ID</th>
           <th style={{ width: '70px', textAlign: "center" }}>Chuyển</th>
           <th style={{ width: '100px' }}>Status</th>
-          <th style={{ width: '150px' }}>Số duyệt</th>
-          <th style={{ width: '100px' }}>Số hóa đơn</th>
+          <th style={{ width: '150px' }}>Số tiền TT</th>
+          {/* <th style={{ width: '100px' }}>Số hóa đơn</th>
           <th style={{ width: '100px' }}>Ngày hóa đơn</th>
-          <th style={{ width: '100px' }}>Tổng tiền</th>
+          <th style={{ width: '100px' }}>Tổng tiền</th> */}
           {/* <th style={{ width: '70px' }}>Mã NV</th> */}
           <th style={{ width: '150px' }}>Tên CVBH</th>
           <th style={{ width: '150px' }}>Tên KHC</th>
@@ -209,29 +206,28 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
         <tbody>
           {data_submit.map((record) => (
             <tr key={record.id} style={{ padding: '5px', fontSize: '14px' }}>
-              <td>{record.id.substring(0, 8)}</td>
+              <td>{record.id.slice(-6)}</td>
               <td>
                 <Form.Check
                   type="switch"
-                  id={`switch-${record.id}`}
+                  id={record.id}
                   checked={record.checked}
-                  onChange={() => handleCheckboxChange(record.id)}
+                  onChange={(e) => handleCheckboxChange(e)}
                 />
               </td>
               <td>{record.status}</td>
 
-              <td>
-                <Form.Control
+              <td> { f.format(record.so_tien_claim_hoa_don) }
+                {/* <Form.Control
                 readOnly
                   type="text"
                   value={ f.format(record.so_ke_hoach) }
                   onChange={(e) => handlePlanningNumberChange(record.id, e.target.value.replace(/\D/g, "") )}
-                />
+                /> */}
               </td>
-              <td>{record.so_hoa_don}</td>
+              {/* <td>{record.so_hoa_don}</td>
               <td>{new Date(record.ngay_hoa_don).toLocaleDateString("vi-VN")}</td>
-              <td>{ f.format(record.so_tien_hoa_don) }</td>
-              {/* <td>{record.manv}</td> */}
+              <td>{ f.format(record.so_tien_hoa_don) }</td> */}
               <td>{record.tencvbh}</td>
               <td>{record.pubcustname}</td>
               <td>{record.ten_hcp}</td>
@@ -256,4 +252,4 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
   );
 };
 
-export default Form_claim_chi_phi_ql_duyet_invmapped;
+export default Form_claim_chi_phi_crm_claimed;

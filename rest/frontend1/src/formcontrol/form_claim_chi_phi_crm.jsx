@@ -17,14 +17,14 @@ import {
 } from "react-bootstrap";
 import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
 
-const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
+const Form_claim_chi_phi_crm = ( {history} ) => {
     const location = useLocation();
     const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
     
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
       const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_crm/?manv=${manv}&page=approved`)
-      // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_ql_duyet/?manv=MR0673`)
+      // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_crm/?manv=MR0673`)
       if (!response.ok) {
           SetLoading(false)
       }
@@ -190,9 +190,9 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
         <Button variant="danger" onClick={() => handleApproval(false)}>
           DENY
         </Button>
-        <Link to="/formcontrol/form_claim_chi_phi_ql_duyet_invmapped">
+        <Link to="/formcontrol/form_claim_chi_phi_crm_claimed">
           <Button
-          variant={location.pathname === "/formcontrol/form_claim_chi_phi_ql_duyet_invmapped" ? "secondary" : "outline-secondary"} 
+          variant={location.pathname === "/formcontrol/form_claim_chi_phi_crm_claimed" ? "secondary" : "outline-secondary"} 
           className="w-100">DUYỆT HÓA ĐƠN
           </Button>
         </Link>
@@ -263,4 +263,4 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
   );
 };
 
-export default Form_claim_chi_phi_ql_duyet;
+export default Form_claim_chi_phi_crm;
