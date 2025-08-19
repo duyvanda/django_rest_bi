@@ -23,7 +23,7 @@ const Form_claim_chi_phi_ql_duyet_invmapped = ( {history} ) => {
     
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
-      const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_v2/?manv=${manv}&page=approved_invmapped`)
+      const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_crm_approved/?manv=${manv}&page=approved_invmapped`)
       if (!response.ok) {
           SetLoading(false)
       }

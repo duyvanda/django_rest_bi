@@ -82,9 +82,7 @@ function Tracking_chi_phi_hco({history}) {
     const [search, set_search] = useState('');
 
     const handeClick = (e) => {
-
-        (e.target.checked) ? set_hco(e.target.id) : set_hco("") 
-
+        // (e.target.checked) ? set_hco(e.target.id) : set_hco("") 
         let lst = [];
         for (const [index, element] of arr_hcp.entries()) {
         if(element.ma_kh_chung === e.target.id) {

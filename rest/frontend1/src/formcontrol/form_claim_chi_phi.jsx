@@ -124,9 +124,11 @@ function Form_claim_chi_phi({ history }) {
 // It’s totally valid (and preferred) to keep this mapping outside like that — it's declarative and aligns with React's reactive design.
 
     // Check if phongdeptsummary is "MT" or "TP"
-    const isKenhDisabled = manv_info?.phongdeptsummary === 'MT' || manv_info?.phongdeptsummary === 'TP';
+    const is_tp_mt = manv_info?.phongdeptsummary === 'MT' || manv_info?.phongdeptsummary === 'TP';
     // If phongdeptsummary is "MT" or "TP", set kenh to that value
-    const currentKenhValue = isKenhDisabled ? manv_info?.phongdeptsummary : kenh;
+    const currentKenhValue = is_tp_mt ? manv_info?.phongdeptsummary : kenh;
+
+    // console.log("is_tp_mt", is_tp_mt)
     
     // Automatically set kenh to "MT" or "TP" if necessary
     useEffect(() => {
@@ -156,8 +158,9 @@ function Form_claim_chi_phi({ history }) {
     // };
 
     const post_form_data = async (data) => {
-        SetLoading(true)
-        const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_gift_expenses/`, {
+        SetLoading(true);
+
+        const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_form_claim_chi_phi/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -166,24 +169,27 @@ function Form_claim_chi_phi({ history }) {
         });
 
         if (!response.ok) {
-            SetLoading(false);
             const data = await response.json();
             console.log(data);
             SetALert(true);
             SetALertType("alert-danger");
-            SetALertText("CHƯA TẠO ĐƯỢC");
-            setTimeout(() => SetALert(false), 3000);
-        } else {
+            SetALertText(data.error_message);
+            setTimeout(() => {
+            SetALert(false);
             SetLoading(false);
+            }, 2000);
+        } else {
             const data = await response.json();
             console.log(data);
             SetALert(true);
             SetALertType("alert-success");
-            SetALertText("ĐÃ TẠO THÀNH CÔNG");
-            setTimeout(() => SetALert(false), 3000);
+            SetALertText( data.success_message );
+            setTimeout(() => {
+            SetALert(false);
+            SetLoading(false);
+            }, 2000);
             clear_data();
             setCount(count+1);
-
         }
     }
 
@@ -201,7 +207,7 @@ function Form_claim_chi_phi({ history }) {
         const insert = Inserted_at();
         const baseData = {
             id: rawId,
-            status:"new",
+            status:"H",
             manv: manv,
             tencvbh: manv_info?.tencvbh,
             phongdeptsummary: manv_info?.phongdeptsummary,
@@ -211,15 +217,17 @@ function Form_claim_chi_phi({ history }) {
             ten_hcp: null,
             qua_tang,
             kenh: kenh,
+            ty_le: ty_le?.value,
             noi_dung: noi_dung,
             ghi_chu,
             so_ke_hoach: Number(so_ke_hoach.replace(/,/g, "")  ),
-            so_hoa_don: null,
-            ngay_hoa_don: null,
-            so_tien_hoa_don:null,
-            inserted_at: insert,
-            ty_le: ty_le?.value,
-            max_ke_hoach
+            max_ke_hoach: null,
+            // so_hoa_don: null,
+            // ngay_hoa_don: null,
+            // so_tien_hoa_don:null,
+            inserted_at: insert
+            
+            
         };
         const plan = Number(so_ke_hoach.replace(/,/g, ""));
 
@@ -248,20 +256,20 @@ function Form_claim_chi_phi({ history }) {
                     ten_hcp: hcp_detail.ten_hcp,
                     qua_tang: baseData.qua_tang,
                     kenh: baseData.kenh,
+                    ty_le: baseData.ty_le,
                     noi_dung: baseData.noi_dung,
                     ghi_chu: baseData.ghi_chu,
                     so_ke_hoach: baseData.so_ke_hoach,
-                    so_hoa_don: baseData.so_hoa_don,
-                    ngay_hoa_don: baseData.ngay_hoa_don,
-                    so_tien_hoa_don: baseData.so_tien_hoa_don,
-                    inserted_at: baseData.inserted_at,
-                    ty_le: baseData.ty_le,
-                    max_ke_hoach
+                    max_ke_hoach: baseData.max_ke_hoach,
+                    // so_hoa_don: baseData.so_hoa_don,
+                    // ngay_hoa_don: baseData.ngay_hoa_don,
+                    // so_tien_hoa_don: baseData.so_tien_hoa_don,
+                    inserted_at: baseData.inserted_at
                 };
                 explodedData.push(newItem);
             }
         }
-
+        
         console.log("explodedData", explodedData);
         post_form_data(explodedData);
     };
@@ -312,25 +320,27 @@ function Form_claim_chi_phi({ history }) {
                             />
                             
                             {/* chon_hcp Select with Search */}
-                            <Select
-                            isMulti
-                            className="mt-2"
-                            options={data_hcp.filter((el) => el.hco_bv === chon_kh_chung?.hco_bv)}
-                            getOptionValue={(el) => el.ma_hcp_2}
-                            getOptionLabel={(el) => `${el.ma_hcp_2} - ${el.ten_hcp}`}
-                            value={chon_hcp}
-                            onChange={
-                                (selectedOptions) => {
-                                set_chon_hcp(selectedOptions);  // Update state
-                                console.log(selectedOptions);  // Log the selected options
+                            {is_tp_mt===false &&
+                                <Select
+                                isMulti
+                                className="mt-2"
+                                options={data_hcp.filter((el) => el.hco_bv === chon_kh_chung?.hco_bv)}
+                                getOptionValue={(el) => el.ma_hcp_2}
+                                getOptionLabel={(el) => `${el.ma_hcp_2} - ${el.ten_hcp}`}
+                                value={chon_hcp}
+                                onChange={
+                                    (selectedOptions) => {
+                                    set_chon_hcp(selectedOptions);  // Update state
+                                    console.log(selectedOptions);  // Log the selected options
+                                    }
                                 }
-                            }
-                            // onChange={ (selectedOption) => set_chon_hcp(selectedOption?.ma_hcp_2) }
-                            isSearchable
-                            isDisabled={isKenhDisabled}
-                            placeholder="Chọn khách hàng"
-                            styles={{ placeholder: (base) => ({ ...base, color: "#212529" }) }}
+                                // onChange={ (selectedOption) => set_chon_hcp(selectedOption?.ma_hcp_2) }
+                                isSearchable
+                                isDisabled={is_tp_mt}
+                                placeholder="Chọn khách hàng"
+                                styles={{ placeholder: (base) => ({ ...base, color: "#212529" }) }}
                             />
+                            }
 
                             {/* Chon Loai Qua Select */}
                             <Form.Select className='mt-2' required onChange={handleQuaTangChange} value={qua_tang}>
@@ -341,18 +351,18 @@ function Form_claim_chi_phi({ history }) {
                             </Form.Select>
                             
                             {/* kenh Select */}
+                            { is_tp_mt === false &&
                             <Form.Select className='mt-2' required 
-                            onChange={(e) => set_kenh(e.target.value)} 
-                            value={currentKenhValue}
-                            disabled={isKenhDisabled}
-                            >
-                            
-                            <option value="">Chọn kênh</option>
-                            {kenhs.map((ch, idx) => (
-                                <option key={idx} value={ch}>{ch}</option>
-                            ))}
+                                onChange={(e) => set_kenh(e.target.value)} 
+                                value={currentKenhValue}
+                                >
+                                <option value="">Chọn kênh</option>
+                                {kenhs.map((ch, idx) => (
+                                    <option key={idx} value={ch}>{ch}</option>
+                                ))}
                             </Form.Select>
-
+                            }
+                            
                             {(kenh === 'CLC & INS') && (
                                 <Select
                                 required

@@ -189,7 +189,6 @@ function Tao_hcp_bv({history, location}) {
 
     };
     
-
     const handeClick = (e) => {
         let lst = [];
         for (let element of arr_co_lam_phong_mach) {
@@ -263,7 +262,6 @@ function Tao_hcp_bv({history, location}) {
             SetLoading(false);
             }, 2000);
         } else {
-            SetLoading(false);
             const data = await response.json();
             console.log(data);
             SetALert(true);
@@ -275,7 +273,6 @@ function Tao_hcp_bv({history, location}) {
             }, 2000);
             clear_data();
             setCount(count+1);
-
         }
     }
 

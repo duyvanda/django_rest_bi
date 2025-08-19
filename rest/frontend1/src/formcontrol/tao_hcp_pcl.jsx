@@ -263,7 +263,6 @@ function Tao_hcp_pcl({history, location}) {
             SetLoading(false);
             }, 2000);
         } else {
-            SetLoading(false);
             const data = await response.json();
             console.log(data);
             SetALert(true);
@@ -275,7 +274,6 @@ function Tao_hcp_pcl({history, location}) {
             }, 2000);
             clear_data();
             setCount(count+1);
-
         }
     }
 

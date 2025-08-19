@@ -8,6 +8,7 @@ import {
     // ButtonGroup,
     Modal,
     Button,
+    ListGroup,
     Col,
     Row,
     Container,
@@ -26,19 +27,29 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
       
     const fetch_initial_data = async (manv) => {
-      SetLoading(true)
-      const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_v2/?manv=${manv}&page=invmapped`)
-      if (!response.ok) {
-          SetLoading(false)
-      }
-      else {
-      const data = await response.json()
-      set_data_submit(data['data_submit'])
-      set_invoices(data['data_hoa_don'])
-      console.log(data);
-      SetLoading(false);
-      }
-  }
+      SetLoading(true);
+      let api1_url = `https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_crm_approved/?manv=${manv}&page=invmapped`;
+      let api2_url = `https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_hoa_don_misa`;
+      try {
+          const [response1, response2] = await Promise.all([
+          fetch(api1_url),
+          fetch(api2_url),
+        ]);
+        if (!response1.ok || !response2.ok) {
+            throw new Error('One of the API calls failed');
+        }
+        else {
+          const data1 = await response1.json();
+          const data2 = await response2.json();
+          set_data_submit(data1['lst_da_duyet'])
+          set_lst_invoices(data2['lst_invoices'])
+          console.log("data1", data1);
+          console.log("data2", data2);
+        }
+      } 
+      catch (error) {console.error('Error fetching data:', error);} 
+      finally {SetLoading(false);}
+    }
     
     const [count, setCount] = useState(0);
     useEffect(() => {
@@ -56,30 +67,20 @@ const Form_claim_chi_phi_final = ( {history} ) => {
     }, [count]);
 
     const [data_submit, set_data_submit] = useState([]);
-    const [debouncedDataSubmit, setDebouncedDataSubmit] = useState([]);
-    const [isDebouncing, setIsDebouncing] = useState(false);
 
-    useEffect(() => {
-      setIsDebouncing(true);
-      const handler = setTimeout(() => {
-        const filteredData = data_submit.filter(item =>
-          item && item.so_hoa_don && item.so_hoa_don.length >= 1
-        );
 
-        if (filteredData.length > 0) {
-          setDebouncedDataSubmit(filteredData);
-        }
-        setIsDebouncing(false); // End debounce: re-enable the button
-      }, 1500); // 1500ms debounce delay
+  const [selected_kh, set_selected_kh] = useState({});
+  const [search, set_search] = useState("");
+  const [show_chon_hoa_don, set_show_chon_hoa_don] = useState(false);
 
-      // Cleanup function to clear the timeout
-      return () => {
-        clearTimeout(handler);
-      };
-    }, [data_submit]); // Dependency array: re-run effect when data_submit changes
+  const [lst_invoices,  set_lst_invoices] = useState ([]);
+  const [renderKey, setRenderKey] = useState(0);
+  const [show_dieu_chinh_hoa_don, set_show_dieu_chinh_hoa_don] = useState(false);
+  const [selected_hoa_don, set_selected_hoa_don] = useState(false);
+  const [so_tien_dieu_chinh_hoa_don, set_so_tien_dieu_chinh_hoa_don] = useState(0);
+  const [lst_chon_invoices,  set_lst_chon_invoices] = useState ([]);
+  const [total_amount,  set_total_amount] = useState (0);
 
-  const [invoices,  set_invoices] = useState ([]);
-  // const [selected_invoices, set_selected_invoices] = useState([]);
   const f = new Intl.NumberFormat();
   const [manv, set_manv] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -88,14 +89,30 @@ const Form_claim_chi_phi_final = ( {history} ) => {
   const [downloadUrl, setDownloadUrl] = useState("");
   const [spinning, setSpinning] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  // const [disable, setdisable] = useState(false);
-  const [OverbudgetIds, setOverbudgetIds] = useState([]);
 
+    const clear_data = () => {
 
+    set_selected_kh({});
+    set_search("");
+    set_show_chon_hoa_don(false);
+      
+    set_selected_kh({});
+    set_search("");
+    set_show_chon_hoa_don(false);
+    set_lst_invoices([]);
+    setRenderKey(0);
+    set_show_dieu_chinh_hoa_don(false);
+    set_selected_hoa_don(false);
+    set_so_tien_dieu_chinh_hoa_don(0);
+    set_lst_chon_invoices([]);
+    set_total_amount(0);
+
+  };
+  
 
   const post_form_data = async (data) => {
     SetLoading(true)
-    const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_gift_expenses/`, {
+    const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_form_claim_chi_phi_hoa_don/`, {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -103,106 +120,92 @@ const Form_claim_chi_phi_final = ( {history} ) => {
         body: JSON.stringify(data),
     });
 
-    if (!response.ok) {
-        SetLoading(false);
-        const data = await response.json();
-        console.log(data);
-        SetALert(true);
-        SetALertType("alert-danger");
-        SetALertText("CHƯA TẠO ĐƯỢC");
-        setTimeout(() => SetALert(false), 3000);
-    } else {
-        SetLoading(false);
-        const data = await response.json();
-        console.log(data);
-        SetALert(true);
-        SetALertType("alert-success");
-        SetALertText("ĐÃ TẠO THÀNH CÔNG");
-        setTimeout(() => SetALert(false), 3000);
-        // clear_data();
-        setCount(count+1);
-
-    }
+        if (!response.ok) {
+            const data = await response.json();
+            console.log(data);
+            SetALert(true);
+            SetALertType("alert-danger");
+            SetALertText(data.error_message);
+            setTimeout(() => {
+            SetALert(false);
+            SetLoading(false);
+            clear_data();
+            setCount(count+1);
+            }, 2000);
+        } else {
+            const data = await response.json();
+            console.log(data);
+            SetALert(true);
+            SetALertType("alert-success");
+            SetALertText( data.success_message );
+            setTimeout(() => {
+            SetALert(false);
+            SetLoading(false);
+            }, 2000);
+            clear_data();
+            setCount(count+1);
+        }
 }
 
-const handleApproval = async (idToApprove) => {
-  let record_to_post = null; // Initialize a variable to hold the selected record
+// const handleApproval = async (idToApprove) => {
+//   let record_to_post = null;
 
-  const updatedRecords = data_submit.map((record) => {
-    console.log("Comparing:", record.id, "with", idToApprove);
-    if (record.id === idToApprove) {
-      let updatedRecord = Object.assign({}, record);
-      updatedRecord.status = "invmapped";
-      updatedRecord.inserted_at = Inserted_at();
-      record_to_post = updatedRecord;
-      return updatedRecord;
-    }
-    return record;
-  });
+//   const updatedRecords = data_submit.map((record) => {
+//     console.log("Comparing:", record.id, "with", idToApprove);
+//     if (record.id === idToApprove) {
+//       let updatedRecord = Object.assign({}, record);
+//       updatedRecord.status = "invmapped";
+//       updatedRecord.inserted_at = Inserted_at();
+//       record_to_post = updatedRecord;
+//       return updatedRecord;
+//     }
+//     return record;
+//   });
 
-  if (record_to_post && record_to_post.so_hoa_don && record_to_post.so_hoa_don.length >= 1)
-  {
-      post_form_data([record_to_post]);
-      console.log("Posting selected record:", [record_to_post]);
-  } else {
-    console.warn("No record found with ID to post:", idToApprove);
-  }
-};
+//   if (record_to_post && record_to_post.so_hoa_don && record_to_post.so_hoa_don.length >= 1)
+//   {
+//       post_form_data([record_to_post]);
+//       console.log("Posting selected record:", [record_to_post]);
+//   } else {
+//     console.warn("No record found with ID to post:", idToApprove);
+//   }
+// };
   
 
   const handlePlanningNumberChange = (id, newValue) => {
-    // Create a new list of records
     const updatedRecords = data_submit.map((record) => {
       if (record.id === id) {
+        // Use the spread operator for a cleaner and more modern way to clone
+        let updatedRecord = { ...record };
+
+        if (Number(newValue) < Number(record.max_ke_hoach)) {
+          updatedRecord.so_tien_claim = Number(newValue); // Update the value
+          // The return statement must be inside a code block
+          return updatedRecord;
+        } else {
+          window.alert("Đã vượt ngưỡng tối đa của kế hoạch");
+          // Return the original record if the condition is not met
+          return record;
+        }
+      }
+      // Return the original record for all other cases
+      return record;
+    });
+    set_data_submit(updatedRecords);
+  };
+
+    const handle_dieu_chinh_so_tien = (id) => {
+    const updatedRecords = lst_invoices.map((record) => {
+      if (record.id_duy_nhat_cua_hoa_don === id) {
         let updatedRecord = Object.assign({}, record); // Clone the object
-        updatedRecord.so_ke_hoach = newValue; // Update the value
+        updatedRecord.so_tien_claim = Number(so_tien_dieu_chinh_hoa_don); // Update the value
         return updatedRecord;
       }
       return record;
     });
-  
-    // Update state
-    set_data_submit(updatedRecords);
+      set_lst_invoices(updatedRecords);
   };
   
-  // const handleInvoiceChange = (id, selectedInvoice) => {
-  //   const updatedRecords = data_submit.map((record) => {
-  //     if (record.id === id) {
-  //       let updatedRecord = Object.assign({}, record);
-  //       updatedRecord.so_ke_hoach = selectedInvoice.so_tien_hoa_don;
-  //       updatedRecord.so_hoa_don = selectedInvoice.so_hoa_don;
-  //       updatedRecord.so_tien_hoa_don = selectedInvoice.so_tien_hoa_don;
-  //       updatedRecord.ngay_hoa_don = selectedInvoice.ngay_hoa_don;
-  //       return updatedRecord;
-  //     }
-  //     return record;
-  //   });
-  //   set_data_submit(updatedRecords);
-  // };
-
-const handleInvoiceChange = (id, selectedInvoices) => {
-  const updatedRecords = data_submit.map((record) => {
-    if (record.id === id) {
-      const newInvoiceDetails = selectedInvoices ? selectedInvoices.map( (invoice, index) => ({
-        so_hoa_don: invoice.so_hoa_don,
-        so_tien_hoa_don: invoice.so_tien_hoa_don,
-        ngay_hoa_don: invoice.ngay_hoa_don,
-        index: index + 1
-      })) : [];
-      const totalSoTienHoaDon = newInvoiceDetails.reduce((sum, invoice) => sum + (invoice.so_tien_hoa_don || 0), 0);
-        return {
-          ...record,
-          so_hoa_don: newInvoiceDetails,
-          so_ke_hoach: totalSoTienHoaDon,
-          so_tien_hoa_don: totalSoTienHoaDon,
-          ngay_hoa_don: null,
-        };
-    }
-    return record;
-  });
-  set_data_submit(updatedRecords);
-};
-
   const handleNoteChange = (id, newValue) => {
     // Create a new list of records
     const updatedRecords = data_submit.map((record) => {
@@ -215,6 +218,60 @@ const handleInvoiceChange = (id, selectedInvoices) => {
     });
       set_data_submit(updatedRecords);
   };
+
+    const handle_switch = (e, kh_id, tong_so_tien_claim, inv ) => {
+      let lst_tong = [];
+      for (const record of lst_invoices) {
+        let element = Object.assign({}, record); // Clone the object
+        if(element.id_duy_nhat_cua_hoa_don === e.target.id) {
+            element.check = e.target.checked
+            element.selected_time = Inserted_at()
+            lst_tong.push(element);
+        }
+        else {
+          void(0);
+          lst_tong.push(element);
+        }
+      }
+      // END FOR
+      let lst_selected = lst_tong.filter(invoice => invoice.check);
+      console.log("lst_selected", lst_selected)
+
+      const totalAmount = lst_selected.reduce(
+        (sum, invoice) => sum + invoice.so_tien_claim,
+        0
+      );
+
+      if (Number(totalAmount) <= Number(tong_so_tien_claim))
+        {
+          console.log("ok", totalAmount, tong_so_tien_claim);
+          set_lst_invoices(lst_tong);
+          set_lst_chon_invoices(lst_selected);
+          set_total_amount(totalAmount);
+        }
+      else {
+            setRenderKey(renderKey + 1);
+            console.log("not ok", totalAmount, tong_so_tien_claim);
+            set_so_tien_dieu_chinh_hoa_don(tong_so_tien_claim - total_amount);
+            set_show_dieu_chinh_hoa_don(true);
+            set_selected_hoa_don(inv);
+      }
+  }
+
+      const handle_xac_nhan_invoice = async (khid, so_tien_claim, lst_chon_invoices) => {
+        SetLoading(true);
+
+        let data = [{
+          khid,
+          so_tien_claim,
+          lst_chon_invoices,
+          status:"I",
+          inserted_at: Inserted_at(),
+        }]
+
+        console.log(data);
+        post_form_data(data);
+    }
 
   const handleConfirm = async () => {
     setSpinning(true);
@@ -250,43 +307,6 @@ const handleInvoiceChange = (id, selectedInvoices) => {
     }
   }
 
-  const check_claim = async () => {
-    setIsDebouncing(true);
-    try {
-
-        const response = await fetch(`https://bi.meraplion.com/local/post_data/check_invoice_mapping_claim_cp/`, {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify(debouncedDataSubmit),
-        });
-
-        if (!response.ok) {
-            const data = await response.json();
-            console.log(data);
-            return data
-        } else {
-            const data = await response.json();
-            console.log(data);
-            return data
-        }
-    } catch (processErr) {
-      console.error("Error processing data:", processErr);
-    } finally {
-      setIsDebouncing(false);
-    }
-  }
-// useEffect để gọi check_claim khi data_submit thay đổi
-useEffect(() => {
-  async function executeProcessing() {
-      const {processedData, overbudgetIds} = await check_claim();
-      setOverbudgetIds(overbudgetIds);
-      console.log("Dữ liệu đã xử lý (từ useEffect):", overbudgetIds);
-  }
-  executeProcessing();
-}, [debouncedDataSubmit]); // Thêm data_submit vào dependencies
-
   return (
     <Container className="h-100" fluid> 
         {/* Responsive Full-Width Buttons */}
@@ -316,14 +336,14 @@ useEffect(() => {
         <thead>
           <tr style={{ padding: '5px', fontSize: '12px' }}>
             <th style={{ width: '80px' }}>KH-ID</th>
-            <th style={{ width: '150px' }}>Số tiền cần TT</th>
-            <th style={{ width: '550px' }}>Hóa đơn</th>
-            <th style={{ width: '100px' }}>Tiền hóa đơn</th>
-            <th style={{ width: '70px' }}>Gửi ĐN</th>
-            <th style={{ width: '150px' }}>Tên CVBH</th>
-            <th style={{ width: '150px' }}>Tên KHC</th>
-            <th style={{ width: '150px' }}>Tên HCP</th>
-            <th style={{ width: '150px' }}>Quà tặng</th>
+            <th style={{ width: '120px' }}>Số tiền tối đa</th>
+            <th style={{ width: '120px' }}>Số tiền duyệt</th>
+            <th style={{ width: '120px' }}>Số tiền cần TT</th>
+            <th style={{ width: '70px' }}>Hóa đơn</th>
+            <th style={{ width: '200px' }}>Tên CVBH</th>
+            <th style={{ width: '200px' }}>Tên KHC</th>
+            <th style={{ width: '200px' }}>Tên HCP</th>
+            <th style={{ width: '200px' }}>Quà tặng</th>
             <th style={{ width: '70px' }}>Kênh</th>
             <th style={{ width: '200px' }}>Nội dung</th>
             <th style={{ width: '200px' }}>Ghi chú</th>
@@ -335,66 +355,25 @@ useEffect(() => {
               style={{
               padding: '5px', 
               fontSize: '14px', 
-              backgroundColor: OverbudgetIds.includes(record.id) ? 'rgb(254 202 202)' : 'transparent',
-              height: '200px'
+              // backgroundColor: OverbudgetIds.includes(record.id) ? 'rgb(254 202 202)' : 'transparent',
               }}
               >
               <td>{record.id.slice(-6)}</td>
+              <td>{f.format(record.max_ke_hoach)}</td>
+              <td>{f.format(record.approved_so_ke_hoach)}</td>
               <td>
                 <Form.Control
                   type="text"
-                  value={ f.format(record.so_ke_hoach) }
+                  value={ f.format(record.so_tien_claim) }
                   onChange={(e) => handlePlanningNumberChange(record.id, e.target.value.replace(/\D/g, "") )}
                 />
               </td>
               
               <td>
-              <Select // SELEC INVOICE
-                  options={invoices}
-                  getOptionValue={(el) => el.so_hoa_don}
-                  getOptionLabel={(el) => `${el.so_hoa_don} - ${f.format(el.so_tien_hoa_don)} - ${el.ngay_hoa_don}`}
-                  value={record.so_hoa_don}
-                  onChange={(selectedInvoices) => {
-                    handleInvoiceChange(record.id, selectedInvoices);
-                    console.log("selectedInvoices", selectedInvoices);
-                  }}
-                  isClearable
-                  isSearchable
-                  isMulti
-                  placeholder="Chọn hóa đơn"
-                  styles={{
-                    control: (base) => ({
-                      ...base,
-                      backgroundColor: "#f0f8ff",
-                    }),
-                    placeholder: (base) => ({ ...base, color: "#212529" }),
-
-                          // ADD THIS TO CONTROL THE NUMBER OF ROWS SHOWN
-                    menuList: (base) => ({
-                      ...base,
-                      maxHeight: '400px', // Adjust this value as needed (e.g., '200px', '400px')
-                      // You can also consider setting a fixed height if you want
-                      // height: '300px',
-                    }),
-                  }}
-                />
-              </td>
-
-              <td> { f.format(record.so_tien_hoa_don) }</td>
-              <td>
-                <Button 
-                size="sm"
-                disabled={
-                OverbudgetIds.length >= 1 ||
-                isDebouncing === true ||
-                (!record.so_hoa_don || record.so_hoa_don.length === 0)
-                } variant="success" onClick={() => {
-                  console.log("Button clicked!", record.id);
-                  handleApproval(record.id);
-
-                }}>
-                Gửi
-                </Button>
+                <Button onClick={() => {
+                  set_show_chon_hoa_don(true);
+                  set_selected_kh(record)
+                  }} size="sm">HĐ</Button>
               </td>
 
               <td>{record.tencvbh}</td>
@@ -415,8 +394,93 @@ useEffect(() => {
         </tbody>
       </Table>
 
-      {/* MODAL */}
+      {/* MODAL Chon Hóa Đơn */}
+      <Modal fullscreen={true} show={show_chon_hoa_don} onHide={() => set_show_chon_hoa_don(false)}>
+      <Modal.Body>
+        <div className="mb-3">
+          <h5 className="mb-3 text-primary fw-bold">Thông tin thanh toán</h5>
+          <div className="mb-2">
+            <span className="text-muted">Số KH-ID: </span>
+            <strong>{selected_kh.id + '-' +selected_kh.noi_dung}</strong>
+          </div>
+          <div className="mb-2">
+            <span className="text-muted">Cho NT-BV: </span>
+            <strong>{selected_kh.pubcustname}</strong>
+          </div>
+          <div className="mb-2">
+            <span className="text-muted">Cho HCP (Nếu có): </span>
+            <strong>{selected_kh.ten_hcp}</strong>
+          </div>
+          <div className="mb-2">
+            <span className="text-muted">Bạn muốn thanh toán: </span>
+            <strong className="text-success">{f.format(selected_kh.so_tien_claim)}</strong>
+          </div>
+          <div className="mb-2">
+            <span className="text-muted">Bạn đã chọn: </span>
+            <strong className="text-info">{f.format(total_amount)}</strong>
+          </div>
+          <div className="mb-2">
+            <span className="text-muted">CL: </span>
+            <strong className="text-info">{f.format(selected_kh.so_tien_claim - total_amount)}</strong>
+          </div>
+        </div>
 
+        <ListGroup key={renderKey} className="mt-2" style={{maxHeight: "250px", overflowY: "auto"}}>
+            <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="Tìm số hóa đơn hoặc ngày hoặc tên NCC (KHONG DAU) " value={search} />
+            {lst_invoices
+                .filter( el => el.clean_ten.toLowerCase().includes( search.toLowerCase() ) )
+                .map( (el, index) =>
+                <ListGroup.Item key={index} className="mx-0 px-0 my-0 py-0" >
+                    <Form.Check key={index} className="text-wrap" type="switch" checked={el.check} onChange={ (e) => handle_switch(e, selected_kh.id, selected_kh.so_tien_claim, el ) } id={el.id_duy_nhat_cua_hoa_don} label={ el.ten_hien_thi + f.format(el.so_tien_claim) }/>
+                </ListGroup.Item>
+                )
+            }
+        </ListGroup>
+      </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => {
+              set_show_chon_hoa_don(false); 
+              set_lst_chon_invoices([]);
+                const resetInvoices = lst_invoices.map(invoice => ({
+                ...invoice, 
+                check: false
+              }));
+              set_lst_invoices(resetInvoices);
+              }}>
+            Đóng
+          </Button>
+          <Button variant="primary" onClick={ () => handle_xac_nhan_invoice(selected_kh.id, selected_kh.so_tien_claim,  lst_chon_invoices) } disabled={loading} >
+          {loading ? <Spinner as="span" animation="border" size="sm" /> : "Xác nhận"}
+          </Button>
+        </Modal.Footer>
+        
+      </Modal>
+
+      <Modal show={show_dieu_chinh_hoa_don} onHide={() => {set_show_dieu_chinh_hoa_don(false);set_so_tien_dieu_chinh_hoa_don(0)}}>
+        <Modal.Header closeButton>
+          <Modal.Title>Hóa đơn chọn đã vượt quá số tiền</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Số tiền còn lại: {f.format(selected_kh.so_ke_hoach - total_amount)}</Modal.Body>
+        <Form>
+            <Form.Group className="mb-3 ml-3">
+              <Form.Label>Điều chỉnh thành:</Form.Label>
+              <Form.Control
+                type="text"
+                value={f.format(so_tien_dieu_chinh_hoa_don)}
+                onChange={(e) => set_so_tien_dieu_chinh_hoa_don(e.target.value.replace(/\D/g, ""))}
+                // onChange={(e) => handle_dieu_chinh_so_tien(selected_hoa_don.id_duy_nhat_cua_hoa_don, e.target.value.replace(/\D/g, ""))}
+              />
+            </Form.Group>
+        </Form>
+      <Button onClick={()=> {
+        handle_dieu_chinh_so_tien(selected_hoa_don.id_duy_nhat_cua_hoa_don); 
+        set_show_dieu_chinh_hoa_don(false);
+        }
+        } variant="outline-info">Điều chỉnh</Button>
+      </Modal>
+
+      {/* MODAL Excel */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Chọn khoảng thời gian</Modal.Title>
@@ -470,4 +534,134 @@ useEffect(() => {
 
 export default Form_claim_chi_phi_final;
 
+//   const handleInvoiceChange = (id, selectedInvoice) => {
+//     const updatedRecords = data_submit.map((record) => {
+//       if (record.id === id) {
+//         let updatedRecord = Object.assign({}, record);
+//         updatedRecord.so_ke_hoach = selectedInvoice.so_tien_hoa_don;
+//         updatedRecord.so_hoa_don = selectedInvoice.so_hoa_don;
+//         updatedRecord.so_tien_hoa_don = selectedInvoice.so_tien_hoa_don;
+//         updatedRecord.ngay_hoa_don = selectedInvoice.ngay_hoa_don;
+//         return updatedRecord;
+//       }
+//       return record;
+//     });
+//     set_data_submit(updatedRecords);
+//   };
 
+// const handleInvoiceChange = (id, selectedInvoices) => {
+//   const updatedRecords = data_submit.map((record) => {
+//     if (record.id === id) {
+//       const newInvoiceDetails = selectedInvoices ? selectedInvoices.map( (invoice, index) => ({
+//         so_hoa_don: invoice.so_hoa_don,
+//         so_tien_hoa_don: invoice.so_tien_hoa_don,
+//         ngay_hoa_don: invoice.ngay_hoa_don,
+//         index: index + 1
+//       })) : [];
+//       const totalSoTienHoaDon = newInvoiceDetails.reduce((sum, invoice) => sum + (invoice.so_tien_hoa_don || 0), 0);
+//         return {
+//           ...record,
+//           so_hoa_don: newInvoiceDetails,
+//           so_ke_hoach: totalSoTienHoaDon,
+//           so_tien_hoa_don: totalSoTienHoaDon,
+//           ngay_hoa_don: null,
+//         };
+//     }
+//     return record;
+//   });
+//   set_data_submit(updatedRecords);
+// };
+
+  // const check_claim = async () => {
+  //   setIsDebouncing(true);
+  //   try {
+
+  //       const response = await fetch(`https://bi.meraplion.com/local/post_data/check_invoice_mapping_claim_cp/`, {
+  //           method: "POST",
+  //           headers: {
+  //           "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify(debouncedDataSubmit),
+  //       });
+
+  //       if (!response.ok) {
+  //           const data = await response.json();
+  //           console.log(data);
+  //           return data
+  //       } else {
+  //           const data = await response.json();
+  //           console.log(data);
+  //           return data
+  //       }
+  //   } catch (processErr) {
+  //     console.error("Error processing data:", processErr);
+  //   } finally {
+  //     setIsDebouncing(false);
+  //   }
+  // }
+
+// useEffect(() => {
+//   async function executeProcessing() {
+//       const {processedData, overbudgetIds} = await check_claim();
+//       setOverbudgetIds(overbudgetIds);
+//       console.log("Dữ liệu đã xử lý (từ useEffect):", overbudgetIds);
+//   }
+//   executeProcessing();
+// }, [debouncedDataSubmit]); 
+
+              {/* <Select
+                  options={invoices}
+                  getOptionValue={(el) => el.so_hoa_don}
+                  getOptionLabel={(el) => `${el.so_hoa_don} - ${f.format(el.so_tien_hoa_don)} - ${el.ngay_hoa_don}`}
+                  value={record.so_hoa_don}
+                  onChange={(selectedInvoices) => {
+                    handleInvoiceChange(record.id, selectedInvoices);
+                    console.log("selectedInvoices", selectedInvoices);
+                  }}
+                  isClearable
+                  isSearchable
+                  isMulti
+                  placeholder="Chọn hóa đơn"
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      backgroundColor: "#f0f8ff",
+                    }),
+                    placeholder: (base) => ({ ...base, color: "#212529" }),
+                  }}
+                /> */}
+
+              {/* <td> { f.format(record.so_tien_hoa_don) }</td> */}
+              {/* <td>
+                <Button 
+                size="sm"
+                disabled={
+                OverbudgetIds.length >= 1 ||
+                isDebouncing === true ||
+                (!record.so_hoa_don || record.so_hoa_don.length === 0)
+                } variant="success" onClick={() => {
+                  console.log("Button clicked!", record.id);
+                  handleApproval(record.id);
+
+                }}>
+                Gửi
+                </Button>
+              </td> */}
+
+
+    // useEffect(() => {
+    //   const handler = setTimeout(() => {
+    //     const filteredData = data_submit.filter(item =>
+    //       item && item.so_hoa_don && item.so_hoa_don.length >= 1
+    //     );
+
+    //     if (filteredData.length > 0) {
+    //       setDebouncedDataSubmit(filteredData);
+    //     }
+    //     setIsDebouncing(false);
+    //   }, 1500);
+
+    //   return () => {
+    //     clearTimeout(handler);
+    //   };
+    // }, [data_submit]);

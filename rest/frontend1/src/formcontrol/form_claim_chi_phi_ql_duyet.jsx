@@ -23,14 +23,14 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
     
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
-      const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_v2/?manv=${manv}&page=approved`)
+      const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_crm/?manv=${manv}&page=approved`)
       // const response = await fetch(`https://bi.meraplion.com/local/get_form_claim_chi_phi_ql_duyet/?manv=MR0673`)
       if (!response.ok) {
           SetLoading(false)
       }
       else {
       const data = await response.json()
-      set_data_submit(data['data_submit'])
+      set_data_submit(data['lst_chon_ke_hoach'])
       console.log(data);
       SetLoading(false);
 
@@ -57,7 +57,7 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
 
   const post_form_data = async (data) => {
     SetLoading(true)
-    const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_gift_expenses/`, {
+    const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_form_claim_chi_phi_crm/`, {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -66,29 +66,31 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
     });
 
     if (!response.ok) {
-        SetLoading(false);
         const data = await response.json();
         console.log(data);
         SetALert(true);
         SetALertType("alert-danger");
-        SetALertText("CHƯA TẠO ĐƯỢC");
-        setTimeout(() => SetALert(false), 3000);
-    } else {
+        SetALertText(data.error_message);
+        setTimeout(() => {
+        SetALert(false);
         SetLoading(false);
+        }, 2000);
+    } else {
         const data = await response.json();
         console.log(data);
         SetALert(true);
         SetALertType("alert-success");
-        SetALertText("ĐÃ TẠO THÀNH CÔNG");
-        setTimeout(() => SetALert(false), 3000);
-        // clear_data();
+        SetALertText( data.success_message );
+        setTimeout(() => {
+        SetALert(false);
+        SetLoading(false);
+        }, 2000);
         setCount(count+1);
-
     }
   }
 
   const handleApproval = async (isApproved) => {
-    const ql_duyet = isApproved ? "approved" : "rejected"
+    const ql_duyet = isApproved ? "C" : "R"
     // Create a new list of records with updated status
     const updatedRecords = data_submit.map((record) => {
       if (record.checked) {
@@ -110,6 +112,7 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
         let updatedRecord = Object.assign({}, record);
         updatedRecord.status = ql_duyet; // Update status
         updatedRecord.inserted_at = Inserted_at(); // Update status
+        updatedRecord.manv = manv
         return updatedRecord;
       });
 
@@ -201,8 +204,8 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
           <tr style={{ padding: '5px', fontSize: '12px' }}>
           <th style={{ width: '80px' }}>ID</th>
           <th style={{ width: '70px', textAlign: "center" }}>Chuyển</th>
-          <th style={{ width: '70px' }}>Status</th>
-          <th style={{ width: '150px' }}>Số kế hoạch</th>
+          {/* <th style={{ width: '70px' }}>Status</th> */}
+          <th style={{ width: '150px' }}>Số duyệt</th>
           {/* <th style={{ width: '70px' }}>Mã NV</th> */}
           <th style={{ width: '150px' }}>Tên CVBH</th>
           <th style={{ width: '150px' }}>Tên KHC</th>
@@ -216,7 +219,7 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
         <tbody>
           {data_submit.map((record) => (
             <tr key={record.id} style={{ padding: '5px', fontSize: '14px' }}>
-              <td>{record.id.substring(0, 8)}</td>
+              <td>{record.id.substring(record.id.length - 6)}</td>
               <td>
                 <Form.Check
                   type="switch"
@@ -225,7 +228,7 @@ const Form_claim_chi_phi_ql_duyet = ( {history} ) => {
                   onChange={() => handleCheckboxChange(record.id)}
                 />
               </td>
-              <td>{record.status}</td>
+              {/* <td>{record.status}</td> */}
 
               <td>
                 <Form.Control
