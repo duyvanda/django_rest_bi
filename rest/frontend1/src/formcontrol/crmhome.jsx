@@ -38,17 +38,23 @@ const CrmHome = () => {
       stt: 4,
       title: 'Booking chi phí Gimmick HCP',
       description: 'Nhập thông tin Gimmick cho HCP',
-      path: '/crmhome',
-      // path: '/formcontrol/tracking_chi_phi_hcp',
+      path: '/formcontrol/tracking_chi_phi_hcp?type=gm',
       icon: <FaCogs size={28} color="#6c757d" />
     },
     {
     stt: 5,
     title: 'Claim chi phí Sales (Kế Toán)',
-    description: 'Quản lý và xác nhận claim chi phí cho Sales',
+    description: 'Quản lý và xác nhận claim chi phí, công tác phí cho Sales',
     path: '/formcontrol/form_claim_chi_phi',
     icon: <FaFileInvoiceDollar size={28} color="#17a2b8" />
-  }
+    },
+    // {
+    // stt: 6,
+    // title: 'Công tác phí (Kế Toán)',
+    // description: 'Khai báo công tác phí cho Sales',
+    // path: '/formcontrol/cong_tac_phi',
+    // icon: <FaFileInvoiceDollar size={28} color="#17a2b8" />
+    // }
   ];
 
   const sortedList = [...items].sort((a, b) => a.stt - b.stt);
@@ -64,11 +70,11 @@ const CrmHome = () => {
               onClick={() => history.push(item.path)} // ✅ Đúng cú pháp React Router v5
               style={{ cursor: 'pointer' }}
             >
-              <Card.Body>
-                <div className="mb-2">{item.icon}</div>
-                <Card.Title>{item.title}</Card.Title>
-                <Card.Text>{item.description}</Card.Text>
-              </Card.Body>
+            <Card.Body>
+              <div className="mb-2">{item.icon}</div>
+              <Card.Title>{item.title}</Card.Title>
+              <Card.Text>{item.description}</Card.Text>
+            </Card.Body>
             </Card>
           </Col>
         ))}

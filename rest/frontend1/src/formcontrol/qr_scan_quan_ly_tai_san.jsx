@@ -254,14 +254,9 @@ const post_form_data = async (data) => {
       for (let i of selectedFile) {
           formData.append('images', i)
       }
-
-
-      const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_qr_scan_quan_ly_tai_san/`, {
+      const response = await fetch(`https://bi.meraplion.com/local/omcs_data/?query=chat`, {
           method: "POST",
-          headers: {
-          // "Content-Type": "application/json",
-          },
-          body: formData,
+          body: formData
       });
 
         if (!response.ok) {

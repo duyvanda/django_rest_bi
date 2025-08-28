@@ -4,8 +4,8 @@ import { useHistory, Link } from "react-router-dom"; // React Router v5
 // import { Container, Row, Col, Button } from 'react-bootstrap';
 import './IntroductionPage.css';
 // import topBanner from '../images/georgie-cobbs-bKjHgo_Lbpo-unsplash.jpg';
-import iconInfo from '../images/digital-campaign.png';
-import iconLightning from '../images/digital-campaign.png';
+// import iconInfo from '../images/digital-campaign.png';
+// import iconLightning from '../images/digital-campaign.png';
 import ReactMarkdown from "react-markdown";
 // import remarkBreaks from 'remark-breaks';
 
@@ -14,15 +14,16 @@ import {
   Col,
   Row,
   Container,
-  Dropdown,
-  Form,
-  Spinner,
-  InputGroup,
-  Stack,
-  FloatingLabel,
-  Table,
+  // Dropdown,
+  // Form,
+  // Spinner,
+  // InputGroup,
+  // Stack,
+  // FloatingLabel,
+  // Table,
+  // Modal,
   Card,
-  Modal
+
 } from "react-bootstrap";
 
 const Nvbc_introduction = () => {

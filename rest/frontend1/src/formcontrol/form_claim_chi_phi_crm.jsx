@@ -143,9 +143,15 @@ const Form_claim_chi_phi_crm = ( {history} ) => {
     // Create a new list of records
     const updatedRecords = data_submit.map((record) => {
       if (record.id === id) {
-        let updatedRecord = Object.assign({}, record); // Clone the object
-        updatedRecord.so_ke_hoach = newValue; // Update the value
-        return updatedRecord;
+          let updatedRecord = Object.assign({}, record);
+          if (Number(newValue) < Number(record.max_ke_hoach)) {
+            updatedRecord.duyet_so_ke_hoach = newValue;
+            return updatedRecord;
+          }
+          else {
+            window.alert("Đã vượt ngưỡng tối đa của kế hoạch");
+            return record;
+          }
       }
       return record;
     });
@@ -233,7 +239,7 @@ const Form_claim_chi_phi_crm = ( {history} ) => {
               <td>
                 <Form.Control
                   type="text"
-                  value={ f.format(record.so_ke_hoach) }
+                  value={ f.format(record.duyet_so_ke_hoach) }
                   onChange={(e) => handlePlanningNumberChange(record.id, e.target.value.replace(/\D/g, "") )}
                 />
               </td>

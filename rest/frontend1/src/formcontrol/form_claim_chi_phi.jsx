@@ -301,17 +301,17 @@ function Form_claim_chi_phi({ history }) {
                         <Form onSubmit={handle_submit}>
                             {/* General chon_hcp Select with Search */}
                             <Select
+                            required
                             className=""
                             options={data_kh_chung}
                             getOptionValue={(el) => el.hco_bv}
                             getOptionLabel={(el) => `${el.hco_bv} - ${el.pubcustname}`}
                             value={chon_kh_chung}
                             onChange={
-                            (selectedOptions) => {
-                            set_chon_kh_chung(selectedOptions);  // Update state
-                            set_chon_hcp(null)
-                            console.log(selectedOptions);  // Log the selected options
-
+                                (selectedOptions) => {
+                                set_chon_kh_chung(selectedOptions);  // Update state
+                                set_chon_hcp(null)
+                                console.log(selectedOptions);  // Log the selected options
                             }
                             }
                             isSearchable
@@ -402,6 +402,7 @@ function Form_claim_chi_phi({ history }) {
                             
                             (
                                 <Select
+                                required
                                 className="mt-2"
                                 options={noi_dung_options}
                                 value={noi_dung_options.find(option => option.value === noi_dung) || null}
@@ -422,10 +423,7 @@ function Form_claim_chi_phi({ history }) {
                             
                             <Button className='mt-2' variant="warning" type="submit" 
                             style={{ width: "100%", fontWeight: "bold" }}
-                            disabled={
-                            (qua_tang === "Quà tặng" && manv_info?.phongdeptsummary === 'HCP' &&
-                                (Number(so_ke_hoach.replace(/,/g, ""))  / Number(chon_hcp?.length)) >= 2000000)
-                            }
+                            disabled={false}
                             >GỬI QL DUYỆT</Button>
 
                         </Form>

@@ -38,9 +38,9 @@ const ClaimNavTabs = () => {
         </Link>
       </Col>
       <Col xs={3}>
-        <Link to="/formcontrol/form_claim_chi_phi_final">
+        <Link to="/formcontrol/form_claim_chi_phi_claimed">
           <Button
-            variant={location.pathname === "/formcontrol/form_claim_chi_phi_final" ? "success" : "outline-success"}
+            variant={location.pathname === "/formcontrol/form_claim_chi_phi_claimed" ? "success" : "outline-success"}
             className="w-100"
           >
             CLAIM

@@ -74,7 +74,7 @@ import Form_log_checkin_nhan_hang from  "./formcontrol/form_log_checkin_nhan_han
 import Cong_tac_phi from "./formcontrol/cong_tac_phi";
 import Form_claim_chi_phi from  "./formcontrol/form_claim_chi_phi";
 import Form_claim_chi_phi_crm from  "./formcontrol/form_claim_chi_phi_crm";
-import Form_claim_chi_phi_final from  "./formcontrol/form_claim_chi_phi_final";
+import Form_claim_chi_phi_claimed from  "./formcontrol/form_claim_chi_phi_claimed";
 import Form_claim_chi_phi_crm_claimed from  "./formcontrol/form_claim_chi_phi_crm_claimed";
 
 import Get_new_upload_files from  "./formcontrol/get_new_upload_files";
@@ -159,7 +159,7 @@ function AppContent() {
                 <Route exact path="/formcontrol/scn_quan_ly_dmnvl" component={Scn_quan_ly_dmnvl} /> */}
                 {/* <Route exact path="/formcontrol/mds_xuan_thinh_vuong" component={MdsXuanThinhVuong} /> */}
                 {/* <Route exact path="/formcontrol/chuong_trinh_dau_tu_hcp_test" component={Chuong_trinh_dau_tu_hcp_test} /> */}
-                <Route path="/formcontrol/tracking_chi_phi_hco" component={Tracking_chi_phi_hco} />
+                {/* <Route path="/formcontrol/tracking_chi_phi_hco" component={Tracking_chi_phi_hco} /> */}
                 <Route path="/crmhome" component={CrmHome} />
                 <Route path="/formcontrol/tracking_chi_phi_hcp_qua_tang" component={Tracking_chi_phi_hcp_qua_tang} />
                 <Route exact path="/formcontrol/tracking_chi_phi_hcp_qua_tang_crm" component={Tracking_chi_phi_hcp_qua_tang_crm} />
@@ -187,7 +187,7 @@ function AppContent() {
                 <Route path="/formcontrol/cong_tac_phi" component={Cong_tac_phi} />
                 <Route path="/formcontrol/form_claim_chi_phi" component={Form_claim_chi_phi} />
                 <Route path="/formcontrol/form_claim_chi_phi_crm" component={Form_claim_chi_phi_crm} />
-                <Route path="/formcontrol/form_claim_chi_phi_final" component={Form_claim_chi_phi_final} />
+                <Route path="/formcontrol/form_claim_chi_phi_claimed" component={Form_claim_chi_phi_claimed} />
                 <Route path="/formcontrol/form_claim_chi_phi_crm_claimed" component={Form_claim_chi_phi_crm_claimed} />
                 <Route path="/formcontrol/get_new_upload_files" component={Get_new_upload_files} />
                 <Route path="/formcontrol/tinh_diem_van_nghe" component={Tinh_diem_van_nghe} />
@@ -197,7 +197,7 @@ function AppContent() {
                 <Route path="/formcontrol/postgres" component={Postgres} />
 
                 <Route path="/formcontrol/qr_scan_quan_ly_tai_san" component={Qr_scan_quan_ly_tai_san} />
-                <Route path="/formcontrol/qr_scan_quan_ly_tai_san_v2" component={Qr_scan_quan_ly_tai_san_v2} />                
+                <Route path="/formcontrol/qr_scan_quan_ly_tai_san_v2" component={Qr_scan_quan_ly_tai_san_v2} />         
 
                 <Route exact path="/formcontrol/nvbc_login" component={Nvbc_login} />
                 <Route exact path="/formcontrol/nvbc_introduction" component={Nvbc_introduction} />

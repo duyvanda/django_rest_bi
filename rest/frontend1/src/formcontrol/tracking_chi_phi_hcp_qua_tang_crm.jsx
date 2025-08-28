@@ -31,6 +31,7 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
         SetLoading(false);
         const data = await response.json()
         set_arr_hcp(data['lst_chon_qua_cua_nv']);
+        set_sl_da_chon(data['lst_chon_qua_cua_nv'].length)
         set_list_nv(data['list_nv']);
         }
         else {
@@ -237,8 +238,7 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
                         
                         {/* <Button disabled={false} className='mt-2' variant="primary" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button> */}
                         
-                        {/* <h4 style={{color:"red"}} className="mt-2">Bạn Đã Chọn:{`\xa0`} {sl_da_chon} </h4> */}
-
+                        <h4 style={{color:"red"}} className="mt-2">Bạn Đã Chọn:{`\xa0`} {sl_da_chon} </h4>
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
                             <Button disabled={false} className='mt-2' variant="success" type="submit" style={{width: "100%", fontWeight: "bold"}}> DUYỆT </Button>
                             <Button disabled={false} onClick={ handle_reject } className='mt-2' variant="danger" style={{width: "100%", fontWeight: "bold"}}> TỪ CHỐI </Button>

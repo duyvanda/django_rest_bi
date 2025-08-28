@@ -16,7 +16,7 @@ import {
     Table,
     ListGroup
 } from "react-bootstrap";
-const Duckdb = () => {
+const Postgres = ( {history} ) => {
 
   const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
 
@@ -637,7 +637,7 @@ const Duckdb = () => {
   );
 };
 
-export default Duckdb;
+export default Postgres;
 
 
 

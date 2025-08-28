@@ -35,7 +35,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
         if (response.ok) {
             const data = await response.json()
             set_arr_hcp(data['lst_hcp']);
-            set_lst_chon_gimmick(data['lst_chon_qua_tang']);
+            set_lst_chon_qua_tang(data['lst_chon_qua_tang']);
             set_mo_link(data['mo_link']);
             set_ten_chuong_trinh(data['ten_chuong_trinh']);
             set_quy_tac(data['quy_tac']);
@@ -59,7 +59,6 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
         } else {
             history.push('/login');
         };
-    // eslint-disable-next-line
     }, [count]);
 
     
@@ -69,43 +68,10 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
     const [quy_tac, set_quy_tac] = useState("");
     const [show_quy_tac, set_show_quy_tac] = useState(false);
     const [manv, set_manv] = useState("");
-    // const [lst_placeholder_cau_hoi, set_lst_placeholder_cau_hoi] = useState([]);
-    // const [lst_chon_qua_tang_cam_xuc, set_lst_chon_qua_tang_cam_xuc] = useState([]);
-    // const [lst_chon_qua_tang_cam_xuc_2024_dot2, set_lst_chon_qua_tang_cam_xuc_2024_dot2] = useState([]);
-    const [lst_chon_gimmick, set_lst_chon_gimmick] = useState([]);
-    // const [lst_chon_qua_1_5, set_lst_chon_qua_1_5] = useState([]);
-    // const [lst_chon_hoi_nghi, set_lst_chon_hoi_nghi] = useState([]);
-    // const [lst_chon_qua_sinh_nhat, set_lst_chon_qua_sinh_nhat] = useState([]);
-    // const [lst_chon_hinh_thuc_hoi_nghi, set_lst_chon_hinh_thuc_hoi_nghi] = useState([]);
-
-
-
-    // const [chon_qua_tang, set_chon_qua_tang] = useState("");
-    // const [chon_qua_sn, set_chon_qua_sn] = useState("");
-    // const [chon_hoi_nghi, set_chon_hoi_nghi] = useState("");
-    // const [chon_qua_tang_hoi_nghi, set_chon_qua_tang_hoi_nghi] = useState("");
-    // const [chon_hinh_thuc_hoi_nghi, set_chon_hinh_thuc_hoi_nghi] = useState("");
-    // const [chon_qua_tang_2, set_chon_qua_tang_2] = useState("");
-    // const [chon_qua_tang_cam_xuc, set_chon_qua_tang_cam_xuc] = useState("");
-    // const [chon_qua_tang_cam_xuc_2, set_chon_qua_tang_cam_xuc_2] = useState("");
-    // const [number1, set_number1] = useState("500000");
-    // const [number2, set_number2] = useState("0");
-
+    const [lst_chon_qua_tang, set_lst_chon_qua_tang] = useState([]);
     const [arr_hcp, set_arr_hcp] = useState([]);
     const [co_chon_hcp, set_co_chon_hcp] = useState("");
-    // const [tong_hcp_da_dau_tu, set_tong_hcp_da_dau_tu] = useState("");
-    // const [tong_tien_ke_hoach_da_dau_tu, set_tong_tien_ke_hoach_da_dau_tu] = useState("");
-    // const [arr_gift, set_arr_gift] = useState(['Quà Tặng 1','Quà Tặng 2','Quà Tặng 3']);
-    // const [hcp, set_hcp]= useState("");
     const [search, set_search] = useState('');
-
-    // const dataTypes = [
-    //     { id: "FLOAT", name: "FLOAT" },
-    //     { id: "TIMESTAMP", name: "TIMESTAMP" },
-    //     { id: "INTERGER", name: "INTERGER" },
-    //     { id: "STRING", name: "STRING" }
-    // ];
-
     const [schema, set_schema] = useState([  ]);
     const [showExcelModal, setShowExcelModal] = useState(false);
     const [excelFile, setExcelFile] = useState("");
@@ -373,7 +339,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                                     className="mt-2"
                                     >
                                     <option value="">Click chọn</option>
-                                    {lst_chon_gimmick.map((el) => (
+                                    {lst_chon_qua_tang.map((el) => (
                                         <option key={el.stt} value={ el.ten_qua_tang + '--' + el.gia_tien }>
                                         { el.ten_qua_tang + '--' + f.format(el.gia_tien) + 'đ' }
                                         </option>
