@@ -22,13 +22,14 @@ const Postgres = ( {history} ) => {
 
   const fetch_initial_data = async (manv) => {
     SetLoading(true)
-    const response = await fetch(`https://bi.meraplion.com/local/get_all_pg_tables/`)
+    const response = await fetch(`https://bi.meraplion.com/local/get_data/`)
     if (!response.ok) {
         SetLoading(false)
     }
     else {
     const data = await response.json()
-    setDbFiles(data['db_files'])
+    // setDbFiles(data['db_files'])
+    setDbFiles([])
     console.log(data);
     SetLoading(false);
 
