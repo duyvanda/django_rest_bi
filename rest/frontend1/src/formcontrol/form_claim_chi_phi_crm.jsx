@@ -84,8 +84,8 @@ const Form_claim_chi_phi_crm = ( {history} ) => {
         setTimeout(() => {
         SetALert(false);
         SetLoading(false);
-        }, 2000);
         setCount(count+1);
+        }, 2000);   
     }
   }
 

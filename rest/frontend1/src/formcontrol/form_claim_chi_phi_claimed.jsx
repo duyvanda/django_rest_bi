@@ -142,9 +142,9 @@ const Form_claim_chi_phi_claimed = ( {history} ) => {
             setTimeout(() => {
             SetALert(false);
             SetLoading(false);
-            }, 2000);
             clear_data();
             setCount(count+1);
+            }, 2000);
         }
 }
 
@@ -239,6 +239,7 @@ const Form_claim_chi_phi_claimed = ( {history} ) => {
 
     let data = [{
       khid,
+      manv,
       so_tien_claim,
       lst_chon_invoices,
       status:"I",

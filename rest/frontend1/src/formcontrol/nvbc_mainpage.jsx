@@ -25,13 +25,29 @@ import {
 
 const Nvbc_mainpage = ({history}) => {
 
-    const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
+    const { Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const list_chon = [
         // { id: 1, value: "6 điểm : Ổn", color: "#d1d1d1", icon: <BiStar /> },
         // { id: 2, value: "7 điểm : Hay", color: "#a0e6a0", icon: <FaStar /> },
         // { id: 3, value: "8 điểm : Khá Hay", color: "#6ad06a", icon: <FaStar style={{ color: "gold" }} /> },
         { id: 4, value: "Túi đựng mỹ phẩm, đồ du lịch da PU thoáng khí", color: "#42c1f5", icon: <BiTrophy style={{ color: "red" }} /> },
         { id: 5, value: "Túi cói kèm charm đáng yêu", color: "#ffbf47", icon: <BiTrophy style={{ color: "gold" }} /> }
+    ];
+
+      const list_chon_dgcc = [
+        // { id: 1, value: "6 điểm : Ổn", color: "#d1d1d1", icon: <BiStar /> },
+        // { id: 2, value: "7 điểm : Hay", color: "#a0e6a0", icon: <FaStar /> },
+        // { id: 3, value: "8 điểm : Khá Hay", color: "#6ad06a", icon: <FaStar style={{ color: "gold" }} /> },
+        { id: 6, value: "Máy sấy tóc Philips HP8108 1000W", color: "#42c1f5", icon: <BiTrophy style={{ color: "blue" }} /> },
+        { id: 7, value: "Quạt cầm tay tốc độ cao Shimono SM-HF18(W)", color: "#ffbf47", icon: <BiTrophy style={{ color: "green" }} /> }
+    ];
+
+        const list_chon_cgsp = [
+        // { id: 1, value: "6 điểm : Ổn", color: "#d1d1d1", icon: <BiStar /> },
+        // { id: 2, value: "7 điểm : Hay", color: "#a0e6a0", icon: <FaStar /> },
+        // { id: 3, value: "8 điểm : Khá Hay", color: "#6ad06a", icon: <FaStar style={{ color: "gold" }} /> },
+        { id: 8, value: "Ba lô thời trang Sakos Dahlia (SBV169CR)", color: "#42c1f5", icon: <BiTrophy style={{ color: "purple" }} /> },
+        { id: 9, value: "Máy xây sinh tố cầm tay Bear SB –MX04X", color: "#ffbf47", icon: <BiTrophy style={{ color: "black" }} /> }
     ];
 
   useEffect(() => {
@@ -44,22 +60,29 @@ const Nvbc_mainpage = ({history}) => {
     setUserName(parsedUser.name || "Người dùng");
     setUserPhone(parsedUser.phone);
 
-    // Fetch user's current point
-    fetch(`https://bi.meraplion.com/local/nvbc_get_point/?phone=${parsedUser.phone}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch points");
-        return res.json();
-      })
-      .then((data) => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`https://bi.meraplion.com/local/nvbc_get_point/?phone=${parsedUser.phone}`);
+        if (!res.ok) {
+          throw new Error("Failed to fetch points");
+        }
+        const data = await res.json();
         setUserPoint(data.point || 0);
         setContentList(data.contentlist);
         setModalData(data.lich_su_diem);
+        set_show_reward_selection(data.show_reward_selection)
         set_show_chon_qua_thang(data.th_monthly_reward);
-        show_sorry_qua_thang(data.fail_th_monthly_reward);
-      })
-      .catch((err) => {
+        set_show_product_expert_reward(data.product_expert_reward);
+        set_show_avid_reader_reward(data.avid_reader_reward);
+        
+
+        // show_sorry_qua_thang(data.fail_th_monthly_reward);
+      } catch (err) {
         console.error("Error fetching user points:", err);
-      });
+      }
+    };
+
+    fetchData();
   }, [history]);
 
   const [userName, setUserName] = useState("");
@@ -68,10 +91,17 @@ const Nvbc_mainpage = ({history}) => {
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState([]);
 
+  const [show_reward_selection, set_show_reward_selection] = useState(false);
   const [show_chon_qua_thang, set_show_chon_qua_thang] = useState(false);
-  const [selectedValue2, setSelectedValue2] = useState("");
+  const [show_product_expert_reward, set_show_product_expert_reward] = useState(false);
+  const [show_avid_reader_reward, set_show_avid_reader_reward] = useState(false);
+  
 
-  const [show_sorry_qua_thang, set_show_sorry_qua_thang] = useState(false);
+  const [selectedValue2, setSelectedValue2] = useState("");
+  const [selectedValueDGCC, setSelectedValueDGCC] = useState("");
+  const [selectedValueCGSP, setSelectedValueCGSP] = useState("");
+
+  // const [show_sorry_qua_thang, set_show_sorry_qua_thang] = useState(false);
 
   const [contentList, setContentList] = useState([]);
 
@@ -125,7 +155,7 @@ const Nvbc_mainpage = ({history}) => {
       setShowModal(false);
     };
 
-  const handleClose = () => set_show_chon_qua_thang(false);
+  const handleClose = () => set_show_reward_selection(false);
   // const handleShow = () => setShow(true);
 
       const clear_data = () => {
@@ -177,10 +207,19 @@ const Nvbc_mainpage = ({history}) => {
   const handle_luu_qua = (e) => {
     handleClose();
 
+    var value2 = selectedValue2 || "|";
+    var valueDGCC = selectedValueDGCC || "|";
+    var valueCGSP = selectedValueCGSP || "|";
+
+    let result = value2 + valueDGCC + valueCGSP;
+
       const data = {
           "phone":userPhone,
-          "value":selectedValue2,
-          "reward_type":"7th_monthly_reward"
+          "value":result,
+          // "value_dgcc":selectedValueDGCC,
+          // "cgsp":selectedValueCGSP,
+          "reward_type":"9th_monthly_reward",
+          "inserted_at": Inserted_at()
       }
       console.log([data]);
       post_form_data([data]);
@@ -223,51 +262,140 @@ const Nvbc_mainpage = ({history}) => {
               </div>
           }
 
-          <Modal show={show_chon_qua_thang} onHide={handleClose}>
+          <Modal show={show_reward_selection} onHide={handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>
                 Chúc mừng bạn đã là:<br></br>
-                Thành viên tích cực nhất tháng 07/2025!!! <br></br>
-                Vui lòng chọn 1 trong 2 món quà bên dưới:
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-            
-          {list_chon.map((item) => (
-          <label 
-          key={item.id} 
-          style={{ 
-              display: "flex", alignItems: "center", gap: "12px",
-              padding: "10px", margin: "5px 0", borderRadius: "8px",
-              backgroundColor: selectedValue2 === item.value ? item.color : "#fff",
-              border: `2px solid ${item.color}`,
-              transition: "0.3s",
-              cursor: "pointer",
-              boxShadow: selectedValue2 === item.value ? "0px 0px 10px rgba(0,0,0,0.2)" : "none"
-          }}
-          >
-          <span style={{ fontSize: "22px", width: "25px", textAlign: "center", display: "flex", alignItems: "center" }}>
-              {item.icon}
-          </span>
-          <Form.Check
-              type="radio"
-              name="diem_chon"
-              id={`option-${item.id}`}
-              label={item.value}
-              value={item.value}
-              checked={selectedValue2 === item.value}
-              onChange={(e) => setSelectedValue2(e.target.value)}
-              style={{ display: "flex", alignItems: "center", flex: 1 }}
-          />
-          </label>
-          ))}
+          
+          {show_chon_qua_thang && 
+          <>
+            <Modal.Title>
+              Thành viên tích cực nhất tháng 09/2025!!! <br></br>
+            </Modal.Title>
+              
+            {
+              list_chon.map((item) => (
+              <label 
+              key={item.id} 
+              style={{ 
+                  display: "flex", alignItems: "center", gap: "12px",
+                  padding: "10px", margin: "5px 0", borderRadius: "8px",
+                  backgroundColor: selectedValue2 === item.value ? item.color : "#fff",
+                  border: `2px solid ${item.color}`,
+                  transition: "0.3s",
+                  cursor: "pointer",
+                  boxShadow: selectedValue2 === item.value ? "0px 0px 10px rgba(0,0,0,0.2)" : "none"
+              }}
+              >
+              <span style={{ fontSize: "22px", width: "25px", textAlign: "center", display: "flex", alignItems: "center" }}>
+                  {item.icon}
+              </span>
+              <Form.Check
+                  type="radio"
+                  name="diem_chon"
+                  id={`option-${item.id}`}
+                  label={item.value}
+                  value={item.value}
+                  checked={selectedValue2 === item.value}
+                  onChange={(e) => setSelectedValue2(e.target.value)}
+                  style={{ display: "flex", alignItems: "center", flex: 1 }}
+              />
+              </label>
+              ))
+            }
+            </>
+          }
+
+          {show_avid_reader_reward && 
+          <>
+            <Modal.Title>
+              Chọn phần thưởng Đọc giả chăm chỉ:
+            </Modal.Title>
+
+            {
+              list_chon_dgcc.map((item) => (
+              <label 
+              key={item.id} 
+              style={{ 
+                  display: "flex", alignItems: "center", gap: "12px",
+                  padding: "10px", margin: "5px 0", borderRadius: "8px",
+                  backgroundColor: selectedValueDGCC === item.value ? item.color : "#fff",
+                  border: `2px solid ${item.color}`,
+                  transition: "0.3s",
+                  cursor: "pointer",
+                  boxShadow: selectedValueDGCC === item.value ? "0px 0px 10px rgba(0,0,0,0.2)" : "none"
+              }}
+              >
+              <span style={{ fontSize: "22px", width: "25px", textAlign: "center", display: "flex", alignItems: "center" }}>
+                  {item.icon}
+              </span>
+              <Form.Check
+                  type="radio"
+                  name="diem_chon_2"
+                  id={`option-${item.id}`}
+                  label={item.value}
+                  value={item.value}
+                  checked={selectedValueDGCC === item.value}
+                  onChange={(e) => setSelectedValueDGCC(e.target.value)}
+                  style={{ display: "flex", alignItems: "center", flex: 1 }}
+              />
+              </label>
+              ))
+            }
+          </>
+          }
+
+          {show_product_expert_reward &&
+
+            <>
+
+            <Modal.Title>
+              Chọn phần thưởng Chuyên gia SP:
+            </Modal.Title>
+
+            {
+              list_chon_cgsp.map((item) => (
+              <label 
+              key={item.id} 
+              style={{ 
+                  display: "flex", alignItems: "center", gap: "12px",
+                  padding: "10px", margin: "5px 0", borderRadius: "8px",
+                  backgroundColor: selectedValueCGSP === item.value ? item.color : "#fff",
+                  border: `2px solid ${item.color}`,
+                  transition: "0.3s",
+                  cursor: "pointer",
+                  boxShadow: selectedValueCGSP === item.value ? "0px 0px 10px rgba(0,0,0,0.2)" : "none"
+              }}
+              >
+              <span style={{ fontSize: "22px", width: "25px", textAlign: "center", display: "flex", alignItems: "center" }}>
+                  {item.icon}
+              </span>
+              <Form.Check
+                  type="radio"
+                  name="diem_chon_3"
+                  id={`option-${item.id}`}
+                  label={item.value}
+                  value={item.value}
+                  checked={selectedValueCGSP === item.value}
+                  onChange={(e) => setSelectedValueCGSP(e.target.value)}
+                  style={{ display: "flex", alignItems: "center", flex: 1 }}
+              />
+              </label>
+              ))
+            }
+
+            </>
+          }
 
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>
                 Đóng
               </Button>
-              <Button disabled={selectedValue2===""} variant="primary" onClick={handle_luu_qua}>
+              <Button variant="primary" onClick={handle_luu_qua}>
                 Lưu quà
               </Button>
             </Modal.Footer>
@@ -311,7 +439,7 @@ const Nvbc_mainpage = ({history}) => {
               </Card.Body>
             </Card>
 
-            { show_sorry_qua_thang &&
+            {/* { show_sorry_qua_thang &&
             <Card className="text-left mb-4 shadow-sm border-0">
               <Card.Body>
                 <p className="text-muted mb-0">
@@ -322,7 +450,7 @@ const Nvbc_mainpage = ({history}) => {
                 </p>
               </Card.Body>
             </Card>
-            }
+            } */}
 
             {/* Content List */}
             <Card className="shadow-sm">

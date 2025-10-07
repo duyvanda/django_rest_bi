@@ -13,7 +13,7 @@ const ClaimNavTabs = () => {
             variant="outline-success"
             className="w-100 text-center"
           >
-            CRM
+            HOME
           </Button>
         </Link>
       </Col>

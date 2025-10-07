@@ -33,6 +33,8 @@ function Form_claim_chi_phi({ history }) {
         set_data_kh_chung(data['data_kh_chung'])
         set_data_hcp(data['data_hcp'])
         set_manv_info(data['manv_info'][0])
+        set_noi_dungs(data['lst_noi_dung'])
+        set_noi_dungs_giao_tiep(data['lst_noi_dung_giao_tiep'])
         console.log(data);
         SetLoading(false);
 
@@ -59,6 +61,10 @@ function Form_claim_chi_phi({ history }) {
     const [qua_tang, set_qua_tang] = useState("");
     const [kenh, set_kenh] = useState("");
     const [ty_le, set_ty_le] = useState( { value: '5:5', label: '5:5' } );
+
+    const [noi_dungs, set_noi_dungs] = useState([]);
+    const [noi_dungs_giao_tiep, set_noi_dungs_giao_tiep] = useState([]);
+
     const [current_noi_dung, set_current_noi_dung] = useState([]);
     const [noi_dung, set_noi_dung] = useState("");
     const [ghi_chu, set_ghi_chu] = useState("");
@@ -70,37 +76,37 @@ function Form_claim_chi_phi({ history }) {
     const kenhs = ["CLC & INS","CLC", "INS", "PCL"];
     // const noi_dungs = ["noi_dung1", "noi_dung2", "noi_dung3"];
 
-    const noi_dungs = [
-        "Chi phí quà tặng tết nguyên đán",
-        "Chi phí quà tặng tết trung thu",
-        "Chi phí quà tặng ngày nhà giáo",
-        "Chi phí quà tặng ngày thầy thuốc",
-        "Chi phí quà tặng dịp sinh nhật",
-        "Chi phí quà tặng dịp thăng cấp",
-        "Chi phí quà tặng mừng sinh con",
-        "Chi phí quà tặng mừng cưới",
-        "Chi phí vòng hoa đám tang",
-        "Chi phí giỏ trái cây đám tang",
-        "Chi phí quà tặng quà dịp 01/01",
-        "Chi phí quà tặng quà dịp 08/03",
-        "Chi phí quà tặng quà dịp 20/03",
-        "Chi phí quà tặng quà dịp Giỗ tổ Hùng Vương",
-        "Chi phí quà tặng quà dịp 01/05",
-        "Chi phí quà tặng ngày Điều dưỡng thế giới 12/05",
-        "Chi phí quà tặng ngày Gia đình Việt Nam 28/06",
-        "Chi phí quà tặng quà dịp Dược sĩ thế giới 25/09",
-        "Chi phí quà tặng sinh nhật Merap 17/10",
-        "Chi phí quà tặng ngày phụ nữ Việt Nam 20/10",
-        "Chi phí quà tặng ngày giáng sinh 24/12"
-    ];
+    // const noi_dungs = [
+    //     "Chi phí quà tặng tết nguyên đán",
+    //     "Chi phí quà tặng tết trung thu",
+    //     "Chi phí quà tặng ngày nhà giáo",
+    //     "Chi phí quà tặng ngày thầy thuốc",
+    //     "Chi phí quà tặng dịp sinh nhật",
+    //     "Chi phí quà tặng dịp thăng cấp",
+    //     "Chi phí quà tặng mừng sinh con",
+    //     "Chi phí quà tặng mừng cưới",
+    //     "Chi phí vòng hoa đám tang",
+    //     "Chi phí giỏ trái cây đám tang",
+    //     "Chi phí quà tặng quà dịp 01/01",
+    //     "Chi phí quà tặng quà dịp 08/03",
+    //     "Chi phí quà tặng quà dịp 20/03",
+    //     "Chi phí quà tặng quà dịp Giỗ tổ Hùng Vương",
+    //     "Chi phí quà tặng quà dịp 01/05",
+    //     "Chi phí quà tặng ngày Điều dưỡng thế giới 12/05",
+    //     "Chi phí quà tặng ngày Gia đình Việt Nam 28/06",
+    //     "Chi phí quà tặng quà dịp Dược sĩ thế giới 25/09",
+    //     "Chi phí quà tặng sinh nhật Merap 17/10",
+    //     "Chi phí quà tặng ngày phụ nữ Việt Nam 20/10",
+    //     "Chi phí quà tặng ngày giáng sinh 24/12"
+    // ];
 
-    const noi_dungs_giao_tiep = [
-        "Chi phí gặp gỡ giao tiếp trao đổi thông tin",
-        "Chi phí gặp sở chia sẻ thông tin ngành",
-        "Chi phí giao tiếp tư vấn chuyên môn",
-        "Chi phí giao tiếp cập nhật kiến thức về sản phẩm",
-        "Chi phí giao tiếp đánh giá về hiệu quả của thuốc"
-      ];
+    // const noi_dungs_giao_tiep = [
+    //     "Chi phí gặp gỡ giao tiếp trao đổi thông tin",
+    //     "Chi phí gặp sở chia sẻ thông tin ngành",
+    //     "Chi phí giao tiếp tư vấn chuyên môn",
+    //     "Chi phí giao tiếp cập nhật kiến thức về sản phẩm",
+    //     "Chi phí giao tiếp đánh giá về hiệu quả của thuốc"
+    //   ];
 
     const qua_tang_type = [
         "Quà tặng",
@@ -138,8 +144,8 @@ function Form_claim_chi_phi({ history }) {
     }, [manv_info]); // Run this effect when manv_info changes
 
     const noi_dung_options = current_noi_dung.map(item => ({
-        value: item,
-        label: item
+        value: item.ten_dip,
+        label: item.ten_dip
         }));
 
     const clear_data = () => {
@@ -222,11 +228,9 @@ function Form_claim_chi_phi({ history }) {
             ghi_chu,
             so_ke_hoach: Number(so_ke_hoach.replace(/,/g, "")  ),
             max_ke_hoach: null,
-            // so_hoa_don: null,
-            // ngay_hoa_don: null,
-            // so_tien_hoa_don:null,
-            inserted_at: insert
-            
+            inserted_at: insert,
+            ma_dip: "khong_co",
+            thang_chi_phi: null
             
         };
         const plan = Number(so_ke_hoach.replace(/,/g, ""));
@@ -257,14 +261,13 @@ function Form_claim_chi_phi({ history }) {
                     qua_tang: baseData.qua_tang,
                     kenh: baseData.kenh,
                     ty_le: baseData.ty_le,
-                    noi_dung: baseData.noi_dung,
+                    noi_dung: baseData.noi_dung.ten_dip,
                     ghi_chu: baseData.ghi_chu,
                     so_ke_hoach: baseData.so_ke_hoach,
                     max_ke_hoach: baseData.max_ke_hoach,
-                    // so_hoa_don: baseData.so_hoa_don,
-                    // ngay_hoa_don: baseData.ngay_hoa_don,
-                    // so_tien_hoa_don: baseData.so_tien_hoa_don,
-                    inserted_at: baseData.inserted_at
+                    inserted_at: baseData.inserted_at,
+                    ma_dip: baseData.noi_dung.ma_dip,
+                    thang_chi_phi: baseData.noi_dung.thang_chi_phi
                 };
                 explodedData.push(newItem);
             }
@@ -299,10 +302,52 @@ function Form_claim_chi_phi({ history }) {
                         </Modal>
 
                         <Form onSubmit={handle_submit}>
+
+                            {/* Chon Loai Qua Select */}
+                            <Form.Select className='mt-2' required onChange={handleQuaTangChange} value={qua_tang}>
+                                <option value="">Chọn loại quà</option>
+                                {qua_tang_type.map((ch, idx) => (
+                                <option key={idx} value={ch}>{ch}</option>
+                                ))}
+                            </Form.Select>
+
+                            {
+                            (manv_info?.phongdeptsummary === 'MT' || manv_info?.phongdeptsummary === 'TP') ? (
+                            <textarea
+                                className="form-control mt-2"
+                                placeholder="Nhập nội dung"
+                                value={noi_dung}
+                                onChange={(e) => set_noi_dung(e.target.value)}
+                                required
+                            />
+                            ) : 
+                            
+                            (
+                                <Select
+                                required
+                                className="mt-2"
+
+                                options={current_noi_dung}
+                                getOptionValue={(el) => el.ten_dip}
+                                getOptionLabel={(el) => el.ten_dip}
+                                value={noi_dung}
+
+                                // options={noi_dung_options}
+                                // value={noi_dung_options}
+                                onChange={(selectedOptions) => set_noi_dung(selectedOptions)}
+
+                                isSearchable
+                                placeholder="Chọn nội dung"
+                                styles={{ placeholder: (base) => ({ ...base, color: "#212529" }) }}
+                                />
+                            )
+                            }
+
                             {/* General chon_hcp Select with Search */}
                             <Select
+                            isMulti={false}
                             required
-                            className=""
+                            className="mt-2"
                             options={data_kh_chung}
                             getOptionValue={(el) => el.hco_bv}
                             getOptionLabel={(el) => `${el.hco_bv} - ${el.pubcustname}`}
@@ -322,7 +367,7 @@ function Form_claim_chi_phi({ history }) {
                             {/* chon_hcp Select with Search */}
                             {is_tp_mt===false &&
                                 <Select
-                                isMulti
+                                isMulti={ noi_dung?.ten_dip !== "Chi phí quà tặng dịp sinh nhật" }
                                 className="mt-2"
                                 options={data_hcp.filter((el) => el.hco_bv === chon_kh_chung?.hco_bv)}
                                 getOptionValue={(el) => el.ma_hcp_2}
@@ -330,8 +375,14 @@ function Form_claim_chi_phi({ history }) {
                                 value={chon_hcp}
                                 onChange={
                                     (selectedOptions) => {
-                                    set_chon_hcp(selectedOptions);  // Update state
-                                    console.log(selectedOptions);  // Log the selected options
+                                        if (noi_dung?.ten_dip !== "Chi phí quà tặng dịp sinh nhật") {
+                                        set_chon_hcp(selectedOptions);
+                                        console.log("selectedOptions",selectedOptions);
+                                        }
+                                        else {
+                                            set_chon_hcp([selectedOptions]);
+                                            console.log("selectedOptions", [selectedOptions]);
+                                        }
                                     }
                                 }
                                 // onChange={ (selectedOption) => set_chon_hcp(selectedOption?.ma_hcp_2) }
@@ -342,13 +393,6 @@ function Form_claim_chi_phi({ history }) {
                             />
                             }
 
-                            {/* Chon Loai Qua Select */}
-                            <Form.Select className='mt-2' required onChange={handleQuaTangChange} value={qua_tang}>
-                                <option value="">Chọn loại quà</option>
-                                {qua_tang_type.map((ch, idx) => (
-                                <option key={idx} value={ch}>{ch}</option>
-                                ))}
-                            </Form.Select>
                             
                             {/* kenh Select */}
                             { is_tp_mt === false &&
@@ -389,29 +433,6 @@ function Form_claim_chi_phi({ history }) {
                                     <option key={idx} value={cnt}>{cnt}</option>
                                 ))}
                             </Form.Select> */}
-
-                            {(manv_info?.phongdeptsummary === 'MT' || manv_info?.phongdeptsummary === 'TP') ? (
-                            <textarea
-                                className="form-control mt-2"
-                                placeholder="Nhập nội dung"
-                                value={noi_dung}
-                                onChange={(e) => set_noi_dung(e.target.value)}
-                                required
-                            />
-                            ) : 
-                            
-                            (
-                                <Select
-                                required
-                                className="mt-2"
-                                options={noi_dung_options}
-                                value={noi_dung_options.find(option => option.value === noi_dung) || null}
-                                onChange={(selected) => set_noi_dung(selected?.value || '')}
-                                isSearchable
-                                placeholder="Chọn nội dung"
-                                styles={{ placeholder: (base) => ({ ...base, color: "#212529" }) }}
-                                />
-                            )}
 
 
                             

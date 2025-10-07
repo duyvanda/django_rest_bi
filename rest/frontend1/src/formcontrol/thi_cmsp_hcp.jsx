@@ -135,7 +135,7 @@ function Thi_cmsp_hcp({history}) {
 
 
     const post_form_data = async (data) => {
-        SetLoading(true)
+        SetLoading(true);
         const response = await fetch(`https://bi.meraplion.com/local/insert_data_cmsp_quy_tp/`, {
             method: "POST",
             headers: {
@@ -145,26 +145,27 @@ function Thi_cmsp_hcp({history}) {
         });
 
         if (!response.ok) {
-            SetLoading(false);
+            // SetLoading(false);
             const errorData = await response.json(); // Renamed 'data' to 'errorData' to avoid conflict
             console.log(errorData);
             SetALert(true);
             SetALertType("alert-danger");
-            SetALertText("Đã nộp thành công");
+            SetALertText("FAILED");
             setTimeout(() => {
                 SetALert(false);
                 SetLoading(false);
             }, 2000);
         } else {
-            SetLoading(false);
+            // SetLoading(false);
             const successData = await response.json(); // Renamed 'data' to 'successData' to avoid conflict
             console.log(successData);
             SetALert(true);
             SetALertType("alert-success");
-            SetALertText("FAILED");
+            SetALertText("Đã nộp thành công");
             setTimeout(() => {
                 SetALert(false);
                 SetLoading(false);
+                setCount(count+1);
             }, 2000);
 
         }
@@ -186,7 +187,7 @@ function Thi_cmsp_hcp({history}) {
         post_form_data(data);
     }
 
-    if (!loading) {
+    if (true) {
         return (
         <Container className="bg-teal-100 h-100" fluid>
             <Row className="justify-content-center">
@@ -238,7 +239,7 @@ function Thi_cmsp_hcp({history}) {
                             arr_input.length > 1 ?
                             <>
                                 <h3 style={{color:"red"}} className="mt-2 text-center">Bạn Đã Chọn:{`\xa0`}  
-                                { arr_indx.length } / 20
+                                { arr_indx.length } / 30
                                 </h3>
                                 <Button disabled={arr_indx.length<=5} className='mt-5' variant="warning" type="submit" style={{width: "100%", fontWeight: "bold"}}> NỘP BÀI VÀ XEM KẾT QUẢ </Button>
                             </>

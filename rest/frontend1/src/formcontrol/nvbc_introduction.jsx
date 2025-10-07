@@ -147,16 +147,16 @@ const renderCards = (items) => (
     const contentWithBreaks = markdownContent.replace(/\n/g, '  \n'); // Add two spaces before the newline for markdown to recognize the break
 
     const markdownContent_2 = `
-### Công thức tính điểm trên 1 lượt truy cập:
+#### Công thức tính điểm trên 1 lượt truy cập:
 
 **Điểm** = Tỷ lệ thời gian * Hệ số chủ đề
 
-**Tỷ lệ thời gian**:
+**- Tỷ lệ thời gian**:
 Thời gian tra cứu thư viện được quy đổi theo tỷ lệ sau:
 - **Dưới 30 giây** = 0%
 - **Từ 30 giây trở lên** = 100%
 
-**Hệ số chủ đề**:
+**- Hệ số chủ đề**:
 Mỗi chủ đề có một hệ số riêng (có thể thay đổi theo thông báo từng quý)
 
 **Điểm số 5 chủ đề từ ngày 01/07/2025 đến 30/09/2025 như sau:**
@@ -168,7 +168,11 @@ Mỗi chủ đề có một hệ số riêng (có thể thay đổi theo thông 
 3. **Thông tin bệnh học**: +2 điểm/Video
 4. **Sổ tay người thầy thuốc**: +2 điểm/Chuyên đề
 5. **Tư vấn cùng chuyên gia**: +2 điểm/Video
-    `;
+
+**- Điểm xét thưởng**:
+- Quà Tháng: Điểm tối thiểu từ 1.000 điểm trở lên.
+- Quà Quý: Điểm tối thiểu từ 3.000 điểm trở lên.
+`;
       // Replace newlines with <br /> tags
       const contentWithBreaks_2 = markdownContent_2.replace(/\n/g, '  \n'); // Add two spaces before the newline for markdown to recognize the break
 
@@ -243,19 +247,19 @@ const markdownContent_xin_chao_br = markdownContent_xin_chao.replace(/\n/g, '  \
 
           <div className="mt-4">
           <h5 className="text-info">🎁 Thành viên tích cực nhất tháng:</h5>
-          <p>Tiêu chí hàng tháng: Top 100 Thành viên có điểm tích lũy cao nhất của tháng được chọn 1 món quà sau :</p>
+          <p>Tiêu chí hàng tháng: Top 100 Thành viên có mức điểm tích lũy cao nhất trong tháng (điểm tối thiểu là 1.000 điểm/tháng), được chọn 1 món quà sau:</p>
           {renderCards(filterBy("Tháng", "t1"))}
         </div>
 
         <div className="mt-5">
           <h5 className="text-info">🎁 Chuyên gia sản phẩm:</h5>
-          <p>Tiêu chí hàng quý: Top 50 Thành viên có điểm tích lũy cao nhất của quý được chọn 1 món quà sau:</p>
+          <p>Tiêu chí hàng quý: Top 50 Thành viên có điểm tích lũy cao nhất trong quý (điểm tối thiểu là 3.000 điểm/quý), được chọn 1 món quà sau:</p>
           {renderCards(filterBy("Quý", "t2"))}
         </div>
 
         <div className="mt-5">
           <h5 className="text-info">🎁 Đọc giả chăm chỉ:</h5>
-          <p>Tiêu chí hàng quý: Top 50 thành viên có số ngày tham gia tra cứu thư viện chuyên cần nhất được chọn 1 món quà sau:</p>
+          <p>Tiêu chí hàng quý: Top 50 Thành viên có số ngày tham gia tra cứu thư viện chuyên cần nhất (điểm tối thiểu là 3.000 điểm/quý), được chọn 1 món quà sau:</p>
           {renderCards(filterBy("Quý", "t3"))}
         </div>
         </div>
