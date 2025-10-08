@@ -13,7 +13,7 @@ rest/incomeexpenseapi/bigquery1508.json
 
 # Distribution / packaging
 .Python
-# build/
+build/
 node_modules/
 develop-eggs/
 dist/

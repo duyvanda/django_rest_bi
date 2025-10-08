@@ -30,17 +30,18 @@ import {
 } from "react-bootstrap";
 
 function Mds_tra_thuong_cmm_q12025({history, location}) {
-    const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
+    const { Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
     const navigate = useHistory();
     const location_search = new URLSearchParams(location.search)
 
     const fetch_initial_data = async (manv) => {
         SetLoading(true);
-        const response = await fetch(`https://bi.meraplion.com/local/data_mds_tra_thuong_cmm_2025/?manv=${manv}`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_dat/adata_mds_tra_thuong_cmm_2025/?manv=${manv}`)
+        // const response = await fetch(`https://bi.meraplion.com/local/get_data/get_data_mds_tra_thuong_cmm_2025/?manv=MR3963`)
         
         if (response.ok) {
             const data = await response.json()
-            set_data_table(data['header']);
+            set_data_table(data['data']);
             SetLoading(false);
         }
         else {
@@ -93,7 +94,7 @@ function Mds_tra_thuong_cmm_q12025({history, location}) {
             formData.append('images', i)
         }
 
-        const response = await fetch(`https://bi.meraplion.com/local/file_upload_data_mds_tra_thuong_cmm_2025/`, {
+        const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_data_mds_tra_thuong_cmm_q32025/`, {
             method: "POST",
             headers: {
             // "Content-Type": "application/json",
@@ -182,10 +183,10 @@ function Mds_tra_thuong_cmm_q12025({history, location}) {
             "manv": manv,
             "ma_kh_dms":selectedItem.ma_kh_dms,
             "ten_kh":selectedItem.ten_kh,
-            "inserted_at": null
+            "inserted_at": Inserted_at()
         }
-        console.log(data);
-        post_form_data(data);
+        console.log([data]);
+        post_form_data([data]);
         setShowModal(false);
       };
 
@@ -210,24 +211,23 @@ function Mds_tra_thuong_cmm_q12025({history, location}) {
                         {/* <Form onSubmit={handle_submit}> */}
                         {/* START FORM BODY */}
 
-                        <h1 className="ms-auto" style={{ textAlign: 'justify' }} >TRẢ THƯỞNG CMM Q1 2025</h1>
+                        <h1 className="ms-auto" style={{ textAlign: 'justify' }} >TRẢ THƯỞNG CMM Q2 2025</h1>
                         
                         {data_table
-                            .map( (el, idx) =>
-                        <Col key={idx}  xs={12} lg={6}>
-                        
-                        <Card>
-                            <Card.Body>
-                            <Card.Title>Tên KH {idx+1}: {el.ten_kh}</Card.Title>
-                            <Card.Text>
-                            Mã KH: {el.ma_kh_dms}.<br></br>
-                            Tình Trạng Trả Thưởng: { Number(el.done) === 1 ? "Đã trả" : "Chưa trả"}.
-                            </Card.Text>
-                            <Button onClick={() => handleEdit(el)} size="sm"  variant={el.done === 0 ? "primary" : "outline-secondary"}  >Thực hiện trả thưởng</Button>
-                            </Card.Body>
-                        
-                        </Card>
-                        </Col>
+                        .map( (el, idx) =>
+                            <Col key={idx}  xs={12} lg={6}>
+                                <Card>
+                                    <Card.Body>
+                                    <Card.Title>Tên KH {idx+1}: {el.ten_kh}</Card.Title>
+                                    <Card.Text>
+                                    Mã KH: {el.ma_kh_dms}.<br></br>
+                                    Tình Trạng Trả Thưởng: { Number(el.done) === 1 ? "Đã trả" : "Chưa trả"}.
+                                    </Card.Text>
+                                    <Button onClick={() => handleEdit(el)} size="sm"  variant={el.done === 0 ? "primary" : "outline-secondary"}  >Thực hiện trả thưởng</Button>
+                                    </Card.Body>
+                                
+                                </Card>
+                            </Col>
                         )
                         }
                         
