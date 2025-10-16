@@ -16,16 +16,7 @@ import {
     Spinner,
     Modal,
     Card,
-    ListGroup,
-    // FloatingLabel,
-    // Stack,
-    // Dropdown,
-    // ListGroup,
-    // ButtonGroup,
-    // Badge
-    // InputGroup,
-    
-
+    ListGroup
 
 } from "react-bootstrap";
 
@@ -36,7 +27,7 @@ function Mds_tra_thuong_cmm_q12025({history, location}) {
 
     const fetch_initial_data = async (manv) => {
         SetLoading(true);
-        const response = await fetch(`https://bi.meraplion.com/local/get_dat/adata_mds_tra_thuong_cmm_2025/?manv=${manv}`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_data_mds_tra_thuong_cmm_2025/?manv=${manv}`)
         // const response = await fetch(`https://bi.meraplion.com/local/get_data/get_data_mds_tra_thuong_cmm_2025/?manv=MR3963`)
         
         if (response.ok) {
@@ -211,7 +202,7 @@ function Mds_tra_thuong_cmm_q12025({history, location}) {
                         {/* <Form onSubmit={handle_submit}> */}
                         {/* START FORM BODY */}
 
-                        <h1 className="ms-auto" style={{ textAlign: 'justify' }} >TRẢ THƯỞNG CMM Q2 2025</h1>
+                        <h1 className="ms-auto" style={{ textAlign: 'justify' }} >TRẢ THƯỞNG CMM 2025</h1>
                         
                         {data_table
                         .map( (el, idx) =>

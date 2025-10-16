@@ -19,7 +19,7 @@ import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as
 function Form_claim_chi_phi({ history }) {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const { formatNumber, get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
+    const { generateMonthOptions, formatNumber, get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
     
     const fetch_initial_data = async (manv) => {
         SetLoading(true)
@@ -40,6 +40,7 @@ function Form_claim_chi_phi({ history }) {
 
         }
     }
+    const monthOptions = generateMonthOptions(-2, 2);
     const [count, setCount] = useState(0);
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {
@@ -49,11 +50,13 @@ function Form_claim_chi_phi({ history }) {
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, location.pathname, isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
+        set_ky_chi_phi_kt(monthOptions[2].value);
         } else {
             history.push(`/login?redirect=${location.pathname}`);
         };
     }, []);
     
+    const [ky_chi_phi_kt, set_ky_chi_phi_kt] = useState('');
     const [manv, set_manv] = useState("");
     const [manv_info, set_manv_info] = useState(null);
     const [chon_kh_chung, set_chon_kh_chung] = useState(null);
@@ -71,47 +74,22 @@ function Form_claim_chi_phi({ history }) {
     const [so_ke_hoach, set_so_ke_hoach] = useState("");
     const [data_kh_chung, set_data_kh_chung] = useState([]
     )
-    const [data_hcp, set_data_hcp] = useState([]);  
+    const [data_hcp, set_data_hcp] = useState([]);
+
+    
     
     const kenhs = ["CLC & INS","CLC", "INS", "PCL"];
-    // const noi_dungs = ["noi_dung1", "noi_dung2", "noi_dung3"];
-
-    // const noi_dungs = [
-    //     "Chi phí quà tặng tết nguyên đán",
-    //     "Chi phí quà tặng tết trung thu",
-    //     "Chi phí quà tặng ngày nhà giáo",
-    //     "Chi phí quà tặng ngày thầy thuốc",
-    //     "Chi phí quà tặng dịp sinh nhật",
-    //     "Chi phí quà tặng dịp thăng cấp",
-    //     "Chi phí quà tặng mừng sinh con",
-    //     "Chi phí quà tặng mừng cưới",
-    //     "Chi phí vòng hoa đám tang",
-    //     "Chi phí giỏ trái cây đám tang",
-    //     "Chi phí quà tặng quà dịp 01/01",
-    //     "Chi phí quà tặng quà dịp 08/03",
-    //     "Chi phí quà tặng quà dịp 20/03",
-    //     "Chi phí quà tặng quà dịp Giỗ tổ Hùng Vương",
-    //     "Chi phí quà tặng quà dịp 01/05",
-    //     "Chi phí quà tặng ngày Điều dưỡng thế giới 12/05",
-    //     "Chi phí quà tặng ngày Gia đình Việt Nam 28/06",
-    //     "Chi phí quà tặng quà dịp Dược sĩ thế giới 25/09",
-    //     "Chi phí quà tặng sinh nhật Merap 17/10",
-    //     "Chi phí quà tặng ngày phụ nữ Việt Nam 20/10",
-    //     "Chi phí quà tặng ngày giáng sinh 24/12"
-    // ];
-
-    // const noi_dungs_giao_tiep = [
-    //     "Chi phí gặp gỡ giao tiếp trao đổi thông tin",
-    //     "Chi phí gặp sở chia sẻ thông tin ngành",
-    //     "Chi phí giao tiếp tư vấn chuyên môn",
-    //     "Chi phí giao tiếp cập nhật kiến thức về sản phẩm",
-    //     "Chi phí giao tiếp đánh giá về hiệu quả của thuốc"
-    //   ];
 
     const qua_tang_type = [
         "Quà tặng",
         "Giao tiếp - Mời cơm",
     ]
+
+    const handleMonthChange = (event) => {
+        set_ky_chi_phi_kt(event.target.value);
+        // You can add more logic here, like calling an API or updating a parent state
+        console.log("Selected Month:", event.target.value);
+    };
 
     const handleQuaTangChange = (e) => {
         const selectedValue = e.target.value;
@@ -158,10 +136,6 @@ function Form_claim_chi_phi({ history }) {
         set_so_ke_hoach("");
         set_ty_le( { value: '5:5', label: '5:5' } )
     };
-
-    // const formatNumber = (value) => {
-    //     return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    // };
 
     const post_form_data = async (data) => {
         SetLoading(true);
@@ -230,7 +204,8 @@ function Form_claim_chi_phi({ history }) {
             max_ke_hoach: null,
             inserted_at: insert,
             ma_dip: "khong_co",
-            thang_chi_phi: null
+            thang_chi_phi: null,
+            ky_chi_phi_kt: ky_chi_phi_kt
             
         };
         const plan = Number(so_ke_hoach.replace(/,/g, ""));
@@ -267,7 +242,8 @@ function Form_claim_chi_phi({ history }) {
                     max_ke_hoach: baseData.max_ke_hoach,
                     inserted_at: baseData.inserted_at,
                     ma_dip: baseData.noi_dung.ma_dip,
-                    thang_chi_phi: baseData.noi_dung.thang_chi_phi
+                    thang_chi_phi: baseData.noi_dung.thang_chi_phi,
+                    ky_chi_phi_kt: baseData.ky_chi_phi_kt
                 };
                 explodedData.push(newItem);
             }
@@ -303,6 +279,23 @@ function Form_claim_chi_phi({ history }) {
 
                         <Form onSubmit={handle_submit}>
 
+                        <Form.Select 
+                            className='mt-2' 
+                            required 
+                            onChange={ (e) => set_ky_chi_phi_kt(e.target.value) }
+                            value={ky_chi_phi_kt}
+                        >
+                            <option value="" disabled>Kỳ chi phí KT</option>
+                            {monthOptions.map((option, idx) => (
+                                <option 
+                                    key={idx} 
+                                    value={option.value}
+                                >
+                                    {option.label}
+                                </option>
+                            ))}
+                        </Form.Select>
+
                             {/* Chon Loai Qua Select */}
                             <Form.Select className='mt-2' required onChange={handleQuaTangChange} value={qua_tang}>
                                 <option value="">Chọn loại quà</option>
@@ -331,13 +324,10 @@ function Form_claim_chi_phi({ history }) {
                                 getOptionValue={(el) => el.ten_dip}
                                 getOptionLabel={(el) => el.ten_dip}
                                 value={noi_dung}
-
-                                // options={noi_dung_options}
-                                // value={noi_dung_options}
                                 onChange={(selectedOptions) => set_noi_dung(selectedOptions)}
 
                                 isSearchable
-                                placeholder="Chọn nội dung"
+                                placeholder="Chọn nội dung (dịp)"
                                 styles={{ placeholder: (base) => ({ ...base, color: "#212529" }) }}
                                 />
                             )
@@ -425,17 +415,7 @@ function Form_claim_chi_phi({ history }) {
                                 }}
                             />
                             )}
-                            
-                            {/* noi_dung Select */}
-                            {/* <Form.Select className='mt-2' required onChange={(e) => set_noi_dung(e.target.value)} value={noi_dung}>
-                                <option value="">Chọn nội dung</option>
-                                {current_noi_dung.map((cnt, idx) => (
-                                    <option key={idx} value={cnt}>{cnt}</option>
-                                ))}
-                            </Form.Select> */}
 
-
-                            
                             {/* ghi_chu Input */}
                             <Form.Control className='mt-2 dark-placeholder' type="text" placeholder="Ghi chú" onChange={(e) => set_ghi_chu(e.target.value)} value={ghi_chu} style={{ '::placeholder': { color: '#333' } }}/>
                             

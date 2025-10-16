@@ -152,14 +152,14 @@ const renderCards = (items) => (
 **Điểm** = Tỷ lệ thời gian * Hệ số chủ đề
 
 **- Tỷ lệ thời gian**:
-Thời gian tra cứu thư viện được quy đổi theo tỷ lệ sau:
-- **Dưới 30 giây** = 0%
-- **Từ 30 giây trở lên** = 100%
+Thời gian tra cứu thư viện ( áp dụng từ 11/10/2025 ) được quy đổi theo tỷ lệ sau:
+- **Dưới 60 giây** = 0%
+- **Từ 60 giây trở lên** = 100%
 
 **- Hệ số chủ đề**:
 Mỗi chủ đề có một hệ số riêng (có thể thay đổi theo thông báo từng quý)
 
-**Điểm số 5 chủ đề từ ngày 01/07/2025 đến 30/09/2025 như sau:**
+**Điểm số 5 chủ đề từ ngày 01/10/2025 đến 31/12/2025 như sau:**
 1. **Thông tin về MerapLion**: + 2 điểm/Video
 2. **Thông tin sản phẩm**:
   - Tờ giới thiệu sản phẩm: +2 điểm/SKU

@@ -73,7 +73,7 @@ const Nvbc_view_video = () => {
             console.error("Tracking error:", error);
           });
       }
-    }, 30000); // 10 seconds delay
+    }, 60000); // 10 seconds delay
     return () => clearTimeout(timer); // cleanup
   }, [location, history]);
 
@@ -99,7 +99,7 @@ const Nvbc_view_video = () => {
           {/* Back Button */}
           <div style={{ textAlign: 'center'}}>
           <Button variant="success" size="sm" onClick={handleGoBack}>
-          Quay lại
+            Quay lại
           </Button>
           </div>
           <Ratio aspectRatio="16x9">

@@ -9,12 +9,12 @@ import {
     Modal,
     Button,
     ListGroup,
-    Col,
-    Row,
+    // Col,
+    // Row,
     Container,
     Form,
     Spinner,
-    Card,
+    // Card,
     Table
 } from "react-bootstrap";
 import dayjs from "dayjs";
@@ -130,8 +130,8 @@ const Form_claim_chi_phi_claimed = ( {history} ) => {
             setTimeout(() => {
             SetALert(false);
             SetLoading(false);
-            clear_data();
-            setCount(count+1);
+            // clear_data();
+            // setCount(count+1);
             }, 2000);
         } else {
             const data = await response.json();
@@ -160,7 +160,13 @@ const Form_claim_chi_phi_claimed = ( {history} ) => {
           updatedRecord.so_tien_claim = Number(newValue); // Update the value
           return updatedRecord;
         } else {
-          window.alert("Đã vượt ngưỡng tối đa của kế hoạch");
+          
+        window.alert(
+          `Đã vượt ngưỡng tối đa của kế hoạch!\n\n` +
+          `Đã nhập: ${f.format(newValue)}\n` +
+          `Ngưỡng tối đa: ${f.format(record.max_ke_hoach)}`
+        );
+
           return record;
         }
       }

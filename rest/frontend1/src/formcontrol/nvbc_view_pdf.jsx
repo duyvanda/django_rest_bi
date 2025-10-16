@@ -76,7 +76,7 @@ const Nvbc_view_pdf = () => {
             console.error("Tracking error:", error);
           });
       }
-    }, 30000); // 10 seconds delay
+    }, 60000); // 10 seconds delay
     return () => clearTimeout(timer); // cleanup
   }, [location, history]);
 

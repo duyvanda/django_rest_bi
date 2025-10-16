@@ -38,6 +38,9 @@ function Navbar1() {
                   <NavDropdown.Item onClick={() => history.push('/crmhome')}>
                     💼 <strong>CRM HOME</strong>
                   </NavDropdown.Item>
+                  <NavDropdown.Item onClick={() => history.push('/workflow')}>
+                    🔁 <strong>WORKFLOW</strong>
+                  </NavDropdown.Item>
                   <NavDropdown.Item onClick={handleLogout} className="text-danger">
                     🚪 <strong>LOGOUT</strong>
                   </NavDropdown.Item>

@@ -42,10 +42,13 @@ const Nvbc_login = ({history, location}) => {
     setLoading(true);
   
     try {
-      const response = await fetch("https://bi.meraplion.com/local/nvbc_login/", {
+        const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiTVIyOTY2IiwidXNlcm5hbWUiOiJNUjI5NjYiLCJleHAiOjE3NzU4OTE2MzEsImlhdCI6MTc2MDMzOTYzMX0.SdGtII6-xJjsCL8pvGoZAZiydDbih1vXPhHxmsw6CKQ"; // replace with your actual token
+        const response = await fetch("https://bi.meraplion.com/local/nvbc_login/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+
         },
         body: JSON.stringify({ phone: phone.trim() }),
       });

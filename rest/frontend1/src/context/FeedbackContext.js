@@ -167,6 +167,23 @@ export const FeedbackProvider = ({ children }) => {
     return inserted_at;
   }
 
+  const generateMonthOptions = (startOffset, endOffset) => {
+    const options = [];
+    const today = new Date();
+    for (let i = startOffset; i <= endOffset; i++) {
+        const date = new Date(today.getFullYear(), today.getMonth() + i, 1);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const value = `01-${month}-${year}`;
+        const label = date.toLocaleDateString('vi-VN', { 
+            month: 'long', 
+            year: 'numeric' 
+        });
+        options.push({ value, label });
+    }
+    return options;
+};
+
   function removeAccents(str) {
     var AccentsMap = [
       "aàảãáạăằẳẵắặâầẩẫấậ",
@@ -376,6 +393,7 @@ export const FeedbackProvider = ({ children }) => {
         formatDate,
         get_current_dmy,
         Inserted_at,
+        generateMonthOptions,
         removeAccents,
         get_id,
         formatNumber,

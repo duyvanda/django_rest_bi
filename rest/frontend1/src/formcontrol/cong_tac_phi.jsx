@@ -27,25 +27,25 @@ import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as
 
 function Cong_tac_phi({history}) {
     
-    const { Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
+    const { generateMonthOptions, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
-    // const fetch_initial_data = async (manv) => {
-    //     SetLoading(true)
-    //     const response = await fetch(`https://bi.meraplion.com/local/form_data_log/?manv=${manv}&dropper=0`)
-    //     if (!response.ok) {
-    //         SetLoading(false)
-    //     }
-    //     else {
-    //     const data = await response.json()
-    //     SetLoading(false);
-    //     }
-    // }
-        const f = new Intl.NumberFormat();
-        // const utteranceRef = useRef(null); 
-        // const [availableVoices, setAvailableVoices] = useState([]); 
-        // const [isSpeaking, setIsSpeaking] = useState(false);
-        // const [ty_le, set_ty_le] = useState('5:5');
+    const fetch_initial_data = async (manv) => {
+      SetLoading(true)
+      const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_claim_chi_phi_hoa_don_misa`)
+      if (!response.ok) {
+          SetLoading(false)
+      }
+      else {
+      const data = await response.json()
+      set_lst_invoices_ve_xe(data['lst_invoices'])
+      console.log(data);
+      SetLoading(false);
 
+      }
+  }
+
+    const f = new Intl.NumberFormat();
+    const monthOptions = generateMonthOptions(-2, 2);
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {        
         const media = window.matchMedia('(max-width: 960px)');
@@ -53,29 +53,32 @@ function Cong_tac_phi({history}) {
         const dv_width = window.innerWidth;
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'Cong_tac_phi', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
+        fetch_initial_data();
 
         } else {
             history.push('/login?redirect=/formcontrol/cong_tac_phi');
         };
     }, []);
     const [manv, set_manv] = useState("");
-
-
+    const [search, set_search] = useState("");
+    const [lst_invoices_ve_xe,  set_lst_invoices_ve_xe] = useState ([]);
+    const [show_chon_hoa_don_ve_xe,  set_show_chon_hoa_don_ve_xe] = useState (false);
+    const [lst_chon_invoices_ve_xe,  set_lst_chon_invoices_ve_xe] = useState ([]);
     const [input_data, set_input_data] = useState({
-          thang: '',
-          tu_ngay: '',
-          den_ngay: '',
-          tinh: '',
-          ve_xe: '',
-          ky_hieu_ve_xe: '',
-          so_hoa_don_ve_xe: '',
-          ngay_hoa_don_ve_xe: '',
-          chi_phi_khach_san: '',
-          ky_hieu_khach_san: '',
-          so_hoa_don_khach_san: '',
-          ngay_hoa_don_khach_san: '',
-          phu_cap_di_lai: '',
-          inserted_at: Inserted_at(),
+        thang: '',
+        tu_ngay: '',
+        den_ngay: '',
+        tinh: '',
+        ve_xe: '',
+        ky_hieu_ve_xe: '',
+        so_hoa_don_ve_xe: '',
+        ngay_hoa_don_ve_xe: '',
+        chi_phi_khach_san: '',
+        ky_hieu_khach_san: '',
+        so_hoa_don_khach_san: '',
+        ngay_hoa_don_khach_san: '',
+        phu_cap_di_lai: '',
+        inserted_at: Inserted_at()
     });
 
     const clear_data = () => {
@@ -97,6 +100,29 @@ function Cong_tac_phi({history}) {
             });
         };
 
+  const handle_switch_ve_xe = (e, inv ) => {
+    let lst_tong = [];
+    for (const record of lst_invoices_ve_xe) {
+      let element = Object.assign({}, record); // Clone the object
+      if(element.id_duy_nhat_cua_hoa_don === e.target.id) {
+          element.check = e.target.checked
+        //   element.selected_time = Inserted_at()
+          lst_tong.push(element);
+      }
+      else {
+        // void(0);
+        lst_tong.push(element);
+      }
+    }
+    set_lst_invoices_ve_xe(lst_tong);
+
+    const selected_invoices = lst_tong.filter(invoice => invoice.check === true);
+    set_lst_chon_invoices_ve_xe(selected_invoices);
+
+    console.log("selected_invoices", selected_invoices)
+
+  }
+
   // Not a recommended way read notes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -109,7 +135,6 @@ function Cong_tac_phi({history}) {
     }
     set_input_data(updatedRecord)
   };
-
 
     const post_form_data = async (data) => {
         SetLoading(true);
@@ -139,7 +164,6 @@ function Cong_tac_phi({history}) {
         SetALertText("ĐÃ TẠO THÀNH CÔNG");
         setTimeout(() => SetALert(false), 3000);
         clear_data();
-        // setCount(count+1);
     }
     }
 
@@ -178,8 +202,8 @@ function Cong_tac_phi({history}) {
                         <Form onSubmit={handle_submit}>
                             <div className="text-center">
 
-                                <FloatingLabel label="Tháng" className="border rounded mt-2">
-                                    <Form.Control
+                                  <FloatingLabel label="Tháng" className="border rounded mt-2">
+                                    <Form.Select
                                         required
                                         className=""
                                         placeholder=""
@@ -187,7 +211,18 @@ function Cong_tac_phi({history}) {
                                         name="thang"
                                         value={input_data?.thang || ''}
                                         onChange={handleInputChange}
-                                    ></Form.Control>
+                                    >
+
+                                    <option value="" disabled>Kỳ chi phí KT</option>
+                                    {monthOptions.map((option, idx) => (
+                                        <option 
+                                            key={idx} 
+                                            value={option.value}
+                                        >
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                    </Form.Select>
                                 </FloatingLabel>
 
                                 <FloatingLabel label="Từ ngày (dd-mm-yyyy)" className="border rounded mt-2">
@@ -215,7 +250,7 @@ function Cong_tac_phi({history}) {
                                 </FloatingLabel>
 
                                 <FloatingLabel label="Tỉnh" className="border rounded mt-2">
-                                    <Form.Control
+                                    <Form.Select
                                         required
                                         className=""
                                         placeholder=""
@@ -223,135 +258,12 @@ function Cong_tac_phi({history}) {
                                         name="tinh"
                                         value={input_data?.tinh || ''}
                                         onChange={handleInputChange}
-                                    ></Form.Control>
+                                    >
+                                    <option>Hồ Chí Minh</option>
+                                    <option>Đồng Nai</option>
+                                    <option>Bình Dương</option>
+                                    </Form.Select>
                                 </FloatingLabel>
-
-                                <Select
-                                    required
-                                    className="mt-2"
-                                    options={[
-                                    { value: 'hcm', label: 'hcm' },
-                                    { value: 'bd', label: 'bd' },
-                                    { value: 'dn', label: 'dn' }
-                                    ]}
-                                    value={{ value: input_data.tinh, label: input_data.tinh }}
-                                    onChange={(d) => handleInputChange(
-                                      {"target": {"name":"tinh","value":d.value}}
-                                    )}
-                                    placeholder="Chọn tỉnh"
-                                    isSearchable
-                                    styles={{
-                                    placeholder: (base) => ({ ...base, color: "#212529" })
-                                    }}
-                                />
-
-                                <div className="border border-secondary rounded p-3 mt-3">
-                                    <h5 className="mb-3">Thông tin Vé xe</h5>
-                                    <FloatingLabel label="Vé xe" className="border rounded mt-2">
-                                        <Form.Control
-                                            required
-                                            className=""
-                                            placeholder=""
-                                            type="text"
-                                            name="ve_xe"
-                                            value={ f.format(input_data?.ve_xe || '') }
-                                            onChange={handleInputChange}
-                                        ></Form.Control>
-                                    </FloatingLabel>
-
-                                    <Row className="mt-2">
-                                        <Col xs={4}>
-                                            <FloatingLabel label="Ký hiệu" className="border rounded">
-                                                <Form.Control
-                                                    className=""
-                                                    placeholder=""
-                                                    type="text"
-                                                    name="ky_hieu_ve_xe"
-                                                    value={input_data?.ky_hieu_ve_xe || ''}
-                                                    onChange={handleInputChange}
-                                                ></Form.Control>
-                                            </FloatingLabel>
-                                        </Col>
-                                        <Col xs={4}>
-                                            <FloatingLabel label="Số hóa đơn" className="border rounded">
-                                                <Form.Control
-                                                    className=""
-                                                    placeholder=""
-                                                    type="text"
-                                                    name="so_hoa_don_ve_xe"
-                                                    value={input_data?.so_hoa_don_ve_xe || ''}
-                                                    onChange={handleInputChange}
-                                                ></Form.Control>
-                                            </FloatingLabel>
-                                        </Col>
-                                        <Col xs={4}>
-                                            <FloatingLabel label="Ngày hóa đơn" className="border rounded">
-                                                <Form.Control
-                                                    className=""
-                                                    placeholder=""
-                                                    type="date"
-                                                    name="ngay_hoa_don_ve_xe"
-                                                    value={input_data?.ngay_hoa_don_ve_xe || ''}
-                                                    onChange={handleInputChange}
-                                                ></Form.Control>
-                                            </FloatingLabel>
-                                        </Col>
-                                    </Row>
-                                </div>
-
-                                <div className="border border-secondary rounded p-3 mt-3">
-                                    <h5 className="mb-3">Thông tin Chi phí khách sạn</h5>
-                                    <FloatingLabel label="Chi phí khách sạn" className="border rounded mt-2">
-                                        <Form.Control
-                                            required
-                                            className=""
-                                            placeholder=""
-                                            type="text"
-                                            name="chi_phi_khach_san"
-                                            value={ f.format(input_data?.chi_phi_khach_san || '') }
-                                            onChange={handleInputChange}
-                                        ></Form.Control>
-                                    </FloatingLabel>
-
-                                    <Row className="mt-2">
-                                        <Col xs={4}>
-                                            <FloatingLabel label="Ký hiệu" className="border rounded">
-                                                <Form.Control
-                                                    className=""
-                                                    placeholder=""
-                                                    type="text"
-                                                    name="ky_hieu_khach_san"
-                                                    value={input_data?.ky_hieu_khach_san || ''}
-                                                    onChange={handleInputChange}
-                                                ></Form.Control>
-                                            </FloatingLabel>
-                                        </Col>
-                                        <Col xs={4}>
-                                            <FloatingLabel label="Số hóa đơn" className="border rounded">
-                                                <Form.Control
-                                                    className=""
-                                                    placeholder=""
-                                                    type="text"
-                                                    name="so_hoa_don_khach_san"
-                                                    value={input_data?.so_hoa_don_khach_san || ''}
-                                                    onChange={handleInputChange}
-                                                ></Form.Control>
-                                            </FloatingLabel>
-                                        </Col>
-                                        <Col xs={4}>
-                                            <FloatingLabel label="Ngày hóa đơn" className="border rounded">
-                                                <Form.Control
-                                                    className=""
-                                                    placeholder=""
-                                                    type="date"
-                                                    name="ngay_hoa_don_khach_san"
-                                                    value={input_data?.ngay_hoa_don_khach_san || ''}
-                                                    onChange={handleInputChange}
-                                                ></Form.Control>
-                                            </FloatingLabel>
-                                        </Col>
-                                    </Row>
-                                </div>
 
                                 <FloatingLabel label="Phụ cấp đi lại" className="border rounded mt-2">
                                     <Form.Control
@@ -365,7 +277,62 @@ function Cong_tac_phi({history}) {
                                     ></Form.Control>
                                 </FloatingLabel>
 
+                                <FloatingLabel label="Phụ cấp ăn uống" className="border rounded mt-2">
+                                    <Form.Control
+                                        required
+                                        className=""
+                                        placeholder=""
+                                        type="text"
+                                        name="phu_cap_an_uong"
+                                        value={f.format(input_data?.phu_cap_an_uong || '')}
+                                        onChange={handleInputChange}
+                                    ></Form.Control>
+                                </FloatingLabel>
+
+                                <FloatingLabel label="Khoản mục" className="border rounded mt-2">
+                                    <Form.Control
+                                        required
+                                        className=""
+                                        placeholder=""
+                                        type="text"
+                                        name="khoan_muc"
+                                        value={(input_data?.khoan_muc || '')}
+                                        onChange={handleInputChange}
+                                    ></Form.Control>
+                                </FloatingLabel>
+
+                                    <Button variant="success" onClick={ (e) => set_show_chon_hoa_don_ve_xe(true) } className="mb-2 mt-2 mr-2">Chọn Hóa Đơn Vé Xe ({lst_chon_invoices_ve_xe.length})</Button>
+                                    {/* <Button onClick={ (e) => set_show_chon_hoa_don_khach_san(true) } className="mb-2 mt-2">Chọn Hóa Đơn Khách Sạn</Button> */}
+
                             </div>
+
+                            {/* MODAL Chon Hóa Đơn Vé Xe */}
+                            <Modal fullscreen={true} show={show_chon_hoa_don_ve_xe} onHide={ () => set_show_chon_hoa_don_ve_xe(false) }>
+                                <Modal.Body>
+
+                                <ListGroup className="mt-2" style={{maxHeight: "250px", overflowY: "auto"}}>
+                                    <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="Tìm số hóa đơn hoặc ngày hoặc tên NCC (KHONG DAU) " value={search} />
+                                    {lst_invoices_ve_xe
+                                        .filter( el => el.clean_ten?.toLowerCase().includes( search.toLowerCase() ) )
+                                        .sort((a, b) => a.stt - b.stt)
+                                        .map( (el, index) =>
+                                        <ListGroup.Item style={{ backgroundColor: el.stt === 0 ? 'rgb(254 202 202)' : 'transparent',}} key={index} className="mx-0 px-0 my-0 py-0" >
+                                            <Form.Check key={index} className="text-wrap" type="switch" checked={el.check} onChange={ (e) => handle_switch_ve_xe(e, el ) } id={el.id_duy_nhat_cua_hoa_don} label={ el.ten_hien_thi + f.format(el.so_tien_claim) }/>
+                                        </ListGroup.Item>
+                                        )
+                                    }
+                                </ListGroup>
+                                </Modal.Body>
+
+                                <Modal.Footer>
+                                <Button variant="secondary" onClick={() => {
+                                    set_show_chon_hoa_don_ve_xe(false); 
+                                    }}>
+                                    Đóng
+                                </Button>
+
+                                </Modal.Footer>
+                            </Modal>
 
                             <Button
                                 disabled={loading}
@@ -376,7 +343,7 @@ function Cong_tac_phi({history}) {
                             >
                                 LƯU THÔNG TIN
                             </Button>
-                            <p>version 1.3(18/06/2025)</p>
+                            <p>version 1.4(15/10/2025)</p>
                         </Form>
                     </div>
                 </Col>
@@ -390,321 +357,3 @@ function Cong_tac_phi({history}) {
 }
 
 export default Cong_tac_phi
-
-
-    // useEffect(() => {
-    //     const handleSpeakEnd = () => setIsSpeaking(false);
-    //     const handleVoicesChanged = () => {
-    //         setAvailableVoices(speechSynthesis.getVoices());
-    //         const voices = speechSynthesis.getVoices();
-    //         voices.forEach(voice => console.log(`  Name: ${voice.name}, Lang: ${voice.lang}, Default: ${voice.default}`));
-    //     };
-
-    //     if (utteranceRef.current) {
-    //         utteranceRef.current.onend = handleSpeakEnd;
-    //         utteranceRef.current.onerror = (event) => {
-    //             console.error('SpeechSynthesisUtterance.onerror', event);
-    //             setIsSpeaking(false);
-    //         };
-    //     }
-    //     if (speechSynthesis) {
-    //         speechSynthesis.addEventListener('voiceschanged', handleVoicesChanged);
-    //         if (speechSynthesis.getVoices().length > 0) {
-    //             setAvailableVoices(speechSynthesis.getVoices());
-    //         }
-    //     }
-
-    //     return () => {
-    //         if (utteranceRef.current) {
-    //             utteranceRef.current.onend = null;
-    //             utteranceRef.current.onerror = null;
-    //         }
-    //         if (speechSynthesis) {
-    //             speechSynthesis.cancel();
-    //             speechSynthesis.removeEventListener('voiceschanged', handleVoicesChanged);
-    //         }
-    //     };
-    // }, []);
-
-
-// const convertWebMToWav = async (webmBlob) => {
-//     const arrayBuffer = await webmBlob.arrayBuffer();
-//     const audioCtx = new AudioContext();
-//     const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-//     return encodeWAV(audioBuffer);
-//   };
-  
-
-//   const encodeWAV = (audioBuffer) => {
-//     const numOfChannels = audioBuffer.numberOfChannels;
-//     const sampleRate = audioBuffer.sampleRate;
-//     const length = audioBuffer.length * numOfChannels * 2 + 44;
-//     const buffer = new ArrayBuffer(length);
-//     const view = new DataView(buffer);
-    
-//     writeString(view, 0, "RIFF");
-//     view.setUint32(4, 36 + audioBuffer.length * numOfChannels * 2, true);
-//     writeString(view, 8, "WAVE");
-//     writeString(view, 12, "fmt ");
-//     view.setUint32(16, 16, true);
-//     view.setUint16(20, 1, true);
-//     view.setUint16(22, numOfChannels, true);
-//     view.setUint32(24, sampleRate, true);
-//     view.setUint32(28, sampleRate * numOfChannels * 2, true);
-//     view.setUint16(32, numOfChannels * 2, true);
-//     view.setUint16(34, 16, true);
-//     writeString(view, 36, "data");
-//     view.setUint32(40, audioBuffer.length * numOfChannels * 2, true);
-    
-//     const interleaved = interleave(audioBuffer);
-//     const data = new DataView(buffer, 44);
-//     for (let i = 0, offset = 0; i < interleaved.length; i++, offset += 2) {
-//       data.setInt16(offset, interleaved[i] * 0x7FFF, true);
-//     }
-  
-//     return new Blob([buffer], { type: "audio/wav" });
-//   };
-  
-//   const interleave = (audioBuffer) => {
-//     const numOfChannels = audioBuffer.numberOfChannels;
-//     const length = audioBuffer.length * numOfChannels;
-//     const interleaved = new Float32Array(length);
-//     for (let channel = 0; channel < numOfChannels; channel++) {
-//       const channelData = audioBuffer.getChannelData(channel);
-//       for (let i = 0; i < channelData.length; i++) {
-//         interleaved[i * numOfChannels + channel] = channelData[i];
-//       }
-//     }
-//     return interleaved;
-//   };
-  
-//   const writeString = (view, offset, string) => {
-//     for (let i = 0; i < string.length; i++) {
-//       view.setUint8(offset + i, string.charCodeAt(i));
-//     }
-//   };
-
-
-    // const [text_3, set_text_3] = useState('');
-    // AUDIO
-    // const [showModal, setShowModal] = useState(false);
-    // const [recording, setRecording] = useState(false);
-    // const [audioBlob, setAudioBlob] = useState(null);
-    // const [startTime, setStartTime] = useState(null);
-    // const [endTime, setEndTime] = useState(null);
-    // const [countdown, setCountdown] = useState(30);
-    // const mediaRecorderRef = useRef(null);
-    // const audioChunksRef = useRef([]);
-    // const countdownRef = useRef(null);
-
-    // const post_audio_data = async () => {
-    //     SetLoading(true);
-    //     const wavBlob = await convertWebMToWav(audioBlob);
-    //     const formData = new FormData();
-    //     formData.append("audio", wavBlob, "recording.wav");
-    //     const response = await fetch(`https://bi.meraplion.com/local/file_upload_cong_tac_phi/`, {
-    //         method: "POST",
-    //         headers: {},
-    //         body: formData,
-    //     });
-
-    //     if (!response.ok) {
-    //         const data = await response.json();
-    //         console.log(data);
-    //         SetALert(true);
-    //         SetALertType("alert-danger");
-    //         SetALertText("CHƯA TẠO ĐƯỢC");
-    //         setTimeout(() => SetLoading(false), 1000);
-    //         setTimeout(() => SetALert(false), 1000);
-    //     } else {
-    //         const data = await response.json();
-    //         set_text_3(data['message']);
-    //         set_input_data(data['input_data']);
-    //         console.log(data);
-    //         SetALert(true);
-    //         SetALertType("alert-success");
-    //         SetALertText("ĐÃ TẠO THÀNH CÔNG");
-    //         setTimeout(() => SetLoading(false), 1000);
-    //         setTimeout(() => SetALert(false), 1000);
-    //         clear_data();
-    //         removeAudio();
-
-    //     }
-    // }
-
-
-    // const synthesizeSpeech = async (text) => {
-    //     if (!('speechSynthesis' in window)) {
-    //         addMessage('AI', "Your browser does not support speech synthesis.");
-    //         return;
-    //     }
-    //     setIsSpeaking(true);
-    //     const utterance = new SpeechSynthesisUtterance(text);
-    //     utteranceRef.current = utterance;
-
-    //     utterance.lang = 'vi-VN';
-
-    //     const vietnameseVoices = availableVoices.filter(voice => 
-    //         voice.lang === 'vi-VN' || voice.lang === 'vi_VN'
-    //     );
-    //     let selectedVoice = null;
-
-    //     selectedVoice = vietnameseVoices.find(voice =>
-    //         voice.name.toLowerCase().includes('female') ||
-    //         voice.name.toLowerCase().includes('girl') ||
-    //         voice.name.toLowerCase().includes('nữ')
-    //     );
-
-    //     if (!selectedVoice && vietnameseVoices.length > 0) {
-    //         selectedVoice = vietnameseVoices[0];
-    //     }
-
-    //     if (selectedVoice) {
-    //         utterance.voice = selectedVoice;
-    //         console.log(`Using voice: ${selectedVoice.name} (${selectedVoice.lang})`);
-    //     } else {
-    //         console.warn('No specific Vietnamese voice found, using default browser voice for Vietnamese.');
-    //     }
-
-    //     utterance.onend = () => {
-    //         setIsSpeaking(false);
-    //     };
-    //     utterance.onerror = (event) => {
-    //         console.error('SpeechSynthesisUtterance.onerror', event);
-    //         setIsSpeaking(false);
-    //     };
-    //     speechSynthesis.speak(utterance);
-    // };
-
-    // const startRecording = async () => {
-    //     setAudioBlob(null);
-    //     set_text_3("");
-    //     try {
-    //       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    //       mediaRecorderRef.current = new MediaRecorder(stream);
-    //       audioChunksRef.current = [];
-      
-    //       mediaRecorderRef.current.ondataavailable = (event) => {
-    //         if (event.data.size > 0) audioChunksRef.current.push(event.data);
-    //       };
-      
-    //       mediaRecorderRef.current.onstop = () => {
-    //         const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" } );
-    //         setAudioBlob(audioBlob);
-    //         console.log("Recorded Audio Blob:", audioBlob);
-    //       };
-      
-    //       mediaRecorderRef.current.start();
-    //       setRecording(true);
-    //       setShowModal(true);
-      
-    //       const now = new Date();
-    //       setStartTime(now);
-    //       setEndTime(new Date(now.getTime() + 30000));
-      
-    //       setCountdown(30);
-    //       countdownRef.current = setInterval(() => {
-    //         setCountdown((prev) => {
-    //           if (prev <= 1) clearInterval(countdownRef.current);
-    //           return prev - 1;
-    //         });
-    //       }, 1000);
-      
-    //       setTimeout(() => {
-    //         if (mediaRecorderRef.current.state === "recording") {
-    //           console.log("Time out - Stopping recording");
-    //           stopRecording();
-    //         }
-    //       }, 30000);
-    //     } catch (error) {
-    //       console.error("Error starting recording:", error);
-    //     }
-    //   };
-      
-    //   const stopRecording = () => {
-    //     if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
-    //       mediaRecorderRef.current.stop();
-    //       setRecording(false);
-    //       clearInterval(countdownRef.current);
-    //     }
-    //   };
-      
-    //   const removeAudio = () => {
-    //     setAudioBlob(null);
-    //     setStartTime(null);
-    //     setEndTime(null);
-    //     setCountdown(30);
-    //   };
-
-{/* Modal for Recording Status */}
-{/* <Modal show={showModal} onHide={() => setShowModal(false)}>
-    <Modal.Header closeButton>
-        <Modal.Title>{recording ? "Đang Ghi Âm..." : "Bản Ghi Âm"}</Modal.Title>
-    </Modal.Header>
-
-    <Modal.Body>
-        <div className="mt-3">
-            <p><strong>Hãy nói:</strong></p>
-            <p className="text-primary">
-                Thanh toán công tác phí tháng <strong>...</strong> <br />
-                Từ ngày <strong>...</strong> <br />
-                Đến ngày <strong>...</strong> <br />
-                Ở tỉnh <strong>...</strong> <br />
-                Vé xe: <strong>...</strong> nghìn, Ký hiệu <strong>...</strong>, số hóa đơn <strong>...</strong>, ngày hóa đơn <strong>...</strong> <br />
-                Chi phí khách sạn: <strong>...</strong> nghìn, Ký hiệu <strong>...</strong>, số hóa đơn <strong>...</strong>, ngày hóa đơn <strong>...</strong> <br />
-                Phụ cấp đi lại: <strong>...</strong> nghìn <br />
-            </p>
-            <p>Thời gian còn lại: {countdown}s</p>
-        </div>
-
-        {audioBlob && (
-            <div className="mt-3">
-                <p><strong>File Audio:</strong></p>
-                <div className="mb-2">
-                    <audio controls className="w-100">
-                        <source src={URL.createObjectURL(audioBlob)} type="audio/webm" />
-                        Your browser does not support the audio element.
-                    </audio>
-                </div>
-                <button onClick={post_audio_data} className="btn btn-success">
-                    GỬI FILE GHI ÂM
-                </button>
-            </div>
-        )}
-    </Modal.Body>
-
-    <Modal.Footer>
-        <button onClick={stopRecording} className="btn btn-warning" disabled={!recording}>
-            Dừng Ghi Âm
-        </button>
-        <button onClick={() => { stopRecording(); setShowModal(false); }} className="btn btn-danger">
-            Đóng
-        </button>
-    </Modal.Footer>
-</Modal> */}
-
-// NOTES:
-// Issues with the updatedRecord Approach
-// The code you provided—let updatedRecord = { ...input_data } followed by set_input_data(updatedRecord)—has two main problems:
-
-// Stale Closures: React state updates are asynchronous and often batched. If a user types quickly, multiple handleInputChange calls might run before set_input_data is finished updating the state. Each of these calls would be working with a "stale" input_data value from the time the function was first called, potentially causing some updates to be lost or overwritten.
-
-// Verbosity and Immutability: While it correctly creates a new object to maintain immutability, it's more verbose than the functional update approach. The original code handles this concisely within the set_input_data call itself, which is the preferred way to handle state updates that depend on the previous state.
-
-// Why the Original Code is Better
-// The original code—set_input_data((prevItem) => ({ ...prevItem, [name]: value }))—is better for several reasons:
-
-// Guaranteed Latest State: By using a functional update, you get the latest state value (prevItem) directly from React. This prevents the stale closure problem and ensures your update is always based on the most current data, regardless of how quickly the component re-renders.
-
-// Conciseness: It's a more compact and expressive way to handle a common React pattern. The single line of code clearly communicates that you're updating a portion of the state based on its previous value.
-
-// Immutability: Both approaches correctly create a new object, but the functional update is the standard, safe pattern for doing so within React.
-
-// In summary, while your code might seem to work for simple cases, the original approach is the robust and recommended method for updating state in React, especially for complex forms or frequent updates.
-
-// Original, Concise Code:
-
-// JavaScript
-
-// set_input_data((prevItem) => ({ ...prevItem, [name]: value }));
-// Here, the parentheses () around the object {...} tell JavaScript to implicitly return the object. This is a common and efficient pattern in React development.

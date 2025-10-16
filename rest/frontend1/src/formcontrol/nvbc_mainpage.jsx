@@ -62,7 +62,18 @@ const Nvbc_mainpage = ({history}) => {
 
     const fetchData = async () => {
       try {
-        const res = await fetch(`https://bi.meraplion.com/local/nvbc_get_point/?phone=${parsedUser.phone}`);
+        const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiTVIyOTY2IiwidXNlcm5hbWUiOiJNUjI5NjYiLCJleHAiOjE3NzU4OTE2MzEsImlhdCI6MTc2MDMzOTYzMX0.SdGtII6-xJjsCL8pvGoZAZiydDbih1vXPhHxmsw6CKQ";
+        const res = await fetch(
+          `https://bi.meraplion.com/local/nvbc_get_point/?phone=${parsedUser.phone}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+          }
+        );
+
         if (!res.ok) {
           throw new Error("Failed to fetch points");
         }

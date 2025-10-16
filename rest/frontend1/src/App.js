@@ -84,6 +84,9 @@ import Dang_ky_nghi_phep_pkh from  "./formcontrol/dang_ky_nghi_phep_pkh";
 import Dang_ky_nghi_phep_pkh_ncrm from  "./formcontrol/dang_ky_nghi_phep_pkh_ncrm";
 import CrmHome from  "./formcontrol/crmhome";
 
+import Workflow from  "./formcontrol/workflow";
+import Excel_kh_bi_thu_hoi_gpp from  "./formcontrol/excel_kh_bi_thu_hoi_gpp";
+
 import Test from  "./formcontrol/test";
 import Duckdb from  "./formcontrol/duckdb";
 import Postgres from  "./formcontrol/postgres";
@@ -160,6 +163,9 @@ function AppContent() {
                 {/* <Route exact path="/formcontrol/mds_xuan_thinh_vuong" component={MdsXuanThinhVuong} /> */}
                 {/* <Route exact path="/formcontrol/chuong_trinh_dau_tu_hcp_test" component={Chuong_trinh_dau_tu_hcp_test} /> */}
                 {/* <Route path="/formcontrol/tracking_chi_phi_hco" component={Tracking_chi_phi_hco} /> */}
+                
+                <Route path="/formcontrol/excel_kh_bi_thu_hoi_gpp" component={Excel_kh_bi_thu_hoi_gpp} />
+                <Route path="/workflow" component={Workflow} />
                 <Route path="/crmhome" component={CrmHome} />
                 <Route path="/formcontrol/tracking_chi_phi_hcp_qua_tang" component={Tracking_chi_phi_hcp_qua_tang} />
                 <Route exact path="/formcontrol/tracking_chi_phi_hcp_qua_tang_crm" component={Tracking_chi_phi_hcp_qua_tang_crm} />
