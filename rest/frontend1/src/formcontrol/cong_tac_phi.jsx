@@ -27,7 +27,7 @@ import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as
 
 function Cong_tac_phi({history}) {
     
-    const { generateMonthOptions, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
+    const { get_id, generateMonthOptions, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
@@ -36,8 +36,14 @@ function Cong_tac_phi({history}) {
           SetLoading(false)
       }
       else {
-      const data = await response.json()
-      set_lst_invoices_ve_xe(data['lst_invoices'])
+        const data = await response.json()
+        let invoices = data['lst_invoices']
+        const updatedInvoices = invoices.map(el => ({
+        ...el,
+        cost_type: null,
+        }));
+
+      set_lst_invoices(updatedInvoices)
       console.log(data);
       SetLoading(false);
 
@@ -46,6 +52,9 @@ function Cong_tac_phi({history}) {
 
     const f = new Intl.NumberFormat();
     const monthOptions = generateMonthOptions(-2, 2);
+
+
+    const [count, setCount] = useState(0);
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {        
         const media = window.matchMedia('(max-width: 960px)');
@@ -58,76 +67,85 @@ function Cong_tac_phi({history}) {
         } else {
             history.push('/login?redirect=/formcontrol/cong_tac_phi');
         };
-    }, []);
+    }, [count]);
     const [manv, set_manv] = useState("");
     const [search, set_search] = useState("");
-    const [lst_invoices_ve_xe,  set_lst_invoices_ve_xe] = useState ([]);
-    const [show_chon_hoa_don_ve_xe,  set_show_chon_hoa_don_ve_xe] = useState (false);
-    const [lst_chon_invoices_ve_xe,  set_lst_chon_invoices_ve_xe] = useState ([]);
+    const [lst_invoices,  set_lst_invoices] = useState ([]);
+    const [show_chon_hoa_don,  set_show_chon_hoa_don] = useState (false);
+
+    const [lst_chon_invoices,  set_lst_chon_invoices] = useState ([]);
+    const [total_hotel_cost,  set_total_hotel_cost] = useState (0);
+    const [total_transport_cost,  set_total_transport_cost] = useState (0);
+
     const [input_data, set_input_data] = useState({
-        thang: '',
-        tu_ngay: '',
-        den_ngay: '',
-        tinh: '',
-        ve_xe: '',
-        ky_hieu_ve_xe: '',
-        so_hoa_don_ve_xe: '',
-        ngay_hoa_don_ve_xe: '',
-        chi_phi_khach_san: '',
-        ky_hieu_khach_san: '',
-        so_hoa_don_khach_san: '',
-        ngay_hoa_don_khach_san: '',
-        phu_cap_di_lai: '',
-        inserted_at: Inserted_at()
+                ky_chi_phi_kt: '',
+                tu_ngay: '',
+                den_ngay: '',
+                tinh: '',
+                phu_cap_di_lai: '',
+                phu_cap_an_uong: '',
+                khoan_muc: '',
+                inserted_at: ''
     });
 
     const clear_data = () => {
             set_input_data({
-                thang: '',
+                ky_chi_phi_kt: '',
                 tu_ngay: '',
                 den_ngay: '',
                 tinh: '',
-                ve_xe: '',
-                ky_hieu_ve_xe: '',
-                so_hoa_don_ve_xe: '',
-                ngay_hoa_don_ve_xe: '',
-                chi_phi_khach_san: '',
-                ky_hieu_khach_san: '',
-                so_hoa_don_khach_san: '',
-                ngay_hoa_don_khach_san: '',
                 phu_cap_di_lai: '',
+                phu_cap_an_uong: '',
+                khoan_muc: '',
                 inserted_at: '',
             });
+
+            set_lst_chon_invoices([]);
+            set_total_hotel_cost(0);
+            set_total_transport_cost(0);
         };
 
-  const handle_switch_ve_xe = (e, inv ) => {
+  const handle_switch = (e, new_type='transport' ) => {
+
+    console.log(e.target.name, e.target.checked, e.target.id)
     let lst_tong = [];
-    for (const record of lst_invoices_ve_xe) {
-      let element = Object.assign({}, record); // Clone the object
+    for (const record of lst_invoices) {
+      let element = Object.assign({}, record);
       if(element.id_duy_nhat_cua_hoa_don === e.target.id) {
-          element.check = e.target.checked
-        //   element.selected_time = Inserted_at()
-          lst_tong.push(element);
+				element.check = e.target.checked
+					if (e.target.checked === true) {
+						element.cost_type = new_type
+					}
+					else {element.cost_type = null}
+				lst_tong.push(element);
       }
       else {
-        // void(0);
         lst_tong.push(element);
       }
     }
-    set_lst_invoices_ve_xe(lst_tong);
-
+    set_lst_invoices(lst_tong);
     const selected_invoices = lst_tong.filter(invoice => invoice.check === true);
-    set_lst_chon_invoices_ve_xe(selected_invoices);
-
+    set_lst_chon_invoices(selected_invoices);
     console.log("selected_invoices", selected_invoices)
 
+
+    // 💰 Calculate totals by cost type
+    const total_transport_cost = selected_invoices
+    .filter(inv => inv.cost_type === "transport")
+    .reduce((sum, inv) => sum + (inv.so_tien_claim || 0), 0);
+    set_total_transport_cost(total_transport_cost);
+
+    const total_hotel_cost = selected_invoices
+    .filter(inv => inv.cost_type === "hotel")
+    .reduce((sum, inv) => sum + (inv.so_tien_claim || 0), 0);
+    set_total_hotel_cost(total_hotel_cost);
   }
 
   // Not a recommended way read notes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     let updatedRecord = { ...input_data }
-    if (name === "phu_cap_di_lai" || name === "chi_phi_khach_san" || name === "ve_xe") {
+    if (name === "phu_cap_di_lai" || name === "chi_phi_khach_san" || name === "phu_cap_an_uong" || name === "ve_xe") {
       updatedRecord[name] = value.replace(/\D/g, '');
     }
     else {
@@ -139,7 +157,7 @@ function Cong_tac_phi({history}) {
     const post_form_data = async (data) => {
         SetLoading(true);
         console.log(input_data);
-        const response = await fetch(`https://bi.meraplion.com/local/insert_data_cong_tac_phi/`, {
+        const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_form_cong_tac_phi/`, {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -147,33 +165,44 @@ function Cong_tac_phi({history}) {
             body: JSON.stringify(data),
         });
 
-    if (!response.ok) {
-        SetLoading(false);
-        const data = await response.json();
-        console.log(data);
-        SetALert(true);
-        SetALertType("alert-danger");
-        SetALertText("CHƯA TẠO ĐƯỢC");
-        setTimeout(() => SetALert(false), 3000);
-    } else {
-        SetLoading(false);
-        const data = await response.json();
-        console.log(data);
-        SetALert(true);
-        SetALertType("alert-success");
-        SetALertText("ĐÃ TẠO THÀNH CÔNG");
-        setTimeout(() => SetALert(false), 3000);
-        clear_data();
-    }
+        if (!response.ok) {
+            const data = await response.json();
+            console.log(data);
+            SetALert(true);
+            SetALertType("alert-danger");
+            SetALertText(data.error_message);
+            setTimeout(() => {
+            SetALert(false);
+            SetLoading(false);
+            }, 2000);
+        } else {
+            const data = await response.json();
+            console.log(data);
+            SetALert(true);
+            SetALertType("alert-success");
+            SetALertText( data.success_message );
+            setTimeout(() => {
+            SetALert(false);
+            SetLoading(false);
+            }, 2000);
+            clear_data();
+            setCount(count+1);
+        }
     }
 
     const handle_submit = (e) => {
         e.preventDefault();
         const current_date = formatDate(Date());
 
+        const cloned_input_data = structuredClone(input_data);
+        cloned_input_data['inserted_at'] = Inserted_at();
         const data = {
+            "khid":"CTP"+get_id(),
             "manv":manv,
-            ...input_data
+            "lst_chon_invoices": lst_chon_invoices,
+            "tong_tien_ve_xe": total_transport_cost,
+            "tong_tien_khach_san": total_hotel_cost,
+            ...cloned_input_data
         }
         console.log([data]);
         post_form_data([data])
@@ -187,17 +216,18 @@ function Cong_tac_phi({history}) {
             <Row className="justify-content-center">
                 <Col md={5} >
                     <div>
+                        {/* ALERT COMPONENT */}
                         <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
-                            <Button variant="secondary" disabled> <Spinner animation="grow" size="sm" /> Đang tải...</Button>
-                        </Modal>
+                            <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
 
-                        {alert &&
+                            {alert &&
                             <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
-                                <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={() => setAlert(false)}>
+                                <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
                                 </button>
-                                <span><strong>Cảnh Báo: </strong>{alertText}</span>
+                                <span><strong>Cảnh Báo:  </strong>{alertText}</span>
                             </div>
-                        }
+                            }
+                        </Modal>
 
                         <Form onSubmit={handle_submit}>
                             <div className="text-center">
@@ -208,8 +238,8 @@ function Cong_tac_phi({history}) {
                                         className=""
                                         placeholder=""
                                         type="date"
-                                        name="thang"
-                                        value={input_data?.thang || ''}
+                                        name="ky_chi_phi_kt"
+                                        value={input_data?.ky_chi_phi_kt || ''}
                                         onChange={handleInputChange}
                                     >
 
@@ -259,6 +289,7 @@ function Cong_tac_phi({history}) {
                                         value={input_data?.tinh || ''}
                                         onChange={handleInputChange}
                                     >
+                                    <option value={""}>Chọn Tỉnh</option>
                                     <option>Hồ Chí Minh</option>
                                     <option>Đồng Nai</option>
                                     <option>Bình Dương</option>
@@ -301,32 +332,89 @@ function Cong_tac_phi({history}) {
                                     ></Form.Control>
                                 </FloatingLabel>
 
-                                    <Button variant="success" onClick={ (e) => set_show_chon_hoa_don_ve_xe(true) } className="mb-2 mt-2 mr-2">Chọn Hóa Đơn Vé Xe ({lst_chon_invoices_ve_xe.length})</Button>
-                                    {/* <Button onClick={ (e) => set_show_chon_hoa_don_khach_san(true) } className="mb-2 mt-2">Chọn Hóa Đơn Khách Sạn</Button> */}
+                                    <Button variant="success" onClick={ (e) => set_show_chon_hoa_don(true) } className="mb-2 mt-2 mr-2">Chọn Hóa Đơn Vé Xe Hoặc KS ({lst_chon_invoices.length})</Button>
+                                    {/* <Button onClick={ (e) => set_show_chon_hoa_don(true) } className="mb-2 mt-2">Chọn Hóa Đơn Khách Sạn</Button> */}
 
                             </div>
 
                             {/* MODAL Chon Hóa Đơn Vé Xe */}
-                            <Modal fullscreen={true} show={show_chon_hoa_don_ve_xe} onHide={ () => set_show_chon_hoa_don_ve_xe(false) }>
+                            <Modal fullscreen={true} show={show_chon_hoa_don} onHide={ () => set_show_chon_hoa_don(false) }>
                                 <Modal.Body>
 
-                                <ListGroup className="mt-2" style={{maxHeight: "250px", overflowY: "auto"}}>
-                                    <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="Tìm số hóa đơn hoặc ngày hoặc tên NCC (KHONG DAU) " value={search} />
-                                    {lst_invoices_ve_xe
-                                        .filter( el => el.clean_ten?.toLowerCase().includes( search.toLowerCase() ) )
-                                        .sort((a, b) => a.stt - b.stt)
-                                        .map( (el, index) =>
-                                        <ListGroup.Item style={{ backgroundColor: el.stt === 0 ? 'rgb(254 202 202)' : 'transparent',}} key={index} className="mx-0 px-0 my-0 py-0" >
-                                            <Form.Check key={index} className="text-wrap" type="switch" checked={el.check} onChange={ (e) => handle_switch_ve_xe(e, el ) } id={el.id_duy_nhat_cua_hoa_don} label={ el.ten_hien_thi + f.format(el.so_tien_claim) }/>
-                                        </ListGroup.Item>
-                                        )
-                                    }
-                                </ListGroup>
-                                </Modal.Body>
+                                <div className="mb-3">
+                                    <h5 className="mb-3 text-primary fw-bold">Thông tin thanh toán</h5>
+                                    <div className="mb-2">
+                                    <span className="text-muted">Tiền vé xe: </span>
+                                    <strong>{ f.format(total_transport_cost) }</strong>
+                                    </div>
+                                    <div className="mb-2">
+                                    <span className="text-muted">Tiền KS: </span>
+                                    <strong>{f.format(total_hotel_cost)}</strong>
+                                    </div>
+                                </div>
+
+                            <ListGroup className="mt-2" style={{
+                                // maxHeight: "700px",
+                                overflowY: "auto"
+                            }}>
+                            <Form.Control
+                                type="text"
+                                onChange={(e) => set_search(e.target.value)}
+                                placeholder="Tìm số hóa đơn hoặc ngày hoặc tên NCC (KHONG DAU)"
+                                value={search}
+                            />
+
+                            {lst_invoices
+                                .filter((el) => el.clean_ten?.toLowerCase().includes(search.toLowerCase()))
+                                .sort((a, b) => a.stt - b.stt)
+                                .map((el, index) => (
+                                <ListGroup.Item
+                                    key={index}
+                                    style={{
+                                    backgroundColor: el.stt === 0 ? "rgb(254 202 202)" : "transparent",
+                                    }}
+                                    className="px-2 py-2"
+                                >
+                                    {/* Switch to select invoice */}
+                                    <Form.Check
+                                    type="switch"
+                                    checked={el.check}
+                                    name="switch"
+                                    onChange={(e) => handle_switch(e)}
+                                    id={el.id_duy_nhat_cua_hoa_don}
+                                    label={`${el.ten_hien_thi} ${f.format(el.so_tien_claim)}`}
+                                    className="text-wrap fw-semibold"
+                                    />
+
+                                    {/* Cost type radios BELOW label — always visible */}
+                                    <div className="d-flex gap-3 ps-0 mt-0">
+                                    <Form.Check
+                                        type="radio"
+                                        id={el.id_duy_nhat_cua_hoa_don}
+                                        name={`cost-type-${el.id_duy_nhat_cua_hoa_don}`}
+                                        label="Hotel"
+                                        checked={el.cost_type === "hotel"}
+                                        onChange={(e) => handle_switch(e, "hotel")}
+                                    />
+                                    <Form.Check
+                                        type="radio"
+                                        id={el.id_duy_nhat_cua_hoa_don}
+                                        name={`cost-type-${el.id_duy_nhat_cua_hoa_don}`}
+                                        label="Xe"
+                                        checked={el.cost_type === "transport"}
+                                        onChange={(e) => handle_switch(e, "transport")}
+                                    />
+                                    </div>
+                                </ListGroup.Item>
+                                ))}
+                            </ListGroup>
+
+
+                            </Modal.Body>
 
                                 <Modal.Footer>
                                 <Button variant="secondary" onClick={() => {
-                                    set_show_chon_hoa_don_ve_xe(false); 
+                                    set_show_chon_hoa_don(false); 
                                     }}>
                                     Đóng
                                 </Button>

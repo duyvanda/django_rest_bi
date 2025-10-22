@@ -1,70 +1,50 @@
-{
-  "feedback": [
+[
     {
-      "id": "DV0001",
-      "makhdms": "DV0001",
-      "receiverName": "Van Quang Duy",
-      "receiverAddress": "438 CAO THẮNG",
-      "receiverProvinceCode": "70",
-      "receiverDistrictCode": "7250",
-      "receiverCommuneCode": "72506",
-      "receiverPhone": "0909195449",
-      "receiverEmail": "duyvan@gmail.com"
-    },
-    {
-      "id": "VN0002",
-      "makhdms": "VN0002",
-      "receiverName": "Vo Thanh Nhan 2",
-      "receiverAddress": "438 CAO THẮNG 2",
-      "receiverProvinceCode": "70",
-      "receiverDistrictCode": "7250",
-      "receiverCommuneCode": "72506",
-      "receiverPhone": "0909195449",
-      "receiverEmail": "duyvan@gmail.com"
-    },
-    {
-      "id": "VN0003",
-      "makhdms": "VN0003",
-      "receiverName": "Vo Thanh Nhan 3",
-      "receiverAddress": "438 CAO THẮNG 3",
-      "receiverProvinceCode": "70",
-      "receiverDistrictCode": "7250",
-      "receiverCommuneCode": "72506",
-      "receiverPhone": "0909195449",
-      "receiverEmail": "duyvan@gmail.com"
-    },
-    {
-      "id": "VN0004",
-      "makhdms": "VN0004",
-      "receiverName": "Vo Thanh Nhan A1",
-      "receiverAddress": "438 CAO THẮNG A1",
-      "receiverProvinceCode": "70",
-      "receiverDistrictCode": "7250",
-      "receiverCommuneCode": "72506",
-      "receiverPhone": "0909195449",
-      "receiverEmail": "duyvan@gmail.com"
-    },
-    {
-      "id": "VN0005",
-      "makhdms": "VN000A1",
-      "receiverName": "Vo Thanh Nhan A1",
-      "receiverAddress": "438 CAO THẮNG A1",
-      "receiverProvinceCode": "70",
-      "receiverDistrictCode": "7250",
-      "receiverCommuneCode": "72506",
-      "receiverPhone": "0909195449",
-      "receiverEmail": "duyvan@gmail.com"
-    },
-    {
-      "id": "A1",
-      "makhdms": "VN000A1",
-      "receiverName": "Vo Thanh Nhan A1",
-      "receiverAddress": "438 CAO THẮNG A1",
-      "receiverProvinceCode": "70",
-      "receiverDistrictCode": "7250",
-      "receiverCommuneCode": "72506",
-      "receiverPhone": "0909195449",
-      "receiverEmail": "duyvan@gmail.com"
+        "khid": "CTP20251017160746372",
+        "manv": "MR1391",
+        "lst_chon_invoices": [
+            {
+                "stt": 1,
+                "check": true,
+                "check_tm": true,
+                "clean_ten": "VU QUOC PHONG | 1803 | 17-10-2025 | 075077013624 | ",
+                "so_hoa_don": "000001803",
+                "ngay_hoa_don": "17-10-2025",
+                "ten_hien_thi": "VŨ QUỐC PHONG | 000001803 | 17-10-2025 | 075077013624 | ",
+                "tien_con_lai": 2301110,
+                "selected_time": "",
+                "so_tien_claim": 2301110,
+                "ten_nguoi_ban": "VŨ QUỐC PHONG",
+                "tong_tien_thanh_toan": 2301110,
+                "id_duy_nhat_cua_hoa_don": "68f1cd70d93dd47c0deedbd9",
+                "cost_type": "transport"
+            },
+            {
+                "stt": 2,
+                "check": true,
+                "check_tm": true,
+                "clean_ten": "TONG CONG TY CP BUU CHINH VIETTEL | 1576959 | 17-10-2025 | 0104093672 | ",
+                "so_hoa_don": "001576959",
+                "ngay_hoa_don": "17-10-2025",
+                "ten_hien_thi": "TỔNG CÔNG TY CP BƯU CHÍNH VIETTEL | 001576959 | 17-10-2025 | 0104093672 | ",
+                "tien_con_lai": 927225,
+                "selected_time": "",
+                "so_tien_claim": 927225,
+                "ten_nguoi_ban": "TỔNG CÔNG TY CP BƯU CHÍNH VIETTEL",
+                "tong_tien_thanh_toan": 927225,
+                "id_duy_nhat_cua_hoa_don": "68f1ce87e75bb2f96321d039",
+                "cost_type": "hotel"
+            }
+        ],
+        "tong_tien_ve_xe": 2301110,
+        "tong_tien_khach_san": 927225,
+        "ky_chi_phi_kt": "01-10-2025",
+        "tu_ngay": "2025-10-10",
+        "den_ngay": "2025-10-24",
+        "tinh": "Đồng Nai",
+        "phu_cap_di_lai": "100",
+        "phu_cap_an_uong": "150",
+        "khoan_muc": "A",
+        "inserted_at": "2025-10-17T16:06:45.047"
     }
-  ]
-}
+]

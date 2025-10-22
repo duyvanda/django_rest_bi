@@ -367,6 +367,7 @@ return (
     <>
     <Card className="mt-2 border-success" style={{ borderWidth: "0.1rem" }}>
     <Card.Title >Upload 01 Hình Ảnh</Card.Title>
+    
     <Form.Control id='customFileInputCapture' type="file" accept="image/*" capture="environment" style={{width: "115px", fontWeight: "bold", display: "none" }} multiple={true} onChange={ (e) => choose_images(e) } ></Form.Control>
     <Button style={{ width: '10rem' }} size="sm" variant="secondary" onClick={() => document.getElementById("customFileInputCapture").click()}>
         CHỤP HÌNH

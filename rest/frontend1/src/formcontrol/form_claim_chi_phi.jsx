@@ -183,7 +183,7 @@ function Form_claim_chi_phi({ history }) {
         }
         else {max_ke_hoach = 99999999}
         
-        const rawId = get_id();
+        const rawId = "CCP"+get_id();
         const insert = Inserted_at();
         const baseData = {
             id: rawId,
@@ -205,7 +205,7 @@ function Form_claim_chi_phi({ history }) {
             inserted_at: insert,
             ma_dip: "khong_co",
             thang_chi_phi: null,
-            ky_chi_phi_kt: ky_chi_phi_kt
+            ky_chi_phi_kt: ky_chi_phi_kt.replace(/(\d{2})-(\d{2})-(\d{4})/, '$3-$2-$1')
             
         };
         const plan = Number(so_ke_hoach.replace(/,/g, ""));
@@ -268,13 +268,13 @@ function Form_claim_chi_phi({ history }) {
                         <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
                             <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
 
-                        {alert &&
-                        <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
-                            <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                            </button>
-                            <span><strong>Cảnh Báo:  </strong>{alertText}</span>
-                        </div>
-                        }
+                            {alert &&
+                            <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
+                                <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                </button>
+                                <span><strong>Cảnh Báo:  </strong>{alertText}</span>
+                            </div>
+                            }
                         </Modal>
 
                         <Form onSubmit={handle_submit}>

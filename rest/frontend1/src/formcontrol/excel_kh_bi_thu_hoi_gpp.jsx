@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef  } from "react";
 import Select from "react-select";
 import './myvnp.css';
 import { Link, useLocation  } from "react-router-dom";
@@ -19,7 +19,7 @@ import {
 const Excel_kh_bi_thu_hoi_gpp = ( {history} ) => {
 
   const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
-
+  const fileInputRef = useRef(null); // ✅ Define the ref here
   // const fetch_initial_data = async (manv) => {
   //   SetLoading(true)
     
@@ -40,68 +40,19 @@ const Excel_kh_bi_thu_hoi_gpp = ( {history} ) => {
   useEffect(() => {
       if (localStorage.getItem("userInfo")) {
       const media = window.matchMedia('(max-width: 960px)');
-      const isMB = (media.matches);
-      const dv_width = window.innerWidth;
-      // userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, location.pathname, isMB, dv_width);
       set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
-      // fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
+
       } else {
           history.push(`/login?redirect=${location.pathname}`);
       };
   }, [count]);
-  const [dbFiles, setDbFiles] = useState([
-    // { name: "/app/thumuc/crm_hcp.db", last_modified: "2025-04-18 20:56:27" },
-    // { name: "/app/thumuc/update_thu_hoi.db", last_modified: "2025-04-18 20:35:08" },
-    // { name: "/app/thumuc/chi_phi_mkt_tp.db", last_modified: "2025-04-18 17:30:20" }
-  ]);
-
-  // Example table data (replace this with actual fetched data)
-  const [dataTable, setDataTable] = useState([
-    {
-      'table_name': 'sales',
-      'schema': {
-        'col1': 'TEXT',
-        'col2': 'FLOAT',
-        'col3': 'TIMESTAMP'
-      }
-    },
-    {
-      'table_name': 'customer',
-      'schema': {
-        'id': 'FLOAT',
-        'name': 'TEXT',
-        'created_at': 'TIMESTAMP'
-      }
-    }
-  ]);
 
   const [manv, set_manv] = useState("");
-  // States for managing selected file, selected table, query, and result
-  const [currentFile, setCurrentFile] = useState("");
-  const [selectedTable, setSelectedTable] = useState({});
-  const [sqlQuery, setSqlQuery] = useState("");
-  const [excelUrl, setExcelUrl] = useState("");
-  const [newDbFile, setNewDbFile] = useState({ name: "" });
-  const [showDbFiles, setShowDbFiles] = useState(false);  // Toggle for .db files
+  const [messages, setMessages] = useState([]);
+  const [excelFile, setExcelFile] = useState(""); 
+  const [recentFiles, setRecentFiles] = useState([]);
+  const [ket_qua_url, set_ket_qua_url] = useState([]);
 
-  // States for modals
-  const [showExcelModal, setShowExcelModal] = useState(false);
-  const [showSchemaModal, setShowSchemaModal] = useState(false);
-  const [excelFileName, setExcelFileName] = useState("");
-  const [tableName, setTableName] = useState("");
-  const [schemaColumns, setSchemaColumns] = useState([]);  // Default type is TEXT
-  const [excelFile, setExcelFile] = useState(""); // State to store the uploaded Excel file
-  const [actionType, setActionType] = useState('create');
-  // const [bq_table, set_bq_table] = useState("");
-  // const [db_table, set_db_table] = useState("");
-  // Handle SQL query input change
-  const handleSqlChange = (e) => {
-    setSqlQuery(e.target.value);
-  };
-
-  // Handle editing a file (set current file to edit
-
-  // Handle Excel file change (when file is selected)
   const handleExcelFileChange = async (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
@@ -126,6 +77,7 @@ const Excel_kh_bi_thu_hoi_gpp = ( {history} ) => {
     const formData = new FormData();
     formData.append("excelFile", excelFile);
     formData.append("data", JSON.stringify({"manv": manv }) );
+    SetLoading(true)
     try {
       const response = await fetch("https://bi.meraplion.com/local/sync_thu_hoi_gpp_to_dms/", {
         method: "POST",
@@ -134,13 +86,37 @@ const Excel_kh_bi_thu_hoi_gpp = ( {history} ) => {
 
       const data = await response.json();
       if (response.ok) {
-        window.alert("Excel file and table name successfully submitted.");
+        // window.alert("Excel file successfully submitted.");
       // ✅ Reset state
+
       setExcelFile(null);
-      // setCount(count+1);
+      setMessages(data.message);
+      setRecentFiles(data.files.slice(0, 3));
+      set_ket_qua_url(data.ket_qua_url);
+
+      console.log(typeof data.ket_qua_url, data.ket_qua_url);
+
+      SetALert(true);
+      SetALertType("alert-success");
+      SetALertText( data.success_message );
+      setTimeout(() => {
+      SetALert(false);
+      SetLoading(false);
+      }, 2000);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // 👈 clear file input manually
+      }
 
       } else {
-        window.alert("Error submitting data.");
+            
+      SetALert(true);
+      SetALertType("alert-danger");
+      SetALertText(data.error_message);
+      setTimeout(() => {
+      SetALert(false);
+      SetLoading(false);
+      }, 2000);
       }
     } catch (error) {
       console.error("Error uploading Excel file:", error);
@@ -150,18 +126,117 @@ const Excel_kh_bi_thu_hoi_gpp = ( {history} ) => {
 
   return (
     <div>
+
+          {/* ALERT COMPONENT */}
+          <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
+              <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
+
+              {alert &&
+              <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
+                  <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                  </button>
+                  <span><strong>Cảnh Báo:  </strong>{alertText}</span>
+              </div>
+              }
+          </Modal>
           <Form onSubmit={handle_submit} >
             <Form.Group controlId="formExcelFile">
               <Form.Label>Upload Excel File</Form.Label>
               <Form.Control
                 type="file"
                 accept=".xlsx, .xls"
+                ref={fileInputRef} // ✅ Attach the ref to the file input
                 onChange={handleExcelFileChange}
               />
             </Form.Group>
-          <Button disabled={ false } className='mt-2' variant="primary" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
+          <Button disabled={ false } className='mt-2' variant="secondary" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button>
           </Form>
+
+          {recentFiles.length > 0 && (
+            <div className="mt-4">
+              <h6>3 files upload gần nhất:</h6>
+              <ul className="list-unstyled">
+                {recentFiles.map((fileUrl, index) => (
+                  <li key={index}>
+                    <a
+                      href={fileUrl}
+                      download // 👈 forces download instead of opening in browser
+                      style={{ color: "#007bff", textDecoration: "underline" }}
+                    >
+                      {fileUrl.split("/").pop()}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+            {messages.length > 0 && (
+              <div className="mt-4">
+                <h6>Kết quả xử lý:</h6>
+                <a
+                  href={ket_qua_url}
+                  download // 👈 forces download instead of opening in browser
+                  style={{ color: "#007bff", textDecoration: "underline" }}
+                >
+                  { ket_qua_url }
+                </a>
+
+
+                <Table bordered hover size="sm" className="text-center">
+                  <thead>
+                    <tr>
+                      {/* ✅ Always show these three first */}
+                      <th>File ID</th>
+                      <th>Dòng</th>
+                      <th>Kết Quả</th>
+
+                      {/* ✅ Add any extra columns dynamically */}
+                      {Object.keys(messages[0])
+                        .filter(
+                          (key) => !["file_id", "row_id", "result"].includes(key)
+                        )
+                        .map((extraKey) => (
+                          <th key={extraKey}>{extraKey}</th>
+                        ))}
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {messages.map((msg, index) => (
+                      <tr key={index}>
+                        {/* ✅ Always show these three */}
+                        <td>{msg.file_id}</td>
+                        <td>{msg.row_id}</td>
+                        <td
+                          style={{
+                            color: msg.result?.includes("Không")
+                              ? "red"
+                              : "green",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {msg.result}
+                        </td>
+
+                        {/* ✅ Add any extra values dynamically */}
+                        {Object.keys(msg)
+                          .filter(
+                            (key) => !["file_id", "row_id", "result"].includes(key)
+                          )
+                          .map((extraKey) => (
+                            <td key={extraKey}>{msg[extraKey]}</td>
+                          ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            )}
+
     </div>
+
+    
   );
 };
 

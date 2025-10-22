@@ -275,9 +275,9 @@ function Mds_tra_thuong_cmm_q12025({history, location}) {
                             
                             </Form>
                             
-                            <Form.Control id='customFileInput' type="file" accept="image/*" capture="environment" style={{width: "115px", fontWeight: "bold", display: "none" }} multiple={true} onChange={ (e) => choose_images(e) } ></Form.Control>
+                            <Form.Control id='customFileInput' type="file" accept="image/*" style={{width: "115px", fontWeight: "bold", display: "none" }} multiple={true} onChange={ (e) => choose_images(e) } ></Form.Control>
                                 <Button className="mt-2" style={{ width: '10rem' }} size="sm" variant="secondary" onClick={() => document.getElementById("customFileInput").click()}>
-                                CHỤP HÌNH <br></br> (ít nhất 2 hình: Khách hàng nhận hàng và Biên bản ký nhận hàng)
+                                UP HÌNH <br></br> (ít nhất 2 hình: Khách hàng nhận hàng và Biên bản ký nhận hàng)
                             </Button>
 
 
@@ -304,7 +304,7 @@ function Mds_tra_thuong_cmm_q12025({history, location}) {
                             Number(selectedItem?.done)  === 1
                             } 
                             variant="primary" onClick={handleSave} >
-                            LƯU
+                            LƯU (Ver: 20-10-2025)
                             </Button>
                             </Modal.Footer>
                         </Modal>
