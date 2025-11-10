@@ -40,8 +40,10 @@ const Excel_kh_bi_thu_hoi_gpp = ( {history} ) => {
   useEffect(() => {
       if (localStorage.getItem("userInfo")) {
       const media = window.matchMedia('(max-width: 960px)');
+      const isMB = (media.matches);
+      const dv_width = window.innerWidth;
+      userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, location.pathname, isMB, dv_width);
       set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
-
       } else {
           history.push(`/login?redirect=${location.pathname}`);
       };
@@ -77,6 +79,7 @@ const Excel_kh_bi_thu_hoi_gpp = ( {history} ) => {
     const formData = new FormData();
     formData.append("excelFile", excelFile);
     formData.append("data", JSON.stringify({"manv": manv }) );
+    
     SetLoading(true)
     try {
       const response = await fetch("https://bi.meraplion.com/local/sync_thu_hoi_gpp_to_dms/", {

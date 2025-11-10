@@ -7,15 +7,15 @@ import {
     Button,
     Col,
     Row,
-    Container,
-    Dropdown,
+    // Container,
+    // Dropdown,
     Form,
     Spinner,
-    InputGroup,
-    Stack,
-    FloatingLabel,
+    // InputGroup,
+    // Stack,
+    // FloatingLabel,
     Table,
-    Card,
+    // Card,
     Modal
 } from "react-bootstrap";
 // import { v4 as uuid } from "uuid";
@@ -114,7 +114,8 @@ const Dang_ky_nghi_phep_pkh_ncrm = ({ history } ) => {
             updatedRecord.inserted_at = Inserted_at();
             return updatedRecord;
           }
-          return record;
+          else {void(0);}
+          // return record;
         });
       
         // Update state with the modified records list

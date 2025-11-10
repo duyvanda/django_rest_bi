@@ -12,6 +12,7 @@ __pycache__/
 rest/incomeexpenseapi/bigquery1508.json
 
 # Distribution / packaging
+frontend_bbgh/
 .Python
 build/
 node_modules/

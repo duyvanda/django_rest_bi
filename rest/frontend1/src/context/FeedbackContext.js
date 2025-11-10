@@ -73,6 +73,7 @@ export const FeedbackProvider = ({ children }) => {
     );
     const data = await response.json();
     const lstreports = data.filter((el) => el.manv === manv);
+    // let lstreports = []
     const manv_el = manv.substring(0, 2);
 
     // public reports

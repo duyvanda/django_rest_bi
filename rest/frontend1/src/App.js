@@ -1,21 +1,11 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
-// import 'leaflet/dist/leaflet.css'
 import { BrowserRouter as Router, Route, Switch, useLocation } from "react-router-dom";
 import Navbar1 from "./components/Navbar.jsx";
 import Navbar_NVBC from './components/Navbar_nvbc';
-// import Navbar_2 from "./components/Navbar_2.jsx";
 import Login from "./components/Login";
 import ReportScreen from "./components/ReportScreen";
-// import FormScreen from "./components/FormScreen";
 import PageNotFound from "./components/404Page.jsx";
-//MYVNPOST
-// import VnpHome from "./myvnpost/VnpHome";
-// import VnpEditKH from "./myvnpost/VnpEditKH";
-// import VnpCreateKH from "./myvnpost/VnpCreateKH";
-// import VnpEditCN from "./myvnpost/VnpEditCN";
-// import VnpCreateCN from "./myvnpost/VnpCreateCN";
-// import VnpCreateOrder from "./myvnpost/VnpCreateOrder";
 //REPORT
 import HomeScreen from "./components/HomeScreen";
 import { FeedbackProvider } from "./context/FeedbackContext";

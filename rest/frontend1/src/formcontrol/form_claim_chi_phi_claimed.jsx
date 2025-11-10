@@ -15,6 +15,7 @@ import {
     Form,
     Spinner,
     // Card,
+    FloatingLabel,
     Table
 } from "react-bootstrap";
 import dayjs from "dayjs";
@@ -23,7 +24,7 @@ import ClaimNavTabs from '../components/FormClaimNavTabs';
 
 const Form_claim_chi_phi_claimed = ( {history} ) => {
   const location = useLocation();
-  const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
+  const { generateMonthOptions, get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
       
   // =================================================================
   // 1. CUSTOM HOOK FOR DATA AND STATE MANAGEMENT
@@ -43,6 +44,8 @@ const Form_claim_chi_phi_claimed = ( {history} ) => {
   const [total_amount,  set_total_amount] = useState (0);
 
   const f = new Intl.NumberFormat();
+  const monthOptions = generateMonthOptions(-2, 2);
+
   const [manv, set_manv] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [fromDate, setFromDate] = useState(dayjs().startOf("month").format("YYYY-MM-DD"));
@@ -260,7 +263,9 @@ const Form_claim_chi_phi_claimed = ( {history} ) => {
     SetLoading(true);
     setDownloadUrl("")
     setErrorMessage(""); // Reset error message before new request
-    const requestData = { fromDate, toDate, manv, id:get_id() };
+    let from_date = toDate.replace(/(\d{2})-(\d{2})-(\d{4})/, '$3-$2-$1')
+    let to_date = toDate.replace(/(\d{2})-(\d{2})-(\d{4})/, '$3-$2-$1')
+    const requestData = { from_date, to_date, manv, id:get_id() };
     console.log(requestData)
     try {
       const response = await fetch("https://bi.meraplion.com/local/get_form_claim_chi_phi_excel/", {
@@ -475,7 +480,7 @@ const Form_claim_chi_phi_claimed = ( {history} ) => {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group className="mb-3">
+            {/* <Form.Group className="mb-3">
               <Form.Label>Từ ngày</Form.Label>
               <Form.Control
                 type="date"
@@ -490,7 +495,31 @@ const Form_claim_chi_phi_claimed = ( {history} ) => {
                 value={toDate}
                 onChange={(e) => setToDate(e.target.value)}
               />
-            </Form.Group>
+            </Form.Group> */}
+
+            <FloatingLabel label="Tháng" className="border rounded mt-2">
+              <Form.Select
+                  required
+                  className=""
+                  placeholder=""
+                  type="date"
+                  name="ky_chi_phi_kt"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+              >
+
+              <option value="" disabled>Kỳ chi phí KT</option>
+              {monthOptions.map((option, idx) => (
+                  <option 
+                      key={idx} 
+                      value={option.value}
+                  >
+                      {option.label}
+                  </option>
+              ))}
+              </Form.Select>
+          </FloatingLabel>
+
             {downloadUrl && (
             <div className="mt-3">
               <a 
@@ -511,7 +540,7 @@ const Form_claim_chi_phi_claimed = ( {history} ) => {
             Đóng
           </Button>
           <Button variant="primary" onClick={handleConfirm} disabled={loading} >
-          {loading ? <Spinner as="span" animation="border" size="sm" /> : "Xác nhận"}
+          {loading ? <Spinner as="span" animation="border" size="sm" /> : "Tải data"}
           </Button>
         </Modal.Footer>
       </Modal>

@@ -92,6 +92,7 @@ function Tao_hcp_pcl({history, location}) {
     const [manv, set_manv] = useState("");
     const [ten_hcp, set_ten_hcp]= useState("");
     const [sdt, set_sdt]= useState("");
+    const [email, set_email]= useState("");
     const [arr_tinh, set_arr_tinh] = useState([]);
     const [chon_tinh, set_chon_tinh] = useState("");
     const [arr_quan_huyen, set_arr_quan_huyen] = useState([]);
@@ -224,6 +225,7 @@ function Tao_hcp_pcl({history, location}) {
     
     const clear_data = () => {
         set_sdt("");
+        set_email("");
         set_ten_hcp("");
         set_chon_hco_bv("");
         set_chon_mahcp2_bv("");
@@ -309,6 +311,7 @@ function Tao_hcp_pcl({history, location}) {
         console.log(arr_hcpp)
 
         set_sdt( arr_hcpp['sdt'] )
+        set_email( arr_hcpp['email'] )
         set_ten_hcp( arr_hcpp['ten_hcp'] )
 
         set_chon_tinh(arr_hcpp['tinh'])
@@ -406,7 +409,8 @@ function Tao_hcp_pcl({history, location}) {
             "quan_huyen":chon_quan_huyen,
             "phuong_xa":chon_phuong_xa,
             "dia_chi":dia_chi,
-            "trang_thai":"active"
+            "trang_thai":"active",
+            "email":email
         }
         console.log([data]);
         post_form_data([data]);
@@ -496,10 +500,25 @@ function Tao_hcp_pcl({history, location}) {
 
                         <FloatingLabel label="Tên HCP (IN HOA có dấu), ví dụ: NGUYỄN HÙNG ANH" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="xxx" onChange={ (e) => set_ten_hcp(e.target.value.toLocaleUpperCase()) } value = {ten_hcp}/> </FloatingLabel>
 
-                        <FloatingLabel id="focus_1" label="Số điện thoại" className="border rounded mt-2" > <Form.Control disabled={chon_hco_bv ===""} required type="number" className="" placeholder="xxx" onChange={ (e) => set_sdt(e.target.value) } onBlur={ e => handle_on_blur(e.target.value) } value = {sdt}/> </FloatingLabel>
-                        {check_trung_sdt &&
-                            <p className="ml-1 fw-bold text-danger">SĐT ĐÃ BỊ TRÙNG VUI LÒNG NHẬP SĐT KHÁC</p>
-                        }
+                        <Stack direction="horizontal" gap={2} className="border-1">
+                            {/* Bọc SĐT và lỗi của nó lại */}
+                            <Stack gap={1}> 
+                                <FloatingLabel id="focus_1" label="Số điện thoại" className="border rounded mt-2" > 
+                                    <Form.Control disabled={chon_hco_bv ===""} required type="number" className="" 
+                                                placeholder="xxx" onChange={ (e) => set_sdt(e.target.value) } 
+                                                onBlur={ e => handle_on_blur(e.target.value) } value = {sdt}/> 
+                                </FloatingLabel>
+                                {check_trung_sdt &&
+                                    <p className="ml-1 fw-bold text-danger">SĐT ĐÃ BỊ TRÙNG VUI LÒNG NHẬP SĐT KHÁC</p>
+                                }
+                            </Stack>
+                            
+                            {/* Trường Email */}
+                            <FloatingLabel label="Email" className="border rounded mt-2" > 
+                                <Form.Control type="email" className="" placeholder="xxx" 
+                                            onChange={ (e) => set_email(e.target.value) } value = {email}/> 
+                            </FloatingLabel>
+                        </Stack>
 
                     <Stack direction="horizontal" gap={2} className="border-1">
 
