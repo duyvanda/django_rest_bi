@@ -1,4 +1,7 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
 
 /**
  * Validate file Excel
@@ -44,6 +47,59 @@ export function validateExcelFile(data) {
     const namThuHoi = findColumnValue(row, 'NĂM THU HỒI');
     
     const maKH = findColumnValue(row, 'MÃ KH') || findColumnValue(row, 'Mã KH') || findColumnValue(row, 'MAKH') || null;
+
+    const ngayHLTheoHD = findColumnValue(row, 'Ngày HL theo Hợp đồng');
+    const ngayHetHLTheoHD = findColumnValue(row, 'Ngày hết HL theo Hợp đồng');
+
+    const isNgayEmpty = ngayThuHoi === null || ngayThuHoi === undefined || ngayThuHoi === '';
+    const isThangEmpty = thangThuHoi === null || thangThuHoi === undefined || thangThuHoi === '';
+    const isNamEmpty = namThuHoi === null || namThuHoi === undefined || namThuHoi === '';
+
+    if (isNgayEmpty && isThangEmpty && isNamEmpty) {
+      const validatedRow = {
+        ...row,
+        'NgàyThuHoi': null,
+        'NgàyThuHoi_Original_Day': null,
+        'NgàyThuHoi_Original_Month': null,
+        'NgàyThuHoi_Original_Year': null
+      };
+      validatedData.push(validatedRow);
+      return;
+    }
+
+    const ngayHLResult = validateDateString(ngayHLTheoHD);
+    if (!ngayHLTheoHD || ngayHLTheoHD === '' || ngayHLTheoHD === null || ngayHLTheoHD === undefined) {
+      rowErrors.push({
+        row: rowNumber,
+        column: 'Ngày HL theo Hợp đồng',
+        reason: 'Bắt buộc phải nhập (VD: 1/1/2025, 01/01/2025, 1-1-25)',
+        maKH: maKH
+      });
+    } else if (!ngayHLResult.isValid) {
+      rowErrors.push({
+        row: rowNumber,
+        column: 'Ngày HL theo Hợp đồng',
+        reason: 'Không phải ngày hợp lệ (VD: 1/1/2025, 01/12/25, 31-12-2025)',
+        maKH: maKH
+      });
+    }
+
+    const ngayHetHLResult = validateDateString(ngayHetHLTheoHD);
+    if (!ngayHetHLTheoHD || ngayHetHLTheoHD === '' || ngayHetHLTheoHD === null || ngayHetHLTheoHD === undefined) {
+      rowErrors.push({
+        row: rowNumber,
+        column: 'Ngày hết HL theo Hợp đồng',
+        reason: 'Bắt buộc phải nhập (VD: 31/12/2025, 31-12-25)',
+        maKH: maKH
+      });
+    } else if (!ngayHetHLResult.isValid) {
+      rowErrors.push({
+        row: rowNumber,
+        column: 'Ngày hết HL theo Hợp đồng',
+        reason: 'Không phải ngày hợp lệ (VD: 1/9/2025, 31/12/25, 01-01-2026)',
+        maKH: maKH
+      });
+    }
 
     if (ngayThuHoi === null || ngayThuHoi === undefined || ngayThuHoi === '') {
       rowErrors.push({
@@ -131,9 +187,9 @@ export function validateExcelFile(data) {
       const year = parseInt(namThuHoi);
 
       const dateString = `${day}/${month}/${year}`;
-      const isValidDate = moment(dateString, 'D/M/YYYY', true).isValid();
+      const isValid = isValidDate(year, month, day);
 
-      if (!isValidDate) {
+      if (!isValid) {
         errors.push({
           row: rowNumber,
           column: 'NGÀY/THÁNG/NĂM THU HỒI',
@@ -141,14 +197,16 @@ export function validateExcelFile(data) {
           maKH: maKH
         });
       } else {
-        const ngayThuHoiFormatted = moment(dateString, 'D/M/YYYY').format('DD/MM/YYYY');
+        const ngayThuHoiFormatted = `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
         
         const validatedRow = {
           ...row,
           'NgàyThuHoi': ngayThuHoiFormatted,
           'NgàyThuHoi_Original_Day': day,
           'NgàyThuHoi_Original_Month': month,
-          'NgàyThuHoi_Original_Year': year
+          'NgàyThuHoi_Original_Year': year,
+          'NgàyHLTheoHD': ngayHLResult.formatted || null,
+          'NgàyHetHLTheoHD': ngayHetHLResult.formatted || null
         };
 
         validatedData.push(validatedRow);
@@ -161,6 +219,67 @@ export function validateExcelFile(data) {
     errors: errors,
     validatedData: validatedData
   };
+}
+
+/**
+ * Kiểm tra ngày hợp lệ bằng dayjs
+ * @param {number} year
+ * @param {number} month (1-12)
+ * @param {number} day
+ * @returns {boolean}
+ */
+function isValidDate(year, month, day) {
+  const dateString = `${day}/${month}/${year}`;
+  const date = dayjs(dateString, 'D/M/YYYY', true);
+  return date.isValid();
+}
+
+/**
+ * Validate date string - Chấp nhận nhiều format (1/1/25, 01/01/2025, 1/12/2025, etc.)
+ * @param {*} value - Giá trị ngày cần kiểm tra
+ * @returns {Object} - { isValid: boolean, formatted: string|null, parsed: object|null }
+ */
+function validateDateString(value) {
+  if (value === null || value === undefined || value === '') {
+    return { isValid: false, formatted: null, parsed: null };
+  }
+
+  let dateStr = String(value).trim();
+  
+  if (typeof value === 'number') {
+    const excelDate = dayjs('1899-12-30').add(value, 'days');
+    if (excelDate.isValid()) {
+      return {
+        isValid: true,
+        formatted: excelDate.format('DD/MM/YYYY'),
+        parsed: { day: excelDate.date(), month: excelDate.month() + 1, year: excelDate.year() }
+      };
+    }
+  }
+
+  const formats = [
+    'DD/MM/YYYY',
+    'DD-MM-YYYY',
+    'D/M/YYYY',
+    'D-M-YYYY',
+    'DD/MM/YY',
+    'DD-MM-YY',
+    'D/M/YY',
+    'D-M-YY'
+  ];
+
+  for (const format of formats) {
+    const parsed = dayjs(dateStr, format, true);
+    if (parsed.isValid()) {
+      return {
+        isValid: true,
+        formatted: parsed.format('DD/MM/YYYY'),
+        parsed: { day: parsed.date(), month: parsed.month() + 1, year: parsed.year() }
+      };
+    }
+  }
+
+  return { isValid: false, formatted: null, parsed: null };
 }
 
 /**
@@ -182,7 +301,7 @@ function isValidNumber(value) {
 }
 
 /**
- * Format ngày từ 3 cột riêng biệt
+ * Format ngày từ day/month/year thành dd/mm/yyyy
  * @param {number} day 
  * @param {number} month 
  * @param {number} year 
@@ -190,13 +309,13 @@ function isValidNumber(value) {
  */
 export function formatDate(day, month, year) {
   const dateString = `${day}/${month}/${year}`;
-  const isValid = moment(dateString, 'D/M/YYYY', true).isValid();
+  const date = dayjs(dateString, 'D/M/YYYY', true);
   
-  if (!isValid) {
+  if (!date.isValid()) {
     return null;
   }
   
-  return moment(dateString, 'D/M/YYYY').format('DD/MM/YYYY');
+  return date.format('DD/MM/YYYY');
 }
 
 /**

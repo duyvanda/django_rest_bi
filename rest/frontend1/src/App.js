@@ -77,6 +77,8 @@ import CrmHome from  "./formcontrol/crmhome";
 import Workflow from  "./formcontrol/workflow";
 import Excel_kh_bi_thu_hoi_gpp from  "./formcontrol/excel_kh_bi_thu_hoi_gpp";
 
+import Excel_thu_hoi_hd_clc from  "./formcontrol/excel_thu_hoi_hd_clc";
+
 import Test from  "./formcontrol/test";
 import Duckdb from  "./formcontrol/duckdb";
 import Postgres from  "./formcontrol/postgres";
@@ -155,6 +157,7 @@ function AppContent() {
                 {/* <Route path="/formcontrol/tracking_chi_phi_hco" component={Tracking_chi_phi_hco} /> */}
                 
                 <Route path="/formcontrol/excel_kh_bi_thu_hoi_gpp" component={Excel_kh_bi_thu_hoi_gpp} />
+                <Route path="/formcontrol/excel_thu_hoi_hd_clc" component={Excel_thu_hoi_hd_clc} />
                 <Route path="/workflow" component={Workflow} />
                 <Route path="/crmhome" component={CrmHome} />
                 <Route path="/formcontrol/tracking_chi_phi_hcp_qua_tang" component={Tracking_chi_phi_hcp_qua_tang} />

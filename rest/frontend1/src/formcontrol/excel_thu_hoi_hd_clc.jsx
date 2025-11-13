@@ -2,288 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { validateExcelFile } from '../utils/excelValidator';
 import * as XLSX from 'xlsx';
 
-const uploadStyles = `
-  .upload-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-    padding-bottom: 30px;
-  }
-
-  .upload-container .card {
-    border: none;
-    border-radius: 16px;
-    margin-bottom: 1.5rem;
-    box-shadow: var(--shadow-md);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    overflow: hidden;
-  }
-
-  .upload-container .card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-  }
-
-  .upload-container .card-header {
-    border-bottom: 3px solid rgba(255, 255, 255, 0.2);
-    font-weight: 600;
-    letter-spacing: 0.3px;
-  }
-
-  .drag-drop-zone {
-    border: 2px dashed #c5d0de;
-    border-radius: 12px;
-    padding: 1.5rem 2rem;
-    text-align: center;
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafb 100%);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .drag-drop-zone::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, var(--meraplion-light-teal) 0%, rgba(0, 161, 154, 0.05) 100%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .drag-drop-zone:hover {
-    border-color: var(--meraplion-teal);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 161, 154, 0.15);
-  }
-
-  .drag-drop-zone:hover::before {
-    opacity: 1;
-  }
-
-  .drag-drop-zone.active {
-    border-color: var(--meraplion-teal);
-    border-width: 3px;
-    transform: scale(1.02);
-    box-shadow: 0 8px 24px rgba(0, 161, 154, 0.2);
-  }
-
-  .drag-drop-zone.active::before {
-    opacity: 1;
-  }
-
-  .drag-drop-zone.has-file {
-    border-color: var(--meraplion-teal);
-    background: linear-gradient(135deg, var(--meraplion-light-teal) 0%, #ffffff 100%);
-    border-style: solid;
-  }
-
-  .drag-drop-zone.has-file:hover {
-    transform: translateY(-2px);
-  }
-
-  .drag-drop-zone > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .drag-drop-zone i {
-    display: block;
-    margin-bottom: 1rem;
-  }
-
-  .error-list {
-    max-height: 400px;
-    overflow-y: auto;
-    margin-bottom: 0;
-  }
-
-  .error-item {
-    border-left: 4px solid #dc3545;
-    transition: all 0.3s ease;
-    word-wrap: break-word;
-    background: linear-gradient(90deg, #fff5f5 0%, #ffffff 100%);
-    animation: slideIn 0.3s ease-out;
-  }
-
-  .error-item:hover {
-    background: linear-gradient(90deg, #ffe5e5 0%, #fff5f5 100%);
-    transform: translateX(5px);
-    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
-  }
-
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .alert {
-    overflow: visible;
-    border-radius: 12px;
-    border: none;
-  }
-
-  .alert-danger {
-    background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
-    border-left: 4px solid #dc3545;
-  }
-
-  .alert-info {
-    background: linear-gradient(135deg, #e7f5ff 0%, #d0ebff 100%);
-    border-left: 4px solid #0d6efd;
-  }
-
-  .bi {
-    display: inline-flex;
-    vertical-align: middle;
-    line-height: 1;
-  }
-
-  .rounded-circle .bi,
-  [style*="borderRadius: '50%'"] .bi,
-  .btn .bi {
-    line-height: 0 !important;
-    vertical-align: baseline;
-  }
-
-  .error-list::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .error-list::-webkit-scrollbar-track {
-    background: #f8f9fa;
-    border-radius: 10px;
-  }
-
-  .error-list::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-    border-radius: 10px;
-  }
-
-  .error-list::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes pulse {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.05);
-    }
-  }
-
-  .card {
-    animation: fadeIn 0.5s ease-out;
-  }
-
-  .badge {
-    animation: fadeIn 0.3s ease-out;
-  }
-
-  .btn-primary {
-    background: linear-gradient(135deg, var(--meraplion-teal) 0%, var(--meraplion-dark-teal) 100%);
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 161, 154, 0.25);
-  }
-
-  .btn-primary:hover {
-    background: linear-gradient(135deg, var(--meraplion-dark-teal) 0%, var(--meraplion-teal) 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 161, 154, 0.35);
-  }
-
-  .btn-primary:focus,
-  .btn-primary:active {
-    background: linear-gradient(135deg, var(--meraplion-dark-teal) 0%, var(--meraplion-teal) 100%);
-    box-shadow: 0 0 0 0.2rem rgba(0, 161, 154, 0.3) !important;
-  }
-
-  .upload-history-list {
-    max-height: 500px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--meraplion-teal) #f0f0f0;
-  }
-
-  .upload-history-list::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .upload-history-list::-webkit-scrollbar-track {
-    background: #f0f0f0;
-    border-radius: 10px;
-  }
-
-  .upload-history-list::-webkit-scrollbar-thumb {
-    background: var(--meraplion-teal);
-    border-radius: 10px;
-  }
-
-  .upload-history-list::-webkit-scrollbar-thumb:hover {
-    background: var(--meraplion-dark-teal);
-  }
-
-  .upload-history-item {
-    transition: all 0.3s ease;
-    border-left: 3px solid transparent;
-  }
-
-  .upload-history-item:hover {
-    background: linear-gradient(90deg, var(--meraplion-light-teal) 0%, #ffffff 100%);
-    border-left-color: var(--meraplion-teal);
-    transform: translateX(2px);
-  }
-
-  .upload-history-item:last-child {
-    border-bottom: none !important;
-  }
-
-  .upload-history-item .btn {
-    opacity: 0.7;
-    transition: opacity 0.2s;
-  }
-
-  .upload-history-item:hover .btn {
-    opacity: 1;
-  }
-
-  @media (max-width: 768px) {
-    .drag-drop-zone {
-      padding: 2rem 1rem;
-    }
-  }
-`;
-
-function Upload({history}) {
-  const [manv, set_manv] = useState("");
+function Excel_thu_hoi_hd_clc({history}) {
+  
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [validationResult, setValidationResult] = useState(null);
@@ -305,13 +25,16 @@ function Upload({history}) {
         const dv_width = window.innerWidth;
         // userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'upload_excel_thu_hoi_hd', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv)
+        console.log("Manv upload excel thu hoi hd clc:", JSON.parse(localStorage.getItem("userInfo")).manv);
         }
         else {
             history.push('/login?redirect=/formcontrol/upload_excel_thu_hoi_hd');
         };
     }, []);
 
-  const fetchUploadHistory = async () => {
+  const [manv, set_manv] = useState("");
+
+  const fetchUploadHistory = async (manv) => {
     setLoadingHistory(true);
     try {
       const response = await fetch(`https://bi.meraplion.com/local/get_excel_thu_hoi_hd_clc/?manv=${manv}`);
@@ -990,4 +713,284 @@ function Upload({history}) {
   );
 }
 
-export default Upload;
+export default Excel_thu_hoi_hd_clc;
+
+const uploadStyles = `
+  .upload-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    padding-bottom: 30px;
+  }
+
+  .upload-container .card {
+    border: none;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+  }
+
+  .upload-container .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .upload-container .card-header {
+    border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  .drag-drop-zone {
+    border: 2px dashed #c5d0de;
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafb 100%);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .drag-drop-zone::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--meraplion-light-teal) 0%, rgba(0, 161, 154, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .drag-drop-zone:hover {
+    border-color: var(--meraplion-teal);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 161, 154, 0.15);
+  }
+
+  .drag-drop-zone:hover::before {
+    opacity: 1;
+  }
+
+  .drag-drop-zone.active {
+    border-color: var(--meraplion-teal);
+    border-width: 3px;
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 161, 154, 0.2);
+  }
+
+  .drag-drop-zone.active::before {
+    opacity: 1;
+  }
+
+  .drag-drop-zone.has-file {
+    border-color: var(--meraplion-teal);
+    background: linear-gradient(135deg, var(--meraplion-light-teal) 0%, #ffffff 100%);
+    border-style: solid;
+  }
+
+  .drag-drop-zone.has-file:hover {
+    transform: translateY(-2px);
+  }
+
+  .drag-drop-zone > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .drag-drop-zone i {
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .error-list {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 0;
+  }
+
+  .error-item {
+    border-left: 4px solid #dc3545;
+    transition: all 0.3s ease;
+    word-wrap: break-word;
+    background: linear-gradient(90deg, #fff5f5 0%, #ffffff 100%);
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .error-item:hover {
+    background: linear-gradient(90deg, #ffe5e5 0%, #fff5f5 100%);
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .alert {
+    overflow: visible;
+    border-radius: 12px;
+    border: none;
+  }
+
+  .alert-danger {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+    border-left: 4px solid #dc3545;
+  }
+
+  .alert-info {
+    background: linear-gradient(135deg, #e7f5ff 0%, #d0ebff 100%);
+    border-left: 4px solid #0d6efd;
+  }
+
+  .bi {
+    display: inline-flex;
+    vertical-align: middle;
+    line-height: 1;
+  }
+
+  .rounded-circle .bi,
+  [style*="borderRadius: '50%'"] .bi,
+  .btn .bi {
+    line-height: 0 !important;
+    vertical-align: baseline;
+  }
+
+  .error-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .error-list::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 10px;
+  }
+
+  .error-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    border-radius: 10px;
+  }
+
+  .error-list::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  .card {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .badge {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--meraplion-teal) 0%, var(--meraplion-dark-teal) 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 161, 154, 0.25);
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, var(--meraplion-dark-teal) 0%, var(--meraplion-teal) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 161, 154, 0.35);
+  }
+
+  .btn-primary:focus,
+  .btn-primary:active {
+    background: linear-gradient(135deg, var(--meraplion-dark-teal) 0%, var(--meraplion-teal) 100%);
+    box-shadow: 0 0 0 0.2rem rgba(0, 161, 154, 0.3) !important;
+  }
+
+  .upload-history-list {
+    max-height: 500px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--meraplion-teal) #f0f0f0;
+  }
+
+  .upload-history-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .upload-history-list::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+  }
+
+  .upload-history-list::-webkit-scrollbar-thumb {
+    background: var(--meraplion-teal);
+    border-radius: 10px;
+  }
+
+  .upload-history-list::-webkit-scrollbar-thumb:hover {
+    background: var(--meraplion-dark-teal);
+  }
+
+  .upload-history-item {
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+  }
+
+  .upload-history-item:hover {
+    background: linear-gradient(90deg, var(--meraplion-light-teal) 0%, #ffffff 100%);
+    border-left-color: var(--meraplion-teal);
+    transform: translateX(2px);
+  }
+
+  .upload-history-item:last-child {
+    border-bottom: none !important;
+  }
+
+  .upload-history-item .btn {
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .upload-history-item:hover .btn {
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    .drag-drop-zone {
+      padding: 2rem 1rem;
+    }
+  }
+`;

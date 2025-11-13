@@ -17,10 +17,6 @@ import {
     ListGroup,
     Modal,
     Table
-    // Dropdown,
-    // InputGroup,
-    // Stack,
-    // FloatingLabel,
 } from "react-bootstrap";
 
 function Tracking_chi_phi_hcp_qua_tang( {history} ) {
@@ -38,6 +34,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
             set_lst_chon_qua_tang(data['lst_chon_qua_tang']);
             set_mo_link(data['mo_link']);
             set_ten_chuong_trinh(data['ten_chuong_trinh']);
+            set_chi_phi_thang(data['chi_phi_thang']);
             set_quy_tac(data['quy_tac']);
             SetLoading(false);
         }
@@ -65,6 +62,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
     const f = new Intl.NumberFormat();
     const [mo_link, set_mo_link] = useState("");
     const [ten_chuong_trinh, set_ten_chuong_trinh] = useState("");
+    const [chi_phi_thang, set_chi_phi_thang] = useState("");
     const [quy_tac, set_quy_tac] = useState("");
     const [show_quy_tac, set_show_quy_tac] = useState(false);
     const [manv, set_manv] = useState("");
@@ -203,11 +201,12 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                     qua_tang: item.qua_gm,
                     so_luong: item.so_luong,
                     price: item.price,
-                    ten_ct:ten_chuong_trinh,
                     status:"H",
                     inserted_at: Inserted_at(),
                     approved_at:"",
                     approved_manv:"",
+                    ten_chuong_trinh:ten_chuong_trinh,
+                    chi_phi_thang: chi_phi_thang.split('-').reverse().join('-')
                     }
                 );
             }
@@ -292,6 +291,8 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                             <Link to="/realtime/99" target="_blank" rel="noopener noreferrer"> <Button variant="outline-info text-dark" key={3}>BC</Button> </Link>
                         </ButtonGroup>
 
+                        <h5>{`CT ${ten_chuong_trinh} cho tháng ${chi_phi_thang}`}</h5>
+
                         <ListGroup className="mt-2" style={{maxHeight: "250px", overflowY: "auto"}}>
 
                             <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="Tìm Mã Hoặc Tên (KHONG DAU) " value={search} />
@@ -306,7 +307,11 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                             }
 
                         </ListGroup>
+
+                        
+
                         <Button variant="outline-info" onClick={() => set_show_quy_tac(true)} className="mt-1 text-dark" size="sm">Show quy tắc</Button>
+                        
                         <Modal show={show_quy_tac}>
                             <Modal.Body>
                                 <div style={{ whiteSpace: 'pre-line' }}>
@@ -315,11 +320,13 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                             </Modal.Body>
                             <Button variant="secondary" onClick={() => set_show_quy_tac(false)} >Close</Button>
                         </Modal>
+
+                        
                     <div className="bg-white">
                         <Table bordered hover className="mt-2">
                             <thead>
                             <tr>
-                                <th style={{ width: "60%" }}>{ten_chuong_trinh}</th>
+                                <th style={{ width: "60%" }}>Tên Quà</th>
                                 <th style={{ width: "20%" }}>SL</th>
                                 <th style={{ width: "20%" }}>Action</th>
                             </tr>
@@ -380,7 +387,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                         
                         <Button disabled={
                         co_chon_hcp === "" ||
-                        Number(mo_link) === 0 ||
+                        // Number(mo_link) === 0 ||
                         (
                             schema.length === 0
                         )
