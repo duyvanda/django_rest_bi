@@ -123,7 +123,8 @@ export function MdsTraThuongCmmQ12025L2() {
             "manv": manv,
             "ma_kh_dms":selectedItem.ma_kh_dms,
             "ten_kh":selectedItem.ten_kh,
-            "inserted_at": Inserted_at()
+            "inserted_at": Inserted_at(),
+            "type":"l2"
         }
         post_form_data([data]);
         setShowModal(false);
@@ -149,14 +150,14 @@ export function MdsTraThuongCmmQ12025L2() {
                     {data_table
                     .map( (el, idx) =>
                         <Col key={idx} xs={12} md={4} lg={3} >
-                            <Card>
+                            <Card className="card-hover-effect">
                                 <Card.Body>
                                 <Card.Title>Tên KH {idx+1}: {el.ten_kh}</Card.Title>
                                 <Card.Text>
                                 Mã KH: {el.ma_kh_dms}.<br></br>
                                 Tình Trạng Trả Thưởng: { Number(el.done) === 1 ? "Đã trả" : "Chưa trả"}.
                                 </Card.Text>
-                                <Button onClick={() => handleEdit(el)} size="sm"  variant={el.done === 0 ? "primary" : "outline-secondary"}  >Thực hiện trả thưởng</Button>
+                                <Button onClick={() => handleEdit(el)} size="sm"  variant={el.done === 0 ? "primary" : "outline-secondary"} className={el.done === 0 ? "btn-merap-primary" : ""}  >Thực hiện trả thưởng</Button>
                                 </Card.Body>
                             
                             </Card>

@@ -2,7 +2,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
-// import './myvnp.css';
 import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,

@@ -129,10 +129,26 @@ code {
 
 .card-hover-effect {
   transition: all 0.3s ease;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
 }
 
 .card-hover-effect:hover {
   transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Custom Merap Button */
+.btn-primary.btn-merap-primary {
+  background-color: var(--meraplion-teal);
+  border-color: var(--meraplion-teal);
+  color: white;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.btn-primary.btn-merap-primary:hover {
+  background-color: var(--meraplion-dark-teal);
+  border-color: var(--meraplion-dark-teal);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
