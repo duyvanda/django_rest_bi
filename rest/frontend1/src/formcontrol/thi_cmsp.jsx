@@ -1,30 +1,32 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-import { v4 as uuid } from 'uuid';
-import './myvnp.css';
+import { useNavigate } from "react-router-dom";
+import FeedbackContext from '../context/FeedbackContext';
 import { Link } from "react-router-dom";
-import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,
+    Image,
+    Card,
+    // ButtonGroup,
     Col,
     Row,
     Container,
     Form,
     Spinner,
-    // Dropdown,
-    // InputGroup,
-    // Stack,
-    // FloatingLabel,
-    Card,
-    Image,
-    Modal
+    // Card,
+    Badge,
+    Nav,
+    ListGroup,
+    Modal,
+    Table,
+    Alert
+    // InputGroup
 } from "react-bootstrap";
 
-function Thi_cmsp({history}) {
+function Thi_cmsp() {
 
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    const navigate = useNavigate();
     const fetch_data = async (manv) => {
         SetLoading(true);
         const response = await fetch(`https://bi.meraplion.com/local/cmsp_quy_tp/?manv=${manv}&system=TP`)
@@ -34,7 +36,7 @@ function Thi_cmsp({history}) {
             set_arr_input(data['header']) ;
             set_fst_cauhoi(data['header'][0].cauhoi) ;
             SetLoading(false);
-            if (data['lst_manv_mt'].includes(manv)) {history.push('/formcontrol/thi_cmsp_fmcg')} else {void(0)};
+            if (data['lst_manv_mt'].includes(manv)) {navigate('/formcontrol/thi_cmsp_fmcg')} else {void(0)};
         }
         else {
             SetLoading(false);
@@ -53,7 +55,7 @@ function Thi_cmsp({history}) {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_data(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
-            history.push('/login?redirect=/formcontrol/thi_cmsp_tp');
+            navigate('/login?redirect=/formcontrol/thi_cmsp_tp');
         };
 
     }, [count]);
@@ -159,7 +161,7 @@ function Thi_cmsp({history}) {
         setTimeout(() => {
             SetALert(false);
             SetLoading(false);
-            history.push('/realtime/40?local_url=sp_f_data_cmsp_quy_tp');
+            navigate('/realtime/40?local_url=sp_f_data_cmsp_quy_tp');
             setCount(count+1);
             set_seconds(3600);
         }, 2000);

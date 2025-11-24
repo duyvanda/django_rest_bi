@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
-import './myvnp.css';
+// import './myvnp.css';
 import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
@@ -23,10 +23,10 @@ import {
     // FloatingLabel,
 } from "react-bootstrap";
 
-function Tracking_chi_phi_hcp_qua_tang( {history} ) {
+function Tracking_chi_phi_hcp_qua_tang() {
 
     const { get_id, Inserted_at, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    const navigate = useNavigate();
 
     const fetch_tracking_chi_phi_get_data_hcp = async (manv) => {
         SetLoading(true);
@@ -74,7 +74,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_tracking_chi_phi_get_data_hcp(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
-            history.push('/login');
+            navigate('/login');
         };
     }, [count]);
 
@@ -303,11 +303,11 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                         {/* START FORM BODY */}
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button style={{width: "60px"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >CRM</Button>
+                            <Button style={{width: "60px"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate("/crmhome") } >CRM</Button>
                             
                             <Button variant={type === "gm" ? "primary" : "outline-primary"} key={2} onClick={ () => 
                                 {
-                                    navigate.push("/formcontrol/tracking_chi_phi_hcp?type=gm");
+                                    navigate("/formcontrol/tracking_chi_phi_hcp?type=gm");
                                     set_type_input("gm");
                                     clear_data();
                                     setCount(count+1);
@@ -316,7 +316,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                             
                             <Button variant={type === "vttd" ? "primary" : "outline-primary"} key={1} onClick={ () => 
                                 {
-                                navigate.push("/formcontrol/tracking_chi_phi_hcp?type=vttd");
+                                navigate("/formcontrol/tracking_chi_phi_hcp?type=vttd");
                                 set_type_input("vttd");
                                 clear_data();
                                 setCount(count+1);

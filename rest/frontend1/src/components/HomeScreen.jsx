@@ -2,12 +2,15 @@ import React from 'react'
 import { useEffect } from 'react'
 
 
-function HomeScreen({history}) {
+import { useNavigate } from 'react-router-dom';
+
+function HomeScreen() {
+    const navigate = useNavigate();
 
     useEffect(() => {
-    history.push("/reports");
+    navigate("/reports");
     // console.log("Data")
-	}, [history]);
+	}, [navigate]);
   return (
     <div className='container'>HomeScreen</div>
   )

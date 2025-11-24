@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 import Select from "react-select";
-import './myvnp.css';
+// import './myvnp.css';
 import { Link, useLocation  } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext';
 import {
@@ -16,7 +16,10 @@ import {
 } from "react-bootstrap";
 import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
 
-function Form_claim_chi_phi({ history }) {
+import { useNavigate } from "react-router-dom";
+
+function Form_claim_chi_phi() {
+    const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const { generateMonthOptions, formatNumber, get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
@@ -52,7 +55,7 @@ function Form_claim_chi_phi({ history }) {
         fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
         set_ky_chi_phi_kt(monthOptions[2].value);
         } else {
-            history.push(`/login?redirect=${location.pathname}`);
+            navigate(`/login?redirect=${location.pathname}`);
         };
     }, []);
     

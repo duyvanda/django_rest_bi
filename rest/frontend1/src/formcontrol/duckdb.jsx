@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 import Select from "react-select";
-import './myvnp.css';
+// import './myvnp.css';
 import { Link, useLocation  } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext';
 import {
@@ -16,7 +16,10 @@ import {
     Table,
     ListGroup
 } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+
 const Duckdb = () => {
+    const navigate = useNavigate();
 
   const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
 
@@ -45,7 +48,7 @@ const Duckdb = () => {
       // set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
       fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
       } else {
-          history.push(`/login?redirect=${location.pathname}`);
+          navigate(`/login?redirect=${location.pathname}`);
       };
   }, []);
   const [dbFiles, setDbFiles] = useState([

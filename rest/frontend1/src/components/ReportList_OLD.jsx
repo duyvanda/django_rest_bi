@@ -5,7 +5,10 @@ import { Link } from 'react-router-dom'
 import Form from 'react-bootstrap/Form';
 import { FaChartPie } from 'react-icons/fa';
 
-function ReportList({history}) {
+import { useNavigate } from 'react-router-dom';
+
+function ReportList() {
+  const navigate = useNavigate();
   const { userInfo, Reports, clearFilterReport, SetRpScreen } = useContext(FeedbackContext)
 
 
@@ -14,10 +17,10 @@ function ReportList({history}) {
 		if (localStorage.getItem("userInfo")) {
 			clearFilterReport()
 		} else {
-            history.push('/login');
+            navigate('/login');
         }
   // eslint-disable-next-line
-	}, [history, Reports, userInfo]);
+	}, [navigate, Reports, userInfo]);
 
   // console.log("Reports", Reports)
 

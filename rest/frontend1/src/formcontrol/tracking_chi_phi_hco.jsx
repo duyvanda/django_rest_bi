@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
-import './myvnp.css';
+// import './myvnp.css';
 // import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
@@ -21,10 +21,10 @@ import {
     // Stack,
 } from "react-bootstrap";
 
-function Tracking_chi_phi_hco({history}) {
+function Tracking_chi_phi_hco() {
 
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    const navigate = useNavigate();
 
     const fetch_tracking_chi_phi_get_data_hco = async (manv) => {
         SetLoading(true);
@@ -50,12 +50,12 @@ function Tracking_chi_phi_hco({history}) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        history.push("/formcontrol/tracking_chi_phi_hcp");
+        navigate("/formcontrol/tracking_chi_phi_hcp");
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'tracking_chi_phi_hco', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_tracking_chi_phi_get_data_hco(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
-            history.push('/login');
+            navigate('/login');
         };
     }, [count]);
 
@@ -194,9 +194,9 @@ function Tracking_chi_phi_hco({history}) {
                         {/* START FORM BODY */}
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hco") } className="bg-warning text-dark border-0" >BV</Button>
+                            <Button onClick={ () => navigate("/formcontrol/tracking_chi_phi_hco") } className="bg-warning text-dark border-0" >BV</Button>
                             {/* <Button onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_pcl") } className="bg-success text-white border-0" >PCL</Button> */}
-                            <Button onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp") } className="bg-primary text-white border-0"> HCP</Button>
+                            <Button onClick={ () => navigate("/formcontrol/tracking_chi_phi_hcp") } className="bg-primary text-white border-0"> HCP</Button>
                         </ButtonGroup>
 
                         <Card className="mt-2">

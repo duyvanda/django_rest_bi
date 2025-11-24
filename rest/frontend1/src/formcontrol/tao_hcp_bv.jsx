@@ -1,9 +1,6 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-import { v4 as uuid } from 'uuid';
-import './myvnp.css';
-import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,
@@ -21,10 +18,11 @@ import {
     Dropdown
 } from "react-bootstrap";
 
-function Tao_hcp_bv({history, location}) {
+function Tao_hcp_bv() {
 
     const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    const navigate = useNavigate();
+    const location = useLocation();
     const location_search = new URLSearchParams(location.search)
 
     const fetch_initial_data = async (manv) => {
@@ -82,7 +80,7 @@ function Tao_hcp_bv({history, location}) {
         let bol1 = location_search.get('edit') === '1' ? true : false
         SET_EDITMODE(bol1);
         } else {
-            history.push('/login?redirect=/formcontrol/tao_hcp_bv');
+            navigate('/login?redirect=/formcontrol/tao_hcp_bv');
         };
     }, [count]);
 
@@ -439,13 +437,13 @@ function Tao_hcp_bv({history, location}) {
                         </Modal>
                         <Form onSubmit={handle_submit}>
                         {/* START FORM BODY */}
-                        <Button style={{width: "100%"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >HOME</Button>
+                        <Button style={{width: "100%"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate("/crmhome") } >HOME</Button>
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button style={{fontWeight: "bold"}}  key={1} onClick={ () => {navigate.push("/formcontrol/tao_hcp_bv"); SET_EDITMODE(false); clear_data() } } className="bg-warning text-dark border-0" >Tạo Mới HCP BV</Button>
-                            <Button style={{width: "60px"}} key={2} onClick={ () => {navigate.push("/formcontrol/tao_hcp_bv?edit=1"); SET_EDITMODE(true); clear_data() } } className="ml-1 bg-warning text-dark border-0" >Sửa BV</Button>
-                            <Button style={{fontWeight: "bold"}} key={3} onClick={ () => { navigate.push("/formcontrol/tao_hcp_pcl"); SET_EDITMODE(false); clear_data() } } className="ml-1 bg-primary border-0" >Tạo Mới HCP PCL/ED/GO</Button>
-                            <Button style={{width: "60px"}} key={4} onClick={ () => { navigate.push("/formcontrol/tao_hcp_pcl?edit=1") ; SET_EDITMODE(true); clear_data() } } className="ml-1 bg-primary border-0" >Sửa PCL</Button>
-                            <Button style={{width: "30px"}} key={5} onClick={ () => navigate.push("/formcontrol/tao_hcp_bc") } className="ml-1 bg-secondary border-0" >BC</Button>
+                            <Button style={{fontWeight: "bold"}}  key={1} onClick={ () => {navigate("/formcontrol/tao_hcp_bv"); SET_EDITMODE(false); clear_data() } } className="bg-warning text-dark border-0" >Tạo Mới HCP BV</Button>
+                            <Button style={{width: "60px"}} key={2} onClick={ () => {navigate("/formcontrol/tao_hcp_bv?edit=1"); SET_EDITMODE(true); clear_data() } } className="ml-1 bg-warning text-dark border-0" >Sửa BV</Button>
+                            <Button style={{fontWeight: "bold"}} key={3} onClick={ () => { navigate("/formcontrol/tao_hcp_pcl"); SET_EDITMODE(false); clear_data() } } className="ml-1 bg-primary border-0" >Tạo Mới HCP PCL/ED/GO</Button>
+                            <Button style={{width: "60px"}} key={4} onClick={ () => { navigate("/formcontrol/tao_hcp_pcl?edit=1") ; SET_EDITMODE(true); clear_data() } } className="ml-1 bg-primary border-0" >Sửa PCL</Button>
+                            <Button style={{width: "30px"}} key={5} onClick={ () => navigate("/formcontrol/tao_hcp_bc") } className="ml-1 bg-secondary border-0" >BC</Button>
                         </ButtonGroup>
 
                         {EDITMODE &&

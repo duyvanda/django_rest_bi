@@ -1,0 +1,94 @@
+import { Card, Container, Row, Col } from 'react-bootstrap';
+import {
+  FaUserMd,
+  FaPlusCircle,
+  FaGift,
+  FaCogs,
+  FaFileInvoiceDollar,
+  FaCalendarCheck
+} from 'react-icons/fa';
+import { useHistory } from 'react-router-dom';
+
+const CrmHome = () => {
+  const history = useHistory(); // ✅ React Router v5 dùng useHistory
+
+  // Danh sách các mục điều hướng có thêm icon
+  const items = [
+    {
+      stt: 1,
+      title: 'Danh sách HCP',
+      description: 'Đây là danh sách HCP.',
+      path: '/formcontrol/tao_hcp_bc',
+      icon: <FaUserMd size={28} color="#007bff" />
+    },
+    {
+      stt: 2,
+      title: 'Tạo mới HCP/PCL',
+      description: 'Tạo mới theo phân quyền',
+      path: '/formcontrol/tao_hcp_bv',
+      icon: <FaPlusCircle size={28} color="#28a745" />
+    },
+    {
+      stt: 3,
+      title: 'Booking chi phí quà tặng HCP',
+      description: 'Nhập thông tin quà tặng cho HCP',
+      path: '/formcontrol/tracking_chi_phi_hcp_qua_tang',
+      icon: <FaGift size={28} color="#ffc107" />
+    },
+    {
+      stt: 4,
+      title: 'Booking chi phí Gimmick HCP',
+      description: 'Nhập thông tin Gimmick cho HCP',
+      path: '/formcontrol/tracking_chi_phi_hcp?type=gm',
+      icon: <FaCogs size={28} color="#6c757d" />
+    },
+    {
+    stt: 5,
+    title: 'Đăng ký hội nghị HCP',
+    description: 'Nhập thông tin đăng ký hội nghị',
+    path: '/formcontrol/dang_ky_hcp_tham_du_hoi_nghi?type=online', 
+    icon: <FaCalendarCheck size={28} color="#6c757d" />
+    },
+    {
+    stt: 6,
+    title: 'Claim chi phí Sales (Kế Toán)',
+    description: 'Quản lý và xác nhận claim chi phí, công tác phí cho Sales',
+    path: '/formcontrol/form_claim_chi_phi',
+    icon: <FaFileInvoiceDollar size={28} color="#17a2b8" />
+    },
+    // {
+    // stt: 6,
+    // title: 'Công tác phí (Kế Toán)',
+    // description: 'Khai báo công tác phí cho Sales',
+    // path: '/formcontrol/cong_tac_phi',
+    // icon: <FaFileInvoiceDollar size={28} color="#17a2b8" />
+    // }
+  ];
+
+  const sortedList = [...items].sort((a, b) => a.stt - b.stt);
+
+  return (
+    <Container fluid className="p-4" style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
+      <h5 className="mb-4 fw-bold">Chọn thao tác</h5>
+      <Row xs={1} md={2} lg={2} className="g-4">
+        {sortedList.map((item, index) => (
+          <Col key={index}>
+            <Card
+              className="shadow-sm"
+              onClick={() => history.push(item.path)} // ✅ Đúng cú pháp React Router v5
+              style={{ cursor: 'pointer' }}
+            >
+            <Card.Body>
+              <div className="mb-2">{item.icon}</div>
+              <Card.Title>{item.title}</Card.Title>
+              <Card.Text>{item.description}</Card.Text>
+            </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    </Container>
+  );
+};
+
+export default CrmHome;

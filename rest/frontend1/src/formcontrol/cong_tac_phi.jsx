@@ -2,7 +2,7 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import Select from "react-select";
 import { v4 as uuid } from 'uuid';
-import './myvnp.css';
+// import './myvnp.css';
 // import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
@@ -25,7 +25,10 @@ import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as
 
 // import { Trash } from "react-bootstrap-icons";
 
-function Cong_tac_phi({history}) {
+import { useNavigate } from "react-router-dom";
+
+function Cong_tac_phi() {
+    const navigate = useNavigate();
     
     const { get_id, generateMonthOptions, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
@@ -65,7 +68,7 @@ function Cong_tac_phi({history}) {
         fetch_initial_data();
 
         } else {
-            history.push('/login?redirect=/formcontrol/cong_tac_phi');
+            navigate('/login?redirect=/formcontrol/cong_tac_phi');
         };
     }, [count]);
     const [manv, set_manv] = useState("");

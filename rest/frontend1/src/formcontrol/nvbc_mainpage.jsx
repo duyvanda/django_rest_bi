@@ -2,7 +2,7 @@
 import { useContext, useEffect, useState } from "react";
 import FeedbackContext from '../context/FeedbackContext'
 // import { Container, Row, Col, Card } from 'react-bootstrap';
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaPlus, FaMinus } from 'react-icons/fa'; // Import plus and minus icons
 import { BiStar, BiTrophy } from "react-icons/bi";
 import { FaStar, FaFire } from "react-icons/fa";
@@ -23,9 +23,10 @@ import {
 } from "react-bootstrap";
 
 
-const Nvbc_mainpage = ({history}) => {
+const Nvbc_mainpage = () => {
 
     const { Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
+    const navigate = useNavigate();
     const list_chon = [
         // { id: 1, value: "6 điểm : Ổn", color: "#d1d1d1", icon: <BiStar /> },
         // { id: 2, value: "7 điểm : Hay", color: "#a0e6a0", icon: <FaStar /> },
@@ -53,7 +54,7 @@ const Nvbc_mainpage = ({history}) => {
   useEffect(() => {
     const storedUser = localStorage.getItem("nvbc_user");
     if (!storedUser) {
-      history.push("/formcontrol/nvbc_login");
+      navigate("/formcontrol/nvbc_login");
       return;
     }
     const parsedUser = JSON.parse(storedUser);
@@ -94,7 +95,7 @@ const Nvbc_mainpage = ({history}) => {
     };
 
     fetchData();
-  }, [history]);
+  }, [navigate]);
 
   const [userName, setUserName] = useState("");
   const [userPhone, setUserPhone] = useState("");

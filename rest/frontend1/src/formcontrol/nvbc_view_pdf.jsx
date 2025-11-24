@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useContext, useEffect, useState } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import FeedbackContext from '../context/FeedbackContext'
 // import {  } from 'react-router-dom';
 
@@ -22,19 +22,19 @@ import {
 
 const Nvbc_view_pdf = () => {
     const { Inserted_at } = useContext(FeedbackContext)
-    const history = useHistory();
+    const navigate = useNavigate();
     const [pdfUrl, setPdfUrl] = useState(null);
     const location = useLocation();
 
   // Function to handle back navigation
   const handleGoBack = () => {
-    history.goBack();  // Go back to the previous page
+    navigate(-1);  // Go back to the previous page
   };
 
   useEffect(() => {
     const storedUser = localStorage.getItem("nvbc_user");
     if (!storedUser) {
-      history.push("/formcontrol/nvbc_login");
+      navigate("/formcontrol/nvbc_login");
       return;
     }
     const user = JSON.parse(storedUser);
@@ -78,7 +78,7 @@ const Nvbc_view_pdf = () => {
       }
     }, 60000); // 10 seconds delay
     return () => clearTimeout(timer); // cleanup
-  }, [location, history]);
+  }, [location, navigate]);
 
   return (
     <div

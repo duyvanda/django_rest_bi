@@ -1,28 +1,31 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
-import './myvnp.css';
 import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,
-    ButtonGroup,
+    // ButtonGroup,
     Col,
     Row,
     Container,
     Form,
     Spinner,
-    Card,
+    // Card,
+    Badge,
+    Nav,
     ListGroup,
     Modal,
-    Table
+    Table,
+    Alert
+    // InputGroup
 } from "react-bootstrap";
 
-function Tracking_chi_phi_hcp_qua_tang( {history} ) {
+function Tracking_chi_phi_hcp_qua_tang() {
 
     const { get_id, Inserted_at, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    const navigate = useNavigate();
 
     const fetch_tracking_chi_phi_get_data_hcp = async (manv) => {
         SetLoading(true);
@@ -54,7 +57,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_tracking_chi_phi_get_data_hcp(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
-            history.push('/login');
+            navigate('/login');
         };
     }, [count]);
 
@@ -92,6 +95,11 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
         }
         set_arr_hcp(lst)
     }
+
+        const ma_hcp = []
+        for (let i of arr_hcp) {
+            if (i.check === true) {ma_hcp.push(i.ma_hcp_2)}
+        }
     
     function addSchemaRow() {
     let newSchema = schema.map(row => ({ ...row }));
@@ -261,56 +269,100 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
     handleExcelModalClose();
   };
 
-    if (true) {
+    const navs = [
+        { label: "<=", path: "/crmhome", color: "text-success" },
+        { label: "ĐỀ XUẤT", path: "/formcontrol/tracking_chi_phi_hcp_qua_tang" },
+        { label: "QL DUYỆT", path: "/formcontrol/tracking_chi_phi_hcp_qua_tang_crm" },
+        { label: "BC", path: "/realtime/99", color: "text-info", isExternal: true }
+    ];
+
+    const filtered = arr_hcp.filter(el =>
+        el.clean_ten_hcp.toLowerCase().includes(search.toLowerCase())
+    );
+
         return (
         <Container className="bg-teal-100 h-100" fluid>
             <Row className="justify-content-center">
                 <Col md={5} >
 
-                    <div>
+            {/* <div> */}
                         {/* ALERT COMPONENT */}
                         <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
                             <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
 
-                        {alert &&
-                        <div className={`alert ${alertType} alert-dismissible mt-2`} role="alert" >
-                            <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                            </button>
-                            <span><strong>Cảnh Báo:  </strong>{alertText}</span>
-                        </div>
-                        }
+                            {alert && (
+                                <Alert
+                                    variant={alertType} // e.g., 'danger', 'warning', 'success'
+                                    onClose={() => SetALert(false)} // You must handle the state update here
+                                    dismissible
+                                    className="mt-2 text-start" // Added text-start to align text left if parent is centered
+                                >
+                                    <Alert.Heading as="h6" className="mb-1">
+                                        <strong>Cảnh Báo: </strong>
+                                    </Alert.Heading>
+                                    {alertText}
+                                </Alert>
+                            )}
                         </Modal>
 
                         <Form onSubmit={handle_submit}>
                         {/* START FORM BODY */}
 
-                        <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
+                        {/* <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
                             <Button style={{width: "60px"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >CRM</Button>
                             <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_qua_tang" ? "primary" : "outline-primary"} key={2} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang") } >ĐỀ XUẤT</Button>
                             <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_qua_tang_crm" ? "primary" : "outline-primary"} key={1} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang_crm") } >QL DUYỆT</Button>
                             <Link to="/realtime/99" target="_blank" rel="noopener noreferrer"> <Button variant="outline-info text-dark" key={3}>BC</Button> </Link>
-                        </ButtonGroup>
+                        </ButtonGroup> */}
+                        <h5 className="bg-white border rounded shadow-sm p-2 mt-2 mb-2 d-flex align-items-center">
+                            <Badge bg="primary" className="me-2">CT</Badge>
+                            <span className="fw-bold text-dark">{ten_chuong_trinh}</span>
+                        </h5>
 
-                        <h5>{`CT ${ten_chuong_trinh} cho tháng ${chi_phi_thang}`}</h5>
+                        <Nav variant="pills" activeKey={location.pathname} className="mt-2 bg-light p-2 rounded gap-2 fw-bold" fill>
+                            {navs.map(({ label, path, color, isLink }) => {
+                                const isActive = location.pathname === path; // Check if this tab is active
+                                return (
+                                    <Nav.Item key={path} className="flex-fill">
+                                        <Nav.Link 
+                                            eventKey={path}
+                                            // FIX: Only use bg-white and custom colors if NOT active. 
+                                            // If active, let Bootstrap default (Blue bg + White text) take over.
+                                            className={`shadow-sm border ${isActive ? "bg-merap-active" : `bg-white ${color || ""}`}`}
+                                            onClick={!isLink ? () => navigate(path) : undefined}
+                                            href={isLink ? path : undefined}
+                                            target={isLink ? "_blank" : undefined}
+                                        >
+                                            {label}
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                );
+                            })}
+                        </Nav>
 
-                        <ListGroup className="mt-2" style={{maxHeight: "250px", overflowY: "auto"}}>
+                    <div className="bg-white border rounded shadow-sm p-3 mt-2">
 
-                            <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="Tìm Mã Hoặc Tên (KHONG DAU) " value={search} />
+                        <ListGroup className="mt-2" style={{maxHeight: "350px", overflowY: "auto"}}>
 
-                            {arr_hcp
-                                .filter( el => el.clean_ten_hcp.toLowerCase().includes( search.toLowerCase() ) )
-                                .map( (el, index) =>
-                                <ListGroup.Item key={index} className="mx-0 px-0 my-0 py-0" >
-                                    <Form.Check key={index} className="text-nowrap" type="switch" checked={el.check} onChange={ handle_switch } id={el.ma_hcp_2} label={ el.id + ')'+ el.ten_hien_thi}/>
-                                </ListGroup.Item>
-                                )
-                            }
-
+                            <Form.Control className="mb-2" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="🔍 Tìm mã hoặc tên (KHÔNG DẤU)" value={search} />
+                                    {arr_hcp
+                                        .filter( el => el.clean_ten_hcp.toLowerCase().includes( search.toLowerCase() ) )
+                                        .map( (el, index) =>
+                                        <ListGroup.Item key={index} className="p-1 bg-white border rounded" >
+                                            <Form.Check key={index} className="text-wrap" type="switch" checked={el.check} onChange={ handle_switch } id={el.ma_hcp_2} label={ el.id + ')'+ el.ten_hien_thi}/>
+                                        </ListGroup.Item>
+                                        )
+                                    }
                         </ListGroup>
+                    </div>
 
-                        
+                        {ma_hcp.length > 0 && (
+                            <Alert variant="info" className="mt-3 mb-0 py-2 shadow-sm border-0">
+                                <strong>✓ Đã chọn:</strong> {ma_hcp.length} bác sĩ
+                            </Alert>
+                        )}
 
-                        <Button variant="outline-info" onClick={() => set_show_quy_tac(true)} className="mt-1 text-dark" size="sm">Show quy tắc</Button>
+                        {/* <Button variant="outline-info" onClick={() => set_show_quy_tac(true)} className="mt-1 text-dark" size="sm">Show quy tắc</Button> */}
                         
                         <Modal show={show_quy_tac}>
                             <Modal.Body>
@@ -322,7 +374,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                         </Modal>
 
                         
-                    <div className="bg-white">
+                    <div className="bg-white border rounded shadow-sm p-3 mt-3">
                         <Table bordered hover className="mt-2">
                             <thead>
                             <tr>
@@ -380,19 +432,35 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                         </div>
                     </div>
 
-                        
-                        {/* TEXT */}
-                        {/* <FloatingLabel label="CHI PHÍ GIAO TIẾP" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text1(e.target.value) } value = {text1}/> </FloatingLabel>
-                        <FloatingLabel label="HỘI NGHỊ" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_text2(e.target.value) } value = {text2}/> </FloatingLabel> */}
-                        
-                        <Button disabled={
+                        {/* <div className="bg-white border rounded shadow-sm p-3"></div> */}
+                        <div className="mt-2 d-grid gap-2 d-md-flex bg-white border rounded shadow-sm p-3">
+                        <Button 
+                            variant="info" 
+                            size="lg" 
+                            className="flex-fill text-white" // Added text-white for better contrast on "info"
+                            onClick={() => set_show_quy_tac(true)}
+                        >
+                            📖 Xem quy tắc chương trình
+                        </Button>
+
+                        <Button
+                        disabled={
                         co_chon_hcp === "" ||
-                        // Number(mo_link) === 0 ||
+                        Number(mo_link) === 0 ||
                         (
                             schema.length === 0
                         )
-                        } className='mt-2' variant="primary" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN 
+                        }
+                            variant="primary" 
+                            size="lg" 
+                            className="flex-fill"
+                            onClick={handle_submit}
+                        >
+
+                            📤 Lưu thông tin
                         </Button>
+                        </div>
+                        
 
                         {Number(mo_link) === 0 && <p>Chưa mở link nhập</p>}
                         
@@ -440,23 +508,11 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
 
 
                         
-                    </div>
+            {/* </div> */}
                 </Col>
             </Row>
         </Container>
         )
-    }
-    else {
-        // return (
-    
-        //     <div>
-        //         <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
-        //         <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-        //         </Spinner>
-        //     </div>
-            
-        // )
-    }
 }
 
 

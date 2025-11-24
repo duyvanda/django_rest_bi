@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 import Select from "react-select";
-import './myvnp.css';
-import { Link, useLocation  } from "react-router-dom";
+// import './myvnp.css';
+import { Link, useLocation, useNavigate  } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext';
 import {
     Modal,
@@ -17,7 +17,8 @@ import {
 } from "react-bootstrap";
 import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
 
-const Form_claim_chi_phi_crm_claimed = ( {history} ) => {
+const Form_claim_chi_phi_crm_claimed = () => {
+    const navigate = useNavigate();
     const location = useLocation();
     const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
     
@@ -46,7 +47,7 @@ const Form_claim_chi_phi_crm_claimed = ( {history} ) => {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
         } else {
-            history.push(`/login?redirect=${location.pathname}`);
+            navigate(`/login?redirect=${location.pathname}`);
         };
     }, [count]);
 

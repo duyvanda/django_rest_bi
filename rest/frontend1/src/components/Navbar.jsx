@@ -1,16 +1,16 @@
 /* eslint-disable */
 import React, { useContext } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { Navbar, Container, NavDropdown, Button } from 'react-bootstrap';
-import FeedbackContext from '../context/FeedbackContext';
+import { Link, useNavigate } from 'react-router-dom';
+import FeedbackContext from '../context/FeedbackContext'
+import {Navbar, Container, NavDropdown} from 'react-bootstrap';
 
 function Navbar1() {
   const { userInfo, logoutUser, FilterReports, rpScreen } = useContext(FeedbackContext);
-  const history = useHistory(); // React Router v5
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logoutUser();
-    history.push('/login');
+    navigate('/login');
     console.log('User logged out');
   };
 
@@ -32,13 +32,13 @@ function Navbar1() {
               <Link to="/" className="navbar-brand fw-bold text-white">📊 BI PORTAL</Link>
               {userInfo && (
                 <NavDropdown title={userInfo.manv} className="ms-2 text-white" menuVariant="dark">
-                  <NavDropdown.Item onClick={() => history.push('/reports')}>
+                  <NavDropdown.Item onClick={() => navigate('/reports')}>
                     📑 <strong>REPORTS</strong>
                   </NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => history.push('/crmhome')}>
+                  <NavDropdown.Item onClick={() => navigate('/crmhome')}>
                     💼 <strong>CRM HOME</strong>
                   </NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => history.push('/workflow')}>
+                  <NavDropdown.Item onClick={() => navigate('/workflow')}>
                     🔁 <strong>WORKFLOW</strong>
                   </NavDropdown.Item>
                   <NavDropdown.Item onClick={handleLogout} className="text-danger">

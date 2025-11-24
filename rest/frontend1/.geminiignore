@@ -1,0 +1,36 @@
+# --------------------------------------
+# 1. HEAVY FOLDERS (Crucial for speed)
+# --------------------------------------
+node_modules/
+build/
+.firebase/
+.git/
+
+# --------------------------------------
+# 3. NOISY FILES (Wastes tokens)
+# --------------------------------------
+package-lock.json
+yarn.lock
+npm-debug.log
+
+# --------------------------------------
+# 4. MEDIA/ASSETS (Binary files)
+# --------------------------------------
+# Images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.svg
+
+# Fonts
+*.ttf
+*.woff
+*.woff2
+
+# --------------------------------------
+# 5. SYSTEM FILES
+# --------------------------------------
+.DS_Store
+Thumbs.db

@@ -1,8 +1,13 @@
+/* eslint-disable */
 import React, { useState, useRef, useEffect } from 'react';
+import { Button, Card, Col, Container, Form, Row, Spinner, Modal } from 'react-bootstrap';
 import { validateExcelFile } from '../utils/excelValidator';
 import * as XLSX from 'xlsx';
 
-function Excel_thu_hoi_hd_clc({history}) {
+import { useNavigate } from 'react-router-dom';
+
+function Excel_thu_hoi_hd_clc() {
+  const navigate = useNavigate();
   
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
@@ -28,7 +33,7 @@ function Excel_thu_hoi_hd_clc({history}) {
         console.log("Manv upload excel thu hoi hd clc:", JSON.parse(localStorage.getItem("userInfo")).manv);
         }
         else {
-            history.push('/login?redirect=/formcontrol/upload_excel_thu_hoi_hd');
+            navigate('/login?redirect=/formcontrol/upload_excel_thu_hoi_hd');
         };
     }, []);
 

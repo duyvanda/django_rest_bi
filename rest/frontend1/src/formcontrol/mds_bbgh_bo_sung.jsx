@@ -1,9 +1,6 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-import { v4 as uuid } from 'uuid';
-import './myvnp.css';
-import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,
@@ -25,10 +22,11 @@ import {
     
 } from "react-bootstrap";
 
-function Mds_bbgh_bo_sung({history, location}) {
+function Mds_bbgh_bo_sung() {
 
     const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    const navigate = useNavigate();
+    const location = useLocation();
     const location_search = new URLSearchParams(location.search)
 
 
@@ -49,7 +47,7 @@ function Mds_bbgh_bo_sung({history, location}) {
         set_slsperid(location_search.get('slsperid'));
         // window.open("https://www.w3schools.com")
         } else {
-            history.push('/login');
+            navigate('/login');
         };
     }, []);
 

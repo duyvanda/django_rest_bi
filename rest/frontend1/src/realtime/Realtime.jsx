@@ -6,7 +6,14 @@ import {
     Spinner, Modal, Button
 } from "react-bootstrap";
 
-function Realtime( {match, history, location} ) {
+import {
+    useNavigate,
+    useParams
+} from "react-router-dom";
+
+function Realtime() {
+    const navigate = useNavigate();
+    const { id } = useParams();
 
     const {userInfo, userLogger, SetRpScreen, fetchFilerReportsRT, shared, loading, ReportId, ReportParam, vw } = useContext(FeedbackContext)
 
@@ -15,14 +22,14 @@ function Realtime( {match, history, location} ) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        const stt = match.params.id
+        const stt = id
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, stt , isMB, dv_width);
         SetRpScreen(true);
         if (loading===false){
             fetchFilerReportsRT(stt, isMB, {});
         }
 		} else {
-            history.push('/login');
+            navigate('/login');
         };
     // eslint-disable-next-line
 	}, [userInfo]);

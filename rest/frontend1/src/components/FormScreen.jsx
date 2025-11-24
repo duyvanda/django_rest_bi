@@ -5,7 +5,10 @@ import { useContext, useState, useEffect } from "react";
 // import { Link } from 'react-router-dom'
 import { Spinner, Form, Button, Modal, Dropdown, DropdownButton } from "react-bootstrap";
 
-function ProductList({ history }) {
+import { useNavigate } from 'react-router-dom';
+
+function ProductList() {
+  const navigate = useNavigate();
   const {
     chiNhanh,
     fetchKHVNP,
@@ -158,7 +161,7 @@ function ProductList({ history }) {
     setShow(false);
     // SetALert(true)
     // setTimeout(() => SetALert(false),2000)
-    history.push("/formmdsvnpost");
+    navigate("/formmdsvnpost");
   };
   return (
     <div className="container mt-5">

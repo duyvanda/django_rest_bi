@@ -4,21 +4,16 @@ import { Link  } from 'react-router-dom'
 import FeedbackContext from '../context/FeedbackContext'
 import { useContext } from 'react'
 import {Nav, Navbar, Container, NavDropdown, Button} from 'react-bootstrap';
-import { useHistory } from "react-router-dom";
-
-import logo from "../images2/logo.png"
-
+import { useNavigate } from "react-router-dom";
 
 function EbookProject() {
     const { userInfo, logoutUser, FilterReports, rpScreen } = useContext(FeedbackContext)
-
-    const history = useHistory();
-    const navigate = useHistory();
+    const navigate = useNavigate();
 
     const handleClick = () => {
         logoutUser();
         let path = `/login`;
-        history.push(path);
+        navigate(path);
         console.log("logout")
     }
 

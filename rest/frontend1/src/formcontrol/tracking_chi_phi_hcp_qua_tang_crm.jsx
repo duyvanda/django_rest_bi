@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import { v4 as uuid } from 'uuid';
-import './myvnp.css';
+// import './myvnp.css';
 import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
@@ -13,15 +13,16 @@ import {
     Container,
     Form,
     Spinner,
-    Card,
+    Nav,
     ListGroup,
-    Modal
+    Modal,
+    Alert
 } from "react-bootstrap";
 
-function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
+function Tracking_chi_phi_hcp_qua_tang_crm() {
 
     const { Inserted_at, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    const navigate = useNavigate();
 
     const fetch_tracking_chi_phi_get_data_hcp = async (manv) => {
         SetLoading(true);
@@ -51,7 +52,7 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_tracking_chi_phi_get_data_hcp(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
-            history.push('/login');
+            navigate('/login');
         };
     }, [count]);
 
@@ -163,6 +164,13 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
         }
     }
 
+    const navs = [
+    { label: "<=", path: "/crmhome", color: "text-success" },
+    { label: "ĐỀ XUẤT", path: "/formcontrol/tracking_chi_phi_hcp_qua_tang" },
+    { label: "QL DUYỆT", path: "/formcontrol/tracking_chi_phi_hcp_qua_tang_crm" },
+    { label: "BC", path: "/realtime/99", color: "text-info", isExternal: true }
+    ];
+
     if (true) {
         return (
         <Container className="bg-teal-100 h-100" fluid>
@@ -187,25 +195,33 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
                         <Form onSubmit={handle_submit}>
                         {/* START FORM BODY */}
 
-                        <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button style={{width: "60px"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >CRM</Button>
-                            <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_qua_tang" ? "primary" : "outline-primary"} key={2} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang") } >ĐỀ XUẤT</Button>
-                            <Button variant={location.pathname === "/formcontrol/tracking_chi_phi_hcp_qua_tang_crm" ? "primary" : "outline-primary"} key={1} onClick={ () => navigate.push("/formcontrol/tracking_chi_phi_hcp_qua_tang_crm") } >QL DUYỆT</Button>
-                            <Link to="/realtime/99" target="_blank" rel="noopener noreferrer"> <Button variant="outline-info text-dark" key={3}>BC</Button> </Link>
-                        </ButtonGroup>
-
-                        {/* <Card className="mt-2">
-                            <Card.Body>
-                            <Card.Title>HCP: TRACKING CHI PHÍ ĐẦU TƯ</Card.Title>
-                                <Card.Text>
-                                </Card.Text>
-                            </Card.Body>
-                        </Card> */}
+                            <Nav variant="pills" activeKey={location.pathname} className="mt-2 bg-light p-2 rounded gap-2 fw-bold" fill>
+                                {navs.map(({ label, path, color, isLink }) => {
+                                    const isActive = location.pathname === path; // Check if this tab is active
+                                    return (
+                                        <Nav.Item key={path} className="flex-fill">
+                                            <Nav.Link 
+                                                eventKey={path}
+                                                // FIX: Only use bg-white and custom colors if NOT active. 
+                                                // If active, let Bootstrap default (Blue bg + White text) take over.
+                                                className={`shadow-sm border ${isActive ? "bg-merap-active" : `bg-white ${color || ""}`}`}
+                                                onClick={!isLink ? () => navigate(path) : undefined}
+                                                href={isLink ? path : undefined}
+                                                target={isLink ? "_blank" : undefined}
+                                            >
+                                                {label}
+                                            </Nav.Link>
+                                        </Nav.Item>
+                                    );
+                                })}
+                            </Nav>
+                        
+                        <div className="bg-white border rounded shadow-sm p-3 mt-2">
 
                         <ListGroup className="mt-2" style={{maxHeight: "650px", overflowY: "auto"}}>
 
                         
-                        <Form.Select className="mt-2" style={{}}  onChange={ e => set_select_nv(e.target.value) }>
+                        <Form.Select className="mb-2" style={{}}  onChange={ e => set_select_nv(e.target.value) }>
                             <option value="">Chọn Nhân Viên</option>
                             {list_nv
                             .map( (el, index) => 
@@ -213,23 +229,24 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
                             )
                             }
                         </Form.Select>
+                        
 
-                        <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="Tìm Mã Hoặc Tên" />
+                        {/* <Form.Control className="" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="Tìm Mã Hoặc Tên" /> */}
+                        <Form.Control className="mb-2" type="text" onChange={ (e) => set_search(e.target.value)} placeholder="🔍 Tìm mã hoặc tên (KHÔNG DẤU)" value={search} />
 
 
                         {arr_hcp
                             .filter( el => el.ma_crs.includes(select_nv))
                             .filter( el => el.clean_ten_hcp.toLowerCase().includes(search.toLowerCase()))
                             .map( (el, index) =>
-                            <ListGroup.Item style={{maxHeight:"125px"}} className="border border-secondary mx-0 px-0" >
+                            <ListGroup.Item style={{maxHeight:"125px"}} className="p-1 bg-white border rounded" >
                                 <Form.Check key={index} className="text-wrap" type="switch" checked={el.check} onChange={ handeClick } id={el.uuid} label={ el.ten_hien_thi } />
-                            {/* <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{el.ma_hcp_1 + ' - Quà Cảm Xúc: '+ el.chon_qua_tang_cam_xuc + '(' +  el.ma_crs  + ')'}  </p> */}
-                            {/* <p className="ml-4 mb-0"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span>{'Tổng Tiền: '+ f.format (Number(el.tong_tien_kh)) }  </p> */}
                             </ListGroup.Item>
                             )
                         }
 
-                        </ListGroup>                        
+                        </ListGroup>
+                        </div>                       
 
                         
                         {/* TEXT */}
@@ -238,11 +255,20 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
                         
                         {/* <Button disabled={false} className='mt-2' variant="primary" type="submit" style={{width: "100%", fontWeight: "bold"}}> LƯU THÔNG TIN </Button> */}
                         
-                        <h4 style={{color:"red"}} className="mt-2">Bạn Đã Chọn:{`\xa0`} {sl_da_chon} </h4>
-                        <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button disabled={false} className='mt-2' variant="success" type="submit" style={{width: "100%", fontWeight: "bold"}}> DUYỆT </Button>
-                            <Button disabled={false} onClick={ handle_reject } className='mt-2' variant="danger" style={{width: "100%", fontWeight: "bold"}}> TỪ CHỐI </Button>
+                        {/* <h4 style={{color:"red"}} className="mt-2">Bạn Đã Chọn:{`\xa0`} {sl_da_chon} </h4> */}
+
+                        {sl_da_chon > 0 && (
+                            <Alert variant="info" className="mt-3 mb-0 py-2 shadow-sm border-0">
+                                <strong>✓ Đã chọn:</strong> {sl_da_chon} lượt
+                            </Alert>
+                        )}
+
+                        <div className="bg-white border rounded shadow-sm p-2 mt-2">
+                        <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="lg" className="mt-2 border-0">
+                            <Button disabled={false} type="submit"              className='flex-fill' variant="success"  style={{width: "100%", fontWeight: "bold"}}> ✅ DUYỆT </Button>
+                            <Button disabled={false} onClick={ handle_reject }  className='flex-fill' variant="danger" style={{width: "100%", fontWeight: "bold"}}> ❌ TỪ CHỐI </Button>
                         </ButtonGroup>
+                        </div>
                         
                         </Form>
                         {/* END FORM BODY */}

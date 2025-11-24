@@ -20,7 +20,10 @@ import {
     // Dropdown
 } from "react-bootstrap";
 
-const Chat = ( {history} ) => {
+import { useNavigate } from "react-router-dom";
+
+const Chat = () => {
+    const navigate = useNavigate();
     const [manv, set_manv] = useState("");
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([
@@ -47,7 +50,7 @@ const Chat = ( {history} ) => {
         // if JSON.parse(localStorage.getItem("userInfo")).manv
 
         } else {
-            history.push('/login?redirect=/biagent');
+            navigate('/login?redirect=/biagent');
         };
 
     }, []);

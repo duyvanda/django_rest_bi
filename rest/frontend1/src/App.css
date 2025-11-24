@@ -46,6 +46,11 @@ code {
     color: blue;
 }
 
+.bg-merap-active {
+    background-color: var(--meraplion-dark-teal) !important;
+    color: white !important;
+}
+
 .h-100 {
     min-height: 100vh;
 }
@@ -96,4 +101,38 @@ code {
     white-space: normal !important;
     word-break: break-word !important;
     overflow-wrap: break-word !important;
+}
+
+.w75px {
+    width: 73px;
+}
+
+.w100px {
+    width: 110px;
+}
+
+.w150px {
+    width: 150px;
+}
+
+.w200px {
+    width: 200px;
+}
+
+.w250px {
+    width: 250px;
+}
+
+.w100pc {
+    width: 100%;
+}
+
+.card-hover-effect {
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
 }

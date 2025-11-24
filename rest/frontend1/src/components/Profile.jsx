@@ -1,8 +1,12 @@
 import React from 'react'
 import FeedbackContext from '../context/FeedbackContext'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useState, useContext, useEffect } from 'react'
-function Profile({history, location}) {
+import { useNavigate } from 'react-router-dom';
+
+function Profile() {
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const { userInfo, changePassUser } = useContext(FeedbackContext)
     const [email, setEmail] = useState('')
@@ -12,12 +16,12 @@ function Profile({history, location}) {
     useEffect(() => {
         
 		if (userInfo.length > 0) {
-			history.push(redirect);
+			navigate(redirect);
 		} else {
             void(0)       
         }
 
-	}, [history, userInfo, redirect]);
+	}, [navigate, userInfo, redirect]);
 
     const handleTextChange = (e) => {
         setEmail(e.target.value)
@@ -35,7 +39,7 @@ function Profile({history, location}) {
             password}
         changePassUser(changedata)
         console.log(changedata)
-        history.push("/login")
+        navigate("/login")
         setEmail('')
         setPassword('')
     }

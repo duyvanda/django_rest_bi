@@ -7,10 +7,10 @@ import {
   // FaCogs,
   // FaFileInvoiceDollar 
 } from 'react-icons/fa';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Workflow = () => {
-  const history = useHistory(); // ✅ React Router v5 dùng useHistory
+  const navigate = useNavigate(); // ✅ React Router v5 dùng useHistory
 
   // Danh sách các mục điều hướng có thêm icon
   const items = [
@@ -41,7 +41,7 @@ const Workflow = () => {
           <Col key={index}>
             <Card
               className="shadow-sm"
-              onClick={() => history.push(item.path)} // ✅ Đúng cú pháp React Router v5
+              onClick={() => navigate(item.path)} // ✅ Đúng cú pháp React Router v5
               style={{ cursor: 'pointer' }}
             >
             <Card.Body>

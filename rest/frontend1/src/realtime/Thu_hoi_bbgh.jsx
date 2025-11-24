@@ -6,15 +6,22 @@ import {
     Spinner
 } from "react-bootstrap";
 
-function Thu_hoi_bbgh( {match,history} ) {
+import {
+    useNavigate,
+    useParams
+} from "react-router-dom";
+
+function Thu_hoi_bbgh() {
+    const navigate = useNavigate();
+    const { id } = useParams();
 
     useEffect(() => {
 		if (localStorage.getItem("userInfo")) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        console.log("stt", match.params.id)
-        const stt = match.params.id
+        console.log("stt", id)
+        const stt = id
         const rpid = stt.slice(0, -1)
         const lastChar = stt.substr(stt.length - 1);
         const phancap = lastChar==="0" ? false : true;
@@ -24,7 +31,7 @@ function Thu_hoi_bbgh( {match,history} ) {
         const local_url = "sp_f_thuhoibienbanno_kt_v2"
         fetchFilerReportsRT(rpid, isMB, phancap, local_url, {});
 		} else {
-            history.push('/login');
+            navigate('/login');
         };
 	}, []);
 
