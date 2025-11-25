@@ -3,7 +3,6 @@ import { Container, Row, Col, Nav, Form, ListGroup, FloatingLabel, Button, Stack
 import Select from 'react-select';
 import { removeAccents } from '../utils/string.js';
 import FeedbackContext from '../context/FeedbackContext'; // Assuming context path
-import LoadingAlert from '../components/LoadingAlert';
 
 // Based on form_ui_rules.md and the provided spec
 
@@ -12,6 +11,7 @@ const FormSeminarHco = () => {
 
     const [active_tab, set_active_tab] = useState('deXuat');
     const [hco_search_term, set_hco_search_term] = useState('');
+    
     
     // State for Tab 1
     const [selected_hco, set_selected_hco] = useState([]);
@@ -32,8 +32,6 @@ const FormSeminarHco = () => {
     const [smn_thang_options, set_smn_thang_options] = useState([]);
     const [tuan_thuc_hien_options, set_tuan_thuc_hien_options] = useState([]);
     const [nhom_san_pham_options_state, set_nhom_san_pham_options_state] = useState([]);
-
-    // State for CXM Proposals
     const [cxm_proposals, set_cxm_proposals] = useState([]);
     
     React.useEffect(() => {
@@ -246,24 +244,6 @@ const FormSeminarHco = () => {
         <div className="bg-white border rounded shadow-sm p-3 mt-2">
             <h5 className="mb-3">📝 Đề xuất Kế hoạch Seminar</h5>
 
-                        <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
-                            <Button variant="secondary" disabled> <Spinner animation="grow" size="sm"/> Đang tải...</Button>
-
-                            {alert && (
-                                <Alert
-                                    variant={alertType} // e.g., 'danger', 'warning', 'success'
-                                    onClose={() => SetALert(false)} // You must handle the state update here
-                                    dismissible
-                                    className="mt-2 text-start" // Added text-start to align text left if parent is centered
-                                >
-                                    <Alert.Heading as="h6" className="mb-1">
-                                        <strong>Cảnh Báo: </strong>
-                                    </Alert.Heading>
-                                    {alertText}
-                                </Alert>
-                            )}
-                        </Modal>
-
             {/* --- Chọn nhiều HCO --- */}
             <div className="form-field-hover">
                 <p className="fw-bold mt-3">🧑‍⚕️ Chọn HCO - Khoa Phòng</p>
@@ -365,7 +345,6 @@ const FormSeminarHco = () => {
                     {loading ? <Spinner animation="grow" size="sm" /> : "Gửi Đề Xuất"}
                 </Button>
             </div>
-            {/* Render the LoadingAlert component */}
         </div>
     );
 
@@ -498,6 +477,7 @@ const FormSeminarHco = () => {
                     {active_tab === 'deXuat' && render_de_xuat_tab()}
                     {active_tab === 'cxmDuyet' && render_cxm_duyet_tab()}
                     {active_tab === 'baoCao' && render_bao_cao_tab()}
+                    <LoadingAlert loading={loading} alert={alert} alertType={alertType} alertText={alertText} SetAlert={SetALert} />
                 </Col>
             </Row>
         </Container>
