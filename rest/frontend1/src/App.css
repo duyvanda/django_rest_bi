@@ -190,3 +190,17 @@ code {
   color: black !important;
 }
 
+.black-placeholder::placeholder {
+  color: black !important;
+  opacity: 1;
+}
+
+.black-placeholder:-ms-input-placeholder {
+  color: black !important;
+}
+
+.black-placeholder::-ms-input-placeholder {
+  color: black !important;
+}
+
+

@@ -1,14 +1,16 @@
 import React, { useState, useContext } from 'react';
 import { Container, Row, Col, Nav, Form, ListGroup, FloatingLabel, Button, Stack, Spinner, Table, Modal, Alert } from 'react-bootstrap';
 import Select from 'react-select';
+import { removeAccents } from '../utils/string.js';
 import FeedbackContext from '../context/FeedbackContext'; // Assuming context path
 
 // Based on form_ui_rules.md and the provided spec
 
 const FormSeminarHco = () => {
-    const { get_id, Inserted_at, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
+    const { get_id, Inserted_at, userLogger, loading, SetLoading, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
 
     const [active_tab, set_active_tab] = useState('deXuat');
+    const [hco_search_term, set_hco_search_term] = useState('');
     
     // State for Tab 1
     const [selected_hco, set_selected_hco] = useState([]);
@@ -25,16 +27,67 @@ const FormSeminarHco = () => {
     const [chi_phi_bao_cao_vien, set_chi_phi_bao_cao_vien] = useState('');
     const [tang_pham, set_tang_pham] = useState('');
 
-    // Dummy data for selects - replace with API calls
-    const hco_options = [
-        { id: 'hcp1', ten_gop_hco: 'Nguyễn Văn A - Bệnh viện Chợ Rẫy' },
-        { id: 'hcp2', ten_gop_hco: 'Trần Thị B - Bệnh viện 115' },
-        { id: 'hcp3', ten_gop_hco: 'Lê Văn C - Bệnh viện Đại học Y Dược' },
-    ];
-    const select_options = [
-        { value: '1', label: 'Option 1' },
-        { value: '2', label: 'Option 2' },
-    ];
+    const [hco_options, set_hco_options] = useState([]);
+    const [smn_thang_options, set_smn_thang_options] = useState([]);
+    const [tuan_thuc_hien_options, set_tuan_thuc_hien_options] = useState([]);
+    const [nhom_san_pham_options_state, set_nhom_san_pham_options_state] = useState([]);
+
+    // State for CXM Proposals
+    const [cxm_proposals, set_cxm_proposals] = useState([]);
+    
+    React.useEffect(() => {
+        const fetch_options_data = async () => {
+            SetLoading(true);
+            try {
+                const response = await fetch(`https://bi.meraplion.com/local/get_data/get_dummy_data?manv=MR0023`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                // Add a 'checked' property to each HCO option for the switch list
+                const hco_with_checked = (data.hco_options || []).map(option => ({ ...option, checked: false }));
+                set_hco_options(hco_with_checked);
+                set_smn_thang_options(data.smn_thang_options || []);
+                set_tuan_thuc_hien_options(data.tuan_thuc_hien_options || []);
+                set_nhom_san_pham_options_state(data.nhom_san_pham_options || []);
+            } catch (error) {
+                console.error("Fetch error:", error);
+                SetALert(true);
+                SetALertType("danger");
+                SetALertText("Failed to fetch form options data.");
+            } finally {
+                SetLoading(false);
+            }
+        };
+
+        fetch_options_data();
+    }, [SetALert, SetALertType, SetALertText, SetLoading]); // Dependency array
+
+
+    React.useEffect(() => {
+        if (active_tab === 'cxmDuyet') {
+            const fetch_cxm_proposals = async () => {
+                SetLoading(true);
+                try {
+                    const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_seminar_hco_cxm`);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const result = await response.json(); // Data is wrapped in 'data' key
+                    const proposals_with_checked = (result.data || []).map(proposal => ({ ...proposal, checked: true }));
+                    set_cxm_proposals(proposals_with_checked);
+                } catch (error) {
+                    console.error("Fetch error for CXM proposals:", error);
+                    SetALert(true);
+                    SetALertType("danger");
+                    SetALertText("Failed to fetch CXM proposals data.");
+                } finally {
+                    SetLoading(false);
+                }
+            };
+            fetch_cxm_proposals();
+        }
+    }, [active_tab, SetLoading, SetALert, SetALertType, SetALertText]); // Re-fetch when active_tab changes to cxmDuyet
     
     const select_styles = {
         container: (base) => ({
@@ -75,7 +128,15 @@ const FormSeminarHco = () => {
     };
 
     const clear_data = () => {
-        set_selected_hco([]);
+        // Re-fetch initial data to reset hco_options with checked:false
+        const fetch_options_data = async () => {
+            const response = await fetch(`https://bi.meraplion.com/local/get_data/get_dummy_data?manv=MR0023`);
+            const data = await response.json();
+            const hco_with_checked = (data.hco_options || []).map(option => ({ ...option, checked: false }));
+            set_hco_options(hco_with_checked);
+        };
+        fetch_options_data();
+        
         set_smn_thang(null);
         set_tuan_thuc_hien(null);
         set_nhom_san_pham(null);
@@ -89,6 +150,24 @@ const FormSeminarHco = () => {
         set_chi_phi_bao_cao_vien('');
         set_tang_pham('');
         set_active_tab('deXuat'); // Reset to the first tab
+        set_hco_search_term(''); // Clear the search term
+        set_cxm_proposals([]); // Clear CXM proposals
+    };
+
+    const handleHcoSwitch = (id) => {
+        set_hco_options(
+            hco_options.map(option => 
+                option.id === id ? { ...option, checked: !option.checked } : option
+            )
+        );
+    };
+
+    const handleCxmProposalSwitch = (id) => {
+        set_cxm_proposals(
+            cxm_proposals.map(proposal => 
+                proposal.id === id ? { ...proposal, checked: !proposal.checked } : proposal
+            )
+        );
     };
 
     const post_form_data = async (data) => {
@@ -139,14 +218,15 @@ const FormSeminarHco = () => {
     };
 
     const handle_submit = () => {
+        const selected_hco_ids = hco_options.filter(option => option.checked).map(option => option.id);
         const postData = {
             id: get_id(),
             manv: 'MR0673', // default value
             status:'H',
-            hcp: selected_hco,
-            smn_thang: smn_thang,
-            tuan_thuc_hien: tuan_thuc_hien,
-            nhom_san_pham: nhom_san_pham,
+            hco: selected_hco_ids.join(','),
+            smn_thang: smn_thang ? smn_thang.value : null,
+            tuan_thuc_hien: tuan_thuc_hien ? tuan_thuc_hien.value : null,
+            nhom_san_pham: nhom_san_pham ? nhom_san_pham.value : null,
             so_luong_bs_ds: so_luong_bs_ds,
             dia_diem: dia_diem,
             muc_dich: muc_dich,
@@ -158,7 +238,7 @@ const FormSeminarHco = () => {
             tang_pham: tang_pham,
             inserted_at: Inserted_at(),
         };
-        post_form_data([postData]); // Wrap postData in []
+        post_form_data([postData]);
     };
 
     const render_de_xuat_tab = () => (
@@ -183,26 +263,39 @@ const FormSeminarHco = () => {
                             )}
                         </Modal>
 
-            {/* --- Chọn nhiều HCP --- */}
+            {/* --- Chọn nhiều HCO --- */}
             <div className="form-field-hover">
                 <p className="fw-bold mt-3">🧑‍⚕️ Chọn HCO - Khoa Phòng</p>
                 <div className="border rounded p-2">
-                    <Form.Control placeholder="🔍 Tìm HCO (KHÔNG DẤU)" className="mb-2"/>
+                    <Form.Control 
+                        placeholder="🔍 Tìm HCO (KHÔNG DẤU)" 
+                        className="mb-2 black-placeholder"
+                        value={hco_search_term}
+                        onChange={e => set_hco_search_term(e.target.value)}
+                    />
                     <ListGroup style={{ maxHeight: "400px", overflowY: "auto" }}>
-                        {hco_options.map(item => (
+                        {hco_options
+                            .filter(item => 
+                                removeAccents(item.ten_gop_hco).includes(removeAccents(hco_search_term))
+                            )
+                            .map(item => (
                             <ListGroup.Item key={item.id} className="p-1 bg-white border rounded">
-                                 <Form.Check type="switch" id={`hcp-switch-${item.id}`} label={item.ten_gop_hco} />
+                                 <Form.Check 
+                                    type="switch" 
+                                    id={`hco-switch-${item.id}`} 
+                                    label={item.ten_gop_hco}
+                                    checked={item.checked}
+                                    onChange={() => handleHcoSwitch(item.id)}
+                                 />
                             </ListGroup.Item>
                         ))}
                     </ListGroup>
                 </div>
             </div>
 
-            <Stack gap={1} className="mt-2">
-                <Select styles={select_styles} options={select_options} placeholder="SMN tháng" onChange={set_smn_thang} isSearchable required className="form-field-hover" menuPortalTarget={document.body} />
-                <Select styles={select_styles} options={select_options} placeholder="Tuần thực hiện" onChange={set_tuan_thuc_hien} isSearchable required className="mt-2 form-field-hover" menuPortalTarget={document.body} />
-                <Select styles={select_styles} options={select_options} placeholder="Nhóm sản phẩm giới thiệu chính" onChange={set_nhom_san_pham} isSearchable required className="mt-2 form-field-hover" menuPortalTarget={document.body} />
-            </Stack>
+            <Select styles={select_styles} options={smn_thang_options} placeholder="SMN tháng" onChange={set_smn_thang} value={smn_thang} isSearchable required className="form-field-hover mt-2" menuPortalTarget={document.body} />
+            <Select styles={select_styles} options={tuan_thuc_hien_options} placeholder="Tuần thực hiện" onChange={set_tuan_thuc_hien} value={tuan_thuc_hien} isSearchable required className="form-field-hover mt-2" menuPortalTarget={document.body} />
+            <Select styles={select_styles} options={nhom_san_pham_options_state} placeholder="Nhóm sản phẩm giới thiệu chính" onChange={set_nhom_san_pham} value={nhom_san_pham} isSearchable required className="form-field-hover mt-2" menuPortalTarget={document.body} />
             
             <FloatingLabel label="Số lượng BS/ DS" className="border rounded mt-2 form-field-hover">
                 <Form.Control type="number" value={so_luong_bs_ds} onChange={e => set_so_luong_bs_ds(e.target.value)} required />
@@ -217,7 +310,7 @@ const FormSeminarHco = () => {
             </FloatingLabel>
 
             <p className="fw-bold mt-3">💰 Chi phí dự kiến</p>
-            <FloatingLabel label="Chi phí thuê hội trường" className="border rounded mt-2 form-field-hover">
+            <FloatingLabel label="CP Hội trường" className="border rounded mt-2 form-field-hover">
                 <Form.Control 
                     type="text"
                     value={format_number(chi_phi_hoi_truong)} 
@@ -225,7 +318,7 @@ const FormSeminarHco = () => {
                     required
                 />
             </FloatingLabel>
-            <FloatingLabel label="Chi phí thuê máy chiếu" className="border rounded mt-2 form-field-hover">
+            <FloatingLabel label="CP Máy chiếu" className="border rounded mt-2 form-field-hover">
                 <Form.Control 
                     type="text"
                     value={format_number(chi_phi_may_chieu)} 
@@ -233,7 +326,7 @@ const FormSeminarHco = () => {
                     required
                 />
             </FloatingLabel>
-            <FloatingLabel label="Chi phí ăn uống" className="border rounded mt-2 form-field-hover">
+            <FloatingLabel label="CP Ăn uống" className="border rounded mt-2 form-field-hover">
                 <Form.Control 
                     type="text"
                     value={format_number(chi_phi_an_uong)} 
@@ -241,7 +334,7 @@ const FormSeminarHco = () => {
                     required
                 />
             </FloatingLabel>
-            <FloatingLabel label="Chi phí Teabreak" className="border rounded mt-2 form-field-hover">
+            <FloatingLabel label="CP Teabreak" className="border rounded mt-2 form-field-hover">
                 <Form.Control 
                     type="text"
                     value={format_number(chi_phi_teabreak)} 
@@ -249,7 +342,7 @@ const FormSeminarHco = () => {
                     required
                 />
             </FloatingLabel>
-             <FloatingLabel label="Chi phí mời báo cáo viên" className="border rounded mt-2 form-field-hover">
+             <FloatingLabel label="CP BCV" className="border rounded mt-2 form-field-hover">
                 <Form.Control 
                     type="text"
                     value={format_number(chi_phi_bao_cao_vien)} 
@@ -257,7 +350,7 @@ const FormSeminarHco = () => {
                     required
                 />
             </FloatingLabel>
-             <FloatingLabel label="Chi phí Tặng phẩm" className="border rounded mt-2 form-field-hover">
+             <FloatingLabel label="CP Tặng phẩm" className="border rounded mt-2 form-field-hover">
                 <Form.Control 
                     type="text"
                     value={format_number(tang_pham)} 
@@ -274,107 +367,86 @@ const FormSeminarHco = () => {
         </div>
     );
 
-        const render_cxm_duyet_tab = () => {
-            // Dummy data for the table, representing proposals from tab 1
-            const proposals = [
-                { 
-                    id: 1, 
-                    manv: 'MR0673',
-                    ten_nv: 'Nguyễn Văn B',
-                    ten_hco: 'BV Chợ Rẫy, BV 115',
-                    ds_tong_hco: 150000000,
-                    ds_nhom_sp_chinh: 30000000,
-                    tong_sl_nvyt: 50,
-                    smn_thang: 'Tháng 11', 
-                    tuan_thuc_hien: 'Tuần 48', 
-                    dia_diem: 'BV Chợ Rẫy', 
-                    nhom_san_pham: 'SP A', 
-                    so_luong_bs_ds: 20, 
-                    muc_dich: 'Hội thảo giới thiệu sản phẩm mới',
-                    chi_phi_hoi_truong: 2000000,
-                    chi_phi_may_chieu: 500000,
-                    chi_phi_an_uong: 1500000,
-                    chi_phi_teabreak: 500000,
-                    chi_phi_bao_cao_vien: 1000000,
-                    tang_pham: 500000
-                },
-            ];
-    
-            return (
-                <div className="bg-white border rounded shadow-sm p-3 mt-2">
-                    <h5 className="mb-3">Duyệt đề xuất</h5>
-                    <p>Danh sách các đề xuất đang chờ duyệt. Tắt switch để từ chối.</p>
-                    
-                    <Table striped bordered hover responsive id="cxm-approval-table" className="mt-3">
-                        <thead>
-                            <tr>
-                                <th>Chọn</th>
-                                <th>ID</th>
-                                <th>Mã NV</th>
-                                <th>Tên NV</th>           
-                                <th style={{ minWidth: '200px' }}>Tên HCO</th>
-                                <th style={{ minWidth: '120px' }}>DS HCO</th>
-                                <th style={{ minWidth: '120px' }}>DS Nhóm SP</th>
-                                <th style={{ minWidth: '100px' }}>SL NVYT</th>
-                                <th>Tháng</th>
-                                <th>Tuần</th>
-                                <th style={{ minWidth: '200px' }}>Địa điểm</th>
-                                <th>Nhóm SP</th>
-                                <th style={{ minWidth: '100px' }}>SL BS-DS</th>
-                                <th style={{ minWidth: '300px' }}>Mục đích</th>
-                                <th style={{ minWidth: '120px' }} className="text-end">Tổng CP</th>
-                                <th style={{ minWidth: '120px' }}>CP Hội trường</th>
-                                <th style={{ minWidth: '120px' }}>CP Máy chiếu</th>
-                                <th style={{ minWidth: '120px' }}>CP Ăn uống</th>
-                                <th style={{ minWidth: '120px' }}>CP Teabreak</th>
-                                <th style={{ minWidth: '120px' }}>CP BCV</th>
-                                <th style={{ minWidth: '120px' }}>CP Tặng phẩm</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {proposals.map(p => {
-                                const total_cost = p.chi_phi_hoi_truong + p.chi_phi_may_chieu + p.chi_phi_an_uong + p.chi_phi_teabreak + p.chi_phi_bao_cao_vien + p.tang_pham;
-                                return (
-                                    <tr key={p.id}>
-                                                                            <td>
-                                                                                <Form.Check 
-                                                                                    type="switch"
-                                                                                    id={`proposal-switch-${p.id}`}
-                                                                                    defaultChecked={true}
-                                                                                />
-                                                                            </td>
-                                                                            <td>{p.id}</td>
-                                                                            <td>{p.manv}</td>
-                                                                            <td>{p.ten_nv}</td>                                        <td style={{ minWidth: '200px' }}>{p.ten_hco}</td>
-                                        <td className="text-end" style={{ minWidth: '120px' }}>{format_number(p.ds_tong_hco)}</td>
-                                        <td className="text-end" style={{ minWidth: '120px' }}>{format_number(p.ds_nhom_sp_chinh)}</td>
-                                        <td style={{ minWidth: '100px' }}>{p.tong_sl_nvyt}</td>
-                                        <td>{p.smn_thang}</td>
-                                        <td>{p.tuan_thuc_hien}</td>
-                                        <td style={{ minWidth: '200px' }}>{p.dia_diem}</td>
-                                        <td>{p.nhom_san_pham}</td>
-                                        <td>{p.so_luong_bs_ds}</td>
-                                        <td style={{ minWidth: '300px' }}>{p.muc_dich}</td>
-                                        <td className="text-end fw-bold" style={{ minWidth: '120px' }}>{format_number(total_cost)}</td>
-                                        <td className="text-end">{format_number(p.chi_phi_hoi_truong)}</td>
-                                        <td className="text-end">{format_number(p.chi_phi_may_chieu)}</td>
-                                        <td className="text-end">{format_number(p.chi_phi_an_uong)}</td>
-                                        <td className="text-end">{format_number(p.chi_phi_teabreak)}</td>
-                                        <td className="text-end">{format_number(p.chi_phi_bao_cao_vien)}</td>
-                                        <td className="text-end">{format_number(p.tang_pham)}</td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </Table>
-    
-                    <div className="mt-3 d-flex gap-2">
-                        <Button variant="danger" size="lg" className="flex-fill">Từ chối</Button>
-                        <Button variant="success" size="lg" className="flex-fill">Duyệt</Button>
-                    </div>
+    const render_cxm_duyet_tab = () => {
+        return (
+            <div className="bg-white border rounded shadow-sm p-3 mt-2">
+                <h5 className="mb-3">Duyệt đề xuất</h5>
+                <p>Danh sách các đề xuất đang chờ duyệt. Tắt switch để từ chối.</p>
+                
+                <Table striped bordered hover responsive id="cxm-approval-table" className="mt-3">
+                    <thead>
+                        <tr>
+                            <th>Chọn</th>
+                            <th>ID</th>
+                            <th>Mã NV</th>
+                            <th>Tên NV</th>           
+                            <th style={{ minWidth: '200px' }}>Tên HCO</th>
+                            <th style={{ minWidth: '120px' }}>DS HCO</th>
+                            <th style={{ minWidth: '120px' }}>DS Nhóm SP</th>
+                            <th style={{ minWidth: '100px' }}>SL NVYT</th>
+                            <th>Tháng</th>
+                            <th>Tuần</th>
+                            <th style={{ minWidth: '200px' }}>Địa điểm</th>
+                            <th>Nhóm SP</th>
+                            <th style={{ minWidth: '100px' }}>SL BS-DS</th>
+                            <th style={{ minWidth: '300px' }}>Mục đích</th>
+                            <th style={{ minWidth: '120px' }} className="text-end">Tổng CP</th>
+                            <th style={{ minWidth: '120px' }}>CP Hội trường</th>
+                            <th style={{ minWidth: '120px' }}>CP Máy chiếu</th>
+                            <th style={{ minWidth: '120px' }}>CP Ăn uống</th>
+                            <th style={{ minWidth: '120px' }}>CP Teabreak</th>
+                            <th style={{ minWidth: '120px' }}>CP BCV</th>
+                            <th style={{ minWidth: '120px' }}>CP Tặng phẩm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {cxm_proposals.map(p => {
+                            const total_cost = p.chi_phi_hoi_truong + p.chi_phi_may_chieu + p.chi_phi_an_uong + p.chi_phi_teabreak + p.chi_phi_bao_cao_vien + p.tang_pham;
+                            return (
+                                <tr key={p.id}>
+                                    <td>
+                                        <Form.Check 
+                                            type="switch"
+                                            id={`proposal-switch-${p.id}`}
+                                            checked={p.checked}
+                                            onChange={() => handleCxmProposalSwitch(p.id)}
+                                        />
+                                    </td>
+                                    <td>{p.id}</td>
+                                    <td>{p.manv}</td>
+                                    <td>{p.ten_nv}</td>                                        
+                                    <td style={{ minWidth: '200px' }}>{p.ten_hco}</td>
+                                    <td className="text-end" style={{ minWidth: '120px' }}>{format_number(p.ds_tong_hco)}</td>
+                                    <td className="text-end" style={{ minWidth: '120px' }}>{format_number(p.ds_nhom_sp_chinh)}</td>
+                                    <td style={{ minWidth: '100px' }}>{p.tong_sl_nvyt}</td>
+                                    <td>{p.smn_thang}</td>
+                                    <td>{p.tuan_thuc_hien}</td>
+                                    <td style={{ minWidth: '200px' }}>{p.dia_diem}</td>
+                                    <td>{p.nhom_san_pham}</td>
+                                    <td>{p.so_luong_bs_ds}</td>
+                                    <td style={{ minWidth: '300px' }}>{p.muc_dich}</td>
+                                    <td className="text-end fw-bold" style={{ minWidth: '120px' }}>{format_number(total_cost)}</td>
+                                    <td className="text-end">{format_number(p.chi_phi_hoi_truong)}</td>
+                                    <td className="text-end">{format_number(p.chi_phi_may_chieu)}</td>
+                                    <td className="text-end">{format_number(p.chi_phi_an_uong)}</td>
+                                    <td className="text-end">{format_number(p.chi_phi_teabreak)}</td>
+                                    <td className="text-end">{format_number(p.chi_phi_bao_cao_vien)}</td>
+                                    <td className="text-end">{format_number(p.tang_pham)}</td>
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </Table>
+
+                <div className="mt-3 d-flex gap-2">
+                    <Button variant="danger" size="lg" className="flex-fill">Từ chối</Button>
+                    <Button variant="success" size="lg" className="flex-fill">Duyệt</Button>
                 </div>
-            );
-        };
+            </div>
+        );
+    };
+
+
     const render_bao_cao_tab = () => (
         <div className="bg-white border rounded shadow-sm p-3 mt-2">
             <h5 className="mb-3">📊 Báo cáo</h5>
