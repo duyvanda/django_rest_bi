@@ -1,0 +1,66 @@
+Form đăng ký kế hoạch Seminar HCP
+
+NavTab
+Đề xuất, CXM Duyệt, BC
+
+Tab 1 đề xuất.
+Select-Multi
+Chọn nhiều danh sách khoa phòng.
+Dữ liệu lấy từ API (danh sách data gồm id và ten_khoa_phong)
+
+Searchable Scroll List
+Chọn nhiều HCP (Searchable Scroll List)
+Dữ liệu lấy từ API, danh sách data gồm id (ma_kh_chung), và ten_gop_hco (Tên gộp HCO)
+
+Select-Single
+SMN tháng
+
+Select-Single
+Tuần thực hiện
+
+Select-Single
+Nhóm sản phẩm giới thiệu chính
+
+Input-Number
+Số lượng BS/ DS
+
+Input-text
+Địa điểm thực hiện
+
+Input-text
+Mục đích thực hiện
+
+Input-Number
+Chi phí thuê hội trường
+
+Input-Number
+Chi phí thuê máy chếu
+
+Input-Number
+Chi phí ăn uống
+
+Input-Text
+Chi phí Teabreak
+
+Input-Text
+Chi phí mời báo cáo viên
+
+Input-Text
+Tặng phẩm
+
+data post, dạng array, với mỗi ID là 1 dòng thôi, phải có thêm các thông tin sau:
+manv: mặc định là MR0673
+id: get_id() trong context api
+inserted_at: Inserted_at() trong context api
+
+
+Tab 2:
+CXM Duyệt
+Searchable Scroll List
+data lấy từ Tab 1 và auto select true trước, nếu cần thì CXM (người duyệt) sẽ bấm switch
+2 nút bấm, 1 là duyệt hay là từ chối (button groups)
+
+
+Tab 3:
+Báo cáo:
+Embeb a looker studio report

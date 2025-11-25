@@ -7,7 +7,7 @@ Nhiệm vụ: Tôi cần chạy file deploy script trên Windows bằng Git Bash
 
 Yêu cầu bắt buộc:
 1. Sử dụng chính xác lệnh sau (đường dẫn tuyệt đối):
-   & "C:/Program Files/Git/bin/bash.exe "D:/django_apps/rest/frontend1/deploy.sh"
+   & "C:/Program Files/Git/bin/bash.exe" "D:/django_apps/rest/frontend1/deploy.sh"
 
 2. QUAN TRỌNG: Hãy đặt câu lệnh đó vào trong một code block bash (```bash ... ```).
    Việc này giúp terminal của tôi nhận diện và cho phép thực thi ngay lập tức.

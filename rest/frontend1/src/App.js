@@ -36,6 +36,7 @@ import Tracking_chi_phi_hcp_qua_tang_crm from "./formcontrol/tracking_chi_phi_hc
 import Tracking_chi_phi_hcp_qua_tang_bc from "./formcontrol/tracking_chi_phi_hcp_qua_tang_bc";
 import Dang_ky_hcp_tham_du_hoi_nghi from "./formcontrol/dang_ky_hcp_tham_du_hoi_nghi";
 import Dang_ky_hcp_tham_du_hoi_nghi_crm from "./formcontrol/dang_ky_hcp_tham_du_hoi_nghi_crm";
+import FormSeminarHco from "./formcontrol/form_seminar_hco";
 
 import Tracking_chi_phi_hcp_bc from "./formcontrol/tracking_chi_phi_hcp_bc";
 // import Wps_dang_ky_vpp from "./formcontrol/wps_dang_ky_vpp";
@@ -137,6 +138,7 @@ function AppContent() {
                 
                 <Route path="/formcontrol/dang_ky_hcp_tham_du_hoi_nghi" element={<Dang_ky_hcp_tham_du_hoi_nghi />} />                
                 <Route path="/formcontrol/dang_ky_hcp_tham_du_hoi_nghi_crm" element={<Dang_ky_hcp_tham_du_hoi_nghi_crm />} />
+                <Route path="/formcontrol/form_seminar_hco" element={<FormSeminarHco />} />
                 <Route path="/formcontrol/tracking_chi_phi_hcp" element={<Tracking_chi_phi_hcp />} />
 
                 <Route path="/formcontrol/tracking_chi_phi_hcp_bc" element={<Tracking_chi_phi_hcp_bc />} />

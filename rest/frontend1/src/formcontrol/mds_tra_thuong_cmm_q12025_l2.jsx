@@ -22,7 +22,7 @@ export function MdsTraThuongCmmQ12025L2() {
     const fetch_initial_data = async (manv) => {
         SetLoading(true);
         // Data for L2 is different
-        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_data_mds_tra_thuong_cmm_2025_l2/?manv=${manv}`)
+        const response = await fetch(`https://bi.meraplion.com/local/get_data/get_data_mds_tra_thuong_cmm_2025/?manv=${manv}&type=l2`)
         
         if (response.ok) {
             const data = await response.json()

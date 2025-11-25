@@ -152,3 +152,41 @@ code {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
+
+.form-field-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.form-field-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 138, 132, 0.3); /* Using a transparent meraplion-dark-teal shade */
+}
+
+/* Custom placeholder color */
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: black !important;
+  opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: black !important;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: black !important;
+}
+
+/* Ensure FloatingLabel placeholders are black */
+.form-floating > label {
+  color: black !important;
+}
+
+.form-floating > .form-control::placeholder {
+  color: black !important;
+}
+
+/* Also ensure react-select placeholder is black (although already set in JS, good to be robust) */
+.react-select__placeholder {
+  color: black !important;
+}
+

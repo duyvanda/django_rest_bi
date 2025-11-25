@@ -25,7 +25,7 @@ import ClaimNavTabs from '../components/FormClaimNavTabs';
 import { useNavigate } from "react-router-dom";
 
 const Form_claim_chi_phi_claimed = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const location = useLocation();
   const { generateMonthOptions, get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
       

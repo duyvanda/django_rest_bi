@@ -2,6 +2,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
+import { v4 as uuid } from 'uuid';
 import {
     Button,
     ButtonGroup,
@@ -16,10 +17,6 @@ import {
     FloatingLabel,
     Stack,
     Dropdown,
-    // Badge
-    // InputGroup,
-    
-    
 } from "react-bootstrap";
 
 function Mds_bbgh_bo_sung() {
@@ -37,7 +34,6 @@ function Mds_bbgh_bo_sung() {
         const dv_width = window.innerWidth;
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'mds_bbgh_bo_sung', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
-        // fetch_initial_data(JSON.parse(localStorage.getItem("userInfo")).manv);
         console.log("so_don_hang_hoa_don", location_search.get('so_don_hang_hoa_don') )
         console.log("branchid",location_search.get('chi_nhanh'))
         set_so_don_hang_hoa_don(location_search.get('so_don_hang_hoa_don'));
@@ -45,7 +41,6 @@ function Mds_bbgh_bo_sung() {
         set_so_don_hang_hoa_don(location_search.get('so_don_hang_hoa_don'));
         set_ma_kh(location_search.get('ma_kh'));
         set_slsperid(location_search.get('slsperid'));
-        // window.open("https://www.w3schools.com")
         } else {
             navigate('/login');
         };
@@ -68,68 +63,11 @@ function Mds_bbgh_bo_sung() {
         }
     
 
-    // const handeClick = (e) => {
-    //     let lst = [];
-    //     for (let element of arr_co_lam_phong_mach) {
-    //         let select_lua_chon = e.target.id;  
-    //         if(element.cacluachon === select_lua_chon) {
-    //             element.check = e.target.checked
-    //             lst.push(element);
-    //         }
-
-    //         else if (element.cacluachon !== select_lua_chon){
-    //             element.check = false
-    //             lst.push(element);
-    //         } 
-    //         else {
-    //             lst.push(element);
-    //         }
-
-    //         set_arr_co_lam_phong_mach(lst);
-
-    //         if("Có code" === select_lua_chon & e.target.checked === true) {
-    //             set_chon_co_code(true);
-    //         }
-    //         else {
-    //             set_chon_co_code(false);
-    //             set_chon_hco_pcl("");
-    //             set_chon_chuc_vu("");
-    //         }
-    //     }
-
-    // }
-    
-
-
-    // const fetch_id_data = async (select_id) => {
-    //     SetLoading(true)
-    //     const response = await fetch(`https://bi.meraplion.com/local/template/?id=${select_id}`)
-        
-    //     if (!response.ok) {
-    //         SetLoading(false)
-    //     }
-
-    //     else {
-    //     const data_arr = await response.json()
-    //     const data = data_arr[0]
-    //     set_ten_hcp(data.id)
-    //     console.log(data)
-    //     SetLoading(false)
-
-    //     }
-    // }
-
     const post_form_data = async (postdata) => {
         SetLoading(true);
         const formData = new FormData();
-        // let data = {
-        //     "test":1,
-        //     "status":0
-        // }
-        // JSON.stringify(data)
         formData.append('data', JSON.stringify(postdata));
         for (let i of selectedFile) {
-            // console.log(i)
             formData.append('images', i)
         }
         const response = await fetch(`https://bi.meraplion.com/local/file_upload/`, {
@@ -143,7 +81,6 @@ function Mds_bbgh_bo_sung() {
         if (!response.ok) {
             SetLoading(false);
             const data = await response.json();
-            // console.log(data);
             SetALert(true);
             SetALertType("alert-danger");
             SetALertText("CHƯA TẠO ĐƯỢC");
@@ -151,17 +88,11 @@ function Mds_bbgh_bo_sung() {
         } else {
             SetLoading(false);
             const data = await response.json();
-            // console.log(data);
             SetALert(true);
             SetALertType("alert-success");
             SetALertText("ĐÃ TẠO THÀNH CÔNG");
             setTimeout( () => SetALert(false), 3000);
-            // window.open("https://www.w3schools.com")
-            // window.close()
-            // CLEAR OLD DATA
             setSelectedFile([])
-            // END CLEAR DATA
-            // window.location.reload();
 
         }
     }
@@ -182,7 +113,6 @@ function Mds_bbgh_bo_sung() {
         }
         console.log("postdata ", data);
         post_form_data(data);
-        // document.getElementById("focus_1").focus();
 
     }
 
@@ -196,9 +126,7 @@ function Mds_bbgh_bo_sung() {
                 <Col md={5} >
 
                     <div>
-                        {/* ALERT COMPONENT */}
                         <Form onSubmit={handle_submit}>
-                        {/* START FORM BODY */}
                         <FloatingLabel label="Số đơn hàng - Hóa đơn" className="border rounded mt-2" > <Form.Control readOnly={true} type="text" className="" placeholder="xxx" value = {so_don_hang_hoa_don}/> </FloatingLabel>
                         <FloatingLabel label="Chi nhánh" className="border rounded mt-2" > <Form.Control readOnly={true} type="text" className="" placeholder="xxx" value = {chi_nhanh}/> </FloatingLabel>
 
@@ -222,9 +150,6 @@ function Mds_bbgh_bo_sung() {
                         <p className="fw-italic">version: 1.1</p>
                         
                         </Form>
-                        {/* END FORM BODY */}
-
-                        {/* CARDS IF NEEDED */}
 
 
                         
@@ -235,15 +160,7 @@ function Mds_bbgh_bo_sung() {
         )
     }
     else {
-        // return (
-    
-        //     <div>
-        //         <h1 className="text-danger text-center">Xử Lý Thông Tin</h1>
-        //         <Spinner animation="border" role="status" style={{ height: "100px", width: "100px", margin: "auto", display: "block" }}>
-        //         </Spinner>
-        //     </div>
-            
-        // )
+
     }
 }
 

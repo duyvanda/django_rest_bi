@@ -1,0 +1,3 @@
+- Code Conventions: Snake_case is frequently used for variables and function names in this codebase (e.g., tracking_chi_phi_hcp, handle_submit, set_arr_hcp).
+- Function: Pythonic Style is refered.
+- Khi tôi đề nghị tạo bảng postgres chỉ dùng NUMBERIC, TEXT, TIMESTAMMP WITH OUT TIMEZONE
