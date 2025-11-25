@@ -3,6 +3,7 @@ import { Container, Row, Col, Nav, Form, ListGroup, FloatingLabel, Button, Stack
 import Select from 'react-select';
 import { removeAccents } from '../utils/string.js';
 import FeedbackContext from '../context/FeedbackContext'; // Assuming context path
+import LoadingAlert from '../components/LoadingAlert';
 
 // Based on form_ui_rules.md and the provided spec
 
@@ -364,6 +365,7 @@ const FormSeminarHco = () => {
                     {loading ? <Spinner animation="grow" size="sm" /> : "Gửi Đề Xuất"}
                 </Button>
             </div>
+            {/* Render the LoadingAlert component */}
         </div>
     );
 
