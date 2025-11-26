@@ -496,14 +496,14 @@ function Tao_hcp_bv() {
                                 </Dropdown.Menu>
                         </Dropdown>
 
-                        <FloatingLabel label="Tên HCP (IN HOA có dấu), ví dụ: NGUYỄN HÙNG ANH" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="xxx" onChange={ (e) => set_ten_hcp(e.target.value.toLocaleUpperCase()) } value = {ten_hcp}/> </FloatingLabel>
+                        <FloatingLabel label="Tên HCP (IN HOA có dấu), ví dụ: NGUYỄN HÙNG ANH" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_ten_hcp(e.target.value.toLocaleUpperCase()) } value = {ten_hcp}/> </FloatingLabel>
                         
                         <Stack direction="horizontal" gap={2} className="border-1">
                             {/* Bọc SĐT và lỗi của nó lại */}
                             <Stack gap={1}> 
                                 <FloatingLabel id="focus_1" label="Số điện thoại" className="border rounded mt-2" > 
                                     <Form.Control disabled={chon_hco_bv ===""} required type="number" className="" 
-                                                placeholder="xxx" onChange={ (e) => set_sdt(e.target.value) } 
+                                                placeholder="" onChange={ (e) => set_sdt(e.target.value) } 
                                                 onBlur={ e => handle_on_blur(e.target.value) } value = {sdt}/> 
                                 </FloatingLabel>
                                 {check_trung_sdt &&
@@ -513,7 +513,7 @@ function Tao_hcp_bv() {
                             
                             {/* Trường Email */}
                             <FloatingLabel label="Email" className="border rounded mt-2" > 
-                                <Form.Control type="email" className="" placeholder="xxx" 
+                                <Form.Control type="email" className="" placeholder="" 
                                             onChange={ (e) => set_email(e.target.value) } value = {email}/> 
                             </FloatingLabel>
                         </Stack>
@@ -636,8 +636,8 @@ function Tao_hcp_bv() {
                         </Form.Select>
                         {/* IF PCL then comment */}
                         <Stack direction="horizontal" gap={1} className="border-1">
-                            <FloatingLabel style={{width: "50%"}} label="Số lượt khám" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_luot_kham(e.target.value.toLocaleUpperCase()) } value = {so_luot_kham}/> </FloatingLabel>
-                            <FloatingLabel style={{width: "50%"}} label="Tiềm năng" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_tiem_nang(e.target.value.toLocaleUpperCase()) } value = {so_tiem_nang}/> </FloatingLabel>
+                            <FloatingLabel style={{width: "50%"}} label="Số lượt khám" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_so_luot_kham(e.target.value.toLocaleUpperCase()) } value = {so_luot_kham}/> </FloatingLabel>
+                            <FloatingLabel style={{width: "50%"}} label="Tiềm năng" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_so_tiem_nang(e.target.value.toLocaleUpperCase()) } value = {so_tiem_nang}/> </FloatingLabel>
                         </Stack>
 
                         <Form.Select hidden={true} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh(e.target.value) }>

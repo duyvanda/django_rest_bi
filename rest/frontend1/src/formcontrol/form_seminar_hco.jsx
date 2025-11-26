@@ -1,9 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Container, Row, Col, Nav, Form, ListGroup, FloatingLabel, Button, Stack, Spinner, Table, Modal, Alert } from 'react-bootstrap';
 import Select from 'react-select';
 import { removeAccents } from '../utils/string.js';
 import FeedbackContext from '../context/FeedbackContext'; // Assuming context path
-
+import LoadingAlert from '../components/LoadingAlert';
 // Based on form_ui_rules.md and the provided spec
 
 const FormSeminarHco = () => {
@@ -33,60 +33,60 @@ const FormSeminarHco = () => {
     const [tuan_thuc_hien_options, set_tuan_thuc_hien_options] = useState([]);
     const [nhom_san_pham_options_state, set_nhom_san_pham_options_state] = useState([]);
     const [cxm_proposals, set_cxm_proposals] = useState([]);
-    
-    React.useEffect(() => {
+
         const fetch_options_data = async () => {
-            SetLoading(true);
-            try {
-                const response = await fetch(`https://bi.meraplion.com/local/get_data/get_dummy_data?manv=MR0023`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                // Add a 'checked' property to each HCO option for the switch list
-                const hco_with_checked = (data.hco_options || []).map(option => ({ ...option, checked: false }));
-                set_hco_options(hco_with_checked);
-                set_smn_thang_options(data.smn_thang_options || []);
-                set_tuan_thuc_hien_options(data.tuan_thuc_hien_options || []);
-                set_nhom_san_pham_options_state(data.nhom_san_pham_options || []);
-            } catch (error) {
-                console.error("Fetch error:", error);
-                SetALert(true);
-                SetALertType("danger");
-                SetALertText("Failed to fetch form options data.");
-            } finally {
-                SetLoading(false);
+        SetLoading(true);
+        try {
+            const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_seminar_hco_crs?manv=MR0673`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        };
-
-        fetch_options_data();
-    }, [SetALert, SetALertType, SetALertText, SetLoading]); // Dependency array
-
-
-    React.useEffect(() => {
-        if (active_tab === 'cxmDuyet') {
-            const fetch_cxm_proposals = async () => {
-                SetLoading(true);
-                try {
-                    const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_seminar_hco_cxm`);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    const result = await response.json(); // Data is wrapped in 'data' key
-                    const proposals_with_checked = (result.data || []).map(proposal => ({ ...proposal, checked: true }));
-                    set_cxm_proposals(proposals_with_checked);
-                } catch (error) {
-                    console.error("Fetch error for CXM proposals:", error);
-                    SetALert(true);
-                    SetALertType("danger");
-                    SetALertText("Failed to fetch CXM proposals data.");
-                } finally {
-                    SetLoading(false);
-                }
-            };
-            fetch_cxm_proposals();
+            const data = await response.json();
+            // Add a 'checked' property to each HCO option for the switch list
+            const hco_with_checked = (data.hco_options || []).map(option => ({ ...option, checked: false }));
+            set_hco_options(hco_with_checked);
+            set_smn_thang_options(data.smn_thang_options || []);
+            set_tuan_thuc_hien_options(data.tuan_thuc_hien_options || []);
+            set_nhom_san_pham_options_state(data.nhom_san_pham_options || []);
+        } catch (error) {
+            console.error("Fetch error:", error);
+            SetALert(true);
+            SetALertType("danger");
+            SetALertText("Failed to fetch form options data.");
+        } finally {
+            SetLoading(false);
         }
-    }, [active_tab, SetLoading, SetALert, SetALertType, SetALertText]); // Re-fetch when active_tab changes to cxmDuyet
+    };
+    
+    useEffect(() => {
+        fetch_options_data();
+    }, []); // Dependency array
+
+
+    // React.useEffect(() => {
+    //     if (active_tab === 'cxmDuyet') {
+    //         const fetch_cxm_proposals = async () => {
+    //             SetLoading(true);
+    //             try {
+    //                 const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_seminar_hco_cxm`);
+    //                 if (!response.ok) {
+    //                     throw new Error('Network response was not ok');
+    //                 }
+    //                 const result = await response.json(); // Data is wrapped in 'data' key
+    //                 const proposals_with_checked = (result.data || []).map(proposal => ({ ...proposal, checked: true }));
+    //                 set_cxm_proposals(proposals_with_checked);
+    //             } catch (error) {
+    //                 console.error("Fetch error for CXM proposals:", error);
+    //                 SetALert(true);
+    //                 SetALertType("danger");
+    //                 SetALertText("Failed to fetch CXM proposals data.");
+    //             } finally {
+    //                 SetLoading(false);
+    //             }
+    //         };
+    //         fetch_cxm_proposals();
+    //     }
+    // }, [active_tab]);
     
     const select_styles = {
         container: (base) => ({
@@ -129,7 +129,7 @@ const FormSeminarHco = () => {
     const clear_data = () => {
         // Re-fetch initial data to reset hco_options with checked:false
         const fetch_options_data = async () => {
-            const response = await fetch(`https://bi.meraplion.com/local/get_data/get_dummy_data?manv=MR0023`);
+            const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_seminar_hco_crs?manv=MR0673`);
             const data = await response.json();
             const hco_with_checked = (data.hco_options || []).map(option => ({ ...option, checked: false }));
             set_hco_options(hco_with_checked);
@@ -217,12 +217,64 @@ const FormSeminarHco = () => {
     };
 
     const handle_submit = () => {
-        const selected_hco_ids = hco_options.filter(option => option.checked).map(option => option.id);
+        const errors = [];
+        const checked_hco_options = hco_options.filter(option => option.checked);
+        const total_hcps = checked_hco_options.reduce((sum, option) => sum + (option.sl_nvyt || 0), 0); // Assuming 'sl_nvyt' is the correct property for HCP count
+
+        if (checked_hco_options.length === 0) {
+            errors.push("chọn ít nhất một HCO - Khoa Phòng");
+        }
+        if (!smn_thang) {
+            errors.push("chọn SMN tháng");
+        }
+        if (!tuan_thuc_hien) {
+            errors.push("chọn tuần thực hiện");
+        }
+        if (!nhom_san_pham) {
+            errors.push("chọn nhóm sản phẩm");
+        }
+        if (!so_luong_bs_ds || parseInt(so_luong_bs_ds, 10) <= 0) {
+            errors.push("nhập số lượng BS/DS (phải lớn hơn 0)");
+        }
+        if (!dia_diem.trim()) {
+            errors.push("nhập địa điểm thực hiện");
+        }
+        if (!muc_dich.trim()) {
+            errors.push("nhập mục đích thực hiện");
+        }
+
+        if (errors.length > 0) {
+            SetALert(true);
+            SetALertType("danger");
+            SetALertText(`Vui lòng ${errors.join(', ')}.`);
+            setTimeout(() => SetALert(false), 2000);
+            return;
+        }
+
+        const real_ids = [];
+        const nganh_khoa_phongs = [];
+
+        checked_hco_options.forEach(option => {
+            const parts = option.id.split('@@');
+            real_ids.push(parts[0]);
+            nganh_khoa_phongs.push(parts[1] || '');
+        });
+
+        const unique_real_ids = [...new Set(real_ids)];
+        if (unique_real_ids.length > 1) {
+            SetALert(true);
+            SetALertType("danger");
+            SetALertText("Chỉ được phép chọn các khoa phòng trong cùng 1 HCO.");
+            setTimeout(() => SetALert(false), 1000);
+            return;
+        }
+
         const postData = {
-            id: get_id(),
+            id: get_id(), // Use get_id() as clarified
             manv: 'MR0673', // default value
             status:'H',
-            hco: selected_hco_ids.join(','),
+            hco: real_ids.length > 0 ? real_ids[0] : null, // Only the first real_id
+            nganh_khoa_phong: nganh_khoa_phongs.join(','), // All nganh_khoa_phongs joined
             smn_thang: smn_thang ? smn_thang.value : null,
             tuan_thuc_hien: tuan_thuc_hien ? tuan_thuc_hien.value : null,
             nhom_san_pham: nhom_san_pham ? nhom_san_pham.value : null,
@@ -235,8 +287,10 @@ const FormSeminarHco = () => {
             chi_phi_teabreak: chi_phi_teabreak,
             chi_phi_bao_cao_vien: chi_phi_bao_cao_vien,
             tang_pham: tang_pham,
+            tong_sl_nvyt: total_hcps, // Added with the correct key name
             inserted_at: Inserted_at(),
         };
+        console.log("postData", postData);
         post_form_data([postData]);
     };
 

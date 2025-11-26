@@ -361,19 +361,19 @@ export const FeedbackProvider = ({ children }) => {
 
 
   const getUserInfo = async () => {
-    SetLoading(true);
+    // SetLoading(true);
     if (JSON.parse(localStorage.getItem("userInfo"))) {
       const data = JSON.parse(localStorage.getItem("userInfo"));
       console.log("getUserInfo manv", data)
       setUserInfo(data);
       await fetchReports(data.manv);
       await fetchUserStatus(data.manv, data.token);
-    SetLoading(false);
+    // SetLoading(false);
     } 
     
     else {
       setUserInfo("");
-      SetLoading(false);
+      // SetLoading(false);
     }
     
     
