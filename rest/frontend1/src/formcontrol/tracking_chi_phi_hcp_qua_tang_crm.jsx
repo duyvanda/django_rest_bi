@@ -265,8 +265,8 @@ function Tracking_chi_phi_hcp_qua_tang_crm() {
 
                         <div className="bg-white border rounded shadow-sm p-2 mt-2">
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="lg" className="mt-2 border-0">
-                            <Button disabled={false} type="submit"              className='flex-fill' variant="success"  style={{width: "100%", fontWeight: "bold"}}> ✅ DUYỆT </Button>
-                            <Button disabled={false} onClick={ handle_reject }  className='flex-fill' variant="danger" style={{width: "100%", fontWeight: "bold"}}> ❌ TỪ CHỐI </Button>
+                            <Button disabled={false} onClick={ handleApproval(true) } className='flex-fill' variant="success"  style={{width: "100%", fontWeight: "bold"}}> ✅ DUYỆT </Button>
+                            <Button disabled={false} onClick={ handleApproval(false) }  className='flex-fill' variant="danger" style={{width: "100%", fontWeight: "bold"}}> ❌ TỪ CHỐI </Button>
                         </ButtonGroup>
                         </div>
                         

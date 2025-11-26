@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Container, Row, Col, Nav, Form, ListGroup, FloatingLabel, Button, Stack, Spinner, Table, Modal, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Nav, Form, ListGroup, FloatingLabel, Button, Stack, Spinner, Table, Modal, Alert, ButtonGroup } from 'react-bootstrap';
 import Select from 'react-select';
 import { removeAccents } from '../utils/string.js';
 import FeedbackContext from '../context/FeedbackContext'; // Assuming context path
@@ -9,7 +9,7 @@ import LoadingAlert from '../components/LoadingAlert';
 const FormSeminarHco = () => {
     const { get_id, Inserted_at, userLogger, loading, SetLoading, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
 
-    const [active_tab, set_active_tab] = useState('deXuat');
+    const [active_tab, set_active_tab] = useState('');
     const [hco_search_term, set_hco_search_term] = useState('');
     
     
@@ -33,6 +33,7 @@ const FormSeminarHco = () => {
     const [tuan_thuc_hien_options, set_tuan_thuc_hien_options] = useState([]);
     const [nhom_san_pham_options_state, set_nhom_san_pham_options_state] = useState([]);
     const [cxm_proposals, set_cxm_proposals] = useState([]);
+    const [chuc_danh, set_chuc_danh] = useState('');
 
         const fetch_options_data = async () => {
         SetLoading(true);
@@ -59,34 +60,51 @@ const FormSeminarHco = () => {
     };
     
     useEffect(() => {
-        fetch_options_data();
-    }, []); // Dependency array
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get('active_tab');
+        if (tab) {
+            set_active_tab(tab);
+        }
+    }, []);
+
+    useEffect(() => {
+        window.history.replaceState(null, '', `?active_tab=${active_tab}`);
+    }, [active_tab]);
+    
+    useEffect(() => {
+        if (active_tab === 'deXuat') {
+            console.log("deXuat Tab")
+            fetch_options_data();
+        }
+    }, [active_tab]);
 
 
-    // React.useEffect(() => {
-    //     if (active_tab === 'cxmDuyet') {
-    //         const fetch_cxm_proposals = async () => {
-    //             SetLoading(true);
-    //             try {
-    //                 const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_seminar_hco_cxm`);
-    //                 if (!response.ok) {
-    //                     throw new Error('Network response was not ok');
-    //                 }
-    //                 const result = await response.json(); // Data is wrapped in 'data' key
-    //                 const proposals_with_checked = (result.data || []).map(proposal => ({ ...proposal, checked: true }));
-    //                 set_cxm_proposals(proposals_with_checked);
-    //             } catch (error) {
-    //                 console.error("Fetch error for CXM proposals:", error);
-    //                 SetALert(true);
-    //                 SetALertType("danger");
-    //                 SetALertText("Failed to fetch CXM proposals data.");
-    //             } finally {
-    //                 SetLoading(false);
-    //             }
-    //         };
-    //         fetch_cxm_proposals();
-    //     }
-    // }, [active_tab]);
+    const fetch_cxm_proposals = async () => {
+        SetLoading(true);
+        try {
+            const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_seminar_hco_cxm?manv=MR0673`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const result = await response.json(); // Data is wrapped in 'data' key
+            const proposals_with_checked = (result.data || []).map(proposal => ({ ...proposal, checked: true }));
+            set_cxm_proposals(proposals_with_checked);
+            set_chuc_danh(result.chucdanhengtitlesum || '');
+        } catch (error) {
+            console.error("Fetch error for CXM proposals:", error);
+            SetALert(true);
+            SetALertType("danger");
+            SetALertText("Failed to fetch CXM proposals data.");
+        } finally {
+            SetLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (active_tab === 'cxmDuyet') {
+            fetch_cxm_proposals();
+        }
+    }, [active_tab]);
     
     const select_styles = {
         container: (base) => ({
@@ -128,13 +146,12 @@ const FormSeminarHco = () => {
 
     const clear_data = () => {
         // Re-fetch initial data to reset hco_options with checked:false
-        const fetch_options_data = async () => {
-            const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_seminar_hco_crs?manv=MR0673`);
-            const data = await response.json();
-            const hco_with_checked = (data.hco_options || []).map(option => ({ ...option, checked: false }));
-            set_hco_options(hco_with_checked);
-        };
-        fetch_options_data();
+        // const fetch_options_data = async () => {
+        //     const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_seminar_hco_crs?manv=MR0673`);
+        //     const data = await response.json();
+        //     const hco_with_checked = (data.hco_options || []).map(option => ({ ...option, checked: false }));
+        //     set_hco_options(hco_with_checked);
+        // };
         
         set_smn_thang(null);
         set_tuan_thuc_hien(null);
@@ -167,6 +184,70 @@ const FormSeminarHco = () => {
                 proposal.id === id ? { ...proposal, checked: !proposal.checked } : proposal
             )
         );
+    };
+
+    const handleApproval = (isApproved) => async () => {
+        const selectedProposals = cxm_proposals.filter(p => p.checked);
+
+        if (selectedProposals.length === 0) {
+            SetALert(true);
+            SetALertType("warning");
+            SetALertText("Vui lòng chọn ít nhất một đề xuất để duyệt/từ chối.");
+            setTimeout(() => SetALert(false), 2000);
+            return;
+        }
+
+        const dataToPost = selectedProposals.map(p => ({
+            id: p.id,
+            status: isApproved ? 'I' : 'R', // 'I' for Approved, 'R' for Rejected
+            user: userLogger.manv,
+            inserted_at: Inserted_at()
+        }));
+
+        console.log("dataToPost", dataToPost)
+
+        SetLoading(true);
+        try {
+            const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_form_seminar_hco_cxm/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dataToPost),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                SetALert(true);
+                SetALertType("danger");
+                SetALertText(errorData.error_message || "An error occurred.");
+                setTimeout(() => {
+                    SetALert(false);
+                    SetLoading(false);
+                }, 2000);
+            } else {
+                const successData = await response.json();
+                SetALert(true);
+                SetALertType("success");
+                SetALertText(successData.success_message || "Success!");
+                
+
+                
+                setTimeout(() => {
+                    SetALert(false);
+                    SetLoading(false);
+                    // Re-fetch data using the extracted function
+                    fetch_cxm_proposals();
+                }, 2000);
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            SetALert(true);
+            SetALertType("danger");
+            SetALertText("Network error or server unreachable.");
+            setTimeout(() => {
+                SetALert(false);
+                SetLoading(false);
+            }, 2000);
+        }
     };
 
     const post_form_data = async (data) => {
@@ -275,6 +356,7 @@ const FormSeminarHco = () => {
             status:'H',
             hco: real_ids.length > 0 ? real_ids[0] : null, // Only the first real_id
             nganh_khoa_phong: nganh_khoa_phongs.join(','), // All nganh_khoa_phongs joined
+            tong_sl_nvyt: total_hcps,
             smn_thang: smn_thang ? smn_thang.value : null,
             tuan_thuc_hien: tuan_thuc_hien ? tuan_thuc_hien.value : null,
             nhom_san_pham: nhom_san_pham ? nhom_san_pham.value : null,
@@ -287,7 +369,6 @@ const FormSeminarHco = () => {
             chi_phi_teabreak: chi_phi_teabreak,
             chi_phi_bao_cao_vien: chi_phi_bao_cao_vien,
             tang_pham: tang_pham,
-            tong_sl_nvyt: total_hcps, // Added with the correct key name
             inserted_at: Inserted_at(),
         };
         console.log("postData", postData);
@@ -308,7 +389,7 @@ const FormSeminarHco = () => {
                         value={hco_search_term}
                         onChange={e => set_hco_search_term(e.target.value)}
                     />
-                    <ListGroup style={{ maxHeight: "400px", overflowY: "auto" }}>
+                    <ListGroup style={{ maxHeight: "250px", overflowY: "auto" }}>
                         {hco_options
                             .filter(item => 
                                 removeAccents(item.ten_gop_hco).includes(removeAccents(hco_search_term))
@@ -403,9 +484,12 @@ const FormSeminarHco = () => {
     );
 
     const render_cxm_duyet_tab = () => {
+        const restricted_titles = ["CRS", "CRSS", "CR Staff"];
+        const can_approve = !restricted_titles.includes(chuc_danh) && chuc_danh;
+        
         return (
             <div className="bg-white border rounded shadow-sm p-3 mt-2">
-                <h5 className="mb-3">Duyệt đề xuất</h5>
+                <h5 className="mb-3">Duyệt đề xuất ({chuc_danh})</h5>
                 <p>Danh sách các đề xuất đang chờ duyệt. Tắt switch để từ chối.</p>
                 
                 <Table striped bordered hover responsive id="cxm-approval-table" className="mt-3">
@@ -418,6 +502,7 @@ const FormSeminarHco = () => {
                             <th style={{ minWidth: '200px' }}>Tên HCO</th>
                             <th style={{ minWidth: '120px' }}>DS HCO</th>
                             <th style={{ minWidth: '120px' }}>DS Nhóm SP</th>
+                            <th style={{ minWidth: '120px' }}>Khoa Phòng</th>
                             <th style={{ minWidth: '100px' }}>SL NVYT</th>
                             <th>Tháng</th>
                             <th>Tuần</th>
@@ -449,12 +534,13 @@ const FormSeminarHco = () => {
                                     </td>
                                     <td>{p.id}</td>
                                     <td>{p.manv}</td>
-                                    <td>{p.ten_nv}</td>                                        
+                                    <td style={{ minWidth: '200px' }}>{p.ten_nhan_vien}</td>                                        
                                     <td style={{ minWidth: '200px' }}>{p.ten_hco}</td>
                                     <td className="text-end" style={{ minWidth: '120px' }}>{format_number(p.ds_tong_hco)}</td>
                                     <td className="text-end" style={{ minWidth: '120px' }}>{format_number(p.ds_nhom_sp_chinh)}</td>
+                                    <td style={{ minWidth: '200px' }}>{p.nganh_khoa_phong}</td>
                                     <td style={{ minWidth: '100px' }}>{p.tong_sl_nvyt}</td>
-                                    <td>{p.smn_thang}</td>
+                                    <td style={{ minWidth: '100px' }}>{p.smn_thang}</td>
                                     <td>{p.tuan_thuc_hien}</td>
                                     <td style={{ minWidth: '200px' }}>{p.dia_diem}</td>
                                     <td>{p.nhom_san_pham}</td>
@@ -473,9 +559,13 @@ const FormSeminarHco = () => {
                     </tbody>
                 </Table>
 
-                <div className="mt-3 d-flex gap-2">
-                    <Button variant="danger" size="lg" className="flex-fill">Từ chối</Button>
-                    <Button variant="success" size="lg" className="flex-fill">Duyệt</Button>
+                <div className="bg-white border rounded shadow-sm p-2 mt-2">
+                <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="lg" className="mt-2 border-0">
+                    {can_approve && (
+                        <Button disabled={false} onClick={ handleApproval(true) }  className='flex-fill' variant="success"  style={{width: "100%", fontWeight: "bold"}}> ✅ DUYỆT </Button>
+                    )}
+                    <Button disabled={false} onClick={ handleApproval(false) }  className='flex-fill' variant="danger" style={{width: "100%", fontWeight: "bold"}}> ❌ TỪ CHỐI </Button>
+                </ButtonGroup>
                 </div>
             </div>
         );
