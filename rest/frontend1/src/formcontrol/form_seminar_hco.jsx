@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Container, Row, Col, Nav, Form, ListGroup, FloatingLabel, Button, Stack, Spinner, Table, Modal, Alert, ButtonGroup } from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 import { removeAccents } from '../utils/string.js';
 import FeedbackContext from '../context/FeedbackContext'; // Assuming context path
@@ -7,13 +8,16 @@ import LoadingAlert from '../components/LoadingAlert';
 // Based on form_ui_rules.md and the provided spec
 
 const FormSeminarHco = () => {
+    const navigate = useNavigate();
+    const [manv, set_manv] = useState("");
     const { get_id, Inserted_at, userLogger, loading, SetLoading, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
-
+    
     const [active_tab, set_active_tab] = useState('');
     const [hco_search_term, set_hco_search_term] = useState('');
     
     
     // State for Tab 1
+    
     const [selected_hco, set_selected_hco] = useState([]);
     const [smn_thang, set_smn_thang] = useState(null);
     const [tuan_thuc_hien, set_tuan_thuc_hien] = useState(null);
@@ -35,10 +39,22 @@ const FormSeminarHco = () => {
     const [cxm_proposals, set_cxm_proposals] = useState([]);
     const [chuc_danh, set_chuc_danh] = useState('');
 
-        const fetch_options_data = async () => {
+        useEffect(() => {
+            if (localStorage.getItem("userInfo")) {
+            const media = window.matchMedia('(max-width: 960px)');
+            const isMB = (media.matches);
+            const dv_width = window.innerWidth;
+            userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'tracking_chi_phi_hcp', isMB, dv_width);
+            set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
+            } else {
+                navigate('/login');
+            };
+        }, []);
+
+    const fetch_options_data = async () => {
         SetLoading(true);
         try {
-            const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_seminar_hco_crs?manv=MR0673`);
+            const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_seminar_hco_crs?manv=${manv}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -82,7 +98,7 @@ const FormSeminarHco = () => {
     const fetch_cxm_proposals = async () => {
         SetLoading(true);
         try {
-            const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_seminar_hco_cxm?manv=MR0673`);
+            const response = await fetch(`https://bi.meraplion.com/local/get_data/get_form_seminar_hco_cxm?manv=${manv}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -187,24 +203,40 @@ const FormSeminarHco = () => {
     };
 
     const handleApproval = (isApproved) => async () => {
+        let status;
+        if (isApproved) {
+            if (chuc_danh.includes("CXM")) {
+                status = 'C';
+            } else if (chuc_danh.includes("CRM")) {
+                status = 'I';
+            } else {
+                SetALert(true);
+                SetALertType("danger");
+                SetALertText("Bạn không có quyền duyệt đề xuất này.");
+                setTimeout(() => SetALert(false), 2000);
+                return;
+            }
+        } else {
+            // Rejection is always 'R' regardless of title
+            status = 'R';
+        }
+
         const selectedProposals = cxm_proposals.filter(p => p.checked);
 
         if (selectedProposals.length === 0) {
             SetALert(true);
             SetALertType("warning");
-            SetALertText("Vui lòng chọn ít nhất một đề xuất để duyệt/từ chối.");
+            SetALertText("Vui lòng chọn ít nhất một đề xuất.");
             setTimeout(() => SetALert(false), 2000);
             return;
         }
-
+        
         const dataToPost = selectedProposals.map(p => ({
             id: p.id,
-            status: isApproved ? 'I' : 'R', // 'I' for Approved, 'R' for Rejected
-            user: userLogger.manv,
+            status: status,
+            manv: manv,
             inserted_at: Inserted_at()
         }));
-
-        console.log("dataToPost", dataToPost)
 
         SetLoading(true);
         try {
@@ -229,12 +261,9 @@ const FormSeminarHco = () => {
                 SetALertType("success");
                 SetALertText(successData.success_message || "Success!");
                 
-
-                
                 setTimeout(() => {
                     SetALert(false);
                     SetLoading(false);
-                    // Re-fetch data using the extracted function
                     fetch_cxm_proposals();
                 }, 2000);
             }
@@ -352,7 +381,7 @@ const FormSeminarHco = () => {
 
         const postData = {
             id: get_id(), // Use get_id() as clarified
-            manv: 'MR0673', // default value
+            manv: manv, // default value
             status:'H',
             hco: real_ids.length > 0 ? real_ids[0] : null, // Only the first real_id
             nganh_khoa_phong: nganh_khoa_phongs.join(','), // All nganh_khoa_phongs joined
@@ -484,13 +513,11 @@ const FormSeminarHco = () => {
     );
 
     const render_cxm_duyet_tab = () => {
-        const restricted_titles = ["CRS", "CRSS", "CR Staff"];
-        const can_approve = !restricted_titles.includes(chuc_danh) && chuc_danh;
+        const can_approve_by_role = chuc_danh && (chuc_danh.includes("CXM") || chuc_danh.includes("CRM"));
         
         return (
             <div className="bg-white border rounded shadow-sm p-3 mt-2">
-                <h5 className="mb-3">Duyệt đề xuất ({chuc_danh})</h5>
-                <p>Danh sách các đề xuất đang chờ duyệt. Tắt switch để từ chối.</p>
+                <p>({chuc_danh}) Danh sách các đề xuất đang chờ duyệt. Tắt Chọn (●—) để từ chối.</p>
                 
                 <Table striped bordered hover responsive id="cxm-approval-table" className="mt-3">
                     <thead>
@@ -561,7 +588,7 @@ const FormSeminarHco = () => {
 
                 <div className="bg-white border rounded shadow-sm p-2 mt-2">
                 <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="lg" className="mt-2 border-0">
-                    {can_approve && (
+                    {can_approve_by_role && (
                         <Button disabled={false} onClick={ handleApproval(true) }  className='flex-fill' variant="success"  style={{width: "100%", fontWeight: "bold"}}> ✅ DUYỆT </Button>
                     )}
                     <Button disabled={false} onClick={ handleApproval(false) }  className='flex-fill' variant="danger" style={{width: "100%", fontWeight: "bold"}}> ❌ TỪ CHỐI </Button>
@@ -605,7 +632,7 @@ const FormSeminarHco = () => {
                                 onClick={() => set_active_tab('cxmDuyet')}
                                 className={active_tab === 'cxmDuyet' ? 'bg-merap-active text-white' : 'bg-white shadow-sm border text-dark'}
                             >
-                                CXM Duyệt
+                                QL Duyệt
                             </Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
