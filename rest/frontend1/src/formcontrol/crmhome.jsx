@@ -5,7 +5,8 @@ import {
   FaGift,
   FaCogs,
   FaFileInvoiceDollar,
-  FaCalendarCheck
+  FaCalendarCheck,
+  FaChalkboardTeacher
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
@@ -56,13 +57,13 @@ const CrmHome = () => {
     path: '/formcontrol/form_claim_chi_phi',
     icon: <FaFileInvoiceDollar size={28} color="#17a2b8" />
     },
-    // {
-    // stt: 6,
-    // title: 'Công tác phí (Kế Toán)',
-    // description: 'Khai báo công tác phí cho Sales',
-    // path: '/formcontrol/cong_tac_phi',
-    // icon: <FaFileInvoiceDollar size={28} color="#17a2b8" />
-    // }
+    {
+      stt: 7,
+      title: 'Đăng ký seminar HCO',
+      description: 'Đăng ký seminar HCO',
+      path: '/formcontrol/form_seminar_hco?active_tab=deXuat',
+      icon: <FaChalkboardTeacher size={28} color="#17a2b8" />
+    }
   ];
 
   const sortedList = [...items].sort((a, b) => a.stt - b.stt);
