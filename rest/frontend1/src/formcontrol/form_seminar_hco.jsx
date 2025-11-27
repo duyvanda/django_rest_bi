@@ -405,7 +405,7 @@ const FormSeminarHco = () => {
     };
 
     const render_de_xuat_tab = () => (
-        <div className="bg-white border rounded shadow-sm p-3 mt-2">
+        <div className="bg-white border rounded shadow-lg p-3 mt-2">
             <h5 className="mb-3">📝 Đề xuất Kế hoạch Seminar</h5>
 
             {/* --- Chọn nhiều HCO --- */}
@@ -600,15 +600,14 @@ const FormSeminarHco = () => {
 
 
     const render_bao_cao_tab = () => (
-        <div className="bg-white border rounded shadow-sm p-3 mt-2">
+        <div className="bg-white border rounded shadow-lg p-3 mt-2">
             <h5 className="mb-3">📊 Báo cáo</h5>
             <iframe
                 title="Looker Studio Report"
                 width="100%"
                 height="600"
-                src="https://lookerstudio.google.com/embed/reporting/YOUR_REPORT_ID"
-                frameBorder="0"
-                style={{ border: 0 }}
+                src="https://lookerstudio.google.com/embed/reporting/72887267-cb8c-4eb9-b895-00b90a6abf45"
+                style={{ border: '1px solid #ccc', borderRadius: '8px' }}
                 allowFullScreen
             ></iframe>
         </div>
