@@ -4,3 +4,5 @@
 - Load for forms, just import LoadingAlert from '../components/LoadingAlert'; and use it 
 <LoadingAlert loading={loading} alert={alert} alertType={alertType} alertText={alertText} SetAlert={SetALert} />
 - post_data_guide.md
+- to deploy use & "C:/Program Files/Git/bin/bash.exe" "D:/django_apps/rest/frontend1/deploy.sh"
+- Dont use any git command
