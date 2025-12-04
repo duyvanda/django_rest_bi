@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { useContext, useEffect, useState, useRef  } from "react";
 import Select from "react-select";
-import './myvnp.css';
+// import './myvnp.css';
 import { Link, useLocation  } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext';
 import {
@@ -16,7 +16,10 @@ import {
     Table,
     ListGroup
 } from "react-bootstrap";
-const Excel_kh_bi_thu_hoi_gpp = ( {history} ) => {
+import { useNavigate } from "react-router-dom";
+
+const Excel_kh_bi_thu_hoi_gpp = () => {
+    const navigate = useNavigate();
 
   const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
   const fileInputRef = useRef(null); // ✅ Define the ref here
@@ -45,7 +48,7 @@ const Excel_kh_bi_thu_hoi_gpp = ( {history} ) => {
       userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, location.pathname, isMB, dv_width);
       set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
       } else {
-          history.push(`/login?redirect=${location.pathname}`);
+          navigate(`/login?redirect=${location.pathname}`);
       };
   }, [count]);
 

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 import Select from "react-select";
-import './myvnp.css';
+// import './myvnp.css';
 import { Link, useLocation  } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext';
 import {
@@ -14,9 +14,12 @@ import {
     Form,
     Spinner,
 } from "react-bootstrap";
-import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
+import FormClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
 
-function Form_claim_chi_phi({ history }) {
+import { useNavigate } from "react-router-dom";
+
+function Form_claim_chi_phi() {
+    const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const { generateMonthOptions, formatNumber, get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
@@ -52,7 +55,7 @@ function Form_claim_chi_phi({ history }) {
         fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
         set_ky_chi_phi_kt(monthOptions[2].value);
         } else {
-            history.push(`/login?redirect=${location.pathname}`);
+            navigate(`/login?redirect=${location.pathname}`);
         };
     }, []);
     
@@ -72,6 +75,7 @@ function Form_claim_chi_phi({ history }) {
     const [noi_dung, set_noi_dung] = useState("");
     const [ghi_chu, set_ghi_chu] = useState("");
     const [so_ke_hoach, set_so_ke_hoach] = useState("");
+    const [nguoi_tiep, set_nguoi_tiep] = useState(""); // New state for 'nguoi_tiep'
     const [data_kh_chung, set_data_kh_chung] = useState([]
     )
     const [data_hcp, set_data_hcp] = useState([]);
@@ -95,6 +99,7 @@ function Form_claim_chi_phi({ history }) {
         const selectedValue = e.target.value;
         set_qua_tang(selectedValue);
         set_noi_dung(null); // Reset nội dung
+        set_nguoi_tiep(""); // Reset nguoi_tiep when qua_tang changes
     
         if (selectedValue === 'Giao tiếp - Mời cơm') {
           set_current_noi_dung(noi_dungs_giao_tiep);
@@ -134,6 +139,7 @@ function Form_claim_chi_phi({ history }) {
         set_noi_dung("");
         set_ghi_chu("");
         set_so_ke_hoach("");
+        set_nguoi_tiep(""); // Clear nguoi_tiep on data clear
         set_ty_le( { value: '5:5', label: '5:5' } )
     };
 
@@ -205,7 +211,8 @@ function Form_claim_chi_phi({ history }) {
             inserted_at: insert,
             ma_dip: "khong_co",
             thang_chi_phi: null,
-            ky_chi_phi_kt: ky_chi_phi_kt.replace(/(\d{2})-(\d{2})-(\d{4})/, '$3-$2-$1')
+            ky_chi_phi_kt: ky_chi_phi_kt.replace(/(\d{2})-(\d{2})-(\d{4})/, '$3-$2-$1'),
+            nguoi_tiep: nguoi_tiep // Include nguoi_tiep in baseData
             
         };
         const plan = Number(so_ke_hoach.replace(/,/g, ""));
@@ -243,7 +250,8 @@ function Form_claim_chi_phi({ history }) {
                     inserted_at: baseData.inserted_at,
                     ma_dip: baseData.noi_dung.ma_dip,
                     thang_chi_phi: baseData.noi_dung.thang_chi_phi,
-                    ky_chi_phi_kt: baseData.ky_chi_phi_kt
+                    ky_chi_phi_kt: baseData.ky_chi_phi_kt,
+                    nguoi_tiep: baseData.nguoi_tiep // Include nguoi_tiep in explodedData
                 };
                 explodedData.push(newItem);
             }
@@ -257,7 +265,7 @@ function Form_claim_chi_phi({ history }) {
         return (
     <Container className="bg-teal-100 h-100" fluid>
         {/* Responsive Full-Width Buttons */}
-        <ClaimNavTabs />
+        <FormClaimNavTabs />
 
         {/* Existing noi_dung */}
 
@@ -332,6 +340,17 @@ function Form_claim_chi_phi({ history }) {
                                 />
                             )
                             }
+                            {/* New input for "Họ và Tên người tiếp" for TP/MT */}
+                            {is_tp_mt && (
+                                <Form.Control
+                                    className='mt-2 dark-placeholder'
+                                    type="text"
+                                    placeholder="Họ và Tên người tiếp"
+                                    onChange={(e) => set_nguoi_tiep(e.target.value)}
+                                    value={nguoi_tiep}
+                                    required
+                                />
+                            )}
 
                             {/* General chon_hcp Select with Search */}
                             <Select

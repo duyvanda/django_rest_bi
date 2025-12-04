@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
-import './myvnp.css';
+// import './myvnp.css';
 import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
@@ -23,10 +23,10 @@ import {
     // FloatingLabel,
 } from "react-bootstrap";
 
-function Tracking_chi_phi_hcp_qua_tang( {history} ) {
+function Tracking_chi_phi_hcp_qua_tang() {
 
     const { get_id, Inserted_at, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    const navigate = useNavigate();
 
     const fetch_tracking_chi_phi_get_data_hcp = async (manv) => {
         SetLoading(true);
@@ -39,6 +39,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
             set_mo_link(data['mo_link']);
             set_ten_chuong_trinh(data['ten_chuong_trinh']);
             set_quy_tac(data['quy_tac']);
+            set_nguoi_upload_file_data(data['nguoi_upload_file_data'] || []);
             SetLoading(false);
         }
         else {
@@ -52,6 +53,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
     const [mo_link, set_mo_link] = useState("");
     const [ten_chuong_trinh, set_ten_chuong_trinh] = useState("");
     const [quy_tac, set_quy_tac] = useState("");
+    const [nguoi_upload_file_data, set_nguoi_upload_file_data] = useState([]);
     const [show_quy_tac, set_show_quy_tac] = useState(false);
     const [manv, set_manv] = useState("");
     const [lst_chon_gm, set_lst_chon_gm] = useState([]);
@@ -74,7 +76,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_tracking_chi_phi_get_data_hcp(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
-            history.push('/login');
+            navigate('/login');
         };
     }, [count]);
 
@@ -106,7 +108,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
         }
 
         else {
-            void(0)
+            void(0);
             // element.check = false
             lst.push(element);
         }
@@ -231,8 +233,20 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
         }
         
         console.log("data", data);
-        console.log(result);
-        post_form_data(result);
+        
+        const validResult = result.filter(item => item.so_luong && parseInt(item.so_luong) >= 1);
+        console.log(validResult);
+
+        if (validResult.length > 0) {
+            post_form_data(validResult);
+        } else {
+            SetALert(true);
+            SetALertType("alert-warning");
+            SetALertText("Vui lòng nhập số lượng lớn hơn hoặc bằng 1");
+            setTimeout(() => {
+                SetALert(false);
+            }, 3000);
+        }
         // set_gia_tri_smn("");
 
     }
@@ -303,11 +317,11 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                         {/* START FORM BODY */}
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button style={{width: "60px"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >CRM</Button>
+                            <Button style={{width: "60px"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate("/crmhome") } >CRM</Button>
                             
                             <Button variant={type === "gm" ? "primary" : "outline-primary"} key={2} onClick={ () => 
                                 {
-                                    navigate.push("/formcontrol/tracking_chi_phi_hcp?type=gm");
+                                    navigate("/formcontrol/tracking_chi_phi_hcp?type=gm");
                                     set_type_input("gm");
                                     clear_data();
                                     setCount(count+1);
@@ -316,7 +330,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
                             
                             <Button variant={type === "vttd" ? "primary" : "outline-primary"} key={1} onClick={ () => 
                                 {
-                                navigate.push("/formcontrol/tracking_chi_phi_hcp?type=vttd");
+                                navigate("/formcontrol/tracking_chi_phi_hcp?type=vttd");
                                 set_type_input("vttd");
                                 clear_data();
                                 setCount(count+1);
@@ -426,7 +440,7 @@ function Tracking_chi_phi_hcp_qua_tang( {history} ) {
 
                         {Number(mo_link) === 0 && <p>Chưa mở link nhập</p>}
                         
-                        { ['MR1119', 'MR0474', 'MR2616', 'MR2417', 'MR0673'].includes(manv) &&
+                        { nguoi_upload_file_data.includes(manv) &&
                         <Button variant="danger" size="sm" onClick={handleExcelModalShow} className="mt-2">
                         + Thay đổi data (ADMIN)
                         </Button>

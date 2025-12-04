@@ -1,30 +1,33 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
-import './myvnp.css';
+import FeedbackContext from '../context/FeedbackContext';
 import { Link } from "react-router-dom";
-import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,
+    Image,
+    Card,
+    // ButtonGroup,
     Col,
     Row,
     Container,
     Form,
     Spinner,
-    Card,
-    Image,
-    InputGroup,
-    Stack,
-    FloatingLabel,
-    Dropdown,
+    // Card,
+    Badge,
+    Nav,
+    ListGroup,
     Modal,
+    Table,
+    Alert
+    // InputGroup
 } from "react-bootstrap";
 
-function Thi_cmsp_hcp({history}) {
+function Thi_cmsp_hcp() {
 
     const { userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    const navigate = useNavigate();
     const fetch_data = async (manv) => {
         SetLoading(true);
         const response = await fetch(`https://bi.meraplion.com/local/cmsp_quy_tp/?manv=${manv}&system=HCP`)
@@ -37,7 +40,7 @@ function Thi_cmsp_hcp({history}) {
 
             // xu ly date_thi
             let date_thi = formatDate(Date());
-            if (data['date_thi_hcp'] !== date_thi) {history.push('/reports');}
+            if (data['date_thi_hcp'] !== date_thi) {navigate('/reports');}
             else { void(0); }
             // end
         }
@@ -60,7 +63,7 @@ function Thi_cmsp_hcp({history}) {
 
 
         } else {
-            history.push('/login?redirect=/formcontrol/thi_cmsp_hcp');
+            navigate('/login?redirect=/formcontrol/thi_cmsp_hcp');
         };
 
     }, [count]);

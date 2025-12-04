@@ -38,7 +38,8 @@ const Dang_ky_nghi_phep_pkh_ncrm = () => {
         else {
         const data = await response.json()
         set_data_submit(data['data'])
-        console.log(data);
+        set_ds_approver(data['ds_approver'])
+        console.log("data", data);
         SetLoading(false);
 
         }
@@ -63,6 +64,8 @@ const Dang_ky_nghi_phep_pkh_ncrm = () => {
 
     const [manv, set_manv] = useState("");
     const [data_submit, set_data_submit] = useState([]);
+    const [ds_approver, set_ds_approver] = useState([]);
+    
     
       // Update the 'checked' status when the switch is toggled
       const handleSwitchChange = (uuid) => {
@@ -117,14 +120,19 @@ const Dang_ky_nghi_phep_pkh_ncrm = () => {
             updatedRecord.inserted_at = Inserted_at();
             return updatedRecord;
           }
-          else {void(0);}
-          // return record;
-        });
+          return record;
+        }).filter(Boolean);
       
+        // Records to send to the server
+        const recordsToPost = updatedRecords.filter((record) => record.checked && record.status === ql_duyet);
+
         // Update state with the modified records list
+        console.log("recordsToPost", recordsToPost)
         console.log("updatedRecords", updatedRecords)
-        set_data_submit(updatedRecords);
-        post_form_data(updatedRecords);
+        // set_data_submit(updatedRecords);
+        if (recordsToPost.length > 0) {
+          post_form_data(recordsToPost);
+        }
     
       };
     
@@ -167,7 +175,7 @@ const Dang_ky_nghi_phep_pkh_ncrm = () => {
           {/* Buttons for approving or denying */}
           <div className="mt-2" style={{ marginBottom: "20px", display: "flex", gap: "10px", justifyContent: "flex-start" }}>
           <Button
-            disabled={manv !== 'MR0485'}
+            disabled={!ds_approver.includes(manv)}
             variant="success"
             onClick={() => handleApproval(true)}
             style={{ padding: '5px 10px' }} // Smaller padding

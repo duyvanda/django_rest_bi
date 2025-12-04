@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import { v4 as uuid } from 'uuid';
-import './myvnp.css';
+// import './myvnp.css';
 import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
@@ -19,10 +19,19 @@ import {
     Alert
 } from "react-bootstrap";
 
-function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
+function Tracking_chi_phi_hcp_qua_tang_crm() {
 
     const { Inserted_at, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    const navigate = useNavigate();
+
+    const [count, setCount] = useState(0);
+    const f = new Intl.NumberFormat();
+    const [manv, set_manv] = useState("");
+    const [arr_hcp, set_arr_hcp] = useState([]);
+    const [list_nv, set_list_nv] = useState([]);
+    const [select_nv, set_select_nv] = useState("");
+    const [search, set_search] = useState('');
+    const [sl_da_chon, set_sl_da_chon] = useState(0);
 
     const fetch_tracking_chi_phi_get_data_hcp = async (manv) => {
         SetLoading(true);
@@ -41,8 +50,6 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
 
     }
 
-    const [count, setCount] = useState(0);
-
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {
         const media = window.matchMedia('(max-width: 960px)');
@@ -52,24 +59,19 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_tracking_chi_phi_get_data_hcp(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
-            history.push('/login');
+            navigate('/login');
         };
     }, [count]);
 
-    
-    const f = new Intl.NumberFormat();
-    const [manv, set_manv] = useState("");
-    // const current_date = formatDate(Date());
-    const [arr_hcp, set_arr_hcp] = useState([]);
-    // const [tong_hcp_da_dau_tu, set_tong_hcp_da_dau_tu] = useState("");
-    // const [tong_tien_ke_hoach_da_dau_tu, set_tong_tien_ke_hoach_da_dau_tu] = useState("");
-    const [list_nv, set_list_nv] = useState([]);
-    const [select_nv, set_select_nv] = useState("");
-    const [search, set_search] = useState('');
-    const [sl_da_chon, set_sl_da_chon] = useState(0);
+    // Recalculate sl_da_chon whenever arr_hcp or select_nv changes
+    useEffect(() => {
+        const filtered_arr_hcp = arr_hcp.filter(el => el.ma_crs.includes(select_nv));
+        const checked_count = filtered_arr_hcp.filter(el => el.check).length;
+        set_sl_da_chon(checked_count);
+    }, [arr_hcp, select_nv]);
 
     const handeClick = (e) => {
-        (e.target.checked) ? set_sl_da_chon(sl_da_chon+1) : set_sl_da_chon(sl_da_chon-1) 
+        // (e.target.checked) ? set_sl_da_chon(sl_da_chon+1) : set_sl_da_chon(sl_da_chon-1) 
         let lst = [];
         for (const element of arr_hcp) {
         if(element.uuid === e.target.id) {
@@ -87,9 +89,9 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
 
     const handle_submit = (e) => {
         e.preventDefault();
-        // const current_date = formatDate(Date());
         const ma_uuid = []
-        for (let i of arr_hcp) {
+        const filtered_arr_hcp = arr_hcp.filter(el => el.ma_crs.includes(select_nv));
+        for (let i of filtered_arr_hcp) {
             if (i.check === true) {ma_uuid.push(i.uuid)}
         }
         const data = {
@@ -113,7 +115,8 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
         e.preventDefault();
         // const current_date = formatDate(Date());
         const ma_uuid = []
-        for (let i of arr_hcp) {
+        const filtered_arr_hcp = arr_hcp.filter(el => el.ma_crs.includes(select_nv));
+        for (let i of filtered_arr_hcp) {
             if (i.check === true) {ma_uuid.push(i.uuid)}
         }
         const data = {
@@ -134,6 +137,7 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
     }
 
     const post_form_data = async (data) => {
+        // return;
         // SetLoading(true)
         console.log("post_form_data", data)
         const response = await fetch(`https://bi.meraplion.com/local/post_data/insert_planning_collect_hcp_qua_tang_crm/`, {
@@ -205,7 +209,7 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
                                                 // FIX: Only use bg-white and custom colors if NOT active. 
                                                 // If active, let Bootstrap default (Blue bg + White text) take over.
                                                 className={`shadow-sm border ${isActive ? "bg-merap-active" : `bg-white ${color || ""}`}`}
-                                                onClick={!isLink ? () => navigate.push(path) : undefined}
+                                                onClick={!isLink ? () => navigate(path) : undefined}
                                                 href={isLink ? path : undefined}
                                                 target={isLink ? "_blank" : undefined}
                                             >
@@ -224,8 +228,8 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
                         <Form.Select className="mb-2" style={{}}  onChange={ e => set_select_nv(e.target.value) }>
                             <option value="">Chọn Nhân Viên</option>
                             {list_nv
-                            .map( (el, index) => 
-                            <option value={el.manv}> {el.manv + ' - ' + el.tencvbh} </option>
+                            .map( (el) => 
+                            <option key={el.manv} value={el.manv}> {el.manv + ' - ' + el.tencvbh} </option>
                             )
                             }
                         </Form.Select>
@@ -238,9 +242,9 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
                         {arr_hcp
                             .filter( el => el.ma_crs.includes(select_nv))
                             .filter( el => el.clean_ten_hcp.toLowerCase().includes(search.toLowerCase()))
-                            .map( (el, index) =>
-                            <ListGroup.Item style={{maxHeight:"125px"}} className="p-1 bg-white border rounded" >
-                                <Form.Check key={index} className="text-wrap" type="switch" checked={el.check} onChange={ handeClick } id={el.uuid} label={ el.ten_hien_thi } />
+                            .map( (el) =>
+                            <ListGroup.Item key={el.uuid} style={{maxHeight:"125px"}} className="p-1 bg-white border rounded" >
+                                <Form.Check className="text-wrap" type="switch" checked={el.check} onChange={ handeClick } id={el.uuid} label={ el.ten_hien_thi } />
                             </ListGroup.Item>
                             )
                         }
@@ -264,10 +268,10 @@ function Tracking_chi_phi_hcp_qua_tang_crm({history}) {
                         )}
 
                         <div className="bg-white border rounded shadow-sm p-2 mt-2">
-                        <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="lg" className="mt-2 border-0">
-                            <Button disabled={false} type="submit"              className='flex-fill' variant="success"  style={{width: "100%", fontWeight: "bold"}}> ✅ DUYỆT </Button>
-                            <Button disabled={false} onClick={ handle_reject }  className='flex-fill' variant="danger" style={{width: "100%", fontWeight: "bold"}}> ❌ TỪ CHỐI </Button>
-                        </ButtonGroup>
+                            <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="lg" className="mt-2 border-0">
+                                <Button disabled={false} type="submit"              className='flex-fill' variant="success"  style={{width: "100%", fontWeight: "bold"}}> ✅ DUYỆT </Button>
+                                <Button disabled={false} onClick={ handle_reject }  className='flex-fill' variant="danger" style={{width: "100%", fontWeight: "bold"}}> ❌ TỪ CHỐI </Button>
+                            </ButtonGroup>
                         </div>
                         
                         </Form>

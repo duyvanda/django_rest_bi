@@ -1,11 +1,15 @@
 import React from 'react'
 import { useState, useContext, useEffect } from 'react'
 import FeedbackContext from '../context/FeedbackContext'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Spinner, Form } from "react-bootstrap";
 
 
-function Login( {history, location} ) {
+import { useNavigate } from 'react-router-dom';
+
+function Login() {
+    const navigate = useNavigate();
+    const location = useLocation();
     const { loginUser, userInfo, LoginText, LoginLoading } = useContext(FeedbackContext)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -32,7 +36,7 @@ function Login( {history, location} ) {
         const verify = async () => {
           try {
             await loginUser(logindata); // from context
-            history.replace(redirect);
+            navigate(redirect, { replace: true });
           } catch (err) {
             console.log("Token verification failed.");
           } finally {
@@ -48,18 +52,18 @@ function Login( {history, location} ) {
       {
         console.log("redirect", location_search.get('redirect') )
         // const redirect = location.search.split("&")[0].split("=")[1]
-        history.push(redirect);
+        navigate(redirect);
       }
     else if (userInfo)
       {
-        history.push("/reports");
+        navigate("/reports");
       }
 
     else if (location_search.get('utm_source')) {
       // const utm_source = location.search.split("&")[0].split("=")[1]
       const manv = location.search.split("&")[1].split("=")[1]
       const token = location.search.split("&")[2].split("=")[1]
-      history.push("/login")
+      navigate("/login")
       const logindata = {
         email: manv,
         password: token}
@@ -69,7 +73,7 @@ function Login( {history, location} ) {
     void(0)
   }
   // eslint-disable-next-line
-	}, [history, userInfo]);
+	}, [navigate, userInfo]);
   
   // userInfo
 
@@ -87,8 +91,6 @@ function Login( {history, location} ) {
             email:email,
             password:"GIwSgZdtwXadjrHA.U9ftBp.SOis8YoKLU4yaj1U9ftBp_c2y7owPhZAmU4Tpn0YbOxkMFSOis8YoKLU4yaj1U9ftBp509236728"
           }
-        
-        console.log("logindata", logindata)
         loginUser(logindata)
         setEmail(''); 
         setPassword('');
@@ -96,7 +98,7 @@ function Login( {history, location} ) {
         if (location_search.get('redirect'))
         {
           const redirect = location.search.split("&")[0].split("=")[1]
-          history.push(redirect);
+          navigate(redirect);
         }
         else {void(0)}
         

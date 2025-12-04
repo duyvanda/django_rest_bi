@@ -1,9 +1,6 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-import { v4 as uuid } from 'uuid';
-import './myvnp.css';
-import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,
@@ -21,9 +18,10 @@ import {
     Dropdown    
 } from "react-bootstrap";
 
-function Tao_hcp_bc({history, location}) {
+function Tao_hcp_bc() {
 
-    const navigate = useHistory();
+    const navigate = useNavigate();
+    const location = useLocation();
     const location_search = new URLSearchParams(location.search)
 
     
@@ -39,13 +37,11 @@ function Tao_hcp_bc({history, location}) {
             fetchFilerReportsRT("192", isMB, {});
         }
 		else {
-            history.push('/login?redirect=/formcontrol/tao_hcp_bc');
+            navigate('/login?redirect=/formcontrol/tao_hcp_bc');
         };
 
         } 
-        // else {
-        //     history.push('/login?redirect=/formcontrol/tao_hcp_bc');
-        // };
+
     }, []);
 
     const {userInfo, userLogger, SetRpScreen, fetchFilerReportsRT, shared, loading, ReportId, ReportParam, vw } = useContext(FeedbackContext)
@@ -67,8 +63,8 @@ function Tao_hcp_bc({history, location}) {
                         <Col md={4} >
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button style={{width: "60px"}} variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >CRM</Button>
-                            <Button style={{width: "30px"}} key={5} onClick={ () => navigate.push("/formcontrol/tao_hcp_bc") } className="ml-1 bg-secondary border-0" >BC</Button>
+                            <Button style={{width: "60px"}} variant="outline-success" key={0} onClick={ () => navigate("/crmhome") } >CRM</Button>
+                            <Button style={{width: "30px"}} key={5} onClick={ () => navigate("/formcontrol/tao_hcp_bc") } className="ml-1 bg-secondary border-0" >BC</Button>
                         </ButtonGroup>
 
                         </Col>

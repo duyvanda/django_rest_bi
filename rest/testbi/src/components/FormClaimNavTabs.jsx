@@ -1,64 +1,45 @@
-// src/components/ClaimNavTabs.jsx
+// src/components/FormClaimNavTabs.jsx
 import React from 'react';
-import { Row, Col, Button } from 'react-bootstrap';
+import { Nav } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 
-const ClaimNavTabs = () => {
-  const location = useLocation();
-  return (
-    <Row className="justify-content-center mb-1 mt-1">
-      <Col xs={2} className="" >
-        <Link to="/crmhome">
-          <Button
-            variant="outline-success"
-            className="w-100 text-center"
-          >
-            HOME
-          </Button>
-        </Link>
-      </Col>
-      <Col xs={3}>
-        <Link to="/formcontrol/form_claim_chi_phi">
-          <Button
-            variant={location.pathname === "/formcontrol/form_claim_chi_phi" ? "primary" : "outline-primary"}
-            className="w-100"
-          >
-            ĐỀ XUẤT
-          </Button>
-        </Link>
-      </Col>
-      <Col xs={2}>
-        <Link to="/formcontrol/form_claim_chi_phi_crm">
-          <Button
-            variant={location.pathname === "/formcontrol/form_claim_chi_phi_crm" ? "success" : "outline-secondary"}
-            className="w-100"
-          >
-            QL
-          </Button>
-        </Link>
-      </Col>
-      <Col xs={3}>
-        <Link to="/formcontrol/form_claim_chi_phi_claimed">
-          <Button
-            variant={location.pathname === "/formcontrol/form_claim_chi_phi_claimed" ? "success" : "outline-success"}
-            className="w-100"
-          >
-            CLAIM
-          </Button>
-        </Link>
-      </Col>
-      <Col xs={2}>
-        <Link to="/formcontrol/cong_tac_phi">
-          <Button
-            variant={location.pathname === "/formcontrol/cong_tac_phi" ? "success" : "outline-success"}
-            className="w-100"
-          >
-            CTP
-          </Button>
-        </Link>
-      </Col>
-    </Row>
-  );
+const FormClaimNavTabs = () => {
+    const location = useLocation();
+
+    const getNavLinkClass = (path) => {
+        const isActive = location.pathname === path;
+        return isActive ? "bg-merap-active text-white" : "bg-white shadow-sm border";
+    };
+
+    return (
+        <Nav variant="pills" fill className="bg-light p-2 rounded gap-2 fw-bold">
+            <Nav.Item>
+                <Nav.Link as={Link} to="/crmhome" className={getNavLinkClass("/crmhome") + " text-success"}>
+                    HOME
+                </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+                <Nav.Link as={Link} to="/formcontrol/form_claim_chi_phi" className={getNavLinkClass("/formcontrol/form_claim_chi_phi") + " text-primary"}>
+                    ĐỀ XUẤT
+                </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+                <Nav.Link as={Link} to="/formcontrol/form_claim_chi_phi_crm" className={getNavLinkClass("/formcontrol/form_claim_chi_phi_crm") + " text-info"}>
+                    QL
+                </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+                <Nav.Link as={Link} to="/formcontrol/form_claim_chi_phi_claimed" className={getNavLinkClass("/formcontrol/form_claim_chi_phi_claimed") + " text-success"}>
+                    CLAIM
+                </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+                <Nav.Link as={Link} to="/formcontrol/form_claim_chi_phi_ctp" className={getNavLinkClass("/formcontrol/form_claim_chi_phi_ctp") + " text-success"}>
+                    CTP
+                </Nav.Link>
+            </Nav.Item>
+        </Nav>
+    );
 };
 
-export default ClaimNavTabs;
+export default FormClaimNavTabs;

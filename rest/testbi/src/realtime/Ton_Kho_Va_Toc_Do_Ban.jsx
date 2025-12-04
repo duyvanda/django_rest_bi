@@ -11,15 +11,22 @@ import {
     Modal
 } from "react-bootstrap";
 
-function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
+import {
+    useNavigate,
+    useParams
+} from "react-router-dom";
+
+function Ton_Kho_Va_Toc_Do_Ban() {
+    const navigate = useNavigate();
+    const { id } = useParams();
 
     useEffect(() => {
 		if (localStorage.getItem("userInfo")) {
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
         const dv_width = window.innerWidth;
-        console.log("stt", match.params.id)
-        const stt = match.params.id
+        console.log("stt", id)
+        const stt = id
         const rpid = stt.slice(0, -1)
         const lastChar = stt.substr(stt.length - 1);
         const phancap = lastChar==="0" ? false : true;
@@ -28,7 +35,7 @@ function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
         SetRpScreen(true);
         fetchFilerReports(rpid, isMB);
 		} else {
-            history.push('/login');
+            navigate('/login');
         };
     // eslint-disable-next-line
 	}, []);
@@ -90,7 +97,7 @@ function Ton_Kho_Va_Toc_Do_Ban( {match,history} ) {
         e.preventDefault();
         const media = window.matchMedia('(max-width: 960px)');
         const isMB = (media.matches);
-        const stt = match.params.id
+        const stt = id
         const rpid = stt.slice(0, -1)
         const lastChar = stt.substr(stt.length - 1);
         const phancap = lastChar==="0" ? false : true;

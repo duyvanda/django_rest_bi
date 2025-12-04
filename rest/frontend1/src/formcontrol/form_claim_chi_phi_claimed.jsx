@@ -20,7 +20,7 @@ import {
 } from "react-bootstrap";
 import dayjs from "dayjs";
 import { FaDownload } from "react-icons/fa";
-import ClaimNavTabs from '../components/FormClaimNavTabs';
+import FormClaimNavTabs from '../components/FormClaimNavTabs';
 
 import { useNavigate } from "react-router-dom";
 
@@ -305,7 +305,7 @@ const Form_claim_chi_phi_claimed = () => {
   return (
     <Container className="h-100" fluid> 
       {/* Responsive Full-Width Buttons */}
-        <ClaimNavTabs />
+        <FormClaimNavTabs />
 
       {/* ALERT COMPONENT */}
       <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">

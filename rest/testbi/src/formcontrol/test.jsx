@@ -1,5 +1,5 @@
+/* eslint-disable */
 import React, { useState, useEffect, useContext } from 'react';
-
 // Mock FeedbackContext for demonstration
 const FeedbackContext = React.createContext({
   SetALert: () => {},

@@ -102,3 +102,105 @@ code {
     word-break: break-word !important;
     overflow-wrap: break-word !important;
 }
+
+.w75px {
+    width: 73px;
+}
+
+.w100px {
+    width: 110px;
+}
+
+.w150px {
+    width: 150px;
+}
+
+.w200px {
+    width: 200px;
+}
+
+.w250px {
+    width: 250px;
+}
+
+.w100pc {
+    width: 100%;
+}
+
+.card-hover-effect {
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Custom Merap Button */
+.btn-primary.btn-merap-primary {
+  background-color: var(--meraplion-teal);
+  border-color: var(--meraplion-teal);
+  color: white;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.btn-primary.btn-merap-primary:hover {
+  background-color: var(--meraplion-dark-teal);
+  border-color: var(--meraplion-dark-teal);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.form-field-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.form-field-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 138, 132, 0.3); /* Using a transparent meraplion-dark-teal shade */
+}
+
+/* Custom placeholder color */
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: black !important;
+  opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: black !important;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: black !important;
+}
+
+/* Ensure FloatingLabel placeholders are black */
+.form-floating > label {
+  color: black !important;
+}
+
+.form-floating > .form-control::placeholder {
+  color: black !important;
+}
+
+/* Also ensure react-select placeholder is black (although already set in JS, good to be robust) */
+.react-select__placeholder {
+  color: black !important;
+}
+
+.black-placeholder::placeholder {
+  color: black !important;
+  opacity: 1;
+}
+
+.black-placeholder:-ms-input-placeholder {
+  color: black !important;
+}
+
+.black-placeholder::-ms-input-placeholder {
+  color: black !important;
+}
+
+

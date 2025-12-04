@@ -39,6 +39,7 @@ function Tracking_chi_phi_hcp_qua_tang() {
             set_mo_link(data['mo_link']);
             set_ten_chuong_trinh(data['ten_chuong_trinh']);
             set_quy_tac(data['quy_tac']);
+            set_nguoi_upload_file_data(data['nguoi_upload_file_data'] || []);
             SetLoading(false);
         }
         else {
@@ -52,6 +53,7 @@ function Tracking_chi_phi_hcp_qua_tang() {
     const [mo_link, set_mo_link] = useState("");
     const [ten_chuong_trinh, set_ten_chuong_trinh] = useState("");
     const [quy_tac, set_quy_tac] = useState("");
+    const [nguoi_upload_file_data, set_nguoi_upload_file_data] = useState([]);
     const [show_quy_tac, set_show_quy_tac] = useState(false);
     const [manv, set_manv] = useState("");
     const [lst_chon_gm, set_lst_chon_gm] = useState([]);
@@ -106,7 +108,7 @@ function Tracking_chi_phi_hcp_qua_tang() {
         }
 
         else {
-            void(0)
+            void(0);
             // element.check = false
             lst.push(element);
         }
@@ -231,8 +233,20 @@ function Tracking_chi_phi_hcp_qua_tang() {
         }
         
         console.log("data", data);
-        console.log(result);
-        post_form_data(result);
+        
+        const validResult = result.filter(item => item.so_luong && parseInt(item.so_luong) >= 1);
+        console.log(validResult);
+
+        if (validResult.length > 0) {
+            post_form_data(validResult);
+        } else {
+            SetALert(true);
+            SetALertType("alert-warning");
+            SetALertText("Vui lòng nhập số lượng lớn hơn hoặc bằng 1");
+            setTimeout(() => {
+                SetALert(false);
+            }, 3000);
+        }
         // set_gia_tri_smn("");
 
     }
@@ -426,7 +440,7 @@ function Tracking_chi_phi_hcp_qua_tang() {
 
                         {Number(mo_link) === 0 && <p>Chưa mở link nhập</p>}
                         
-                        { ['MR1119', 'MR0474', 'MR2616', 'MR2417', 'MR0673'].includes(manv) &&
+                        { nguoi_upload_file_data.includes(manv) &&
                         <Button variant="danger" size="sm" onClick={handleExcelModalShow} className="mt-2">
                         + Thay đổi data (ADMIN)
                         </Button>

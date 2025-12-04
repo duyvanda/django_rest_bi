@@ -1,9 +1,7 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
-import './myvnp.css';
-import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
     Button,
@@ -21,10 +19,11 @@ import {
     Dropdown
 } from "react-bootstrap";
 
-function Tao_hcp_bv({history, location}) {
+function Tao_hcp_bv() {
 
     const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    const navigate = useNavigate();
+    const location = useLocation();
     const location_search = new URLSearchParams(location.search)
 
     const fetch_initial_data = async (manv) => {
@@ -82,7 +81,7 @@ function Tao_hcp_bv({history, location}) {
         let bol1 = location_search.get('edit') === '1' ? true : false
         SET_EDITMODE(bol1);
         } else {
-            history.push('/login?redirect=/formcontrol/tao_hcp_bv');
+            navigate('/login?redirect=/formcontrol/tao_hcp_bv');
         };
     }, [count]);
 
@@ -439,13 +438,13 @@ function Tao_hcp_bv({history, location}) {
                         </Modal>
                         <Form onSubmit={handle_submit}>
                         {/* START FORM BODY */}
-                        <Button style={{width: "100%"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >HOME</Button>
+                        <Button style={{width: "100%"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate("/crmhome") } >HOME</Button>
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button style={{fontWeight: "bold"}}  key={1} onClick={ () => {navigate.push("/formcontrol/tao_hcp_bv"); SET_EDITMODE(false); clear_data() } } className="bg-warning text-dark border-0" >Tạo Mới HCP BV</Button>
-                            <Button style={{width: "60px"}} key={2} onClick={ () => {navigate.push("/formcontrol/tao_hcp_bv?edit=1"); SET_EDITMODE(true); clear_data() } } className="ml-1 bg-warning text-dark border-0" >Sửa BV</Button>
-                            <Button style={{fontWeight: "bold"}} key={3} onClick={ () => { navigate.push("/formcontrol/tao_hcp_pcl"); SET_EDITMODE(false); clear_data() } } className="ml-1 bg-primary border-0" >Tạo Mới HCP PCL/ED/GO</Button>
-                            <Button style={{width: "60px"}} key={4} onClick={ () => { navigate.push("/formcontrol/tao_hcp_pcl?edit=1") ; SET_EDITMODE(true); clear_data() } } className="ml-1 bg-primary border-0" >Sửa PCL</Button>
-                            <Button style={{width: "30px"}} key={5} onClick={ () => navigate.push("/formcontrol/tao_hcp_bc") } className="ml-1 bg-secondary border-0" >BC</Button>
+                            <Button style={{fontWeight: "bold"}}  key={1} onClick={ () => {navigate("/formcontrol/tao_hcp_bv"); SET_EDITMODE(false); clear_data() } } className="bg-warning text-dark border-0" >Tạo Mới HCP BV</Button>
+                            <Button style={{width: "60px"}} key={2} onClick={ () => {navigate("/formcontrol/tao_hcp_bv?edit=1"); SET_EDITMODE(true); clear_data() } } className="ml-1 bg-warning text-dark border-0" >Sửa BV</Button>
+                            <Button style={{fontWeight: "bold"}} key={3} onClick={ () => { navigate("/formcontrol/tao_hcp_pcl"); SET_EDITMODE(false); clear_data() } } className="ml-1 bg-primary border-0" >Tạo Mới HCP PCL/ED/GO</Button>
+                            <Button style={{width: "60px"}} key={4} onClick={ () => { navigate("/formcontrol/tao_hcp_pcl?edit=1") ; SET_EDITMODE(true); clear_data() } } className="ml-1 bg-primary border-0" >Sửa PCL</Button>
+                            <Button style={{width: "30px"}} key={5} onClick={ () => navigate("/formcontrol/tao_hcp_bc") } className="ml-1 bg-secondary border-0" >BC</Button>
                         </ButtonGroup>
 
                         {EDITMODE &&
@@ -497,14 +496,14 @@ function Tao_hcp_bv({history, location}) {
                                 </Dropdown.Menu>
                         </Dropdown>
 
-                        <FloatingLabel label="Tên HCP (IN HOA có dấu), ví dụ: NGUYỄN HÙNG ANH" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="xxx" onChange={ (e) => set_ten_hcp(e.target.value.toLocaleUpperCase()) } value = {ten_hcp}/> </FloatingLabel>
+                        <FloatingLabel label="Tên HCP (IN HOA có dấu), ví dụ: NGUYỄN HÙNG ANH" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_ten_hcp(e.target.value.toLocaleUpperCase()) } value = {ten_hcp}/> </FloatingLabel>
                         
                         <Stack direction="horizontal" gap={2} className="border-1">
                             {/* Bọc SĐT và lỗi của nó lại */}
                             <Stack gap={1}> 
                                 <FloatingLabel id="focus_1" label="Số điện thoại" className="border rounded mt-2" > 
                                     <Form.Control disabled={chon_hco_bv ===""} required type="number" className="" 
-                                                placeholder="xxx" onChange={ (e) => set_sdt(e.target.value) } 
+                                                placeholder="" onChange={ (e) => set_sdt(e.target.value) } 
                                                 onBlur={ e => handle_on_blur(e.target.value) } value = {sdt}/> 
                                 </FloatingLabel>
                                 {check_trung_sdt &&
@@ -514,7 +513,7 @@ function Tao_hcp_bv({history, location}) {
                             
                             {/* Trường Email */}
                             <FloatingLabel label="Email" className="border rounded mt-2" > 
-                                <Form.Control type="email" className="" placeholder="xxx" 
+                                <Form.Control type="email" className="" placeholder="" 
                                             onChange={ (e) => set_email(e.target.value) } value = {email}/> 
                             </FloatingLabel>
                         </Stack>
@@ -637,8 +636,8 @@ function Tao_hcp_bv({history, location}) {
                         </Form.Select>
                         {/* IF PCL then comment */}
                         <Stack direction="horizontal" gap={1} className="border-1">
-                            <FloatingLabel style={{width: "50%"}} label="Số lượt khám" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_luot_kham(e.target.value.toLocaleUpperCase()) } value = {so_luot_kham}/> </FloatingLabel>
-                            <FloatingLabel style={{width: "50%"}} label="Tiềm năng" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="xxx" onChange={ (e) => set_so_tiem_nang(e.target.value.toLocaleUpperCase()) } value = {so_tiem_nang}/> </FloatingLabel>
+                            <FloatingLabel style={{width: "50%"}} label="Số lượt khám" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_so_luot_kham(e.target.value.toLocaleUpperCase()) } value = {so_luot_kham}/> </FloatingLabel>
+                            <FloatingLabel style={{width: "50%"}} label="Tiềm năng" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_so_tiem_nang(e.target.value.toLocaleUpperCase()) } value = {so_tiem_nang}/> </FloatingLabel>
                         </Stack>
 
                         <Form.Select hidden={true} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh(e.target.value) }>

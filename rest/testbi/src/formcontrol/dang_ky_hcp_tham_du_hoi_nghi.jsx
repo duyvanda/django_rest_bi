@@ -1,28 +1,30 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
 import { v4 as uuid } from 'uuid';
-// import './myvnp.css';
-// import { Link } from "react-router-dom";
-import FeedbackContext from '../context/FeedbackContext'
+import { useNavigate, useLocation } from "react-router-dom";
+import FeedbackContext from '../context/FeedbackContext';
 import {
     Button,
+    // ButtonGroup,
     Col,
     Row,
     Container,
     Form,
     Spinner,
+    // Card,
     Badge,
     Nav,
     ListGroup,
     Modal,
+    // Table,
     Alert
+    // InputGroup
 } from "react-bootstrap";
 
-function Dang_ky_hcp_tham_du_hoi_nghi( {history} ) {
+function Dang_ky_hcp_tham_du_hoi_nghi() {
 
     const { get_id, Inserted_at, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
 
     // --- STATE VARIABLES ---
@@ -35,7 +37,8 @@ function Dang_ky_hcp_tham_du_hoi_nghi( {history} ) {
     const [manv, set_manv] = useState("");
     
     // Priority Selection
-    const [lst_chon_uu_tien, set_lst_chon_uu_tien] = useState([]); 
+    const [lst_chon_uu_tien, set_lst_chon_uu_tien] = useState([]);
+    const [nguoi_upload_file_data, set_nguoi_upload_file_data] = useState([]);
     const [selected_uu_tien, set_selected_uu_tien] = useState(""); 
 
     const [arr_hcp, set_arr_hcp] = useState([]);
@@ -56,8 +59,8 @@ function Dang_ky_hcp_tham_du_hoi_nghi( {history} ) {
             set_mo_link(data['mo_link']);
             set_ten_chuong_trinh(data['ten_chuong_trinh']);
             set_quy_tac(data['quy_tac']);
-            set_lst_chon_uu_tien(data['lst_chon_uu_tien'] || []); 
-
+            set_lst_chon_uu_tien(data['lst_chon_uu_tien'] || [] ); 
+            set_nguoi_upload_file_data(data['nguoi_upload_file_data'] || []);
             SetLoading(false);
         }
         else {
@@ -76,7 +79,7 @@ function Dang_ky_hcp_tham_du_hoi_nghi( {history} ) {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_first_data(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
-            history.push('/login');
+            navigate('/login');
         };
     }, [count]);
 
@@ -226,7 +229,7 @@ function Dang_ky_hcp_tham_du_hoi_nghi( {history} ) {
         { label: "On", path: "/formcontrol/dang_ky_hcp_tham_du_hoi_nghi?type=online" },
         { label: "Off", path: "/formcontrol/dang_ky_hcp_tham_du_hoi_nghi?type=offline" },
         { label: "QL", path: "/formcontrol/dang_ky_hcp_tham_du_hoi_nghi_crm" },
-        { label: "BC", path: "/realtime/99", color: "text-info", isExternal: true }
+        { label: "BC", path: "/reports", color: "text-info", isExternal: true }
     ];
 
         return (
@@ -268,7 +271,7 @@ function Dang_ky_hcp_tham_du_hoi_nghi( {history} ) {
                                         <Nav.Link 
                                             eventKey={path}
                                             className={`shadow-sm border ${isActive ? "bg-merap-active" : `bg-white ${color || ""}`}`}
-                                            onClick={!isLink ? () => navigate.push(path) : undefined}
+                                            onClick={!isLink ? () => navigate(path) : undefined}
                                             href={isLink ? path : undefined}
                                             target={isLink ? "_blank" : undefined}
                                         >
@@ -361,7 +364,7 @@ function Dang_ky_hcp_tham_du_hoi_nghi( {history} ) {
 
                         {Number(mo_link) === 0 && <p>Chưa mở link nhập</p>}
                         
-                        { ['MR1119', 'MR0474', 'MR2616', 'MR2417', 'MR0673'].includes(manv) &&
+                        { nguoi_upload_file_data.includes(manv) &&
                         <Button variant="danger" size="sm" onClick={handleExcelModalShow} className="mt-2">
                         + Thay đổi data (ADMIN)
                         </Button>

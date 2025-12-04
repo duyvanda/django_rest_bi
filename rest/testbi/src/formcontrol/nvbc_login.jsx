@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom"; // React Router v5
+import { useNavigate } from "react-router-dom"; // React Router v5
 // import { Container, Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './LoginPage.css';
@@ -20,18 +20,18 @@ import {
   Modal
 } from "react-bootstrap";
 
-const Nvbc_login = ({history, location}) => {
+const Nvbc_login = () => {
 
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
-  // const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const user = localStorage.getItem("nvbc_user");
     if (user) {
-      history.push("/formcontrol/nvbc_introduction");
+      navigate("/formcontrol/nvbc_introduction");
     }
-  }, [history]);
+  }, [navigate]);
 
   const handleLogin = async () => {
     if (!phone.trim()) {
@@ -63,7 +63,7 @@ const Nvbc_login = ({history, location}) => {
       // Only store user data if the response is successful
       localStorage.setItem("nvbc_user", JSON.stringify(userData));
   
-      history.push("/formcontrol/nvbc_introduction");
+      navigate("/formcontrol/nvbc_introduction");
     } catch (error) {
       console.error("Login failed:", error);
       window.alert("Vui lòng kiểm tra số điện thoại, hệ thống chỉ dành cho nhân viên bán chính. Liên hệ CSKH để được hướng dẫn thêm!");

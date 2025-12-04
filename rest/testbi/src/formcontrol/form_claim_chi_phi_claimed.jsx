@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 import Select from "react-select";
-import './myvnp.css';
+// import './myvnp.css';
 import { Link, useLocation  } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext';
 import {
@@ -20,9 +20,12 @@ import {
 } from "react-bootstrap";
 import dayjs from "dayjs";
 import { FaDownload } from "react-icons/fa";
-import ClaimNavTabs from '../components/FormClaimNavTabs';
+import FormClaimNavTabs from '../components/FormClaimNavTabs';
 
-const Form_claim_chi_phi_claimed = ( {history} ) => {
+import { useNavigate } from "react-router-dom";
+
+const Form_claim_chi_phi_claimed = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const { generateMonthOptions, get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
       
@@ -64,7 +67,7 @@ const Form_claim_chi_phi_claimed = ( {history} ) => {
     fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
     }
       else {
-        history.push(`/login?redirect=${location.pathname}`);
+        navigate(`/login?redirect=${location.pathname}`);
     };
   }, [count]);
 
@@ -302,7 +305,7 @@ const Form_claim_chi_phi_claimed = ( {history} ) => {
   return (
     <Container className="h-100" fluid> 
       {/* Responsive Full-Width Buttons */}
-        <ClaimNavTabs />
+        <FormClaimNavTabs />
 
       {/* ALERT COMPONENT */}
       <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">

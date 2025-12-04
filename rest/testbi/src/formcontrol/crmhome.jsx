@@ -5,12 +5,13 @@ import {
   FaGift,
   FaCogs,
   FaFileInvoiceDollar,
-  FaCalendarCheck
+  FaCalendarCheck,
+  FaChalkboardTeacher
 } from 'react-icons/fa';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const CrmHome = () => {
-  const history = useHistory(); // ✅ React Router v5 dùng useHistory
+  const navigate = useNavigate(); // ✅ React Router v5 dùng useHistory
 
   // Danh sách các mục điều hướng có thêm icon
   const items = [
@@ -56,13 +57,13 @@ const CrmHome = () => {
     path: '/formcontrol/form_claim_chi_phi',
     icon: <FaFileInvoiceDollar size={28} color="#17a2b8" />
     },
-    // {
-    // stt: 6,
-    // title: 'Công tác phí (Kế Toán)',
-    // description: 'Khai báo công tác phí cho Sales',
-    // path: '/formcontrol/cong_tac_phi',
-    // icon: <FaFileInvoiceDollar size={28} color="#17a2b8" />
-    // }
+    {
+      stt: 7,
+      title: 'Đăng ký seminar HCO',
+      description: 'Đăng ký seminar HCO',
+      path: '/formcontrol/form_seminar_hco?active_tab=deXuat',
+      icon: <FaChalkboardTeacher size={28} color="#17a2b8" />
+    }
   ];
 
   const sortedList = [...items].sort((a, b) => a.stt - b.stt);
@@ -75,7 +76,7 @@ const CrmHome = () => {
           <Col key={index}>
             <Card
               className="shadow-sm"
-              onClick={() => history.push(item.path)} // ✅ Đúng cú pháp React Router v5
+              onClick={() => navigate(item.path)} // ✅ Đúng cú pháp React Router v5
               style={{ cursor: 'pointer' }}
             >
             <Card.Body>

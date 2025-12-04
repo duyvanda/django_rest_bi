@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 import { v4 as uuid } from 'uuid';
-import './myvnp.css';
+// import './myvnp.css';
 // import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
@@ -23,7 +23,10 @@ import {
 
 // import { Trash } from "react-bootstrap-icons";
 
-function Form_log_checkin_nhan_hang({history}) {
+import { useNavigate } from "react-router-dom";
+
+function Form_log_checkin_nhan_hang() {
+    const navigate = useNavigate();
     
     const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
@@ -91,7 +94,7 @@ function Form_log_checkin_nhan_hang({history}) {
 
 
         } else {
-            history.push('/login?redirect=/formcontrol/form_ghi_nhan_hang_log');
+            navigate('/login?redirect=/formcontrol/form_ghi_nhan_hang_log');
         };
     }, []);
 

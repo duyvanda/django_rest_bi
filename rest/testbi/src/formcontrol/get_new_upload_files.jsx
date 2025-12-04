@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
 // import { v4 as uuid } from 'uuid';
-import './myvnp.css';
+// import './myvnp.css';
 import { Link, useLocation  } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
@@ -39,7 +39,10 @@ const cleanDataColumn = (input) => {
   return finalCleaned;
 };
 
+import { useNavigate } from "react-router-dom";
+
 const Get_new_upload_files = () => {
+    const navigate = useNavigate();
     const location = useLocation();
 
   const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
@@ -67,7 +70,7 @@ const Get_new_upload_files = () => {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
         } else {
-            history.push(`/login?redirect=${location.pathname}`);
+            navigate(`/login?redirect=${location.pathname}`);
         };
     }, [count]);
 

@@ -15,7 +15,7 @@ import {
     Card,
     Table
 } from "react-bootstrap";
-import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
+import FormClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
 
 import { useNavigate } from "react-router-dom";
 
@@ -34,13 +34,15 @@ const Form_claim_chi_phi_crm = () => {
       else {
       const data = await response.json()
       set_data_submit(data['lst_chon_ke_hoach'])
+      set_user_chuc_danh(data['chuc_danh'])
       console.log(data);
       SetLoading(false);
 
       }
   }
     
-    const [count, setCount] = useState(0);
+    const [count, set_count] = useState(0);
+    const [user_chuc_danh, set_user_chuc_danh] = useState("");
     useEffect(() => {
         if (localStorage.getItem("userInfo")) {
         const media = window.matchMedia('(max-width: 960px)');
@@ -87,7 +89,7 @@ const Form_claim_chi_phi_crm = () => {
         setTimeout(() => {
         SetALert(false);
         SetLoading(false);
-        setCount(count+1);
+        set_count(count+1);
         }, 2000);   
     }
   }
@@ -177,7 +179,7 @@ const Form_claim_chi_phi_crm = () => {
   return (
     <Container className="h-100" fluid> 
         {/* Responsive Full-Width Buttons */}
-        <ClaimNavTabs />
+        <FormClaimNavTabs />
 
       {/* ALERT COMPONENT */}
       <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">
@@ -193,18 +195,22 @@ const Form_claim_chi_phi_crm = () => {
       </Modal>
 
       <div className="d-flex gap-2 mb-3">
-        <Button variant="success" onClick={() => handleApproval(true)}>
-          CONFIRM
-        </Button>
+        {user_chuc_danh && user_chuc_danh.includes("CRM") && (
+            <Button variant="success" onClick={() => handleApproval(true)}>
+              CONFIRM
+            </Button>
+        )}
         <Button variant="danger" onClick={() => handleApproval(false)}>
           DENY
         </Button>
-        <Link to="/formcontrol/form_claim_chi_phi_crm_claimed">
-          <Button
-          variant={location.pathname === "/formcontrol/form_claim_chi_phi_crm_claimed" ? "secondary" : "outline-secondary"} 
-          className="w-100">DUYỆT HÓA ĐƠN
-          </Button>
-        </Link>
+        {user_chuc_danh && user_chuc_danh.includes("CRM") && (
+            <Link to="/formcontrol/form_claim_chi_phi_crm_claimed">
+              <Button
+              variant={location.pathname === "/formcontrol/form_claim_chi_phi_crm_claimed" ? "secondary" : "outline-secondary"} 
+              className="w-100">DUYỆT HÓA ĐƠN
+              </Button>
+            </Link>
+        )}
       </div>
 
       <div style={{ overflowX: 'auto' }}>

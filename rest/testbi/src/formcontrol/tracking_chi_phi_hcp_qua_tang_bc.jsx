@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import { v4 as uuid } from 'uuid';
-import './myvnp.css';
+// import './myvnp.css';
 // import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
@@ -21,9 +21,9 @@ import {
     // Dropdown
 } from "react-bootstrap";
 
-function Tracking_chi_phi_hcp_qua_tang_bc({history, location}) {
+function Tracking_chi_phi_hcp_qua_tang_bc({location}) {
 
-    const navigate = useHistory();
+    const navigate = useNavigate();
     const location_search = new URLSearchParams(location.search)
 
     useEffect(() => {
@@ -35,7 +35,7 @@ function Tracking_chi_phi_hcp_qua_tang_bc({history, location}) {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetchFilerReportsRT("27", true, true, "", {});
         } else {
-            history.push('/login?redirect=/formcontrol/tracking_chi_phi_hcp_bc');
+            navigate('/login?redirect=/formcontrol/tracking_chi_phi_hcp_bc');
         };
     }, []);
 
@@ -58,7 +58,7 @@ function Tracking_chi_phi_hcp_qua_tang_bc({history, location}) {
                         <Col md={4} >
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button style={{width: "60px"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate.push("/crmhome") } >CRM</Button>
+                            <Button style={{width: "60px"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate("/crmhome") } >CRM</Button>
                         </ButtonGroup>
 
                         </Col>

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { useContext, useEffect, useState,useRef  } from "react";
 import { v4 as uuid } from 'uuid';
-import './myvnp.css';
+// import './myvnp.css';
 import { Link } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext'
 import {
@@ -19,7 +19,10 @@ import {
     Pagination
 } from "react-bootstrap";
 
-function Template({history}) {
+import { useNavigate } from "react-router-dom";
+
+function Template() {
+    const navigate = useNavigate();
     
     const { removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
 
@@ -31,7 +34,7 @@ function Template({history}) {
         userLogger(JSON.parse(localStorage.getItem("userInfo")).manv, 'template', isMB, dv_width);
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
-            history.push('/login?redirect=/formcontrol/template');
+            navigate('/login?redirect=/formcontrol/template');
         };
     }, []);
 

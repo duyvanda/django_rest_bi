@@ -11,7 +11,12 @@ import { HiLocationMarker } from "react-icons/hi";
 const iconMarkupGreen = renderToStaticMarkup(<HiLocationMarker size={50} color='green'/>);
 const customMarkerIconGreen = divIcon({html: iconMarkupGreen,iconSize: [0, 0],iconAnchor: [17, 16]});
 
-function SalesRoutes({history}) {
+import {
+  useNavigate
+} from "react-router-dom";
+
+function SalesRoutes() {
+  const navigate = useNavigate();
   const { fetchFilerReports, SetRpScreen, userLogger, loading, SetLoading, formatDate, Inserted_at, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
   const current_date = formatDate(Date())
   const [onDate, setDate] = useState(current_date);
@@ -43,7 +48,7 @@ function SalesRoutes({history}) {
       });
 
     } else {
-            history.push('/login');
+            navigate('/login');
         };
   }, []);
 

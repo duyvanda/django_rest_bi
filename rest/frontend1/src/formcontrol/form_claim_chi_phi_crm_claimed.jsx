@@ -15,7 +15,7 @@ import {
     Card,
     Table
 } from "react-bootstrap";
-import ClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
+import FormClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
 
 const Form_claim_chi_phi_crm_claimed = () => {
     const navigate = useNavigate();
@@ -152,7 +152,7 @@ const Form_claim_chi_phi_crm_claimed = () => {
   return (
     <Container className="mt-4">
         {/* Responsive Full-Width Buttons */}
-        <ClaimNavTabs />
+        <FormClaimNavTabs />
 
       {/* ALERT COMPONENT */}
       <Modal show={loading} centered aria-labelledby="contained-modal-title-vcenter" size="sm">

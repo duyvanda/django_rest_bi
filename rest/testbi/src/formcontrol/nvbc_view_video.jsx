@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useContext, useEffect, useState } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import FeedbackContext from '../context/FeedbackContext'
 // import {  } from 'react-router-dom';
 
@@ -23,7 +23,7 @@ import {
 
 const Nvbc_view_video = () => {
   const { Inserted_at } = useContext(FeedbackContext)
-    const history = useHistory();
+    const navigate = useNavigate();
     const [videoUrl, setvideoUrl] = useState(null);
     const location = useLocation();
 
@@ -31,7 +31,7 @@ const Nvbc_view_video = () => {
 
     const storedUser = localStorage.getItem("nvbc_user");
     if (!storedUser) {
-      history.push("/formcontrol/nvbc_login");
+      navigate("/formcontrol/nvbc_login");
       return;
     }
     const user = JSON.parse(storedUser);
@@ -75,11 +75,11 @@ const Nvbc_view_video = () => {
       }
     }, 60000); // 10 seconds delay
     return () => clearTimeout(timer); // cleanup
-  }, [location, history]);
+  }, [location, navigate]);
 
   // Function to handle back navigation
   const handleGoBack = () => {
-    history.goBack();  // Go back to the previous page
+    navigate(-1);  // Go back to the previous page
   };
   // const videoUrl = "https://www.youtube.com/embed/OnEkMka21Tc?si=Q3GcMH6b6TVpyuZj";
   return (

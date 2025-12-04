@@ -21,7 +21,10 @@ import {
 } from "react-bootstrap";
 // import { v4 as uuid } from "uuid";
 
-const Dang_ky_nghi_phep_pkh = ({ history } ) => {
+import { useNavigate } from "react-router-dom";
+
+const Dang_ky_nghi_phep_pkh = () => {
+    const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
@@ -56,7 +59,7 @@ const Dang_ky_nghi_phep_pkh = ({ history } ) => {
         set_supid(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_initial_data( JSON.parse(localStorage.getItem("userInfo")).manv );
         } else {
-            history.push(`/login?redirect=${location.pathname}`);
+            navigate(`/login?redirect=${location.pathname}`);
         };
     }, []);
   

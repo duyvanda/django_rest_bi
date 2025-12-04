@@ -285,7 +285,7 @@ const Nvbc_mainpage = () => {
           {show_chon_qua_thang && 
           <>
             <Modal.Title>
-              Thành viên tích cực nhất tháng 09/2025!!! <br></br>
+              Thành viên tích cực nhất tháng 11/2025!!! <br></br>
             </Modal.Title>
               
             {

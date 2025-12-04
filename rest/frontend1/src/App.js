@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
@@ -52,7 +53,7 @@ import Mds_bbgh_bo_sung from "./formcontrol/mds_bbgh_bo_sung";
 // import Hr_nguoi_phu_thuoc from "./formcontrol/hr_nguoi_phu_thuoc";
 import Mds_tra_thuong_cmm_q12025 from "./formcontrol/mds_tra_thuong_cmm_q12025";
 import Form_log_checkin_nhan_hang from  "./formcontrol/form_log_checkin_nhan_hang";
-import Cong_tac_phi from "./formcontrol/cong_tac_phi";
+import Form_claim_chi_phi_ctp from "./formcontrol/form_claim_chi_phi_ctp";
 import Form_claim_chi_phi from  "./formcontrol/form_claim_chi_phi";
 import Form_claim_chi_phi_crm from  "./formcontrol/form_claim_chi_phi_crm";
 import Form_claim_chi_phi_claimed from  "./formcontrol/form_claim_chi_phi_claimed";
@@ -117,6 +118,11 @@ function AppContent() {
                 <Route path="/workflow" element={<Workflow />} />
                 <Route path="/crmhome" element={<CrmHome />} />
                 <Route path="/login" element={<Login />} />
+                {/* REPORT */}
+                <Route path="/reports" element={<ReportList />} />
+                <Route path="/reportscreen/:id" element={<ReportScreen />} />
+                <Route path="/testscreensize" element={<TestScreenSize />} />
+
                 {/* Tồn Kho Và Tốc Độ Bán */}
                 <Route path="/ctrlscreen/ton_kho_va_toc_do_ban/:id" element={<Ton_Kho_Va_Toc_Do_Ban />} />
                 <Route path="/ctrlscreen/ton_phan_bo_hang_hoa/:id" element={<Ton_phan_bo_hang_hoa />} />
@@ -146,7 +152,7 @@ function AppContent() {
                 <Route path="/formcontrol/tao_hcp_pcl" element={<Tao_hcp_pcl />} />
                 <Route path="/formcontrol/tao_hcp_bc" element={<Tao_hcp_bc />} />
 
-                <Route path="/formcontrol/cong_tac_phi" element={<Cong_tac_phi />} />
+                <Route path="/formcontrol/form_claim_chi_phi_ctp" element={<Form_claim_chi_phi_ctp />} />
                 <Route path="/formcontrol/form_claim_chi_phi" element={<Form_claim_chi_phi />} />
                 <Route path="/formcontrol/form_claim_chi_phi_crm" element={<Form_claim_chi_phi_crm />} />
                 <Route path="/formcontrol/form_claim_chi_phi_claimed" element={<Form_claim_chi_phi_claimed />} />
@@ -183,11 +189,6 @@ function AppContent() {
                 <Route path="/formcontrol/nvbc_view_pdf" element={<Nvbc_view_pdf />} />
                 <Route path="/formcontrol/nvbc_view_video" element={<Nvbc_view_video />} />
 
-
-                {/* REPORT */}
-                <Route path="/reports" element={<ReportList />} />
-                <Route path="/reportscreen/:id" element={<ReportScreen />} />
-                <Route path="/testscreensize" element={<TestScreenSize />} />
                 {/* MAPS */}
                 <Route path="/maps/sales" element={<Maps />} />
                 <Route path="/maps/routes" element={<RoutesComponent />} />

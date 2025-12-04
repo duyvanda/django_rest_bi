@@ -37,7 +37,8 @@ function Dang_ky_hcp_tham_du_hoi_nghi() {
     const [manv, set_manv] = useState("");
     
     // Priority Selection
-    const [lst_chon_uu_tien, set_lst_chon_uu_tien] = useState([]); 
+    const [lst_chon_uu_tien, set_lst_chon_uu_tien] = useState([]);
+    const [nguoi_upload_file_data, set_nguoi_upload_file_data] = useState([]);
     const [selected_uu_tien, set_selected_uu_tien] = useState(""); 
 
     const [arr_hcp, set_arr_hcp] = useState([]);
@@ -58,8 +59,8 @@ function Dang_ky_hcp_tham_du_hoi_nghi() {
             set_mo_link(data['mo_link']);
             set_ten_chuong_trinh(data['ten_chuong_trinh']);
             set_quy_tac(data['quy_tac']);
-            set_lst_chon_uu_tien(data['lst_chon_uu_tien'] || []); 
-
+            set_lst_chon_uu_tien(data['lst_chon_uu_tien'] || [] ); 
+            set_nguoi_upload_file_data(data['nguoi_upload_file_data'] || []);
             SetLoading(false);
         }
         else {
@@ -363,7 +364,7 @@ function Dang_ky_hcp_tham_du_hoi_nghi() {
 
                         {Number(mo_link) === 0 && <p>Chưa mở link nhập</p>}
                         
-                        { ['MR1119', 'MR0474', 'MR2616', 'MR2417', 'MR0673'].includes(manv) &&
+                        { nguoi_upload_file_data.includes(manv) &&
                         <Button variant="danger" size="sm" onClick={handleExcelModalShow} className="mt-2">
                         + Thay đổi data (ADMIN)
                         </Button>

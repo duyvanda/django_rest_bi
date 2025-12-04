@@ -39,6 +39,7 @@ function Tracking_chi_phi_hcp_qua_tang() {
             set_ten_chuong_trinh(data['ten_chuong_trinh']);
             set_chi_phi_thang(data['chi_phi_thang']);
             set_quy_tac(data['quy_tac']);
+            set_nguoi_upload_file_data(data['nguoi_upload_file_data'] || []);
             SetLoading(false);
         }
         else {
@@ -67,6 +68,7 @@ function Tracking_chi_phi_hcp_qua_tang() {
     const [ten_chuong_trinh, set_ten_chuong_trinh] = useState("");
     const [chi_phi_thang, set_chi_phi_thang] = useState("");
     const [quy_tac, set_quy_tac] = useState("");
+    const [nguoi_upload_file_data, set_nguoi_upload_file_data] = useState([]);
     const [show_quy_tac, set_show_quy_tac] = useState(false);
     const [manv, set_manv] = useState("");
     const [lst_chon_qua_tang, set_lst_chon_qua_tang] = useState([]);
@@ -165,29 +167,44 @@ function Tracking_chi_phi_hcp_qua_tang() {
                     console.log(successData);
                     SetALert(true);
                     SetALertType("alert-success");
-                    SetALertText(successData.success_message);
-                    setTimeout(() => {
-                        SetALert(false);
-                        SetLoading(false);
-                    }, 2000);
+                                SetALertText(successData.success_message);
+                                setTimeout(() => {
+                                    SetALert(false);
+                                    SetLoading(false);
+                                }, 2000);
+                                
+                                clear_data();
+                            }
+                        } catch (error) {
+                            console.error("Fetch error:", error);
+                            }
+                    };
                     
-                    set_schema([]);
-                }
-            } catch (error) {
-                console.error("Fetch error:", error);
-                }
-        };
-
-
-    const handle_submit = (e) => {
-        e.preventDefault();
-        const current_date = formatDate(Date());
-
-        const ma_hcp = []
-        for (let i of arr_hcp) {
-            if (i.check === true) {ma_hcp.push(i.ma_hcp_2)}
-        }
-
+                        const clear_data = () => {
+                            set_mo_link("");
+                            set_ten_chuong_trinh("");
+                            set_chi_phi_thang("");
+                            set_quy_tac("");
+                            set_nguoi_upload_file_data([]);
+                            set_show_quy_tac(false);
+                            set_lst_chon_qua_tang([]);
+                            set_arr_hcp([]);
+                            set_co_chon_hcp("");
+                            set_search('');
+                            set_schema([]);
+                            setShowExcelModal(false);
+                            setExcelFile("");
+                            setCount(count+1); // This will trigger useEffect and refetch data
+                        };
+                    
+                        const handle_submit = (e) => {
+                            e.preventDefault();
+                            const current_date = formatDate(Date());
+                    
+                            const ma_hcp = []
+                            for (let i of arr_hcp) {
+                                if (i.check === true) {ma_hcp.push(i.ma_hcp_2)}
+                            }
         const data = {
             "ma_hcp_2":ma_hcp ,
             "manv":manv,
@@ -464,7 +481,7 @@ function Tracking_chi_phi_hcp_qua_tang() {
 
                         {Number(mo_link) === 0 && <p>Chưa mở link nhập</p>}
                         
-                        { ['MR1119', 'MR0474', 'MR2616', 'MR2417', 'MR0673'].includes(manv) &&
+                        { nguoi_upload_file_data.includes(manv) &&
                         <Button variant="danger" size="sm" onClick={handleExcelModalShow} className="mt-2">
                         + Thay đổi data (ADMIN)
                         </Button>

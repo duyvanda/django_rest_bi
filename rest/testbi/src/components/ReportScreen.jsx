@@ -5,7 +5,12 @@ import { useContext, useEffect, useState } from 'react'
 
 
 
-function ReportScreen({match, history, location}) {
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+
+function ReportScreen() {
+    const navigate = useNavigate();
+    const { id } = useParams();
+    const location = useLocation();
     const { userInfo, loading, Reports, fetchFilerReports, shared, vw, ReportId, userLogger, ReportParam, SetRpScreen } = useContext(FeedbackContext)
     
 
@@ -15,7 +20,6 @@ function ReportScreen({match, history, location}) {
       const isMB = (media.matches);
       const dv_width = window.innerWidth;
       SetRpScreen(true)
-      let id = match.params.id
         if (loading===false){
             console.log("Reports", Reports)
             console.log("stt", id)
@@ -33,7 +37,7 @@ function ReportScreen({match, history, location}) {
       else{ void(0) }
       
 		} else {
-            history.push('/login');
+            navigate('/login');
         };
   // eslint-disable-next-line
 	}, [userInfo]);

@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
-import { useHistory, Link } from "react-router-dom"; // React Router v5
+import { useNavigate, Link } from "react-router-dom"; // React Router v5
 // import { Container, Row, Col, Button } from 'react-bootstrap';
 import './IntroductionPage.css';
 // import topBanner from '../images/georgie-cobbs-bKjHgo_Lbpo-unsplash.jpg';
@@ -28,17 +28,17 @@ import {
 
 const Nvbc_introduction = () => {
   const [userName, setUserName] = useState("");
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userData = localStorage.getItem("nvbc_user");
     if (!userData) {
-      history.push("/formcontrol/nvbc_login");
+      navigate("/formcontrol/nvbc_login");
     } else {
       const parsedUser = JSON.parse(userData);
       setUserName(parsedUser.name || "Người dùng");
     }
-  }, [history]);
+  }, [navigate]);
 
   const [showContent, setShowContent] = useState(false); // State to control visibility
 

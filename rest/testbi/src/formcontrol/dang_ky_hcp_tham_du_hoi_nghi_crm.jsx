@@ -1,10 +1,10 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-// import { v4 as uuid } from 'uuid';
-import './myvnp.css';
-// import { Link } from "react-router-dom";
-import FeedbackContext from '../context/FeedbackContext'
+import {
+    useNavigate,
+    useLocation
+} from "react-router-dom";
+import FeedbackContext from '../context/FeedbackContext';
 import {
     Button,
     ButtonGroup,
@@ -13,16 +13,21 @@ import {
     Container,
     Form,
     Spinner,
+    // Card,
+    // Badge,
     Nav,
     ListGroup,
     Modal,
+    // Table,
     Alert
+    // InputGroup
 } from "react-bootstrap";
 
-function Dang_ky_hcp_tham_du_hoi_nghi_crm({history}) {
+function Dang_ky_hcp_tham_du_hoi_nghi_crm() {
+    const location = useLocation();
 
     const { Inserted_at, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext)
-    const navigate = useHistory();
+    const navigate = useNavigate();
 
     const fetch_tracking_chi_phi_get_data_hcp = async (manv) => {
         SetLoading(true);
@@ -52,7 +57,7 @@ function Dang_ky_hcp_tham_du_hoi_nghi_crm({history}) {
         set_manv(JSON.parse(localStorage.getItem("userInfo")).manv);
         fetch_tracking_chi_phi_get_data_hcp(JSON.parse(localStorage.getItem("userInfo")).manv);
         } else {
-            history.push('/login');
+            navigate('/login');
         };
     }, [count]);
 
@@ -173,8 +178,8 @@ function Dang_ky_hcp_tham_du_hoi_nghi_crm({history}) {
         { label: "<=", path: "/crmhome", color: "text-success" },
         { label: "On", path: "/formcontrol/dang_ky_hcp_tham_du_hoi_nghi?type=online" },
         { label: "Off", path: "/formcontrol/dang_ky_hcp_tham_du_hoi_nghi?type=offline" },
-        { label: "QL", path: "/formcontrol/dang_ky_hcp_tham_du_hoi_nghi_crm" },
-        { label: "BC", path: "/realtime/99", color: "text-info", isExternal: true }
+        { label: "QL", path: "/formcontrol/dang_ky_hcp_tham_du_hoi_nghi_crm?type=all" },
+        { label: "BC", path: "/reports", color: "text-info", isExternal: true }
     ];
 
     if (true) {
@@ -208,7 +213,7 @@ function Dang_ky_hcp_tham_du_hoi_nghi_crm({history}) {
 
                             <Nav variant="pills" activeKey={location.pathname} className="mt-2 bg-light p-2 rounded gap-2 fw-bold" fill>
                                 {navs.map(({ label, path, color, isLink }) => {
-                                    const isActive = location.pathname === path; // Check if this tab is active
+                                    const isActive = (location.pathname + location.search) === path;
                                     return (
                                         <Nav.Item key={path} className="flex-fill">
                                             <Nav.Link 
@@ -216,7 +221,7 @@ function Dang_ky_hcp_tham_du_hoi_nghi_crm({history}) {
                                                 // FIX: Only use bg-white and custom colors if NOT active. 
                                                 // If active, let Bootstrap default (Blue bg + White text) take over.
                                                 className={`shadow-sm border ${isActive ? "bg-merap-active" : `bg-white ${color || ""}`}`}
-                                                onClick={!isLink ? () => navigate.push(path) : undefined}
+                                                onClick={!isLink ? () => navigate(path) : undefined}
                                                 href={isLink ? path : undefined}
                                                 target={isLink ? "_blank" : undefined}
                                             >

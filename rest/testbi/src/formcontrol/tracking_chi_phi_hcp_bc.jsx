@@ -1,10 +1,7 @@
 /* eslint-disable */
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-import { v4 as uuid } from 'uuid';
-import './myvnp.css';
-import { Link } from "react-router-dom";
-import FeedbackContext from '../context/FeedbackContext'
+import { useNavigate } from "react-router-dom";
+import FeedbackContext from '../context/FeedbackContext';
 import {
     Button,
     ButtonGroup,
@@ -13,17 +10,12 @@ import {
     Container,
     Form,
     Spinner,
-    Card,
-    ListGroup,
     Modal,
-    FloatingLabel,
-    Stack,
-    Dropdown    
 } from "react-bootstrap";
 
-function Tracking_chi_phi_hcp_bc({history, location}) {
+function Tracking_chi_phi_hcp_bc({location}) {
 
-    const navigate = useHistory();
+    const navigate = useNavigate();
     const location_search = new URLSearchParams(location.search)
 
     useEffect(() => {
@@ -36,7 +28,7 @@ function Tracking_chi_phi_hcp_bc({history, location}) {
 
         fetchFilerReportsRT("27", true, true, "", {});
         } else {
-            history.push('/login?redirect=/formcontrol/tracking_chi_phi_hcp_bc');
+            navigate('/login?redirect=/formcontrol/tracking_chi_phi_hcp_bc');
         };
     }, []);
 
@@ -59,11 +51,11 @@ function Tracking_chi_phi_hcp_bc({history, location}) {
                         <Col md={4} >
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button style={{fontWeight: "bold"}}  key={1} onClick={ () => {navigate.push("/formcontrol/tracking_chi_phi_hcp") } } className="bg-warning text-dark border-0" >Tracking chi phí HCP</Button>
+                            <Button style={{fontWeight: "bold"}}  key={1} onClick={ () => {navigate("/formcontrol/tracking_chi_phi_hcp") } } className="bg-warning text-dark border-0" >Tracking chi phí HCP</Button>
                             {/* <Button style={{width: "60px"}} key={2} onClick={ () => {navigate.push("/formcontrol/tao_hcp_bv?edit=1"); SET_EDITMODE(true); clear_data() } } className="ml-1 bg-warning text-dark border-0" >Sửa BV</Button> */}
                             {/* <Button style={{fontWeight: "bold"}} key={3} onClick={ () => { navigate.push("/formcontrol/tao_hcp_pcl"); SET_EDITMODE(false); clear_data() } } className="ml-1 bg-primary border-0" >Tạo Mới HCP PCL</Button> */}
                             {/* <Button style={{width: "60px"}} key={4} onClick={ () => { navigate.push("/formcontrol/tao_hcp_pcl?edit=1") ; SET_EDITMODE(true) } } className="ml-1 bg-primary border-0" >Sửa PCL</Button> */}
-                            <Button style={{width: "30px"}} key={5} onClick={ () => navigate.push("/formcontrol/tao_hcp_bc") } className="ml-1 bg-secondary border-0" >BC</Button>
+                            <Button style={{width: "30px"}} key={5} onClick={ () => navigate("/formcontrol/tao_hcp_bc") } className="ml-1 bg-secondary border-0" >BC</Button>
                         </ButtonGroup>
 
                         </Col>
