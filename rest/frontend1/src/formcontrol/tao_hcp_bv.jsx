@@ -453,7 +453,7 @@ function Tao_hcp_bv() {
                                 
                                 <Dropdown.Toggle className="border-0 flex-grow-1 w-100 text-center text-dark fw-bold"  style={{height:"40px", backgroundColor:"#FFF8DC" }}>
                                  {/*if PCL then PCL  */}
-                                {chon_mahcp2_bv ==="" ? "Chọn Mã HCP Bệnh Viện Để Sửa": chon_mahcp2_bv}
+                                {chon_mahcp2_bv ==="" ? <><span className="text-danger">*</span> Chọn Mã HCP Bệnh Viện Để Sửa</> : chon_mahcp2_bv}
                                 </Dropdown.Toggle>
                                 
                                 <Dropdown.Menu className="w-100" style={{maxHeight: "410px", overflowY: "auto"}}>
@@ -479,7 +479,7 @@ function Tao_hcp_bv() {
                         <Dropdown className="mt-2" autoClose="true" block="true" onSelect = { (e) => set_chon_hco_bv(e) }>
                                 
                                 <Dropdown.Toggle className="bg-white border-0 text-dark text-left flex-grow-1 w-100"  style={{height:"60px"}}> 
-                                {chon_hco_bv ==="" ? "Chọn HCO Bệnh Viện": chon_hco_bv}
+                                {chon_hco_bv ==="" ? <><span className="text-danger">*</span> Chọn HCO Bệnh Viện</> : chon_hco_bv}
                                 </Dropdown.Toggle>
                                 
                                 <Dropdown.Menu className="w-100" style={{maxHeight: "410px", overflowY: "auto"}}>
@@ -496,7 +496,7 @@ function Tao_hcp_bv() {
                                 </Dropdown.Menu>
                         </Dropdown>
 
-                        <FloatingLabel label={<>Tên HCP (IN HOA có dấu), ví dụ: NGUYỄN HÙNG ANH <span className="text-danger">*</span></>} className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_ten_hcp(e.target.value.toLocaleUpperCase()) } value = {ten_hcp}/> </FloatingLabel>
+                        <FloatingLabel label={<><span className="text-danger">*</span> Tên HCP (IN HOA có dấu), ví dụ: NGUYỄN HÙNG ANH </>} className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_ten_hcp(e.target.value.toLocaleUpperCase()) } value = {ten_hcp}/> </FloatingLabel>
                         
                         <Stack direction="horizontal" gap={2} className="border-1">
                             {/* Bọc SĐT và lỗi của nó lại */}
@@ -521,7 +521,7 @@ function Tao_hcp_bv() {
                     <Stack direction="horizontal" gap={2} className="border-1">
 
                         <Form.Select required className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => handle_chon_tinh(e)  }>
-                        <option style={{fontSize:"15px"}} value= {chon_tinh} > {chon_tinh ==="" ? "Tỉnh": chon_tinh} </option>
+                        <option style={{fontSize:"15px"}} value= {chon_tinh} > {chon_tinh ==="" ? "* Tỉnh": chon_tinh} </option>
                             {arr_tinh
                             .map( (el, index) => 
                             <option key={index} style={{fontSize:"15px"}} value={el}> {el} </option>
@@ -530,7 +530,7 @@ function Tao_hcp_bv() {
                         </Form.Select>
 
                         <Form.Select required className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => handle_chon_quan_huyen(e)  }>
-                        <option style={{fontSize:"15px"}} value= {chon_quan_huyen} > {chon_quan_huyen ==="" ? "Quận Huyện": chon_quan_huyen} </option>
+                        <option style={{fontSize:"15px"}} value= {chon_quan_huyen} > {chon_quan_huyen ==="" ? "* Quận Huyện": chon_quan_huyen} </option>
                             {arr_quan_huyen
                             .map( (el, index) => 
                             <option key={index} style={{fontSize:"15px"}} value={el}> {el} </option>
@@ -539,7 +539,7 @@ function Tao_hcp_bv() {
                         </Form.Select>
 
                         <Form.Select required className="mt-2" style={{height:"60px", fontSize:"15px"}}  onChange={ (e) => set_chon_phuong_xa(e.target.value)  }>
-                        <option style={{fontSize:"15px"}} value= {chon_phuong_xa}>  {chon_phuong_xa ==="" ? "Phường Xã": chon_phuong_xa}  </option>
+                        <option style={{fontSize:"15px"}} value= {chon_phuong_xa}>  {chon_phuong_xa ==="" ? "* Phường Xã": chon_phuong_xa}  </option>
                             {arr_phuong_xa
                             .map( (el, index) => 
                             <option key={index} style={{fontSize:"15px"}} value={el}> {el} </option>
@@ -550,7 +550,7 @@ function Tao_hcp_bv() {
                     </Stack>
 
                         <Form.Group controlId="formSpecificAddress" className="mt-2">
-                        <Form.Control required onChange={(e) => set_dia_chi(e.target.value)} value={dia_chi} as="textarea" rows={3} placeholder="Địa chỉ cụ thể. Ví dụ: Số nhà, Tên đường, Tòa nhà,..." />
+                        <Form.Control required onChange={(e) => set_dia_chi(e.target.value)} value={dia_chi} as="textarea" rows={3} placeholder="* Địa chỉ cụ thể. Ví dụ: Số nhà, Tên đường, Tòa nhà,..." />
                         </Form.Group>
 
                         <Stack direction="horizontal" gap={2} className="border-1">
@@ -597,7 +597,7 @@ function Tao_hcp_bv() {
                         
                         {/* if PCL then comment vì PCL chỉ có 1 kênh */}
                         <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_kenh_lam_viec(e.target.value) }>
-                            <option value= {chon_kenh_lam_viec}> {chon_kenh_lam_viec ==="" ? "Kênh": chon_kenh_lam_viec} </option>
+                            <option value= {chon_kenh_lam_viec}> {chon_kenh_lam_viec ==="" ? "* Kênh": chon_kenh_lam_viec} </option>
                             {lst_kenh_lam_viec
                             .map( (el, index) => 
                             <option key={index} value={el.chon_chinh}> {el.chon_chinh} </option>
@@ -617,7 +617,7 @@ function Tao_hcp_bv() {
                         </Form.Select>
 
                         <Form.Select required className="mt-2" style={{height:"60px"}}  onChange={ (e) => handle_chon_chuc_vu(e) }>
-                            <option value= {chon_chuc_vu} > {chon_chuc_vu ==="" ? "Chức Vụ": chon_chuc_vu} </option>
+                            <option value= {chon_chuc_vu} > {chon_chuc_vu ==="" ? "* Chức Vụ": chon_chuc_vu} </option>
                             {lst_chuc_vu
                             .map( (el, index) => 
                             <option key={index} value={el.chon_chinh}> {el.chon_chinh} </option>
@@ -625,7 +625,7 @@ function Tao_hcp_bv() {
                             }
                         </Form.Select>
                         
-                        <FloatingLabel label="Phân loại HCP">
+                        <FloatingLabel label={<><span className="text-danger">*</span> Phân loại HCP</>}>
                         <Form.Select disabled={chon_chuc_vu===""} required className="mt-2" style={{height:"60px" , fontSize:"15px"}}  onChange={ (e) => set_chon_phan_loai_hcp(e.target.value) }>
                             {/* <option value = {chon_phan_loai_hcp} >  {chon_phan_loai_hcp ==="" ? "Phân Loại HCP": chon_phan_loai_hcp} </option> */}
                             {lst_phan_loai_hcp
@@ -639,8 +639,8 @@ function Tao_hcp_bv() {
 
                         {/* IF PCL then comment */}
                         <Stack direction="horizontal" gap={1} className="border-1">
-                            <FloatingLabel style={{width: "50%"}} label="Số lượt khám" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_so_luot_kham(e.target.value.toLocaleUpperCase()) } value = {so_luot_kham}/> </FloatingLabel>
-                            <FloatingLabel style={{width: "50%"}} label="Tiềm năng" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_so_tiem_nang(e.target.value.toLocaleUpperCase()) } value = {so_tiem_nang}/> </FloatingLabel>
+                            <FloatingLabel style={{width: "50%"}} label={<><span className="text-danger">*</span> Số lượt khám</>} className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_so_luot_kham(e.target.value.toLocaleUpperCase()) } value = {so_luot_kham}/> </FloatingLabel>
+                            <FloatingLabel style={{width: "50%"}} label={<><span className="text-danger">*</span> Tiềm năng</>} className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_so_tiem_nang(e.target.value.toLocaleUpperCase()) } value = {so_tiem_nang}/> </FloatingLabel>
                         </Stack>
 
                         <Form.Select hidden={true} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh(e.target.value) }>
@@ -653,7 +653,7 @@ function Tao_hcp_bv() {
                         </Form.Select>
                         
                         <Form.Select required disabled={chon_chuc_vu===""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_chuyen_khoa(e.target.value) }>
-                            <option value= {chon_nganh_chuyen_khoa} >  {chon_nganh_chuyen_khoa ==="" ? "KHOA PHÒNG HCP LÀM VIỆC": chon_nganh_chuyen_khoa} </option>
+                            <option value= {chon_nganh_chuyen_khoa} >  {chon_nganh_chuyen_khoa ==="" ? "* KHOA PHÒNG HCP LÀM VIỆC": chon_nganh_chuyen_khoa} </option>
                             {lst_nganh_chuyen_khoa
                             .filter (el => el.chon_chinh === chon_chuc_vu)
                             .map( (el, index) => 
@@ -667,7 +667,7 @@ function Tao_hcp_bv() {
                             <Form.Control
                             required
                             type="text"
-                            placeholder="Vui lòng ghi cụ thể"
+                            placeholder="* Vui lòng ghi cụ thể"
                             className="mt-2"
                             value={chon_nganh_chuyen_khoa_khac} // Controlled input with the state
                             onChange={(e) => set_chon_nganh_chuyen_khoa_khac(e.target.value)} // Update state inline on input change
@@ -676,7 +676,7 @@ function Tao_hcp_bv() {
 
                         {/* if PCL then comment */}
                         <Form.Select required disabled={chon_chuc_vu===""} className="mt-2" style={{height:"60px"}}  onChange={ (e) => set_chon_nganh_khoa_phong(e.target.value) }>
-                            <option value= {chon_nganh_khoa_phong} > {chon_nganh_khoa_phong ==="" ? "CHUYÊN KHOA HCP HỌC": chon_nganh_khoa_phong} </option>
+                            <option value= {chon_nganh_khoa_phong} > {chon_nganh_khoa_phong ==="" ? "* CHUYÊN KHOA HCP HỌC": chon_nganh_khoa_phong} </option>
                             {lst_nganh_khoa_phong
                             .filter (el => el.chon_chinh === chon_chuc_vu)
                             .map( (el, index) =>
@@ -690,7 +690,7 @@ function Tao_hcp_bv() {
                             <Form.Control
                             required
                             type="text" 
-                            placeholder="Vui lòng ghi cụ thể" 
+                            placeholder="* Vui lòng ghi cụ thể" 
                             className="mt-2"
                             value={chon_nganh_khoa_phong_khac} // Controlled input with the state
                             onChange={(e) => set_chon_nganh_khoa_phong_khac(e.target.value)} // Update state inline on input change
