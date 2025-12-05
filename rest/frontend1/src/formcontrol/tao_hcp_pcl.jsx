@@ -439,7 +439,7 @@ function Tao_hcp_pcl() {
                         </Modal>
                         <Form onSubmit={handle_submit}>
                         {/* START FORM BODY */}
-                        <Button style={{width: "100%"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate("/crmhome") } >CRM</Button>
+                        <Button style={{width: "100%"}} size="sm" variant="outline-success" key={0} onClick={ () => navigate("/crmhome") } >HOME</Button>
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
                             <Button style={{fontWeight: "bold"}}  key={1} onClick={ () => {navigate("/formcontrol/tao_hcp_bv"); SET_EDITMODE(false); clear_data() } } className="bg-warning text-dark border-0" >Tạo Mới HCP BV</Button>
                             <Button style={{width: "60px"}} key={2} onClick={ () => {navigate("/formcontrol/tao_hcp_bv?edit=1"); SET_EDITMODE(true); clear_data() } } className="ml-1 bg-warning text-dark border-0" >Sửa BV</Button>
@@ -626,16 +626,18 @@ function Tao_hcp_pcl() {
                             )
                             }
                         </Form.Select>
-
-                        <Form.Select disabled={chon_chuc_vu===""} required className="mt-2" style={{height:"60px" , fontSize:"15px"}}  onChange={ (e) => set_chon_phan_loai_hcp(e.target.value) }>
-                            {/* <option value = {chon_phan_loai_hcp} >  {chon_phan_loai_hcp ==="" ? "Phân Loại HCP": chon_phan_loai_hcp} </option> */}
-                            {lst_phan_loai_hcp
-                            .filter (el => el.chon_chinh === chon_chuc_vu)
-                            .map( (el, index) => 
-                            <option key={index} value={el.chon_phu}> {el.chon_phu} </option>
-                            )
-                            }
-                        </Form.Select>
+                        
+                        <FloatingLabel label="Phân loại HCP">
+                            <Form.Select disabled={chon_chuc_vu===""} required className="mt-2" style={{height:"60px" , fontSize:"15px"}}  onChange={ (e) => set_chon_phan_loai_hcp(e.target.value) }>
+                                {/* <option value = {chon_phan_loai_hcp} >  {chon_phan_loai_hcp ==="" ? "Phân Loại HCP": chon_phan_loai_hcp} </option> */}
+                                {lst_phan_loai_hcp
+                                .filter (el => el.chon_chinh === chon_chuc_vu)
+                                .map( (el, index) => 
+                                <option key={index} value={el.chon_phu}> {el.chon_phu} </option>
+                                )
+                                }
+                            </Form.Select>
+                        </FloatingLabel>
                         {/* IF PCL then comment */}
                         <Stack direction="horizontal" gap={1} className="border-1">
                             <FloatingLabel style={{width: "50%"}}  label="Số lượt khám" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_so_luot_kham(e.target.value.toLocaleUpperCase()) } value = {so_luot_kham}/> </FloatingLabel>

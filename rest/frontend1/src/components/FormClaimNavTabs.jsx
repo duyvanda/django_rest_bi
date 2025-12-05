@@ -38,6 +38,11 @@ const FormClaimNavTabs = () => {
                     CTP
                 </Nav.Link>
             </Nav.Item>
+            <Nav.Item>
+                <Nav.Link as={Link} to="/formcontrol/form_claim_chi_phi_bc" className={getNavLinkClass("/formcontrol/form_claim_chi_phi_bc") + " text-warning"}>
+                    BC
+                </Nav.Link>
+            </Nav.Item>
         </Nav>
     );
 };

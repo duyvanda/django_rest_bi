@@ -496,12 +496,12 @@ function Tao_hcp_bv() {
                                 </Dropdown.Menu>
                         </Dropdown>
 
-                        <FloatingLabel label="Tên HCP (IN HOA có dấu), ví dụ: NGUYỄN HÙNG ANH" className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_ten_hcp(e.target.value.toLocaleUpperCase()) } value = {ten_hcp}/> </FloatingLabel>
+                        <FloatingLabel label={<>Tên HCP (IN HOA có dấu), ví dụ: NGUYỄN HÙNG ANH <span className="text-danger">*</span></>} className="border rounded mt-2" > <Form.Control required type="text" className="" placeholder="" onChange={ (e) => set_ten_hcp(e.target.value.toLocaleUpperCase()) } value = {ten_hcp}/> </FloatingLabel>
                         
                         <Stack direction="horizontal" gap={2} className="border-1">
                             {/* Bọc SĐT và lỗi của nó lại */}
                             <Stack gap={1}> 
-                                <FloatingLabel id="focus_1" label="Số điện thoại" className="border rounded mt-2" > 
+                                <FloatingLabel id="focus_1" label={<><span className="text-danger">*</span> Số điện thoại</>} className="border rounded mt-2" > 
                                     <Form.Control disabled={chon_hco_bv ===""} required type="number" className="" 
                                                 placeholder="" onChange={ (e) => set_sdt(e.target.value) } 
                                                 onBlur={ e => handle_on_blur(e.target.value) } value = {sdt}/> 
@@ -624,7 +624,8 @@ function Tao_hcp_bv() {
                             )
                             }
                         </Form.Select>
-
+                        
+                        <FloatingLabel label="Phân loại HCP">
                         <Form.Select disabled={chon_chuc_vu===""} required className="mt-2" style={{height:"60px" , fontSize:"15px"}}  onChange={ (e) => set_chon_phan_loai_hcp(e.target.value) }>
                             {/* <option value = {chon_phan_loai_hcp} >  {chon_phan_loai_hcp ==="" ? "Phân Loại HCP": chon_phan_loai_hcp} </option> */}
                             {lst_phan_loai_hcp
@@ -634,6 +635,8 @@ function Tao_hcp_bv() {
                             )
                             }
                         </Form.Select>
+                        </FloatingLabel>
+
                         {/* IF PCL then comment */}
                         <Stack direction="horizontal" gap={1} className="border-1">
                             <FloatingLabel style={{width: "50%"}} label="Số lượt khám" className="border rounded mt-2" > <Form.Control required type="number" className="" placeholder="" onChange={ (e) => set_so_luot_kham(e.target.value.toLocaleUpperCase()) } value = {so_luot_kham}/> </FloatingLabel>

@@ -63,7 +63,7 @@ function Tao_hcp_bc() {
                         <Col md={4} >
 
                         <ButtonGroup style={{width: "100%",fontWeight: "bold"}} size="sm" className="mt-2 border-0">
-                            <Button style={{width: "60px"}} variant="outline-success" key={0} onClick={ () => navigate("/crmhome") } >CRM</Button>
+                            <Button style={{width: "60px"}} variant="outline-success" key={0} onClick={ () => navigate("/crmhome") } >HOME</Button>
                             <Button style={{width: "30px"}} key={5} onClick={ () => navigate("/formcontrol/tao_hcp_bc") } className="ml-1 bg-secondary border-0" >BC</Button>
                         </ButtonGroup>
 

@@ -150,7 +150,7 @@ const Form_claim_chi_phi_crm_claimed = () => {
   };
 
   return (
-    <Container className="mt-4">
+    <Container className="h-100" fluid>
         {/* Responsive Full-Width Buttons */}
         <FormClaimNavTabs />
 
@@ -200,6 +200,7 @@ const Form_claim_chi_phi_crm_claimed = () => {
           <th style={{ width: '150px' }}>Tên HCP</th>
           <th style={{ width: '150px' }}>Quà tặng</th>
           <th style={{ width: '150px' }}>Kênh</th>
+          <th style={{ width: '150px' }}>Kỳ chi phí KT</th>
           <th style={{ width: '200px' }}>Nội dung</th>
           <th style={{ width: '200px' }}>Ghi chú</th>
           </tr>
@@ -234,6 +235,7 @@ const Form_claim_chi_phi_crm_claimed = () => {
               <td>{record.ten_hcp}</td>
               <td>{record.qua_tang}</td>
               <td>{record.kenh}</td>
+              <td>{formatDate(record.ky_chi_phi_kt)}</td>
               <td>{record.noi_dung}</td>
 
               <td>

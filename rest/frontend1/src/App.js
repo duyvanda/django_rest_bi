@@ -58,6 +58,7 @@ import Form_claim_chi_phi from  "./formcontrol/form_claim_chi_phi";
 import Form_claim_chi_phi_crm from  "./formcontrol/form_claim_chi_phi_crm";
 import Form_claim_chi_phi_claimed from  "./formcontrol/form_claim_chi_phi_claimed";
 import Form_claim_chi_phi_crm_claimed from  "./formcontrol/form_claim_chi_phi_crm_claimed";
+import Form_claim_chi_phi_bc from  "./formcontrol/form_claim_chi_phi_bc";
 
 import Get_new_upload_files from  "./formcontrol/get_new_upload_files";
 
@@ -157,6 +158,7 @@ function AppContent() {
                 <Route path="/formcontrol/form_claim_chi_phi_crm" element={<Form_claim_chi_phi_crm />} />
                 <Route path="/formcontrol/form_claim_chi_phi_claimed" element={<Form_claim_chi_phi_claimed />} />
                 <Route path="/formcontrol/form_claim_chi_phi_crm_claimed" element={<Form_claim_chi_phi_crm_claimed />} />
+                <Route path="/formcontrol/form_claim_chi_phi_bc" element={<Form_claim_chi_phi_bc />} />
 
                 <Route path="/formcontrol/mds_bbgh_bo_sung" element={<Mds_bbgh_bo_sung />} />
                 {/* <Route path="/formcontrol/wps_dang_ky_vpp" element={<Wps_dang_ky_vpp />} /> */}

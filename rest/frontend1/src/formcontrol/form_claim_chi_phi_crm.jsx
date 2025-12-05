@@ -2,7 +2,7 @@
 import { useContext, useEffect, useState } from "react";
 import Select from "react-select";
 // import './myvnp.css';
-import { Link, useLocation  } from "react-router-dom";
+import { Link, useLocation, useNavigate  } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext';
 import {
     Modal,
@@ -17,12 +17,12 @@ import {
 } from "react-bootstrap";
 import FormClaimNavTabs from '../components/FormClaimNavTabs'; // adjust the path as needed
 
-import { useNavigate } from "react-router-dom";
+import { formatDate } from "../utils/string";
 
 const Form_claim_chi_phi_crm = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
+    const { get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
     
     const fetch_initial_data = async (manv) => {
       SetLoading(true)
@@ -227,6 +227,7 @@ const Form_claim_chi_phi_crm = () => {
           <th style={{ width: '150px' }}>Tên HCP</th>
           <th style={{ width: '150px' }}>Quà tặng</th>
           <th style={{ width: '150px' }}>Kênh</th>
+          <th style={{ width: '150px' }}>Kỳ chi phí KT</th>
           <th style={{ width: '200px' }}>Nội dung</th>
           <th style={{ width: '200px' }}>Ghi chú</th>
           </tr>
@@ -259,6 +260,7 @@ const Form_claim_chi_phi_crm = () => {
               <td>{record.ten_hcp}</td>
               <td>{record.qua_tang}</td>
               <td>{record.kenh}</td>
+              <td>{formatDate(record.ky_chi_phi_kt)}</td>
               <td>{record.noi_dung}</td>
 
               <td>

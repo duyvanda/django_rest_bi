@@ -2,7 +2,7 @@
 import { useContext, useEffect, useState } from "react";
 import Select from "react-select";
 // import './myvnp.css';
-import { Link, useLocation  } from "react-router-dom";
+import { Link, useLocation, useNavigate  } from "react-router-dom";
 import FeedbackContext from '../context/FeedbackContext';
 import {
     // ButtonGroup,
@@ -21,13 +21,12 @@ import {
 import dayjs from "dayjs";
 import { FaDownload } from "react-icons/fa";
 import FormClaimNavTabs from '../components/FormClaimNavTabs';
-
-import { useNavigate } from "react-router-dom";
+import { formatDate } from "../utils/string";
 
 const Form_claim_chi_phi_claimed = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { generateMonthOptions, get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, formatDate, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
+  const { generateMonthOptions, get_id, Inserted_at, removeAccents, userLogger, loading, SetLoading, alert, alertText, alertType, SetALert, SetALertText, SetALertType } = useContext(FeedbackContext);
       
   // =================================================================
   // 1. CUSTOM HOOK FOR DATA AND STATE MANAGEMENT
@@ -266,8 +265,8 @@ const Form_claim_chi_phi_claimed = () => {
     SetLoading(true);
     setDownloadUrl("")
     setErrorMessage(""); // Reset error message before new request
-    let from_date = toDate.replace(/(\d{2})-(\d{2})-(\d{4})/, '$3-$2-$1')
-    let to_date = toDate.replace(/(\d{2})-(\d{2})-(\d{4})/, '$3-$2-$1')
+    let from_date = toDate.replace(/(\d{2})-(\d{2})-(\d{4})/, '$3-$2-')
+    let to_date = toDate.replace(/(\d{2})-(\d{2})-(\d{4})/, '$3-$2-')
     const requestData = { from_date, to_date, manv, id:get_id() };
     console.log(requestData)
     try {
@@ -340,6 +339,7 @@ const Form_claim_chi_phi_claimed = () => {
             <th style={{ width: '200px' }}>Tên HCP</th>
             <th style={{ width: '200px' }}>Quà tặng</th>
             <th style={{ width: '70px' }}>Kênh</th>
+            <th style={{ width: '150px' }}>Kỳ chi phí KT</th>
             <th style={{ width: '200px' }}>Nội dung</th>
             <th style={{ width: '200px' }}>Ghi chú</th>
           </tr>
@@ -376,6 +376,7 @@ const Form_claim_chi_phi_claimed = () => {
               <td>{record.ten_hcp}</td>
               <td>{record.qua_tang}</td>
               <td>{record.kenh}</td>
+              <td>{formatDate(record.ky_chi_phi_kt)}</td>
               <td>{record.noi_dung}</td>
               <td>
                 <Form.Control
